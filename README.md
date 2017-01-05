@@ -1,2 +1,3 @@
 # ParkingOS_cloud
 停车云平台
+提供了三部分源码：后台管理系统（parkingos_cloud_web）、接口程序（parkingos_cloud_api）、消息服务（parkingos_cloud_message），后续会提供车主app源码。
