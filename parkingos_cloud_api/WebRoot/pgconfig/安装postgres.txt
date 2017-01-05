@@ -1,0 +1,105 @@
+
+
+/////////////////////////////////////////////////////////////////////////
+postgres数据库安装
+yum install psmisc
+yum install -y gcc  readline-devel   zlib-devel
+cd /opt/
+wget postgresql-9.2.4.tar.gz
+
+tar xvf  postgresql-9.2.4.tar.gz
+
+cd postgresql-9.24
+./configure --prefix=/usr/local/pgsql
+make
+make install
+
+adduser postgres
+
+mkdir /data/Data/
+chown postgres /data/Data/
+
+su - postgres
+/usr/local/pgsql/bin/initdb -D /data/Data/    初始化
+/**
+/usr/local/pgsql/bin/postmaster -D /data/Data/   启动
+*//
+
+/usr/local/pgsql/bin/postgres -D /data/Data/ >logfile  2>&1 &   启动
+
+
+
+
+修改数据库配置
+
+vim /usr/local/pgsql/data/postgresql.conf
+
+…
+
+
+listen_addresses = '*'   允许任何地址访问
+
+vim /usr/local/pgsql/data/pg_hba.conf
+
+   …
+
+   host    all         all         0.0.0.0/0          trust   新增此条数据
+
+信任所有地址，不用密码登录
+
+
+
+数据库配置修改完成后，重新数据库
+
+# su – postgres
+重启
+ /usr/local/pgsql/bin/pg_ctl restart -m fast -D /data/Data/
+
+
+关闭
+/usr/local/pgsql/bin/pg_ctl stop -m fast -D /data/Data
+ 启动
+/usr/local/pgsql/bin/postgres -D /data/Data/ >logfile  2>&1 &  
+创建数据库
+#cd /usr/local/pgsql/bin
+
+#./createdb zldetc -U postgres -h localhost
+
+
+
+
+
+
+更改数据库密码
+
+ /usr/local/pgsql/bin/psql tqdb01
+
+alter role tracqdev with password 'tracq123';    
+
+创建新用户
+
+create user tracqdev;
+
+alter user tracqdev superuser ;
+
+or
+
+create role tracqdev with login
+
+alter role tracqdev superuser
+/
+
+
+////////////////////////////////////////////
+数据恢复
+1重启：
+/usr/local/pgsql/bin/pg_ctl restart -m fast -D /data/Data/
+2删除
+./dropdb zldetc
+3还原
+/usr/local/pgsql/bin/psql  zldetc -h localhost < /data/zldetc_2014-09-25-23.dump 
+4导出数据
+/usr/local/pgsql/bin/pg_dump zldetc > /data/Data/pgbak/zld1011.dump
+
+
+

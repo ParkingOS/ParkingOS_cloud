@@ -1,0 +1,192 @@
+==========用
+./pg_basebackup -h 10.9.21.239 -U postgres -F p -P -x  -D /data/Data/ -l pbback20150717
+
+
+（）首先先做主备数据库之间的信任关系，使两台服务器之间互相访问不需要密码验证。
+主服务器上 在root  postgresql 两个用户下分别生成证书
+分别在主机A和B上执行如下命令来生成配对密钥： 
+ssh-keygen -t rsa 
+按照提示操作，注意，不要输入passphrase。提示信息如下 
+Generating public/private rsa key pair. 
+Enter file in which to save the key (/root/.ssh/id_rsa):  
+Enter passphrase (empty for no passphrase):  
+Enter same passphrase again:  
+Your identification has been saved in /root/.ssh/id_rsa. 
+Your public key has been saved in /root/.ssh/id_rsa.pub. 
+The key fingerprint is: 
+ff:8e:85:68:85:94:7c:2c:46:b1:e5:2d:41:5c:e8:9b  root@localhost.domain 
+
+将 .ssh 目录中的 id_rsa.pub 文件复制到 主机B 的 ~/.ssh/ 目录中，并改名为  authorized_keys。
+
+
+（）分别将公钥复制到另一台机上：
+A-B
+scp .ssh/id_rsa.pub 10.9.2.90:/root/.ssh/authorized_keys 
+B-A
+scp .ssh/id_rsa.pub 10.9.2.91:/root/.ssh/authorized_keys 
+
+
+
+进入postgres用户,分别执行：
+#ssh-keygen -t rsa 
+注意，如果不知道postgres用户的密码，可以用root用户重置postgres用户的密码：passwd postgres ，输入两次密码
+A-B
+scp .ssh/id_rsa.pub  postgres@10.9.2.90:/home/postgres/.ssh/authorized_keys 
+B-A
+scp .ssh/id_rsa.pub  postgres@10.9.2.91:/home/postgres/.ssh/authorized_keys 
+
+
+推荐用下列方法完成 备机 到  主机   信任
+////////////////////////////******************
+
+（）多台信任，在每台备机上
+ssh-keygen -t rsa 
+然后分别执行
+ssh-copy-id -i ~/.ssh/id_rsa.pub 角色@主机
+
+（）设置角色密码,进入root用户
+passwd postgres
+
+*****************************//////////////////
+
+
+
+
+以后从A主机scp到B主机就不需要密码了。
+
+
+*****************************************************************************************
+1、主库A操作：===============================================================================
+（）修改：pg_hba.conf
+添加：
+host all all 127.0.0.1/32 trust
+host all all 124.202.231.26/28 trust  公司网段方便远程维护
+host all all 80.66.40.102/32 trust  主库内网IP
+host all all 80.66.40.103/32 trust 备库内网IP
+host all all 10.161.166.249/32 trust 主应用服务器内网IP
+host all all 10.161.166.143/32 trust 备应用服务器内网IP
+# IPv6 local connections:
+host all all ::1/128 trust
+# Allow replication connections from localhost, by a user with the
+# replication privilege.
+#local replication postgres trust
+host replication postgres 80.66.40.102/32 trust  配置允许流复制主机IP
+host replication postgres 80.66.40.103/32 trust 配置允许流复制主机IP
+#host replication postgres 127.0.0.1/32 trust
+#host replication postgres ::1/128 trust
+
+（）编辑postgresql.conf 
+listen_addresses = '*' 
+max_connections = 300   
+shared_buffers = 128MB
+wal_level = hot_standby 
+archive_mode = on 
+archive_command = 'test ! -f /data/archivedir/%f && cp %p /data/archivedir/%f'  
+archive_timeout = 1200
+
+max_wal_senders = 5  
+wal_keep_segments = 1000
+#wal_sender_timeout = 60s
+
+hot_standby = on --从库上可以执行只读操作
+
+log_timezone = 'PRC'
+
+（）在/data目录下创建存放归档日志的目录
+mkdir archivedir
+chown postgres.postgres archivedir
+
+（）创建存储数据库基础备份的目录
+mkdir pgbackup
+chown postgres.postgres pgbackup
+
+（）以上操作完毕后，重启postgresql数据库。
+/etc/init.d/postgresql restart
+
+2、创建数据库基础本分：===============================================================================
+///////////******************************//////////////////////////////////////////////////////////////
+///////PostgreSQL热备份的过程一般为：
+///////1.数据库中执行：pg_start_backup() ; 
+///////2.然后使用操作系统的tar或 cp命令拷贝 PostgreSQL数据文件。 
+///////3.数据库中执行：pg_stop_backup()  ; 
+
+///////有人可能会问为什么我们开始用操作系统备份数据库前需要执行pg_start_backup()?
+
+///////实际上pg_start_backup()主要做了以下两个工作：
+///////1.置写日志标志为：XLogCtl->Insert.forcePageWrites = true，也就是把这个标志设置为true后，数据库会把变化的整个数据块都记录到数据库中，
+///////而不仅仅是块中记录的变化。 
+///////2.强制发生一次checkpoint点。 
+
+///////为什么要强制WAL日志把整个块都写入WAL中呢？
+
+///////想象一下： 如果你用cp命令拷贝文件时，数据库也可能会同时写这个文件，那么可能会出现，一个数据块，数据库正在写，cp命令正在读，
+///////这样有可能拷贝的数据块的前半部分是新数据，后半部分是旧数据，也就是单个数据块的数据不一致，这时，如果后面使用WAL日志把数据推到一个
+///////一致点时，如果WAL日志中只记录是块中行的变化，那么对于这种不一致块就无法恢复。但这时如果WAL日志中记录的是整个新数据块的内容，
+///////那么后面重演WAL日志时，把整个新块的内容写到这个块中后，这个块的内容就达到了一致点了，这样就没有问题了。
+
+///////强制发生一次checkpoint，也是为了把前面的脏数据都刷到磁盘中，这样从这之后产生的日志都是记录了整个数据块，这样就可以保证恢复的正确。
+///////////******************************//////////////////////////////////////////////////////////////
+进入postgresql 用户：
+su -l postgres
+[postgres@AY131021150028549089Z ~]$ psql
+postgres=# SELECT pg_start_backup('basebak20140916');
+ pg_start_backup
+-----------------
+ 0/8000028
+(1 row)
+postgres=# \q
+[postgres@AY131021150028549089Z ~]$ exit
+[root@AY131021150028549089Z data]# cd pgbackup/
+[root@AY131021150028549089Z pgbackup]# tar zvcf base20140916_data.tar.gz ../Data/ 复制数据库数据目录并压缩成文件
+[root@AY131021150028549089Z data]# su -l postgres
+[postgres@AY131021150028549089Z ~]$ ./psql
+postgres=# SELECT pg_stop_backup();
+NOTICE: pg_stop_backup complete, all required WAL segments have been archived
+ pg_stop_backup
+----------------
+ 0/8000230
+(1 row)
+postgres=# \q
+
+#exit
+[root@AY131021150028549089Z data]# cd pgbackup/
+[root@AY131021150028549089Z pgbackup]# chown postgres.postgres base20131112_data.tar.gz 
+
+3、备库上的操作：===============================================================================
+在/data下创建 pgbackup目录
+mkdir archivedir
+chown postgres.postgres archivedir
+
+创建存储数据库基础备份的目录
+mkdir pgbackup
+chown postgres.postgres pgbackup
+
+以上操作完毕后，停止postgresql数据库。
+===============/etc/init.d/postgresql stop 停止当前备用数据库的运行
+/usr/local/pgsql/bin/pg_ctl stop -m fast -D /data/Data   停止当前备用数据库的运行
+su -l postgres
+cd /data/pgbackup
+scp 10.161.166.25:/data/pgbackup/base20131112_data.tar.gz ./  复制主库的基本库备份文件
+
+[postgres@AY131021150027813b05Z pgbackup]$ tar zvxf base20131112_data.tar.gz -C ../  解压缩并复制到备库数据目录中去
+cd /data/data/pg_xlog
+[postgres@AY131021150027813b05Z pg_xlog]$ rm -f 0*
+[postgres@AY131021150027813b05Z archive_status]$ rm -f 0*
+cd /data/data
+rm postmaster.pid 
+cp /usr/local/pgsql/share/recovery.conf.sample ./recovery.conf 
+
+编辑recover.conf文件
+restore_command = 'scp 10.161.166.25:/data/archivedir/%f "%p" 2> /dev/null'
+recovery_target_timeline = 'latest'
+standby_mode = 'on'  --标记PG为STANDBY SERVER
+primary_conninfo = 'host=172.31.2.150 port=5432 user=postgres'
+trigger_file = '/tmp/trigger_file0'
+修改完成后，重启数据库
+/etc/rc.d/init.d/postgres start
+
+
+
+至此数据库的热备归档+流复制模式配置完毕。
+
+

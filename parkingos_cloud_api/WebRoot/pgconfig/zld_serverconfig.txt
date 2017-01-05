@@ -1,0 +1,63 @@
+2015/7/17
+B机房业务迁移到C机房
+
+1、postgres 
+C 机房两台，B机房一台
+C:10.10.34.81  --primary     已安装
+  10.10.45.237 --standby01   已安装
+B:10.9.5.211   --standby02   已安装
+
+2、mongodb
+C 机房两台，B机房一台
+C:10.10.38.15  
+  10.10.23.48  
+B:10.9.21.239 
+
+（1）三台上分别执行：
+ /home/apps/mongodb/bin/mongod -shardsvr -replSet shard1 -port 27017 -dbpath /data/mongodb/data -journal -logpath /data/mongodb/logs/mongo.log -logappend -fork -rest
+
+（2）初始化replica set(副本集)
+用mongo连接其中一个mongod，执行:
+mongo localhost:27017
+
+> config ={_id:'shard1',members:[{_id:0,host:'10.10.38.15:27017'},{_id:1,host:'10.10.23.48:27017'},{_id:2,host:'10.9.21.239:27017'}]}
+> rs.initiate(config)
+
+（3）三台上分别执行
+ /home/apps/mongodb/bin/mongod -configsvr -dbpath /data/mongodb/config/ -port 20000 -logpath /data/mongodb/logs/config.log -logappend -fork
+
+（4）三台上分别执行
+ /home/apps/mongodb/bin/mongos -configdb 10.10.38.15:20000,10.10.23.48:20000,10.9.21.239:20000 -port 30000 -logpath /data/mongodb/logs/mongos.log -logappend -fork
+
+
+（5）任意一台机器：
+mongo localhost:30000/admin
+>db.runCommand({ addshard: "shard1/10.10.38.15:27017,10.10.23.48:27017,10.9.21.239:27017"})
+
+3、java服务器
+s.tingchebao.com:180.150.188.224(C机房) 118.192.88.90(B机房)
+www.tingchebao.com d.tingchebao.com 118.192.72.119 
+
+（）180.150.188.224 ->C机房，内网：10.10.54.176 haproxy分发到下列三台java服务器:
+C:10.10.114.237 外网IP:    123.59.57.13 BGP 
+  10.10.133.7   外网IP:    123.59.57.14 BGP 
+  10.10.29.217  外网IP:    180.150.179.146 BGP
+  
+（）118.192.88.90   ->B机房，内内：10.9.22.129 haproxy分发到下列三台java服务器:
+B:10.9.22.129 外网IP:118.192.88.90 haproxy http://118.192.88.90/haproxy
+  10.9.7.206  外网IP:118.192.72.119 
+  10.9.5.211  外网IP:118.192.85.142  
+
+升级说明 ，程序先上到C机房 10.10.54.176 
+（外网IP:180.150.188.224 ）,升级前执行backzldjava进行备份
+haproxy  http://180.150.188.224/haproxy 
+
+测试 通过 后，在B机房和C机房的六台java服务器分别执行updatezldjava 密码:zldpass
+
+4、memcached
+B:10.9.7.206 在用
+C:10.10.38.15 备用
+
+
+
+  

@@ -1,0 +1,128 @@
+
+MongoDB 配置：
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+具体配置过程（10.10.38.15/10.10.23.48/10.9.21.239）：
+线上机：(由上到下依次执行)
+10.10.38.15：(主机)
+mkdir -p /data/shard11
+mkdir -p /data/shard21
+mkdir -p /data/config
+
+./mongod -shardsvr -replSet shard1 -port 27017 -dbpath /data/shard11 -journal -logpath /data/shard11.log -logappend -fork -rest
+
+10.10.23.48：
+mkdir -p /data/shard12
+mkdir -p /data/shard22
+mkdir -p /data/config
+
+./mongod -shardsvr -replSet shard1 -port 27017 -dbpath /data/shard12 -journal -logpath /data/shard12.log -logappend -fork -rest
+
+10.9.21.239：
+mkdir -p /data/shard13
+mkdir -p /data/shard23
+mkdir -p /data/config
+
+./mongod -shardsvr -replSet shard1 -port 27017 -dbpath /data/shard13 -journal -logpath /data/shard13.log -logappend -fork -rest
+
+初始化replica set(副本集)
+用mongo连接其中一个mongod，执行:
+mongo localhost:27017
+
+> config ={_id:'shard1',members:[{_id:0,host:'10.10.38.15:27017'},{_id:1,host:'10.10.23.48:27017'},{_id:2,host:'10.9.21.239:27017'}]}
+> rs.initiate(config)
+
+10.10.38.15：
+./mongod -shardsvr -replSet shard2 -port 27018 -dbpath /data/shard21 -logpath /data/shard21.log -logappend -fork -rest
+
+10.10.23.48：
+./mongod -shardsvr -replSet shard2 -port 27018 -dbpath /data/shard22 -logpath /data/shard22.log -logappend -fork -rest
+
+10.9.21.239：
+./mongod -shardsvr -replSet shard2 -port 27018 -dbpath /data/shard23 -logpath /data/shard23.log -logappend -fork -rest
+
+初始化replica set (副本集)
+用mongo连接其中一个mongod，执行:
+mongo localhost:27018
+
+>config ={_id:'shard2',members:[{_id:0,host:'10.10.38.15:27018'},{_id:1,host:'10.10.23.48:27018'},{_id:2,host:'10.9.21.239:27018'}]}
+>rs.initiate(config)
+
+10.10.38.15：
+./mongod -configsvr -dbpath /data/config/ -port 20000 -logpath /data/config.log -logappend -fork
+
+10.10.23.48：
+./mongod -configsvr -dbpath /data/config/ -port 20000 -logpath /data/config.log -logappend -fork
+
+10.9.21.239：
+./mongod -configsvr -dbpath /data/config/ -port 20000 -logpath /data/config.log -logappend -fork
+
+（首次配置时，注意关闭防火墙：/etc/init.d/iptables stop, 如果mongos无法启动，则将/data文件夹内的文件全部清除,前提：确认数据已经备份）
+10.10.38.15:
+./mongos -configdb 10.10.38.15:20000,10.10.23.48:20000,10.9.21.239:20000 -port 30000 -logpath /data/mongos.log -logappend -fork
+10.10.23.48:
+./mongos -configdb 10.10.38.15:20000,10.10.23.48:20000,10.9.21.239:20000 -port 30000 -logpath /data/mongos.log -logappend -fork
+10.9.21.239:
+./mongos -configdb 10.10.38.15:20000,10.10.23.48:20000,10.9.21.239:20000 -port 30000 -logpath /data/mongos.log -logappend -fork
+
+任意一台机器：
+mongo localhost:30000/admin
+>db.runCommand({ addshard: "shard1/10.10.38.15:27017,10.10.23.48:27017,10.9.21.239:27017"})
+>db.runCommand({ addshard: "shard2/10.10.38.15:27018,10.10.23.48:27018,10.9.21.239:27018"})
+
+
+//////////////////////////////////////////|
+/每台机器的文件打开数默认是1024，要修改一下                                            ||
+/修改/etc/security/limits.conf,在文件中加上两行：   ||
+/                                        ||  
+* - nofile 65535                         ||
+* - nproc 65535                          ||
+/保存后，设置  ulimit -n 65535                 ||
+//////////////////////////////////////////|
+
+***************************************************************************************************************
+非正常关闭时，需首先执行修复才能启动：
+10.10.38.15：
+mongod --repair -dbpath /data/shard11
+mongod --repair -dbpath /data/shard21
+
+10.10.23.48：
+mongod --repair -dbpath /data/shard12
+mongod --repair -dbpath /data/shard22
+
+10.9.21.239：
+mongod --repair -dbpath /data/shard13
+mongod --repair -dbpath /data/shard23
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+学习资源：
+1.http://www.taobaodba.com/html/525_525.html
+2.深入学习MongoDB (Scaling MongoDB & 50 Tips and Tricks for MongoDB Developers)
+
+MongoDB Java API
+学习资源：
+1.MongoDB 权威指南
+2.MongoJava 中有相应的CRUD操作
+3.另Python读写GridFS, 以及从GridFS中导文件到Document 的脚本为服务器/home目录下
+
+SpagoBI 学习与使用： 
+配置web server版 和 eclipse，具体不好用语言描述，详细还是参考学习资源
+
+学习资源：
+1.http://www.spagoworld.org/xwiki/bin/view/SpagoBI/TakeATour
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ /home/apps/mongodb/bin/mongod -shardsvr -replSet shard1 -port 27017 -dbpath /data/mongodb/data -journal -logpath /data/mongodb/logs/mongo.log -logappend -fork -rest
+ /home/apps/mongodb/bin/mongod -configsvr -dbpath /data/mongodb/config/ -port 20000 -logpath /data/mongodb/logs/config.log -logappend -fork
+ /home/apps/mongodb/bin/mongos -configdb 10.10.38.15:20000,10.10.23.48:20000,10.9.21.239:20000 -port 30000 -logpath /data/mongodb/logs/mongos.log -logappend -fork
+
+
+
+
+
+
+
+
+
+
+
+

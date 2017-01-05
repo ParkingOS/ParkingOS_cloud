@@ -1,0 +1,109 @@
+* {
+    margin: 0 auto;
+    padding: 0;
+}
+
+body{
+    background-color: #D2F1FC;
+}
+
+.pre_load{
+    width: 100%;
+    text-align: center;
+    color: #6e7a7e;
+    font-size: 4em;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 40%;
+}
+
+.progress_bg {
+    background-color: #cadde3;
+    width: 70%;
+    height: 50px;
+    margin: 0 auto;
+    border-radius: 30px;
+    box-shadow:1px 1px 2px 1px #aaaaaa inset;
+    position: absolute;
+    left: 15%;
+    top: 75%;
+}
+.progress {
+    /*background-color: #BFEE88;*/
+    background: linear-gradient(to bottom, rgba(217,255,169,1),rgba(160,216,91,1));
+    /*width: 70%;*/
+    height: 50px;
+    margin: 0 auto;
+    border-radius: 30px;
+    box-shadow:-1px 1px 2px 1px #aaaaaa;
+    position: absolute;
+    left: 15%;
+    top: 75%;
+}
+
+/*
+  生命值的背景
+*/
+.life_bg {
+    background-color: #ffffff;
+    border-radius: 30px;
+    width: 220px;
+    height: 38px;
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    opacity: 0.9;
+}
+
+/*
+    生命值的内边框
+*/
+.life_border_bg {
+    border: solid 1px #000000;
+    background-color: #ffffff;
+    border-radius: 15px;
+    width: 190px;
+    height: 20px;
+    margin: auto;
+    position: relative;
+    top: 7px;
+    opacity: 0.9;
+}
+
+/*
+    生命值进度条
+*/
+
+.life_pro {
+    width: 190px;
+    height: 20px;
+    background-color: #95c955;
+    border-radius: 15px;
+    margin: 0;
+    opacity: 0.9;
+    /*position: absolute;*/
+    /*top: 50.55%;*/
+    /*left: 12%;*/
+}
+
+.bullet_count {
+    height: 100px;
+    display: flex;
+    position: absolute;
+    /* flex-direction: column;*/
+    align-items: center;
+    /* justify-content: center;*/
+    font-size: 60px;
+}
+.bullet_count > div {
+    display: inline-block;
+    min-width: 100px;
+    text-align: right;
+}
+
+.click_bounds {
+    background: rgba(255,0,255, 0);
+    position: absolute;
+}
+

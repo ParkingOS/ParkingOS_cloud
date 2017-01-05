@@ -1,0 +1,33 @@
+配置 vi /etc/rsyncd.conf
+
+uid = root
+gid = root
+
+use chroot = yes 
+
+log file = /var/log/rsyncd.log
+
+pid file = /var/run/rsyncd.pid
+
+hosts allow = 172.16.220.32 172.16.220.33 172.16.220.34
+
+
+[updatezld]
+comment = update
+path = /data/jtom/webapps/zld
+read only = no
+hosts allow = 172.16.220.32 172.16.220.33 172.16.220.34
+
+
+[updatecloud]
+comment = update
+path = /data/jtom/webapps/tcbcloud
+read only = no
+hosts allow = 172.16.220.32 172.16.220.33 172.16.220.34
+
+
+启动 rsync
+/usr/bin/rsync --daemon --config=/etc/rsyncd.conf
+
+开放873端口
+iptables -I INPUT -s 0.0.0.0/0 -p tcp --dport 873 -j ACCEPT

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-2.5.xsd  
+	http://www.springframework.org/schema/context    
+	http://www.springframework.org/schema/context/spring-context-2.5.xsd  
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+    <import resource="classpath:dbconfig.xml" />
+		<!-- 排名查询 -->
+	<bean name="/collectorsort" class="com.zld.struts.request.CollectorSortAction"></bean>
+	
+	<!-- 收费员请求分享车位，打折，历史订单，当前订单，订单详情，公司信息，现金收费等处理  -->
+	<bean name="/collectorrequest" class="com.zld.struts.request.CollectorRequestAction"></bean>
+	<!-- 收费员登录客户端  -->
+	<bean name="/collectorlogin" class="com.zld.struts.request.ParkCollectorLoginAction"></bean>
+
+	<!-- nfc接口 -->
+	<bean name="/nfchandle" class="com.zld.struts.request.NFCHandleAction"></bean>
+	<bean name="/parkedit" class="com.zld.struts.request.ParkEditAction"></bean>
+	<bean name="/carpicsup" class="com.zld.struts.request.CarPicsUploadAction"></bean>
+		<!-- 照牌生成查询订单  create order by photo-->
+	<bean name="/cobp" class="com.zld.struts.request.ParkerOrderCreatorAction"></bean>
+	<!-- 查询工作站、通道信息 -->
+	<bean name="/worksiteinfo" class="com.zld.struts.request.WorksiteInfoAction"></bean>
+
+	<!--/////////////// 客户端交互===用户 -->
+	<!-- 车主登录,注册用户，发手机验证码，注册车牌号-->
+	<bean name="/carlogin" class="com.zld.struts.request.CarOwerLoginAction"></bean>
+	<!-- 车主上传Ibeacon信息处理 ,根据uuid注册信息，判断是生成或结算订单，自动结算，余额不足提醒 -->
+	<bean name="/ibeaconhandle" class="com.zld.struts.request.IbeaconHandleAction"></bean>
+	<!-- 建议停车场 ,根据传入经纬度查询附近500半径内停车场，返回车场数量及可用车位数，建议到最近的车场-->
+	<bean name="/searchpark" class="com.zld.struts.request.GetParkByLLAction"></bean>
+	<!-- 车主请求，用户客户端个人信息设置，编辑车牌、电话，充值历史,已买的包月产品,充值,当前订单，购买包月，车场的包月产品,停车场信息，个人信息,历史订单，订单详情（历史订单） -->
+	<bean name="/carowner" class="com.zld.struts.request.CarownerRequestAction"></bean>
+	<!-- 车主请求建议车场，包月产品，预订，车位趋势 -->
+	<bean name="/getpark" class="com.zld.struts.request.COGetParkinfoAction"></bean>
+	<!-- 车主登录后，加载地图数据，查询收费停车场的可用车位数-->
+	<bean name="/carservice" class="com.zld.struts.request.CarOwerService"></bean>
+	<!--/////////////// 客户端交互===用户  结束  -->
+	<!-- 微信预支付 -->
+	<bean name="/wxpreorder" class="com.zld.struts.request.WeixinPrePayAction"></bean>
+	<bean name="/wxpreneworder" class="com.zld.struts.request.WeixinPrePayNewAction"></bean>
+		
+	<!-- 微信公众号 -->
+	<bean name="/wxpublic" class="com.zld.struts.request.WeixinPublicAction"></bean>
+	<bean name="/wxpaccount" class="com.zld.struts.request.WeixinPublicAccountAction"></bean>
+	<bean name="/wxpfast" class="com.zld.struts.request.WeixinPublicFastPassAction"></bean>
+	<bean name="/wxpchat" class="com.zld.struts.request.WeixinPublicChatAction"></bean>
+	
+	<!-- 测试类 -->
+	<!-- <bean name="/pricetest" class="com.zld.struts.request.PriceTestAction"></bean> -->
+	<bean name="/testutil" class="com.zld.struts.request.TestUtilAction"></bean>
+	<!-- 中央现金预支付端 -->
+	<bean name="/midprepay" class="com.zld.struts.request.MidPrepayAction"></bean>
+	<bean name="/picshandle" class="com.zld.struts.request.PicsHandleAction"></bean>
+	
+	<bean name="/syncInter" class="com.zld.struts.request.SyncInterface"></bean>
+	
+	<!-- 车主2.0接口 -->
+	<bean name="/carinter" class="com.zld.struts.request.CarOwnerInterface"></bean>
+	<bean name="/parkinter" class="com.zld.struts.request.ParkInterface"></bean>
+	<!-- 客户端本地化 -->
+	<bean name="/local"  class="com.zld.struts.request.LocalizationAction"></bean>
+	<bean name="/recommend" class="com.zld.struts.request.RecommendAction"></bean>
+	<bean name="/localinit"  class="com.zld.struts.request.LocalInitAction"></bean>
+	<!-- 停车场注册 -->
+	<bean name="/regparker" class="com.zld.struts.request.RegisterParkAction"></bean>
+		<!-- 泊车员接口 -->
+	<bean name="/attendant"  class="com.zld.struts.request.ParkingAttendantAction"></bean>
+		<!-- 停车游戏  -->
+	<bean name="/cargame"  class="com.zld.struts.request.CarGameAction"></bean>
+		<bean name="/flygame" class="com.zld.struts.request.FlyGameAction"></bean>
+			 <!-- 总管理员停车场管理  -->
+	<bean name="/parking" class="com.zld.struts.request.ParkManageAction"></bean>
+	<bean name="/useraccount" class="com.zld.struts.request.UserAccountManageAction"></bean>
+		<!-- 减免券客户端 -->
+	<bean name="/shoplogin"  class="com.zld.struts.shop.ShopLoginAction"></bean>
+	<bean name="/shopticket"  class="com.zld.struts.shop.TicketManageAction"></bean>
+	<bean name="/shoppic"  class="com.zld.struts.shop.PicsManageAction"></bean>
+	
+		<!-- 市场专员客户端 -->
+	<!-- 登陆 -->
+	<bean name="/marketerlogin" class="com.zld.struts.marketer.MarketerLoginAction"></bean>
+	<!-- 车场管理 -->
+	<bean name="/parkmanage" class="com.zld.struts.marketer.ParkManageAction"></bean>
+	<!-- 下载图片 -->
+	<bean name="/download" class="com.zld.struts.marketer.DownloadPicsAction"></bean>
+	<!-- 拜访记录 -->
+	<bean name="/visit" class="com.zld.struts.marketer.VisitManageActoin"></bean>
+	<!-- 渠道接口登录  -->
+	<bean name="/channellogin" class="com.zld.struts.request.ChannelLoginAction"></bean>
+	<!-- 诱导屏接口 -->
+	<bean name="/induceinfo" class="com.zld.struts.request.InduceAction"></bean>
+	<!-- 巡查员接口  -->
+	<bean name="/inspector" class="com.zld.struts.request.InspectorAtion"></bean>
+	<!-- 激活卡片人员接口  -->
+	<bean name="/card" class="com.zld.struts.request.CardAction"></bean>
+	
+	<!-- p4数据导p5  -->
+	<bean name="/syncdata" class="com.zld.struts.request.SyncFromP4ToP5Action"></bean>
+	<context:component-scan base-package="com.zld" />
+	</beans>

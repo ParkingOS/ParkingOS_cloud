@@ -1,0 +1,88 @@
+（）PG数据库从dump文件恢复
+
+操作过程：
+
+1、停止主库  /usr/local/pgsql/bin/pg_ctl stop -D /data/Data
+
+2、删除启动数据的数据文件：
+#cd /data/Data
+#rm -rf *
+
+3、初始化数据库的数据文件
+#/usr/local/pgsql/bin/initdb -D /data/Data/
+
+4、修改主库流同步配置：（把原备份的流同步配置文件CP过来,没有备份文件，参照流同步配置修改）
+#cp /data/pgback/pg_hba.conf /data/Data  ==把原先存在的文件删除或改名
+#cp /data/pgback/postgresql.conf /data/Data  ==把原先存在的文件删除或改名
+
+5、启动数据库
+#/usr/local/pgsql/bin/postgres -D /data/Data/ >logfile  2>&1 &
+
+6、创建数据库
+#/usr/local/pgsql/bin/createdb zldetc
+
+7、从备份中恢复数据
+#/usr/local/pgsql/bin/psql  zldetc -h localhost < /data/zldetc_2014-09-25-23.dump 
+
+8、创建数据库基础本分：
+进入postgresql 用户：
+su -l postgres
+[postgres@AY131021150028549089Z ~]$ psql
+postgres=# SELECT pg_start_backup('basebak20140916');
+ pg_start_backup
+-----------------
+ 0/8000028
+(1 row)
+postgres=# \q
+[postgres@AY131021150028549089Z ~]$ exit
+[root@AY131021150028549089Z data]# cd pgbackup/
+[root@AY131021150028549089Z pgbackup]# tar zvcf base20140916_data.tar.gz ../Data/ 复制数据库数据目录并压缩成文件
+[root@AY131021150028549089Z data]# su -l postgres
+[postgres@AY131021150028549089Z ~]$ ./psql
+postgres=# SELECT pg_stop_backup();
+NOTICE: pg_stop_backup complete, all required WAL segments have been archived
+ pg_stop_backup
+----------------
+ 0/8000230
+(1 row)
+postgres=# \q
+
+#exit
+[root@AY131021150028549089Z data]# cd pgbackup/
+[root@AY131021150028549089Z pgbackup]# chown postgres.postgres base20131112_data.tar.gz 
+
+9、备库上操作，如果原来配置过流同步，仅执行第3和第5步
+（1）在/data下创建 pgbackup目录
+mkdir archivedir
+chown postgres.postgres archivedir
+
+（2）创建存储数据库基础备份的目录
+mkdir pgbackup
+chown postgres.postgres pgbackup
+
+（3）以上操作完毕后，停止postgresql数据库。
+/etc/init.d/postgresql stop 停止当前备用数据库的运行
+
+su -l postgres
+cd /data/pgbackup
+scp 10.161.166.25:/data/pgbackup/base20131112_data.tar.gz ./  复制主库的基本库备份文件
+
+[postgres@AY131021150027813b05Z pgbackup]$ tar zvxf base20131112_data.tar.gz -C ../  解压缩并复制到备库数据目录中去
+cd /data/data/pg_xlog
+[postgres@AY131021150027813b05Z pg_xlog]$ rm -f 0*
+[postgres@AY131021150027813b05Z archive_status]$ rm -f 0*
+cd /data/data
+rm postmaster.pid 
+
+（4）cp /usr/local/pgsql/share/recovery.conf.sample ./recovery.conf 
+
+编辑recover.conf文件
+restore_command = 'scp 10.161.166.25:/data/archivedir/%f "%p" 2> /dev/null'  #配置数据源
+recovery_target_timeline = 'latest'
+standby_mode = 'on'  --标记PG为STANDBY SERVER
+primary_conninfo = 'host=172.31.2.150 port=5432 user=postgres'  #配置主库
+trigger_file = '/tmp/trigger_file0'
+
+（5）修改完成后，重启数据库
+#/usr/local/pgsql/bin/postgres -D /data/Data/ >logfile  2>&1 &
+

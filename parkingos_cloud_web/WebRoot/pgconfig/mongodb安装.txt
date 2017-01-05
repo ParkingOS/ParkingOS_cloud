@@ -1,0 +1,29 @@
+（）cd /home/apps/
+不存在apps目录时，创建
+（）copy mongodb文件到这个目录下。
+scp mongdb.tar.gz root@10.10.45.237:/home/apps/
+（）解压文件
+tar -zxvf mongdb.tar.gz 
+（）进入  cd mongodb249/bin
+
+[root@10-10-45-237 bin]# cat mongdb.conf 
+port=27017  
+dbpath=/data/mongodb/db  
+logpath=/data/mongodb/logs/mongodb.log  
+logappend=true  
+fork=true
+
+单机启动：
+ cd /home/apps/mongodb249/bin
+./mongod -f mongdb.conf 
+
+数据导出：
+./mongoexport -h localhost:30000 -d zld -c carstop_pics -o /data/carstop.dat 
+
+数据导入 
+./mongoimport -h localhost:30000 -d zld -c carstop_pics /data/carstop.dat 
+
+多机集群=======
+
+netstat -an | grep ESTABLISHED | grep 30000 | wc -l
+established

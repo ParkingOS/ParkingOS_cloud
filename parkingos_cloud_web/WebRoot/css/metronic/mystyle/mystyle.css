@@ -1,0 +1,110 @@
+@CHARSET "UTF-8";
+.tree-x-scroll{
+	overflow-x:auto;
+	overflow-y:hidden;
+}
+
+.datatable-previous-next-adjust{
+	line-height:19px !important;;
+}
+
+.datatable-calendar{
+	line-height:18px !important;;
+}
+
+.datatable-scrollX-Height{
+	margin-top : 0px !important;;
+}
+
+.datatable-top-border{
+	border: 0px solid #e7ecf1 !important;
+}
+.my-container{
+	margin-top:0px !important;
+	padding: 0px 20px 0 20px !important;
+}
+.my-page-content{
+	margin-left: 0px !important;
+	padding: 10px 0 0 0px !important;
+}
+
+.my-gauge-chart{
+	height: 170px !important;
+}
+.my-button{
+	font-size: 12px !important;
+}
+
+.my-todo-sidebar{
+	float:left !important;
+	width:12%;
+}
+
+.my-todo-content{
+	float:right;
+	width:74%;
+}
+
+.my-container-1{
+	margin-top:0px !important;
+	padding: 0px 0px 0 0px !important;
+}
+
+.my-page-content-1{
+	padding: 5px 0px 10px 5px !important;
+	margin-top:0px !important;
+}
+.my-font-1{
+	font-size:13px !important;
+}
+
+.my-prolet-light{
+	padding: 2px 14px 15px 20px !important;
+}
+
+.my-prolet-title{
+	min-height: 38px !important;
+}
+
+.my-prolet-title2{
+	margin-bottom: 0px !important;
+	height:110px;
+}
+
+.my-prolet-title3{
+	margin-bottom: 0px !important;
+	padding: 0px 15px 8px 20px !important;
+	height:100px;
+}
+
+.my-caption-subject{
+	font-size:12px !important;
+}
+
+.my-caption{
+	font-size:14px !important;
+}
+
+.my-todo-sidebar{
+	width:155px !important;
+}
+
+.my-caption{
+	padding: 6px 0 !important;
+}
+
+.my-title{
+	font-size:18px !important;
+}
+
+.my-sensor1{
+	margin-top:8px !important;
+}
+
+.my-font-size{
+	font-size:12px !important;
+}
+
+.my-hide{
+	display:none;
+}

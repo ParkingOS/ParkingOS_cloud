@@ -1,0 +1,10 @@
+{
+  "framerate":10,
+  "images":["images/flygame/slingshot_sheet.png"],
+  "frames":{"width":260,"height":240,"count":3},
+  "animations":{
+    "red":[2],
+    "yellow":[1],
+    "normal":[0]
+  }
+}

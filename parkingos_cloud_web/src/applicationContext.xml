@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-2.5.xsd  
+	http://www.springframework.org/schema/context    
+	http://www.springframework.org/schema/context/spring-context-2.5.xsd  
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+    <import resource="classpath:dbconfig.xml" />
+	
+    <!-- 用户后台登录 -->
+	<bean name="/dologin" class="com.zld.struts.admin.LoginAction"></bean>
+	 <!-- 总管理员停车场管理  -->
+	<bean name="/parking" class="com.zld.struts.admin.ParkManageAction"></bean>
+	 <!-- 总管理员免费停车场管理  -->
+	<bean name="/freepark" class="com.zld.struts.admin.FreeParkManageAction"></bean>
+	<!-- 客户（车主）管理  -->
+	<bean name="/carower" class="com.zld.struts.admin.CarOwerManageAction"></bean>
+	<!-- 收费员管理  -->
+	<bean name="/collector" class="com.zld.struts.admin.CollectorManageAction"></bean>
+	<!-- 帐务管理 -->
+	<bean name="/account" class="com.zld.struts.admin.AccountManageAction"></bean>
+	<!-- 车场帐务管理 -->
+	<bean name="/parkaccount" class="com.zld.struts.parkadmin.AccountManageAction"></bean>
+	<!-- 市场专员管理-->
+	<bean name="/marketer" class="com.zld.struts.admin.MarketerManageAction"></bean>
+	<!-- 商圈管理-->
+	<bean name="/bizcircle" class="com.zld.struts.admin.BizCircleManageAction"></bean>
+	<!-- 停车场设置 -->
+	<bean name="/parksetting" class="com.zld.struts.admin.ParkSettingManageAction"></bean>
+	 <!-- 成员管理  -->
+	<bean name="/member" class="com.zld.struts.parkadmin.MemberManageAction"></bean>
+	 <!-- 订单管理  -->
+	<bean name="/order" class="com.zld.struts.parkadmin.OrderManageAction"></bean>
+	 <!-- 提现管理  -->
+	<bean name="/withdraw" class="com.zld.struts.parkadmin.WithDrawerManageAction"></bean>
+	 <!-- 车场会员管理   -->
+	<bean name="/vipuser" class="com.zld.struts.parkadmin.VipManageAction"></bean>
+	 <!-- 后台提现管理  -->
+	<bean name="/parkwithdraw" class="com.zld.struts.admin.WithDrawerManageAction"></bean>
+	<!-- 价格管理  -->
+	<bean name="/price" class="com.zld.struts.parkadmin.PriceManageAction"></bean>
+	<!-- 套餐管理  -->
+	<bean name="/package" class="com.zld.struts.parkadmin.PackageManageAction"></bean>
+	<!-- nfc管理 -->
+	<bean name="/nfcmanage" class="com.zld.struts.admin.NFCManageAction"></bean>
+	<!-- 提现帐号 公司 -->
+	<bean name="/comaccount" class="com.zld.struts.admin.ComAccountManageAction"></bean>
+	<!-- 提现帐号 个人-->
+	<bean name="/useraccount" class="com.zld.struts.admin.UserAccountManageAction"></bean>
+	<!-- 手机管理 -->
+	<bean name="/mobilemanage" class="com.zld.struts.admin.MobileManageAction"></bean>
+	<!-- 取数据接口-->
+	<bean name="/getdata" class="com.zld.struts.admin.GetDatas"></bean>
+	<!-- 金额设定-->
+	<bean name="/mset" class="com.zld.struts.admin.MoneySetAction"></bean>
+	<!-- 工作站 -->
+	<bean name="/worksite" class="com.zld.struts.admin.WorksiteManageAction"></bean>
+	<!-- 通道 -->
+	<bean name="/passedit" class="com.zld.struts.admin.PassManageAction"></bean>
+	<!-- 摄像头 -->
+	<bean name="/camera" class="com.zld.struts.admin.CameraManageAction"></bean>
+	<!-- LED屏设置 -->
+	<bean name="/led" class="com.zld.struts.admin.LEDManageAction"></bean>
+	<!-- 识别参数 -->
+	<bean name="/provincesett" class="com.zld.struts.admin.ProvinceSettingAction"></bean>
+	<!-- 权限管理-->
+	<bean name="/authsetting" class="com.zld.struts.admin.AuthManageAction"></bean>
+	<!-- 查看评论-->
+	<bean name="/parkpraise" class="com.zld.struts.admin.ParkPraiseAction"></bean>
+	<!-- 查看停车券-->
+	<bean name="/ticket" class="com.zld.struts.admin.TicketManageAction"></bean>
+	
+	<!-- 查看推荐记录-->
+	<bean name="/recomview" class="com.zld.struts.admin.RecommendAction"></bean>
+	<!-- 车场管理员登录后，停车场管理信息  -->
+	<bean name="/parkinfo" class="com.zld.struts.parkadmin.ParkInfoAction"></bean>
+	<bean name="/marketerpark" class="com.zld.struts.admin.MarketerParkManageAction"></bean>
+	<bean name="/nfcanlysis" class="com.zld.struts.anlysis.NFCAnlysisAction"></bean>
+	<bean name="/orderanly"  class="com.zld.struts.anlysis.ParkOrderanlysisAction"></bean>
+	<bean name="/productanlysis"  class="com.zld.struts.anlysis.ProductanlysisAction"></bean>
+	<bean name="/parklalaanly"  class="com.zld.struts.anlysis.ParkLaLaAnlysisAction"></bean>
+	<!-- 工作站 -->
+	<bean name="/parkworksite" class="com.zld.struts.parkadmin.WorksiteManageAction"></bean>
+	<!-- 通道 -->
+	<bean name="/parkpassedit" class="com.zld.struts.parkadmin.PassManageAction"></bean>
+	<!-- 摄像头 -->
+	<bean name="/parkcamera" class="com.zld.struts.parkadmin.CameraManageAction"></bean>
+	<!-- LED -->
+	<bean name="/parkled" class="com.zld.struts.parkadmin.LEDManageAction"></bean>
+	<!-- 手机支付统计 -->
+	<bean name="/mobileanlysis" class="com.zld.struts.anlysis.ParkMobilePayAnlysisAction"></bean>
+	<!-- 注册统计 -->
+	<bean name="/reganlysis" class="com.zld.struts.anlysis.RegisterAnlysisAction"></bean>
+	<!-- 交易用户新增统计 -->
+	<bean name="/consumeanlysis" class="com.zld.struts.anlysis.ConsumeAnlysisAction"></bean>
+	<!-- 拜访记录统计 -->
+	<bean name="/visitanlysis" class="com.zld.struts.anlysis.VisitAnlysisAction"></bean>
+	<!-- 后台拜访记录图片下载 -->
+	<bean name="/marketerpics" class="com.zld.struts.admin.MarketerPicsAction"></bean>
+	<!-- 速通卡统计 -->
+	<bean name="/easypass" class="com.zld.struts.anlysis.EasyPassAnlysisAction"></bean>
+	<!-- 收费员在岗可支付车场统计 -->
+	<bean name="/hasparker" class="com.zld.struts.anlysis.HasPickerAnlysisAction"></bean>
+	<!-- 充值、余额、会员统计 -->
+	<bean name="/charge" class="com.zld.struts.anlysis.ChargeAnlysisAction"></bean>
+	<!-- 停车宝活动 -->
+	<bean name="/activity" class="com.zld.struts.admin.ZLDActivityAction"></bean>
+	<!-- 补贴和停车费统计 -->
+	<bean name="/allowance" class="com.zld.struts.anlysis.AllowanceAnlysisAction"></bean>
+	<!-- 补贴和停车费统计 -->
+	<bean name="/efparkanlysis"  class="com.zld.struts.anlysis.ParkAnlysisAction"></bean>
+	<!-- 车场中央现金预支付统计 -->
+	<bean name="/midpreanlysis"  class="com.zld.struts.anlysis.MidPreAnlysisAction"></bean>
+	<!-- 商户管理 -->
+	<bean name="/shop"  class="com.zld.struts.parkadmin.ShopManageAction"></bean>
+	<!-- 商户人员管理 -->
+	<bean name="/shopmember"  class="com.zld.struts.parkadmin.ShopMemberManageAction"></bean>
+	<!-- 商户减免券统计 -->
+	<bean name="/shopticketanlysis"  class="com.zld.struts.anlysis.ShopTicketAnlysisAction"></bean>
+	<!-- 停车位月卡收费账台统计 -->
+	<bean name="/plotprod" class="com.zld.struts.anlysis.PlotProdAnlysisAction"></bean>
+	<bean name="/videosurvillance" class="com.zld.struts.city.CityVideoSurvillanceAction"></bean>
+	<bean name="/sensoronline" class="com.zld.struts.anlysis.SensorOnlineAnlysisAction"></bean>
+	<!-- 渠道云后台 -->
+	<bean name="/channel" class="com.zld.struts.channel.ChannelManageAction"></bean>
+	<bean name="/chanmember" class="com.zld.struts.channel.ChanMemberManageAction"></bean>
+	<bean name="/channelpark" class="com.zld.struts.channel.ChannelParkManageAction"></bean>
+	<bean name="/cloudlogo" class="com.zld.struts.channel.LOGOManageAction"></bean>
+	
+	<bean name="/group" class="com.zld.struts.group.GroupManageAction"></bean>
+	<bean name="/employeelogs" class="com.zld.struts.group.EmployeeLogsAction"></bean>
+	<bean name="/groupmember" class="com.zld.struts.group.GroupMemberManageAction"></bean>
+	<bean name="/grouppark" class="com.zld.struts.group.GroupParkManageAction"></bean>
+	<bean name="/gsurvey" class="com.zld.struts.group.GroupSurveyManageAction"></bean>
+	<bean name="/groupinfo" class="com.zld.struts.group.GroupInfoAction"></bean>
+	<!-- 集团订单管理  -->
+	<bean name="/grouporder" class="com.zld.struts.group.GroupOrderManageAction"></bean>
+	
+	<bean name="/city" class="com.zld.struts.city.CityManageAction"></bean>
+	<bean name="/cityinfo" class="com.zld.struts.city.CityInfoAction"></bean>
+	<bean name="/citymember" class="com.zld.struts.city.CityMemberAction"></bean>
+	<bean name="/citygroup" class="com.zld.struts.city.CityGroupManageAction"></bean>
+	<bean name="/cityarea" class="com.zld.struts.city.CityAreaManageAction"></bean>
+	<bean name="/citypark" class="com.zld.struts.city.CityParkManageAction"></bean>
+	<bean name="/cityberthseg" class="com.zld.struts.city.CityBerthSegManageAction"></bean>
+	<bean name="/cityberth" class="com.zld.struts.city.CityBerthManageAction"></bean>
+	<bean name="/cityserver" class="com.zld.struts.city.CityServerManageAction"></bean>
+	<bean name="/cityworksite" class="com.zld.struts.city.CityWorksiteManageAction"></bean>
+	<bean name="/citypass" class="com.zld.struts.city.CityPassManageAction"></bean>
+	<bean name="/citycamera" class="com.zld.struts.city.CityCameraManageAction"></bean>
+	<bean name="/cityvideo" class="com.zld.struts.city.CityVideoManageAction"></bean>
+	<bean name="/cityled" class="com.zld.struts.city.CityLEDManageAction"></bean>
+	<bean name="/citybrake" class="com.zld.struts.city.CityBrakeManageAction"></bean>
+	<bean name="/citysim" class="com.zld.struts.city.CitySIMManageAction"></bean>
+	<bean name="/cityvip" class="com.zld.struts.city.CityVIPManageAction"></bean>
+	<bean name="/cityblack" class="com.zld.struts.city.CityBlackManageAction"></bean>
+	<bean name="/citypos" class="com.zld.struts.city.CityPosManageAction"></bean>
+	<bean name="/alertevent" class="com.zld.struts.city.CityAlertManageAction"></bean>
+	<bean name="/hotareamanage" class="com.zld.struts.city.CityHotAreaManageAction"></bean>
+	<bean name="/cityrfid" class="com.zld.struts.city.CityRFIDManageAction"></bean>
+	<bean name="/citycarowner" class="com.zld.struts.city.CityCarownerManageAction"></bean>
+	<bean name="/cityorder" class="com.zld.struts.city.CityOrderManageAction"></bean>
+	<bean name="/citybigorder" class="com.zld.struts.city.CityBigOrderManageAction"></bean>
+	<bean name="/cityunorder" class="com.zld.struts.city.CityUnOrderManageAction"></bean>
+	<bean name="/citylift" class="com.zld.struts.city.CityLiftManageAction"></bean>
+	<bean name="/citysensor" class="com.zld.struts.city.CitySensorManageAction"></bean>
+	<bean name="/cityinduceleft" class="com.zld.struts.city.CityInduceLeftManageAction"></bean>
+	<bean name="/citytransmitter" class="com.zld.struts.city.CityTransmitterManageAction"></bean>
+	<bean name="/cityinduce" class="com.zld.struts.city.CityInduceAction"></bean>
+	<bean name="/cityinducedmonitor" class="com.zld.struts.city.CityInducedMonitorAction"></bean>
+	<bean name="/inducel3" class="com.zld.struts.city.CityInduceL3ManageAction"></bean>
+	<bean name="/synthetictest" class="com.zld.struts.city.SyntheticTestAction"></bean>
+	<bean name="/orgpark" class="com.zld.struts.area.ParkManageAction"></bean>
+	<bean name="/inducel2" class="com.zld.struts.city.CityInduceL2ManageAction"></bean>
+	<bean name="/publish" class="com.zld.struts.city.CityPublishManageAction"></bean>
+	<bean name="/cityaccount" class="com.zld.struts.city.CityAccountManageAction"></bean>
+	<bean name="/groupaccount" class="com.zld.struts.city.CityGroupAccountAction"></bean>
+	<bean name="/cityparkaccount" class="com.zld.struts.city.CityParkAccountAction"></bean>
+	<bean name="/cityuseraccount" class="com.zld.struts.city.CityCarOwnerAccountAction"></bean>
+	<bean name="/3plwithdraw" class="com.zld.struts.city.City3PLWithdrawAction"></bean>
+	<bean name="/groupwithdraw" class="com.zld.struts.group.GroupWithdrawManageAction"></bean>
+	<bean name="/3placcount" class="com.zld.struts.city.City3PLAccountAction"></bean>
+	<bean name="/citywithdraw" class="com.zld.struts.city.CityWithdrawManageAction"></bean>
+	<bean name="/citymoneyset" class="com.zld.struts.city.CityMoneySetAction"></bean>
+	<bean name="/bankaccount" class="com.zld.struts.city.BankAccountManageAction"></bean>
+	<bean name="/cityindex" class="com.zld.struts.city.CityIndexAction"></bean>
+	<bean name="/inspectevent" class="com.zld.struts.group.GroupInspectEventManageAction"></bean>
+	<bean name="/cityparkaccanlysis" class="com.zld.struts.anlysis.CityParkAccountAnlysisAction"></bean>
+	<bean name="/parkingturnover" class="com.zld.struts.anlysis.ParkingTurnOverAction"></bean>
+	<bean name="/paymentanlysis" class="com.zld.struts.anlysis.PaymentAnlysisAction"></bean>
+	<bean name="/escapecount" class="com.zld.struts.anlysis.EscapeCountAction"></bean>
+	<bean name="/employeecount" class="com.zld.struts.anlysis.EmployeeCountAction"></bean>
+	<bean name="/paytypeanlysis" class="com.zld.struts.anlysis.PayTypeAnlysisAction"></bean>
+	<bean name="/shouldfactanlysis" class="com.zld.struts.anlysis.ShouldFactAnlysisAction"></bean>
+    <bean name="/berthtimeanlysis" class="com.zld.struts.anlysis.BerthtimeAnlysisAction"></bean>
+	<bean name="/citypeakalert" class="com.zld.struts.city.CityPeakAlertManageAction"></bean>
+	<bean name="/berthtrend" class="com.zld.struts.anlysis.BerthTrendAnlysisAction"></bean>
+	<bean name="/colltrend" class="com.zld.struts.anlysis.ChargeTrendAction"></bean>
+	<bean name="/cityparkanly" class="com.zld.struts.anlysis.CityParkAnlysisAction"></bean>
+	<bean name="/peakgantt" class="com.zld.struts.anlysis.PeakAlertAnlysisAction"></bean>
+	<bean name="/feebypark" class="com.zld.struts.anlysis.CollectByParkAnlysisAction"></bean>
+	<bean name="/feebycoll" class="com.zld.struts.anlysis.CollectByCollectorAnlyAction"></bean>
+	<bean name="/staticfeebycoll" class="com.zld.struts.anlysis.CollectByCollectorStaticAnlyAction"></bean>
+	<bean name="/citysensororder" class="com.zld.struts.city.CitySensorOrderAction"></bean>
+	<bean name="/sensorberth" class="com.zld.struts.city.SensorBerthCompareAction"></bean>
+	<bean name="/inducemodule" class="com.zld.struts.city.CityInduceModuleAction"></bean>
+	<bean name="/card" class="com.zld.struts.group.GroupCardManageAction"></bean>
+	<bean name="/cardaccount" class="com.zld.struts.group.GroupCardAccountAction"></bean>
+	
+	<bean name="/statsaccount" class="com.zld.struts.anlysis.StatsAccountAction"></bean>
+	<!--/////////////// 客户端交互===车场 -->
+	<!-- 红包统计  -->
+	<bean name="/bonusanly" class="com.zld.struts.anlysis.BonusAnlysisAction"></bean>
+	<!-- 黑名单管理  -->
+	<bean name="/blackuser"  class="com.zld.struts.admin.BlackUsersManageAction"></bean>
+	<!-- 泊车点管理  -->
+	<bean name="/carstops"  class="com.zld.struts.admin.CarstopsManageAction"></bean>
+	<!-- 泊车员管理  -->
+	<bean name="/parkattendant"  class="com.zld.struts.admin.AttendantManageAction"></bean>
+	<!-- 泊车点价格管理  -->
+	<bean name="/carstopsprice"  class="com.zld.struts.admin.CarstopsPriceManageAction"></bean>
+	<!-- 泊车订单管理  -->
+	<bean name="/ctorders"  class="com.zld.struts.admin.CarstopsOrdersManageAction"></bean>
+	<!-- Ibeacon管理  -->
+	<bean name="/ibeacon"  class="com.zld.struts.admin.IbeaconManageAction"></bean>
+	<!-- 二维码管理  -->
+	<bean name="/qrmanage"  class="com.zld.struts.admin.QRManageAction"></bean>
+	<!-- 车场专用停车券管理  -->
+	<bean name="/parkticket"  class="com.zld.struts.admin.ParkTicketManageAction"></bean>
+	<bean name="/attendant"  class="com.zld.struts.request.ParkingAttendantAction"></bean>
+	
+	<!--/////////////// 客户端交互===车场  结束-->
+	<!-- 市场专员客户端 -->
+	<!-- 登陆 -->
+	<bean name="/marketerlogin" class="com.zld.struts.marketer.MarketerLoginAction"></bean>
+	<!-- 车场管理 -->
+	<bean name="/parkmanage" class="com.zld.struts.marketer.ParkManageAction"></bean>
+	<!-- 下载图片 -->
+	<bean name="/download" class="com.zld.struts.marketer.DownloadPicsAction"></bean>
+	<!-- 拜访记录 -->
+	<bean name="/visit" class="com.zld.struts.marketer.VisitManageActoin"></bean>
+	<bean name="/localserver"  class="com.zld.struts.admin.LocalServerManageAction"></bean>
+	<!-- 服务器同步管理 -->
+	<bean name="/serverasync"  class="com.zld.struts.admin.ServerAsyncManageAction"></bean>
+	<!-- 停车宝账户 -->
+	<bean name="/parkaccountaly" class="com.zld.struts.anlysis.ParkAccountAnlysisAction"></bean>
+	<bean name="/parkuseraccountaly" class="com.zld.struts.anlysis.ParkUserAccountAnlysisAction"></bean>
+	<bean name="/tcbaccountaly" class="com.zld.struts.anlysis.TingchebaoAccountAnlysisAction"></bean>
+	<bean name="/useraccountaly" class="com.zld.struts.anlysis.UserAccountAnlysisAction"></bean>
+	<bean name="/orderbonusanly" class="com.zld.struts.anlysis.OrderBonusAnlysisAction"></bean>
+	<bean name="/reward" class="com.zld.struts.anlysis.RewardAnlysisAction"></bean>
+
+	<bean name="/compark" class="com.zld.struts.parkadmin.ComParkAction"></bean>
+	<bean name="/parkescape" class="com.zld.struts.parkadmin.ParkEscapeAction"></bean>
+	<bean name="/planmember" class="com.zld.struts.parkadmin.PlanMemberAction "></bean>
+	<bean name="/reserveorder" class="com.zld.struts.parkadmin.ReserveOrderAction "></bean>
+	<bean name="/cartype" class="com.zld.struts.admin.CarTypeSetAction"></bean>
+	<bean name="/freereasons" class="com.zld.struts.admin.FreeReasonsAction"></bean>
+	<bean name="/orgtype" class="com.zld.struts.auth.AuthOrgTypeAction"></bean>
+	<bean name="/organize" class="com.zld.struts.auth.AuthOrganizAction"></bean>
+	<bean name="/rolemanage" class="com.zld.struts.auth.AuthUserRoleAction"></bean>
+	<bean name="/authmanage" class="com.zld.struts.auth.AuthManageAction"></bean>
+	<bean name="/authrole" class="com.zld.struts.auth.AuthRoleAction"></bean>
+	<bean name="/adminrole" class="com.zld.struts.auth.AdminEditRoleAction"></bean>
+	<!-- 菜单跳转 -->
+	<bean name="/parkepaymenu" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/parkanlysis" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/carplate" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/membermanage" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/parkmanagemenu" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/parkordermenu" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/logomanage" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/authmenu" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/anlysismenu" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/syssetmenu" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/devicemenu" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/sysmanage" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/vipmanage" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/citycommand" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/inducemenu" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/paymenu" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/cityanlysis" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
+	<bean name="/cardanlysis" class="com.zld.struts.anlysis.CardAnlysisAction"></bean>
+	<bean name="/statsberth" class="com.zld.struts.anlysis.StatsBerthAccountAction"></bean>
+	<!-- 菜单跳转 -->
+	<bean name="/survey" class="com.zld.struts.parkadmin.ParkSurveyAction"></bean>
+	<bean name="/carpicsup" class="com.zld.struts.request.CarPicsUploadAction"></bean>
+		<!-- 排名查询 -->
+	<bean name="/collectorsort" class="com.zld.struts.request.CollectorSortAction"></bean>
+	<!-- 抬杆记录 -->
+	<bean name="/liftrod" class="com.zld.struts.parkadmin.LiftRodAction"></bean>
+	<!-- 车场云系统日志 -->
+	<bean name="/parklogs" class="com.zld.struts.parkadmin.PrakLogsAction"></bean>
+	<bean name="/sensorlog" class="com.zld.struts.parkadmin.SensorLogsAction"></bean>
+	<bean name="/sensorcarinout" class="com.zld.struts.parkadmin.SensorLogCarInOutAction"></bean>
+	<!-- 新功能管理 -->
+	<bean name="/orgmanage" class="com.zld.struts.auth.OrgManageAction"></bean>
+	<bean name="/function" class="com.zld.struts.auth.FunctionManageAction"></bean>
+	<bean name="/orgrole" class="com.zld.struts.auth.RoleManageAction"></bean>
+	<bean name="/workgroupmanage" class="com.zld.struts.group.WorkGroupManageAction"> </bean>
+	<bean name="/inspectgroupmanage" class="com.zld.struts.group.InspectGroupManageAction"> </bean>
+	<bean name="/berthavgmoney" class="com.zld.struts.anlysis.BerthAvgMoneyAction" ></bean>
+	<bean name="/test" class="com.zld.struts.controller.Test"></bean>
+	<bean name="/transmittermonitor" class="com.zld.struts.city.TransmitterMonitorAction"></bean>
+
+	<bean name="/bindcartype" class="com.zld.struts.parkadmin.CarNumberTypeAction"></bean>
+	<bean name="/groupbindcartype" class="com.zld.struts.group.GroupCarNumberTypeAction"></bean>
+	<bean name="/sensormanage" class="com.zld.struts.admin.SensorManageAction"></bean>
+	
+	<bean name="/cheatsensor" class="com.zld.struts.request.CheatSensorAction"></bean>
+	<context:component-scan base-package="com.zld" />
+	</beans>

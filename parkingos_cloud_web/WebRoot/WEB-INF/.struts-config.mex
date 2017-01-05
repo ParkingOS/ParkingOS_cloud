@@ -1,0 +1,2555 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowViewLayout Version="1.2">
+  <StrutsActivity path="/member.do" location="1453,3924" dimension="362,104" />
+  <StrutsActivity path="/order.do" location="795,3924" dimension="362,104" />
+  <StrutsActivity path="/withdraw.do" location="604,4226" dimension="362,104" />
+  <StrutsActivity path="/price.do" location="1011,4226" dimension="362,104" />
+  <StrutsActivity path="/package.do" location="2854,3622" dimension="362,104" />
+  <StrutsActivity path="/authsetting.do" location="1261,472" dimension="362,104" />
+  <StrutsActivity path="/vipuser.do" location="1418,4226" dimension="362,104" />
+  <StrutsActivity path="/parkinfo.do" location="4435,3320" dimension="362,104" />
+  <StrutsActivity path="/carplate.do" location="0,0" dimension="362,104" />
+  <StrutsActivity path="/parkpraise.do" location="1967,2414" dimension="362,104" />
+  <StrutsActivity path="/collector.do" location="1106,1468" dimension="362,104" />
+  <StrutsActivity path="/recomview.do" location="1825,4226" dimension="362,104" />
+  <StrutsActivity path="/ticket.do" location="2232,4226" dimension="362,104" />
+  <StrutsActivity path="/carower.do" location="722,2112" dimension="362,104" />
+  <StrutsActivity path="/parking.do" location="515,2414" dimension="362,104" />
+  <StrutsActivity path="/freepark.do" location="2639,4226" dimension="362,104" />
+  <StrutsActivity path="/account.do" location="3046,4226" dimension="362,104" />
+  <StrutsActivity path="/parkaccount.do" location="3453,4226" dimension="362,104" />
+  <StrutsActivity path="/collectorsort.do" location="826,3622" dimension="362,104" />
+  <StrutsActivity path="/parksetting.do" location="2177,3622" dimension="362,104" />
+  <StrutsActivity path="/marketer.do" location="3860,4226" dimension="362,104" />
+  <StrutsActivity path="/bizcircle.do" location="4267,4226" dimension="362,104" />
+  <StrutsActivity path="/marketerpark.do" location="4674,4226" dimension="362,104" />
+  <StrutsActivity path="/comaccount.do" location="0,4528" dimension="362,104" />
+  <StrutsActivity path="/useraccount.do" location="407,4528" dimension="362,104" />
+  <StrutsActivity path="/nfcmanage.do" location="814,4528" dimension="362,104" />
+  <StrutsActivity path="/activity.do" location="4037,3924" dimension="362,104" />
+  <StrutsActivity path="/mset.do" location="1221,4528" dimension="362,104" />
+  <StrutsActivity path="/parkanlysis.do" location="462,0" dimension="362,104" />
+  <StrutsActivity path="/parkmanagemenu.do" location="924,0" dimension="362,104" />
+  <StrutsActivity path="/parkepaymenu.do" location="1386,0" dimension="362,104" />
+  <StrutsActivity path="/parkordermenu.do" location="1848,0" dimension="362,104" />
+  <StrutsActivity path="/nfcanlysis.do" location="2767,3924" dimension="362,104" />
+  <StrutsActivity path="/shop.do" location="3755,3320" dimension="362,104" />
+  <StrutsActivity path="/shopmember.do" location="1628,4528" dimension="362,104" />
+  <StrutsActivity path="/shopticketanlysis.do" location="901,3320" dimension="362,104" />
+  <StrutsActivity path="/mobileanlysis.do" location="3076,1790" dimension="362,104" />
+  <StrutsActivity path="/reganlysis.do" location="2035,4528" dimension="362,104" />
+  <StrutsActivity path="/consumeanlysis.do" location="2442,4528" dimension="362,104" />
+  <StrutsActivity path="/visitanlysis.do" location="2117,3924" dimension="362,104" />
+  <StrutsActivity path="/efparkanlysis.do" location="2849,4528" dimension="362,104" />
+  <StrutsActivity path="/hasparker.do" location="3256,4528" dimension="362,104" />
+  <StrutsActivity path="/charge.do" location="3663,4528" dimension="362,104" />
+  <StrutsActivity path="/allowance.do" location="4070,4528" dimension="362,104" />
+  <StrutsActivity path="/easypass.do" location="1505,3622" dimension="362,104" />
+  <StrutsActivity path="/marketerpics.do" location="3256,6944" dimension="362,104" />
+  <StrutsActivity path="/orderanly.do" location="2821,2716" dimension="362,104" />
+  <StrutsActivity path="/productanlysis.do" location="4477,4528" dimension="362,104" />
+  <StrutsActivity path="/plotprod.do" location="2349,3320" dimension="362,104" />
+  <StrutsActivity path="/worksite.do" location="4884,4528" dimension="362,104" />
+  <StrutsActivity path="/provincesett.do" location="0,4830" dimension="362,104" />
+  <StrutsActivity path="/passedit.do" location="407,4830" dimension="362,104" />
+  <StrutsActivity path="/camera.do" location="814,4830" dimension="362,104" />
+  <StrutsActivity path="/led.do" location="1221,4830" dimension="362,104" />
+  <StrutsActivity path="/parkworksite.do" location="1628,4830" dimension="362,104" />
+  <StrutsActivity path="/parkpassedit.do" location="2035,4830" dimension="362,104" />
+  <StrutsActivity path="/parkcamera.do" location="2442,4830" dimension="362,104" />
+  <StrutsActivity path="/parkled.do" location="2849,4830" dimension="362,104" />
+  <StrutsActivity path="/parkwithdraw.do" location="3256,4830" dimension="362,104" />
+  <StrutsActivity path="/mobilemanage.do" location="3663,4830" dimension="362,104" />
+  <StrutsActivity path="/pricetest.do" location="1221,7246" dimension="274,104" />
+  <StrutsActivity path="/blackuser.do" location="4070,4830" dimension="362,104" />
+  <StrutsActivity path="/carstops.do" location="1833,2112" dimension="362,104" />
+  <StrutsActivity path="/parkattendant.do" location="2336,2112" dimension="362,104" />
+  <StrutsActivity path="/carstopsprice.do" location="4477,4830" dimension="362,104" />
+  <StrutsActivity path="/ctorders.do" location="4884,4830" dimension="362,104" />
+  <StrutsActivity path="/ibeacon.do" location="0,5132" dimension="362,104" />
+  <StrutsActivity path="/qrmanage.do" location="407,5132" dimension="362,104" />
+  <StrutsActivity path="/parkticket.do" location="814,5132" dimension="362,104" />
+  <StrutsActivity path="/parklalaanly.do" location="137,3622" dimension="362,104" />
+  <StrutsActivity path="/getdata.do" location="3663,6944" dimension="362,104" />
+  <StrutsActivity path="/bonusanly.do" location="132,3924" dimension="362,104" />
+  <StrutsActivity path="/login.do" location="1540,7246" dimension="274,104" />
+  <StrutsActivity path="/dologin.do" location="3605,1468" dimension="362,104" />
+  <StrutsActivity path="/marketerlogin.do" location="4070,6944" dimension="362,104" />
+  <StrutsActivity path="/parkmanage.do" location="4477,6944" dimension="362,104" />
+  <StrutsActivity path="/download.do" location="4884,6944" dimension="362,104" />
+  <StrutsActivity path="/visit.do" location="0,7246" dimension="362,104" />
+  <StrutsActivity path="/tcbaccountaly.do" location="1221,5132" dimension="362,104" />
+  <StrutsActivity path="/parkaccountaly.do" location="1628,5132" dimension="362,104" />
+  <StrutsActivity path="/parkuseraccountaly.do" location="2035,5132" dimension="362,104" />
+  <StrutsActivity path="/useraccountaly.do" location="2442,5132" dimension="362,104" />
+  <StrutsActivity path="/orderbonusanly.do" location="2849,5132" dimension="362,104" />
+  <StrutsActivity path="/midpreanlysis.do" location="3944,2716" dimension="362,104" />
+  <StrutsActivity path="/reward.do" location="3256,5132" dimension="362,104" />
+  <StrutsActivity path="/compark.do" location="3663,5132" dimension="362,104" />
+  <StrutsActivity path="/parkescape.do" location="4070,5132" dimension="362,104" />
+  <StrutsActivity path="/planmember.do" location="4477,5132" dimension="362,104" />
+  <StrutsActivity path="/reserveorder.do" location="4884,5132" dimension="362,104" />
+  <StrutsActivity path="/localserver.do" location="0,5434" dimension="362,104" />
+  <StrutsActivity path="/attendant.do" location="407,7246" dimension="362,104" />
+  <StrutsActivity path="/cartype.do" location="407,5434" dimension="362,104" />
+  <StrutsActivity path="/bindcartype.do" location="814,5434" dimension="362,104" />
+  <StrutsActivity path="/freereasons.do" location="1221,5434" dimension="362,104" />
+  <StrutsActivity path="/membermanage.do" location="2310,0" dimension="362,104" />
+  <StrutsActivity path="/logomanage.do" location="2772,0" dimension="362,104" />
+  <StrutsActivity path="/orgtype.do" location="1628,5434" dimension="362,104" />
+  <StrutsActivity path="/organize.do" location="2035,5434" dimension="362,104" />
+  <StrutsActivity path="/rolemanage.do" location="2442,5434" dimension="362,104" />
+  <StrutsActivity path="/authmanage.do" location="2849,5434" dimension="362,104" />
+  <StrutsActivity path="/authrole.do" location="1289,2716" dimension="362,104" />
+  <StrutsActivity path="/adminrole.do" location="1751,2716" dimension="362,104" />
+  <StrutsActivity path="/survey.do" location="3256,5434" dimension="362,104" />
+  <StrutsActivity path="/carpicsup.do" location="814,7246" dimension="362,104" />
+  <StrutsActivity path="/channel.do" location="3519,3622" dimension="362,104" />
+  <StrutsActivity path="/chanmember.do" location="3663,5434" dimension="362,104" />
+  <StrutsActivity path="/channelpark.do" location="3328,2112" dimension="362,104" />
+  <StrutsActivity path="/cloudlogo.do" location="2845,2112" dimension="362,104" />
+  <StrutsActivity path="/group.do" location="33,1790" dimension="362,104" />
+  <StrutsActivity path="/groupmember.do" location="4070,5434" dimension="362,104" />
+  <StrutsActivity path="/grouppark.do" location="3822,2112" dimension="362,104" />
+  <StrutsActivity path="/gsurvey.do" location="4477,5434" dimension="362,104" />
+  <StrutsActivity path="/groupinfo.do" location="4884,5434" dimension="362,104" />
+  <StrutsActivity path="/city.do" location="495,1790" dimension="362,104" />
+  <StrutsActivity path="/citymember.do" location="0,5736" dimension="362,104" />
+  <StrutsActivity path="/cityinfo.do" location="407,5736" dimension="362,104" />
+  <StrutsActivity path="/citygroup.do" location="957,1790" dimension="362,104" />
+  <StrutsActivity path="/cityarea.do" location="814,5736" dimension="362,104" />
+  <StrutsActivity path="/citypark.do" location="4310,2112" dimension="362,104" />
+  <StrutsActivity path="/cityberthseg.do" location="2362,3018" dimension="362,104" />
+  <StrutsActivity path="/cityberth.do" location="3408,3924" dimension="362,104" />
+  <StrutsActivity path="/cityserver.do" location="1221,5736" dimension="362,104" />
+  <StrutsActivity path="/cityworksite.do" location="1628,5736" dimension="362,104" />
+  <StrutsActivity path="/citypass.do" location="2035,5736" dimension="362,104" />
+  <StrutsActivity path="/citycamera.do" location="2442,5736" dimension="362,104" />
+  <StrutsActivity path="/cityvideo.do" location="2849,5736" dimension="362,104" />
+  <StrutsActivity path="/cityled.do" location="3256,5736" dimension="362,104" />
+  <StrutsActivity path="/citybrake.do" location="3663,5736" dimension="362,104" />
+  <StrutsActivity path="/citysim.do" location="4070,5736" dimension="362,104" />
+  <StrutsActivity path="/cityvip.do" location="97,4226" dimension="362,104" />
+  <StrutsActivity path="/cityblack.do" location="4477,5736" dimension="362,104" />
+  <StrutsActivity path="/cityrfid.do" location="4884,5736" dimension="362,104" />
+  <StrutsActivity path="/citycarowner.do" location="0,6038" dimension="362,104" />
+  <StrutsActivity path="/cityorder.do" location="407,6038" dimension="362,104" />
+  <StrutsActivity path="/citybigorder.do" location="814,6038" dimension="362,104" />
+  <StrutsActivity path="/cityunorder.do" location="1221,6038" dimension="362,104" />
+  <StrutsActivity path="/citylift.do" location="1628,6038" dimension="362,104" />
+  <StrutsActivity path="/citysensor.do" location="2035,6038" dimension="362,104" />
+  <StrutsActivity path="/cityinduceleft.do" location="2442,6038" dimension="362,104" />
+  <StrutsActivity path="/citytransmitter.do" location="2849,6038" dimension="362,104" />
+  <StrutsActivity path="/cityinducedmonitor.do" location="3256,6038" dimension="362,104" />
+  <StrutsActivity path="/cityinduce.do" location="3663,6038" dimension="362,104" />
+  <StrutsActivity path="/cityindex.do" location="4070,6038" dimension="362,104" />
+  <StrutsActivity path="/inducel3.do" location="4477,6038" dimension="362,104" />
+  <StrutsActivity path="/inducel2.do" location="1362,3018" dimension="362,104" />
+  <StrutsActivity path="/publish.do" location="4884,6038" dimension="362,104" />
+  <StrutsActivity path="/cityaccount.do" location="0,6340" dimension="362,104" />
+  <StrutsActivity path="/groupaccount.do" location="407,6340" dimension="362,104" />
+  <StrutsActivity path="/groupbindcartype.do" location="814,6340" dimension="362,104" />
+  <StrutsActivity path="/cityparkaccount.do" location="1221,6340" dimension="362,104" />
+  <StrutsActivity path="/cityuseraccount.do" location="1628,6340" dimension="362,104" />
+  <StrutsActivity path="/3plwithdraw.do" location="2035,6340" dimension="362,104" />
+  <StrutsActivity path="/groupwithdraw.do" location="2442,6340" dimension="362,104" />
+  <StrutsActivity path="/3placcount.do" location="2849,6340" dimension="362,104" />
+  <StrutsActivity path="/citywithdraw.do" location="3256,6340" dimension="362,104" />
+  <StrutsActivity path="/inspectevent.do" location="3663,6340" dimension="362,104" />
+  <StrutsActivity path="/citymoneyset.do" location="4070,6340" dimension="362,104" />
+  <StrutsActivity path="/bankaccount.do" location="4477,6340" dimension="362,104" />
+  <StrutsActivity path="/synthetictest.do" location="3361,2414" dimension="362,104" />
+  <StrutsActivity path="/citypos.do" location="4884,6340" dimension="362,104" />
+  <StrutsActivity path="/alertevent.do" location="0,6642" dimension="362,104" />
+  <StrutsActivity path="/hotareamanage.do" location="4193,3622" dimension="362,104" />
+  <StrutsActivity path="/orgpark.do" location="407,6642" dimension="362,104" />
+  <StrutsActivity path="/liftrod.do" location="814,6642" dimension="362,104" />
+  <StrutsActivity path="/parklogs.do" location="1221,6642" dimension="362,104" />
+  <StrutsActivity path="/sensorlog.do" location="1628,6642" dimension="362,104" />
+  <StrutsActivity path="/sensorcarinout.do" location="2035,6642" dimension="362,104" />
+  <StrutsActivity path="/authmenu.do" location="3234,0" dimension="362,104" />
+  <StrutsActivity path="/anlysismenu.do" location="3696,0" dimension="362,104" />
+  <StrutsActivity path="/syssetmenu.do" location="4158,0" dimension="362,104" />
+  <StrutsActivity path="/devicemenu.do" location="4620,0" dimension="362,104" />
+  <StrutsActivity path="/citycommand.do" location="5082,0" dimension="362,104" />
+  <StrutsActivity path="/inducemenu.do" location="5544,0" dimension="362,104" />
+  <StrutsActivity path="/paymenu.do" location="6006,0" dimension="362,104" />
+  <StrutsActivity path="/cityanlysis.do" location="6468,0" dimension="362,104" />
+  <StrutsActivity path="/cityparkaccanlysis.do" location="1635,3320" dimension="362,104" />
+  <StrutsActivity path="/parkingturnover.do" location="3234,3018" dimension="362,104" />
+  <StrutsActivity path="/paymentanlysis.do" location="173,3320" dimension="362,104" />
+  <StrutsActivity path="/escapecount.do" location="2442,6642" dimension="362,104" />
+  <StrutsActivity path="/employeecount.do" location="2849,6642" dimension="362,104" />
+  <StrutsActivity path="/paytypeanlysis.do" location="3256,6642" dimension="362,104" />
+  <StrutsActivity path="/berthtimeanlysis.do" location="3987,3018" dimension="362,104" />
+  <StrutsActivity path="/shouldfactanlysis.do" location="3663,6642" dimension="362,104" />
+  <StrutsActivity path="/citypeakalert.do" location="4070,6642" dimension="362,104" />
+  <StrutsActivity path="/test.do" location="441,2716" dimension="362,104" />
+  <StrutsActivity path="/function.do" location="1431,1790" dimension="362,104" />
+  <StrutsActivity path="/sysmanage.do" location="6930,0" dimension="362,104" />
+  <StrutsActivity path="/vipmanage.do" location="7392,0" dimension="362,104" />
+  <StrutsActivity path="/orgmanage.do" location="1893,1790" dimension="362,104" />
+  <StrutsActivity path="/videosurvillance.do" location="4477,6642" dimension="362,104" />
+  <StrutsActivity path="/orgrole.do" location="4884,6642" dimension="362,104" />
+  <StrutsActivity path="/transmittermonitor.do" location="0,6944" dimension="362,104" />
+  <StrutsActivity path="/berthtrend.do" location="407,6944" dimension="362,104" />
+  <StrutsActivity path="/colltrend.do" location="814,6944" dimension="362,104" />
+  <StrutsActivity path="/cityparkanly.do" location="3049,3320" dimension="362,104" />
+  <StrutsActivity path="/peakgantt.do" location="1221,6944" dimension="362,104" />
+  <StrutsActivity path="/workgroupmanage.do" location="1268,1146" dimension="362,104" />
+  <StrutsActivity path="/inspectgroupmanage.do" location="1310,824" dimension="362,104" />
+  <StrutsActivity path="/berthavgmoney.do" location="4737,3018" dimension="362,104" />
+  <StrutsActivity path="/feebypark.do" location="1628,6944" dimension="362,104" />
+  <StrutsActivity path="/feebycoll.do" location="2035,6944" dimension="362,104" />
+  <StrutsActivity path="/citysensororder.do" location="2442,6944" dimension="362,104" />
+  <StrutsActivity path="/sensorberth.do" location="4668,3924" dimension="362,104" />
+  <StrutsActivity path="/sensormanage.do" location="2849,6944" dimension="362,104" />
+  <StrutsActivity path="/inducemodule.do" location="333,3018" dimension="362,104" />
+  <StrutsActivity path="/WEB-INF/pages/admin/member.jsp" location="1333,4128" dimension="245,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/member.jsp" location="1678,4128" dimension="272,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/order.jsp" location="668,4128" dimension="256,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/carpics.jsp" location="1024,4128" dimension="264,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/withdraw.jsp" location="647,4430" dimension="275,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/price.jsp" location="1066,4430" dimension="252,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/package.jsp" location="2717,3826" dimension="273,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/week.jsp" location="3090,3826" dimension="253,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/departmembers.jsp" location="0,726" dimension="290,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/person.jsp" location="390,726" dimension="237,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/departmentsetting.jsp" location="727,726" dimension="303,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/authsetting.jsp" location="1130,726" dimension="260,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/authmanage.jsp" location="1490,726" dimension="268,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/departs.jsp" location="1858,726" dimension="241,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/rolesetting.jsp" location="2199,726" dimension="258,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/auth.jsp" location="2557,726" dimension="221,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/vipuser.jsp" location="1466,4430" dimension="265,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/parkset.jsp" location="4298,3524" dimension="267,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/parkinfo.jsp" location="4665,3524" dimension="272,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/menu/menu.jsp" location="3744,374" dimension="265,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/commentdetail.jsp" location="1452,2618" dimension="282,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/commentlist.jsp" location="1834,2618" dimension="266,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/parkpraise.jsp" location="2200,2618" dimension="259,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/praisedetail.jsp" location="2559,2618" dimension="264,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/collector_validate.jsp" location="0,1692" dimension="296,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/collector_validates.jsp" location="396,1692" dimension="302,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/cominfo.jsp" location="798,1692" dimension="243,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/addcollector_acc.jsp" location="1141,1692" dimension="293,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/remarks.jsp" location="1534,1692" dimension="244,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/collector.jsp" location="1878,1692" dimension="246,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/collector_account.jsp" location="2224,1692" dimension="296,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/recommend.jsp" location="1873,4430" dimension="266,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/ticket.jsp" location="2299,4430" dimension="227,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/carower_preauth.jsp" location="0,2316" dimension="293,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/carowerorderlist.jsp" location="393,2316" dimension="292,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/carinfo.jsp" location="785,2316" dimension="236,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/carower.jsp" location="1121,2316" dimension="243,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/carower_auth.jsp" location="1464,2316" dimension="273,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/park/ugcverify.jsp" location="0,2618" dimension="280,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/park/ugclist.jsp" location="380,2618" dimension="265,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/park/parklist.jsp" location="745,2618" dimension="271,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/park/verifydetail.jsp" location="1116,2618" dimension="291,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/freeparklist.jsp" location="2689,4430" dimension="262,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/account.jsp" location="3106,4430" dimension="241,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/account.jsp" location="3500,4430" dimension="268,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/sharesortdetail.jsp" location="682,3826" dimension="283,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/sharesort.jsp" location="1065,3826" dimension="251,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/parkclientset.jsp" location="2040,3826" dimension="270,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/parksetting.jsp" location="2410,3826" dimension="262,53" />
+  <StrutsActivity path="/WEB-INF/pages/manage/marketer.jsp" location="3911,4430" dimension="260,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/bizcircle.jsp" location="4326,4430" dimension="243,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/marketerparklist.jsp" location="4709,4430" dimension="292,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/comaccountlist.jsp" location="40,4732" dimension="282,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/useraccountlist.jsp" location="447,4732" dimension="282,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/nfcmanage.jsp" location="865,4732" dimension="260,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/activity.jsp" location="3929,4128" dimension="235,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/activitylist.jsp" location="4264,4128" dimension="251,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/moneyset.jsp" location="1276,4732" dimension="252,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/nfcdetail.jsp" location="2650,4128" dimension="247,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/nfcanlysis.jsp" location="2997,4128" dimension="253,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/shopsetting.jsp" location="3604,3524" dimension="291,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/shops.jsp" location="3995,3524" dimension="258,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/shopmember.jsp" location="1658,4732" dimension="301,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/shopticketdetail.jsp" location="741,3524" dimension="290,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/shopticketanlysis.jsp" location="1131,3524" dimension="296,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/mobilepaytrend.jsp" location="2335,1994" dimension="290,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/directpaydetail.jsp" location="2725,1994" dimension="284,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/mobiletotaltrend.jsp" location="3109,1994" dimension="295,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/mobileanlysis.jsp" location="3504,1994" dimension="276,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/mobiledetail.jsp" location="3880,1994" dimension="270,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/registertrend.jsp" location="2079,4732" dimension="274,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/consumetrend.jsp" location="2482,4732" dimension="281,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/visitdetail.jsp" location="1995,4128" dimension="252,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/visitanlysis.jsp" location="2347,4128" dimension="258,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/parkinfoanlysis.jsp" location="2887,4732" dimension="285,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/hasparkeranlysis.jsp" location="3289,4732" dimension="295,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/chargeanlysis.jsp" location="3706,4732" dimension="276,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/allowanceanlysis.jsp" location="4104,4732" dimension="293,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/easypassdetail.jsp" location="1361,3826" dimension="283,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/easypass.jsp" location="1744,3826" dimension="251,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/parkuserworkdetail.jsp" location="2446,2920" dimension="311,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/parkorderdetail.jsp" location="2857,2920" dimension="290,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/parkorderanlysis.jsp" location="3247,2920" dimension="296,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/productanlysis.jsp" location="4517,4732" dimension="282,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/plotprodanlysis.jsp" location="2194,3524" dimension="288,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/plotproddetail.jsp" location="2582,3524" dimension="282,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/worksite.jsp" location="4942,4732" dimension="245,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/provincesetting.jsp" location="38,5034" dimension="285,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/pass.jsp" location="476,5034" dimension="223,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/camera.jsp" location="875,5034" dimension="239,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/led.jsp" location="1295,5034" dimension="214,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/worksite.jsp" location="1673,5034" dimension="272,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/pass.jsp" location="2091,5034" dimension="250,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/camera.jsp" location="2490,5034" dimension="266,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/led.jsp" location="2909,5034" dimension="241,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/withdraw.jsp" location="3313,5034" dimension="248,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/mobilemanage.jsp" location="3702,5034" dimension="283,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/blackusers.jsp" location="4122,5034" dimension="258,53" />
+  <StrutsActivity path="/WEB-INF/pages/carstop/uploadret.jsp" location="2207,2316" dimension="261,53" />
+  <StrutsActivity path="/WEB-INF/pages/carstop/carstopslist.jsp" location="1781,2316" dimension="270,53" />
+  <StrutsActivity path="/WEB-INF/pages/carstop/attendantslist.jsp" location="2568,2316" dimension="281,53" />
+  <StrutsActivity path="/WEB-INF/pages/carstop/carstopspricelist.jsp" location="4508,5034" dimension="299,53" />
+  <StrutsActivity path="/WEB-INF/pages/carstop/carstopsorderlist.jsp" location="4913,5034" dimension="303,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/ibeaconlist.jsp" location="52,5336" dimension="258,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/qrlist.jsp" location="475,5336" dimension="225,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/parkticketlist.jsp" location="860,5336" dimension="270,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/parkidleanly.jsp" location="0,3826" dimension="269,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/parklalaanly.jsp" location="369,3826" dimension="268,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/bonusdetail.jsp" location="0,4128" dimension="266,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/bounsanly.jsp" location="366,4128" dimension="257,53" />
+  <StrutsActivity path="/WEB-INF/pages/menu/cardoperatormenu.jsp" location="2565,1692" dimension="302,53" />
+  <StrutsActivity path="/WEB-INF/pages/zld/login.jsp" location="2967,1692" dimension="206,53" />
+  <StrutsActivity path="/WEB-INF/pages/menu/recordermenu.jsp" location="3273,1692" dimension="275,53" />
+  <StrutsActivity path="/WEB-INF/pages/menu/marketermenu.jsp" location="3648,1692" dimension="277,53" />
+  <StrutsActivity path="/WEB-INF/pages/menu/financemenu.jsp" location="4025,1692" dimension="265,53" />
+  <StrutsActivity path="/WEB-INF/pages/menu/menu.jsp" location="4390,1692" dimension="224,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/menu/home.jsp" location="4714,1692" dimension="266,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/tingchebaoaccountanlysis.jsp" location="1229,5336" dimension="346,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/parkaccountanlysis.jsp" location="1655,5336" dimension="308,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/parkuseraccountanlysis.jsp" location="2049,5336" dimension="333,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/useraccountanlysis.jsp" location="2470,5336" dimension="306,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/orderbounsanlysis.jsp" location="2877,5336" dimension="305,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/midpreworkdetail.jsp" location="3588,2920" dimension="301,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/midpredetail.jsp" location="3989,2920" dimension="272,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/midpreanlysis.jsp" location="4361,2920" dimension="278,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/rewardanlysis.jsp" location="3298,5336" dimension="277,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/compark.jsp" location="3706,5336" dimension="275,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/parkescape.jsp" location="4105,5336" dimension="291,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/planmember.jsp" location="4509,5336" dimension="297,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/reserveorder.jsp" location="4915,5336" dimension="299,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/localserver.jsp" location="51,5638" dimension="259,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/cartype.jsp" location="455,5638" dimension="266,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/bindcartype.jsp" location="849,5638" dimension="292,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/freereasons.jsp" location="1256,5638" dimension="292,53" />
+  <StrutsActivity path="/WEB-INF/pages/auth/orgtypelist.jsp" location="1685,5638" dimension="247,53" />
+  <StrutsActivity path="/WEB-INF/pages/auth/orglist.jsp" location="2105,5638" dimension="222,53" />
+  <StrutsActivity path="/WEB-INF/pages/auth/rolelist.jsp" location="2511,5638" dimension="224,53" />
+  <StrutsActivity path="/WEB-INF/pages/auth/authlist.jsp" location="2917,5638" dimension="226,53" />
+  <StrutsActivity path="/WEB-INF/pages/auth/editrole.jsp" location="1412,2920" dimension="230,53" />
+  <StrutsActivity path="/WEB-INF/pages/auth/adminrolelist.jsp" location="1802,2920" dimension="260,53" />
+  <StrutsActivity path="/WEB-INF/pages/auth/collectset.jsp" location="2162,2920" dimension="239,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/survey.jsp" location="3307,5638" dimension="260,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/chansetting.jsp" location="3388,3826" dimension="262,53" />
+  <StrutsActivity path="/WEB-INF/pages/channel/channellist.jsp" location="3750,3826" dimension="264,53" />
+  <StrutsActivity path="/WEB-INF/pages/channel/chanmember.jsp" location="3704,5638" dimension="280,53" />
+  <StrutsActivity path="/WEB-INF/pages/channel/parksetting.jsp" location="3694,2316" dimension="270,53" />
+  <StrutsActivity path="/WEB-INF/pages/channel/parklist.jsp" location="3288,2316" dimension="247,53" />
+  <StrutsActivity path="/WEB-INF/pages/channel/cloudlist.jsp" location="2991,2316" dimension="252,53" />
+  <StrutsActivity path="/WEB-INF/pages/auth/tree.jsp" location="870,2014" dimension="208,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/grouplist.jsp" location="0,2014" dimension="248,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/groupmember.jsp" location="4110,5638" dimension="281,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/parklist.jsp" location="4064,2316" dimension="239,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/survey.jsp" location="4541,5638" dimension="233,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/info.jsp" location="4956,5638" dimension="218,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citylist.jsp" location="461,2014" dimension="214,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citymember.jsp" location="57,5940" dimension="247,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/info.jsp" location="487,5940" dimension="201,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citygrouplist.jsp" location="1186,2014" dimension="250,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityarealist.jsp" location="875,5940" dimension="240,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityparklist.jsp" location="4461,2316" dimension="241,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/unbindberth.jsp" location="2060,3222" dimension="250,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityberthseglist.jsp" location="2410,3222" dimension="266,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/ownberth.jsp" location="2776,3222" dimension="234,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityberthlist.jsp" location="3295,4128" dimension="245,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/bindsensor.jsp" location="3640,4128" dimension="244,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityserverlist.jsp" location="1277,5940" dimension="250,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citywslist.jsp" location="1694,5940" dimension="229,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citypasslist.jsp" location="2095,5940" dimension="241,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citycameralist.jsp" location="2494,5940" dimension="257,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityvideolist.jsp" location="2907,5940" dimension="246,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityledlist.jsp" location="3321,5940" dimension="232,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citybrakelist.jsp" location="3720,5940" dimension="248,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citysimlist.jsp" location="4134,5940" dimension="234,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/vipdetail.jsp" location="0,4430" dimension="228,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityviplist.jsp" location="328,4430" dimension="231,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityblacklist.jsp" location="4535,5940" dimension="245,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityrfidlist.jsp" location="4948,5940" dimension="234,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citycarownerlist.jsp" location="47,6242" dimension="268,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityorderlist.jsp" location="464,6242" dimension="247,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citybigorderlist.jsp" location="862,6242" dimension="266,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityunorderlist.jsp" location="1271,6242" dimension="261,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityliftlist.jsp" location="1695,6242" dimension="228,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citysensorlist.jsp" location="2089,6242" dimension="253,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityinduceleft.jsp" location="2496,6242" dimension="254,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citytransmitter.jsp" location="2899,6242" dimension="261,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityinducedmonitor.jsp" location="3292,6242" dimension="290,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityinduce.jsp" location="3726,6242" dimension="236,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/index.jsp" location="4146,6242" dimension="210,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityinducel3.jsp" location="4535,6242" dimension="246,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/induceparklist.jsp" location="1060,3222" dimension="260,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityinducel2.jsp" location="1420,3222" dimension="246,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/inducehislist.jsp" location="1766,3222" dimension="249,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citypublist.jsp" location="4946,6242" dimension="237,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityaccount.jsp" location="59,6544" dimension="243,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/groupaccount.jsp" location="458,6544" dimension="260,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/bindcartype.jsp" location="862,6544" dimension="265,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/parkaccount.jsp" location="1276,6544" dimension="251,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/carowneraccount.jsp" location="1670,6544" dimension="278,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/3plwithdraw.jsp" location="2091,6544" dimension="249,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/groupwithdraw.jsp" location="2481,6544" dimension="284,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/city3pllist.jsp" location="2914,6544" dimension="232,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citywithdraw.jsp" location="3312,6544" dimension="250,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/inspectevent.jsp" location="3710,6544" dimension="268,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citymoneyset.jsp" location="4124,6544" dimension="254,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/bankaccount.jsp" location="4531,6544" dimension="253,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/playmultivideo.jsp" location="2868,2618" dimension="263,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityallbaidumap.jsp" location="3231,2618" dimension="270,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/playvideo.jsp" location="3601,2618" dimension="235,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/synthetictest.jsp" location="3936,2618" dimension="250,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityposlist.jsp" location="4947,6544" dimension="236,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityalertlist.jsp" location="61,6846" dimension="240,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/hotareaparklist.jsp" location="4059,3826" dimension="267,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/cityhotarealist.jsp" location="4426,3826" dimension="259,53" />
+  <StrutsActivity path="/WEB-INF/pages/area/parklist.jsp" location="473,6846" dimension="229,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/liftrod.jsp" location="866,6846" dimension="258,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/parklogs.jsp" location="1264,6846" dimension="275,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/sensorlogs.jsp" location="1665,6846" dimension="287,53" />
+  <StrutsActivity path="/WEB-INF/pages/parkadmin/sensorcarinout.jsp" location="2061,6846" dimension="309,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/cityparkaccanlysis.jsp" location="1472,3524" dimension="301,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/citypaccdetail.jsp" location="1873,3524" dimension="276,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/parkingturnovericon.jsp" location="3055,3222" dimension="316,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/parkingturnover.jsp" location="3471,3222" dimension="292,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/paymentanlysisicon.jsp" location="0,3524" dimension="310,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/paymentanlysis.jsp" location="410,3524" dimension="286,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/escapecount.jsp" location="2487,6846" dimension="271,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/employeecount.jsp" location="2886,6846" dimension="287,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/paytypeanlysis.jsp" location="3296,6846" dimension="282,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/berthtimeanlysisicon.jsp" location="3808,3222" dimension="316,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/berthtimeanlysis.jsp" location="4224,3222" dimension="292,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/shouldfactanlysis.jsp" location="3696,6846" dimension="296,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citypeakalertlist.jsp" location="4116,6846" dimension="269,53" />
+  <StrutsActivity path="/WEB-INF/pages/haixin/orgtype.jsp" location="0,2920" dimension="239,53" />
+  <StrutsActivity path="/WEB-INF/pages/haixin/scroller.jsp" location="339,2920" dimension="236,53" />
+  <StrutsActivity path="/WEB-INF/pages/haixin/index.jsp" location="675,2920" dimension="224,53" />
+  <StrutsActivity path="/WEB-INF/pages/haixin/ajaxtable.jsp" location="999,2920" dimension="245,53" />
+  <StrutsActivity path="/WEB-INF/pages/auth/funclist.jsp" location="1590,2014" dimension="225,53" />
+  <StrutsActivity path="/WEB-INF/pages/auth/organizelist.jsp" location="2038,2014" dimension="252,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/videosurvillance.jsp" location="4522,6846" dimension="271,53" />
+  <StrutsActivity path="/WEB-INF/pages/auth/orgrolelist.jsp" location="4942,6846" dimension="245,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/transmittermonitor.jsp" location="37,7148" dimension="288,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/berthtrend.jsp" location="458,7148" dimension="260,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/colltrend.jsp" location="870,7148" dimension="249,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/cityparkanly.jsp" location="2909,3524" dimension="267,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/cityparkanlylist.jsp" location="3276,3524" dimension="283,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/peaklalertgantt.jsp" location="1259,7148" dimension="286,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/workgroupsaveberthsec.jsp" location="0,1370" dimension="337,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/workgroupsaveemployee.jsp" location="437,1370" dimension="344,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/workgroupberthsec.jsp" location="881,1370" dimension="311,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/workgroupinspector.jsp" location="1292,1370" dimension="315,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/workgroupmanage.jsp" location="1707,1370" dimension="308,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/workgroupemployee.jsp" location="2115,1370" dimension="318,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/workgroupsaveinspector.jsp" location="2533,1370" dimension="341,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/inspectgroupsaveberthsec.jsp" location="0,1048" dimension="349,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/inspectgroupsaveemployee.jsp" location="449,1048" dimension="356,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/inspectgroupberthsec.jsp" location="905,1048" dimension="323,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/inspectgroupinspector.jsp" location="1328,1048" dimension="327,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/inspectgroupmanage.jsp" location="1755,1048" dimension="320,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/inspectgroupemployee.jsp" location="2175,1048" dimension="330,53" />
+  <StrutsActivity path="/WEB-INF/pages/group/inspectgroupsaveinspector.jsp" location="2605,1048" dimension="353,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/berthavgmoneyicon.jsp" location="4561,3222" dimension="313,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/berthavgmoney.jsp" location="4974,3222" dimension="289,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/feebypark.jsp" location="1680,7148" dimension="257,53" />
+  <StrutsActivity path="/WEB-INF/pages/anlysis/feebycoll.jsp" location="2091,7148" dimension="250,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/citysensororderlist.jsp" location="2480,7148" dimension="286,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/sensorgui.jsp" location="4560,4128" dimension="236,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/sensorberth.jsp" location="4896,4128" dimension="249,53" />
+  <StrutsActivity path="/WEB-INF/pages/admin/sensorlist.jsp" location="2904,7148" dimension="251,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/induceunbindpark.jsp" location="0,3222" dimension="284,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/inducemodule.jsp" location="384,3222" dimension="261,53" />
+  <StrutsActivity path="/WEB-INF/pages/city/inducebindpark.jsp" location="745,3222" dimension="270,53" />
+  <StrutsTransition id="/cityorder.do,list,/WEB-INF/pages/city/cityorderlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="588,6142" />
+      <AbsolutePoint location="588,6242" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityinducedmonitor.do,list,/WEB-INF/pages/city/cityinducedmonitor.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3437,6142" />
+      <AbsolutePoint location="3437,6242" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/mobileanlysis.do,totaltrend,/WEB-INF/pages/anlysis/mobiletotaltrend.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3257,1894" />
+      <AbsolutePoint location="3257,1994" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/workgroupmanage.do,list,/WEB-INF/pages/group/workgroupmanage.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1501,1250" />
+      <AbsolutePoint location="1501,1340" />
+      <AbsolutePoint location="1861,1340" />
+      <AbsolutePoint location="1861,1370" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityinduceleft.do,list,/WEB-INF/pages/city/cityinduceleft.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2623,6142" />
+      <AbsolutePoint location="2623,6242" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/bizcircle.do,list,/WEB-INF/pages/admin/bizcircle.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4448,4330" />
+      <AbsolutePoint location="4448,4430" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/ctorders.do,list,/WEB-INF/pages/carstop/carstopsorderlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="5065,4934" />
+      <AbsolutePoint location="5065,5034" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/test.do,ajaxtable,/WEB-INF/pages/haixin/ajaxtable.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="757,2820" />
+      <AbsolutePoint location="757,2855" />
+      <AbsolutePoint location="1121,2855" />
+      <AbsolutePoint location="1121,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/rolemanage.do,orglist,/WEB-INF/pages/auth/rolelist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2623,5538" />
+      <AbsolutePoint location="2623,5638" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/marketer.do,list,/WEB-INF/pages/manage/marketer.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4041,4330" />
+      <AbsolutePoint location="4041,4430" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/escapecount.do,list,/WEB-INF/pages/anlysis/escapecount.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2623,6746" />
+      <AbsolutePoint location="2623,6846" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityvideo.do,list,/WEB-INF/pages/city/cityvideolist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3030,5840" />
+      <AbsolutePoint location="3030,5940" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/plotprod.do,plotproddetail,/WEB-INF/pages/anlysis/plotproddetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2621,3424" />
+      <AbsolutePoint location="2621,3474" />
+      <AbsolutePoint location="2723,3474" />
+      <AbsolutePoint location="2723,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkinfo.do,success,/WEB-INF/pages/parkadmin/parkinfo.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4706,3424" />
+      <AbsolutePoint location="4706,3474" />
+      <AbsolutePoint location="4801,3474" />
+      <AbsolutePoint location="4801,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityvip.do,detail,/WEB-INF/pages/city/vipdetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="188,4330" />
+      <AbsolutePoint location="188,4380" />
+      <AbsolutePoint location="114,4380" />
+      <AbsolutePoint location="114,4430" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/3plwithdraw.do,list,/WEB-INF/pages/city/3plwithdraw.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2216,6444" />
+      <AbsolutePoint location="2216,6544" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inducel2.do,hislist,/WEB-INF/pages/city/inducehislist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1663,3122" />
+      <AbsolutePoint location="1663,3172" />
+      <AbsolutePoint location="1890,3172" />
+      <AbsolutePoint location="1890,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/city.do,tree,/WEB-INF/pages/auth/tree.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="767,1894" />
+      <AbsolutePoint location="767,1924" />
+      <AbsolutePoint location="932,1924" />
+      <AbsolutePoint location="932,2014" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inducel2.do,parklist,/WEB-INF/pages/city/induceparklist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1422,3122" />
+      <AbsolutePoint location="1422,3172" />
+      <AbsolutePoint location="1190,3172" />
+      <AbsolutePoint location="1190,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/authsetting.do,authmanage,/WEB-INF/pages/admin/authmanage.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1464,576" />
+      <AbsolutePoint location="1464,696" />
+      <AbsolutePoint location="1624,696" />
+      <AbsolutePoint location="1624,726" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/collector.do,list,/WEB-INF/pages/admin/collector.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1390,1572" />
+      <AbsolutePoint location="1390,1632" />
+      <AbsolutePoint location="2001,1632" />
+      <AbsolutePoint location="2001,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/recomview.do,list,/WEB-INF/pages/admin/recommend.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2006,4330" />
+      <AbsolutePoint location="2006,4430" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inducemodule.do,bindpark,/WEB-INF/pages/city/inducebindpark.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="635,3122" />
+      <AbsolutePoint location="635,3172" />
+      <AbsolutePoint location="880,3172" />
+      <AbsolutePoint location="880,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkpassedit.do,list,/WEB-INF/pages/parkadmin/pass.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2216,4934" />
+      <AbsolutePoint location="2216,5034" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/sensormanage.do,list,/WEB-INF/pages/admin/sensorlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3030,7048" />
+      <AbsolutePoint location="3030,7148" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityberth.do,bindsensor,/WEB-INF/pages/city/bindsensor.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3680,4028" />
+      <AbsolutePoint location="3680,4078" />
+      <AbsolutePoint location="3762,4078" />
+      <AbsolutePoint location="3762,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkaccount.do,list,/WEB-INF/pages/parkadmin/account.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3634,4330" />
+      <AbsolutePoint location="3634,4430" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityunorder.do,list,/WEB-INF/pages/city/cityunorderlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1402,6142" />
+      <AbsolutePoint location="1402,6242" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/carstops.do,uploadret,/WEB-INF/pages/carstop/uploadret.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2105,2216" />
+      <AbsolutePoint location="2105,2251" />
+      <AbsolutePoint location="2251,2251" />
+      <AbsolutePoint location="2251,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citymember.do,list,/WEB-INF/pages/city/citymember.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="181,5840" />
+      <AbsolutePoint location="181,5940" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/sensorlog.do,list,/WEB-INF/pages/parkadmin/sensorlogs.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1809,6746" />
+      <AbsolutePoint location="1809,6846" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/adminrole.do,editauthrole,/WEB-INF/pages/auth/editrole.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1811,2820" />
+      <AbsolutePoint location="1811,2870" />
+      <AbsolutePoint location="1585,2870" />
+      <AbsolutePoint location="1585,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/mobileanlysis.do,list,/WEB-INF/pages/anlysis/mobileanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3329,1894" />
+      <AbsolutePoint location="3329,1959" />
+      <AbsolutePoint location="3642,1959" />
+      <AbsolutePoint location="3642,1994" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/orgmanage.do,tree,/WEB-INF/pages/auth/tree.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1983,1894" />
+      <AbsolutePoint location="1983,1984" />
+      <AbsolutePoint location="1057,1984" />
+      <AbsolutePoint location="1057,2014" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/order.do,list,/WEB-INF/pages/parkadmin/order.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="885,4028" />
+      <AbsolutePoint location="885,4078" />
+      <AbsolutePoint location="796,4078" />
+      <AbsolutePoint location="796,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/employeecount.do,list,/WEB-INF/pages/anlysis/employeecount.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3030,6746" />
+      <AbsolutePoint location="3030,6846" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkwithdraw.do,list,/WEB-INF/pages/admin/withdraw.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3437,4934" />
+      <AbsolutePoint location="3437,5034" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inspectgroupmanage.do,inspectorlist,/WEB-INF/pages/group/inspectgroupinspector.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1491,928" />
+      <AbsolutePoint location="1491,1048" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/workgroupmanage.do,berthseclist,/WEB-INF/pages/group/workgroupberthsec.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1397,1250" />
+      <AbsolutePoint location="1397,1340" />
+      <AbsolutePoint location="1036,1340" />
+      <AbsolutePoint location="1036,1370" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inducel2.do,list,/WEB-INF/pages/city/cityinducel2.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1543,3122" />
+      <AbsolutePoint location="1543,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/midpreanlysis.do,workdetail,/WEB-INF/pages/anlysis/midpreworkdetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4004,2820" />
+      <AbsolutePoint location="4004,2870" />
+      <AbsolutePoint location="3738,2870" />
+      <AbsolutePoint location="3738,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/consumeanlysis.do,trend,/WEB-INF/pages/anlysis/consumetrend.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2623,4632" />
+      <AbsolutePoint location="2623,4732" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/useraccount.do,list,/WEB-INF/pages/admin/useraccountlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="588,4632" />
+      <AbsolutePoint location="588,4732" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/dologin.do,success,/WEB-INF/pages/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3889,1572" />
+      <AbsolutePoint location="3889,1632" />
+      <AbsolutePoint location="4502,1632" />
+      <AbsolutePoint location="4502,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/ibeacon.do,list,/WEB-INF/pages/admin/ibeaconlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="181,5236" />
+      <AbsolutePoint location="181,5336" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/ticket.do,list,/WEB-INF/pages/admin/ticket.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2413,4330" />
+      <AbsolutePoint location="2413,4430" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/plotprod.do,list,/WEB-INF/pages/anlysis/plotprodanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2440,3424" />
+      <AbsolutePoint location="2440,3474" />
+      <AbsolutePoint location="2338,3474" />
+      <AbsolutePoint location="2338,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/visitanlysis.do,visit,/WEB-INF/pages/anlysis/visitanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2389,4028" />
+      <AbsolutePoint location="2389,4078" />
+      <AbsolutePoint location="2476,4078" />
+      <AbsolutePoint location="2476,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkpraise.do,list,/WEB-INF/pages/admin/parkpraise.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2193,2518" />
+      <AbsolutePoint location="2193,2583" />
+      <AbsolutePoint location="2329,2583" />
+      <AbsolutePoint location="2329,2618" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parking.do,verifydetail,/WEB-INF/pages/admin/park/verifydetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="832,2518" />
+      <AbsolutePoint location="832,2553" />
+      <AbsolutePoint location="1261,2553" />
+      <AbsolutePoint location="1261,2618" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citysim.do,list,/WEB-INF/pages/city/citysimlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4251,5840" />
+      <AbsolutePoint location="4251,5940" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkescape.do,list,/WEB-INF/pages/parkadmin/parkescape.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4251,5236" />
+      <AbsolutePoint location="4251,5336" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/mobilemanage.do,list,/WEB-INF/pages/admin/mobilemanage.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3844,4934" />
+      <AbsolutePoint location="3844,5034" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/groupinfo.do,success,/WEB-INF/pages/group/info.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="5065,5538" />
+      <AbsolutePoint location="5065,5638" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/collector.do,useraccount,/WEB-INF/pages/admin/collector_account.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1442,1572" />
+      <AbsolutePoint location="1442,1602" />
+      <AbsolutePoint location="2372,1602" />
+      <AbsolutePoint location="2372,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkingturnover.do,list,/WEB-INF/pages/anlysis/parkingturnover.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3505,3122" />
+      <AbsolutePoint location="3505,3172" />
+      <AbsolutePoint location="3617,3172" />
+      <AbsolutePoint location="3617,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/hotareamanage.do,parklist,/WEB-INF/pages/city/hotareaparklist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4283,3726" />
+      <AbsolutePoint location="4283,3776" />
+      <AbsolutePoint location="4192,3776" />
+      <AbsolutePoint location="4192,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityparkaccanlysis.do,mpaydetail,/WEB-INF/pages/anlysis/citypaccdetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1907,3424" />
+      <AbsolutePoint location="1907,3474" />
+      <AbsolutePoint location="2011,3474" />
+      <AbsolutePoint location="2011,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/package.do,list,/WEB-INF/pages/parkadmin/package.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2944,3726" />
+      <AbsolutePoint location="2944,3776" />
+      <AbsolutePoint location="2853,3776" />
+      <AbsolutePoint location="2853,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inspectevent.do,list,/WEB-INF/pages/group/inspectevent.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3844,6444" />
+      <AbsolutePoint location="3844,6544" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/membermanage.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2491,104" />
+      <AbsolutePoint location="2491,194" />
+      <AbsolutePoint location="3830,194" />
+      <AbsolutePoint location="3830,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/midpreanlysis.do,detail,/WEB-INF/pages/anlysis/midpredetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4125,2820" />
+      <AbsolutePoint location="4125,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/bonusanly.do,detail,/WEB-INF/pages/anlysis/bonusdetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="223,4028" />
+      <AbsolutePoint location="223,4078" />
+      <AbsolutePoint location="133,4078" />
+      <AbsolutePoint location="133,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/paymentanlysis.do,list,/WEB-INF/pages/anlysis/paymentanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="444,3424" />
+      <AbsolutePoint location="444,3474" />
+      <AbsolutePoint location="553,3474" />
+      <AbsolutePoint location="553,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/dologin.do,fail,/WEB-INF/pages/zld/login.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3683,1572" />
+      <AbsolutePoint location="3683,1632" />
+      <AbsolutePoint location="3070,1632" />
+      <AbsolutePoint location="3070,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/midpreanlysis.do,list,/WEB-INF/pages/anlysis/midpreanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4245,2820" />
+      <AbsolutePoint location="4245,2870" />
+      <AbsolutePoint location="4500,2870" />
+      <AbsolutePoint location="4500,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parking.do,list,/WEB-INF/pages/admin/park/parklist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="741,2518" />
+      <AbsolutePoint location="741,2583" />
+      <AbsolutePoint location="880,2583" />
+      <AbsolutePoint location="880,2618" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityanlysis.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="6649,104" />
+      <AbsolutePoint location="6649,284" />
+      <AbsolutePoint location="3970,284" />
+      <AbsolutePoint location="3970,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citylift.do,list,/WEB-INF/pages/city/cityliftlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1809,6142" />
+      <AbsolutePoint location="1809,6242" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/adminrole.do,collectset,/WEB-INF/pages/auth/collectset.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2052,2820" />
+      <AbsolutePoint location="2052,2870" />
+      <AbsolutePoint location="2281,2870" />
+      <AbsolutePoint location="2281,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/shopticketanlysis.do,detail,/WEB-INF/pages/anlysis/shopticketdetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="992,3424" />
+      <AbsolutePoint location="992,3474" />
+      <AbsolutePoint location="886,3474" />
+      <AbsolutePoint location="886,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/authsetting.do,todepartpage,/WEB-INF/pages/admin/departs.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1509,576" />
+      <AbsolutePoint location="1509,666" />
+      <AbsolutePoint location="1978,666" />
+      <AbsolutePoint location="1978,726" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/dologin.do,finance,/WEB-INF/pages/menu/financemenu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3838,1572" />
+      <AbsolutePoint location="3838,1662" />
+      <AbsolutePoint location="4157,1662" />
+      <AbsolutePoint location="4157,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/paymenu.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="6187,104" />
+      <AbsolutePoint location="6187,254" />
+      <AbsolutePoint location="3954,254" />
+      <AbsolutePoint location="3954,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityvip.do,list,/WEB-INF/pages/city/cityviplist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="369,4330" />
+      <AbsolutePoint location="369,4380" />
+      <AbsolutePoint location="443,4380" />
+      <AbsolutePoint location="443,4430" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/paytypeanlysis.do,list,/WEB-INF/pages/anlysis/paytypeanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3437,6746" />
+      <AbsolutePoint location="3437,6846" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/authmanage.do,authlist,/WEB-INF/pages/auth/authlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3030,5538" />
+      <AbsolutePoint location="3030,5638" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/orderanly.do,work,/WEB-INF/pages/anlysis/parkuserworkdetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2881,2820" />
+      <AbsolutePoint location="2881,2870" />
+      <AbsolutePoint location="2601,2870" />
+      <AbsolutePoint location="2601,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkaccountaly.do,list,/WEB-INF/pages/anlysis/parkaccountanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1809,5236" />
+      <AbsolutePoint location="1809,5336" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityindex.do,list,/WEB-INF/pages/city/index.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4251,6142" />
+      <AbsolutePoint location="4251,6242" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/productanlysis.do,list,/WEB-INF/pages/anlysis/productanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4658,4632" />
+      <AbsolutePoint location="4658,4732" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/member.do,adminlist,/WEB-INF/pages/admin/member.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1544,4028" />
+      <AbsolutePoint location="1544,4078" />
+      <AbsolutePoint location="1455,4078" />
+      <AbsolutePoint location="1455,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citycarowner.do,list,/WEB-INF/pages/city/citycarownerlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="181,6142" />
+      <AbsolutePoint location="181,6242" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityberthseg.do,list,/WEB-INF/pages/city/cityberthseglist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2543,3122" />
+      <AbsolutePoint location="2543,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkattendant.do,list,/WEB-INF/pages/carstop/attendantslist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2607,2216" />
+      <AbsolutePoint location="2607,2251" />
+      <AbsolutePoint location="2709,2251" />
+      <AbsolutePoint location="2709,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/city.do,list,/WEB-INF/pages/city/citylist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="586,1894" />
+      <AbsolutePoint location="586,1984" />
+      <AbsolutePoint location="568,1984" />
+      <AbsolutePoint location="568,2014" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inducemodule.do,list,/WEB-INF/pages/city/inducemodule.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="514,3122" />
+      <AbsolutePoint location="514,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/workgroupmanage.do,saveinspectorlist,/WEB-INF/pages/group/workgroupsaveinspector.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1604,1250" />
+      <AbsolutePoint location="1604,1280" />
+      <AbsolutePoint location="2703,1280" />
+      <AbsolutePoint location="2703,1370" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/berthavgmoney.do,icon,/WEB-INF/pages/anlysis/berthavgmoneyicon.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4827,3122" />
+      <AbsolutePoint location="4827,3172" />
+      <AbsolutePoint location="4717,3172" />
+      <AbsolutePoint location="4717,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/allowance.do,list,/WEB-INF/pages/anlysis/allowanceanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4251,4632" />
+      <AbsolutePoint location="4251,4732" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkticket.do,list,/WEB-INF/pages/admin/parkticketlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="995,5236" />
+      <AbsolutePoint location="995,5336" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inspectgroupmanage.do,employeelist,/WEB-INF/pages/group/inspectgroupemployee.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1594,928" />
+      <AbsolutePoint location="1594,988" />
+      <AbsolutePoint location="2340,988" />
+      <AbsolutePoint location="2340,1048" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/nfcanlysis.do,detail,/WEB-INF/pages/anlysis/nfcdetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2858,4028" />
+      <AbsolutePoint location="2858,4078" />
+      <AbsolutePoint location="2773,4078" />
+      <AbsolutePoint location="2773,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parksetting.do,list,/WEB-INF/pages/admin/parksetting.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2448,3726" />
+      <AbsolutePoint location="2448,3776" />
+      <AbsolutePoint location="2541,3776" />
+      <AbsolutePoint location="2541,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/carower.do,list,/WEB-INF/pages/admin/carower.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="975,2216" />
+      <AbsolutePoint location="975,2281" />
+      <AbsolutePoint location="1242,2281" />
+      <AbsolutePoint location="1242,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/feebycoll.do,list,/WEB-INF/pages/anlysis/feebycoll.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2216,7048" />
+      <AbsolutePoint location="2216,7148" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/nfcmanage.do,list,/WEB-INF/pages/admin/nfcmanage.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="995,4632" />
+      <AbsolutePoint location="995,4732" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/paymentanlysis.do,icon,/WEB-INF/pages/anlysis/paymentanlysisicon.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="263,3424" />
+      <AbsolutePoint location="263,3474" />
+      <AbsolutePoint location="155,3474" />
+      <AbsolutePoint location="155,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/carstops.do,list,/WEB-INF/pages/carstop/carstopslist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1924,2216" />
+      <AbsolutePoint location="1924,2251" />
+      <AbsolutePoint location="1916,2251" />
+      <AbsolutePoint location="1916,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/tcbaccountaly.do,list,/WEB-INF/pages/anlysis/tingchebaoaccountanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1402,5236" />
+      <AbsolutePoint location="1402,5336" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/groupmember.do,list,/WEB-INF/pages/group/groupmember.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4251,5538" />
+      <AbsolutePoint location="4251,5638" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citybrake.do,list,/WEB-INF/pages/city/citybrakelist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3844,5840" />
+      <AbsolutePoint location="3844,5940" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/publish.do,list,/WEB-INF/pages/city/citypublist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="5065,6142" />
+      <AbsolutePoint location="5065,6242" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/qrmanage.do,list,/WEB-INF/pages/admin/qrlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="588,5236" />
+      <AbsolutePoint location="588,5336" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citycamera.do,list,/WEB-INF/pages/city/citycameralist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2623,5840" />
+      <AbsolutePoint location="2623,5940" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/nfcanlysis.do,list,/WEB-INF/pages/anlysis/nfcanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3039,4028" />
+      <AbsolutePoint location="3039,4078" />
+      <AbsolutePoint location="3123,4078" />
+      <AbsolutePoint location="3123,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/mobileanlysis.do,dpaydetail,/WEB-INF/pages/anlysis/directpaydetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3184,1894" />
+      <AbsolutePoint location="3184,1959" />
+      <AbsolutePoint location="2867,1959" />
+      <AbsolutePoint location="2867,1994" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/comaccount.do,list,/WEB-INF/pages/admin/comaccountlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="181,4632" />
+      <AbsolutePoint location="181,4732" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parklalaanly.do,parkidle,/WEB-INF/pages/anlysis/parkidleanly.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="228,3726" />
+      <AbsolutePoint location="228,3776" />
+      <AbsolutePoint location="134,3776" />
+      <AbsolutePoint location="134,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/anlysismenu.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3877,104" />
+      <AbsolutePoint location="3877,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/authsetting.do,auth,/WEB-INF/pages/admin/auth.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1600,576" />
+      <AbsolutePoint location="1600,606" />
+      <AbsolutePoint location="2667,606" />
+      <AbsolutePoint location="2667,726" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/bonusanly.do,list,/WEB-INF/pages/anlysis/bounsanly.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="404,4028" />
+      <AbsolutePoint location="404,4078" />
+      <AbsolutePoint location="494,4078" />
+      <AbsolutePoint location="494,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/grouppark.do,set,/WEB-INF/pages/channel/parksetting.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3913,2216" />
+      <AbsolutePoint location="3913,2251" />
+      <AbsolutePoint location="3829,2251" />
+      <AbsolutePoint location="3829,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityarea.do,list,/WEB-INF/pages/city/cityarealist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="995,5840" />
+      <AbsolutePoint location="995,5940" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/shopmember.do,list,/WEB-INF/pages/parkadmin/shopmember.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1809,4632" />
+      <AbsolutePoint location="1809,4732" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkepaymenu.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1567,104" />
+      <AbsolutePoint location="1567,254" />
+      <AbsolutePoint location="3799,254" />
+      <AbsolutePoint location="3799,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityberth.do,list,/WEB-INF/pages/city/cityberthlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3499,4028" />
+      <AbsolutePoint location="3499,4078" />
+      <AbsolutePoint location="3417,4078" />
+      <AbsolutePoint location="3417,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/feebypark.do,list,/WEB-INF/pages/anlysis/feebypark.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1809,7048" />
+      <AbsolutePoint location="1809,7148" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citypos.do,list,/WEB-INF/pages/city/cityposlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="5065,6444" />
+      <AbsolutePoint location="5065,6544" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityinfo.do,success,/WEB-INF/pages/city/info.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="588,5840" />
+      <AbsolutePoint location="588,5940" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/berthavgmoney.do,list,/WEB-INF/pages/anlysis/berthavgmoney.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="5008,3122" />
+      <AbsolutePoint location="5008,3172" />
+      <AbsolutePoint location="5118,3172" />
+      <AbsolutePoint location="5118,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/syssetmenu.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4339,104" />
+      <AbsolutePoint location="4339,134" />
+      <AbsolutePoint location="3892,134" />
+      <AbsolutePoint location="3892,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/hasparker.do,trend,/WEB-INF/pages/anlysis/hasparkeranlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3437,4632" />
+      <AbsolutePoint location="3437,4732" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/reserveorder.do,list,/WEB-INF/pages/parkadmin/reserveorder.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="5065,5236" />
+      <AbsolutePoint location="5065,5336" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/collectorsort.do,detail,/WEB-INF/pages/admin/sharesortdetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="916,3726" />
+      <AbsolutePoint location="916,3776" />
+      <AbsolutePoint location="823,3776" />
+      <AbsolutePoint location="823,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/3placcount.do,list,/WEB-INF/pages/city/city3pllist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3030,6444" />
+      <AbsolutePoint location="3030,6544" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkordermenu.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2029,104" />
+      <AbsolutePoint location="2029,224" />
+      <AbsolutePoint location="3814,224" />
+      <AbsolutePoint location="3814,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/collector.do,remarks,/WEB-INF/pages/admin/remarks.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1339,1572" />
+      <AbsolutePoint location="1339,1662" />
+      <AbsolutePoint location="1656,1662" />
+      <AbsolutePoint location="1656,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/liftrod.do,list,/WEB-INF/pages/parkadmin/liftrod.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="995,6746" />
+      <AbsolutePoint location="995,6846" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/channel.do,list,/WEB-INF/pages/channel/channellist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3791,3726" />
+      <AbsolutePoint location="3791,3776" />
+      <AbsolutePoint location="3882,3776" />
+      <AbsolutePoint location="3882,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citycommand.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="5263,104" />
+      <AbsolutePoint location="5263,194" />
+      <AbsolutePoint location="3923,194" />
+      <AbsolutePoint location="3923,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/collector.do,adduseraccount,/WEB-INF/pages/admin/addcollector_acc.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1287,1572" />
+      <AbsolutePoint location="1287,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/carstopsprice.do,list,/WEB-INF/pages/carstop/carstopspricelist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4658,4934" />
+      <AbsolutePoint location="4658,5034" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/shopticketanlysis.do,list,/WEB-INF/pages/anlysis/shopticketanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1173,3424" />
+      <AbsolutePoint location="1173,3474" />
+      <AbsolutePoint location="1279,3474" />
+      <AbsolutePoint location="1279,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/workgroupmanage.do,inspectorlist,/WEB-INF/pages/group/workgroupinspector.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1449,1250" />
+      <AbsolutePoint location="1449,1370" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/reganlysis.do,trend,/WEB-INF/pages/anlysis/registertrend.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2216,4632" />
+      <AbsolutePoint location="2216,4732" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/synthetictest.do,multivideo,/WEB-INF/pages/city/playmultivideo.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3406,2518" />
+      <AbsolutePoint location="3406,2553" />
+      <AbsolutePoint location="2999,2553" />
+      <AbsolutePoint location="2999,2618" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/orgpark.do,list,/WEB-INF/pages/area/parklist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="588,6746" />
+      <AbsolutePoint location="588,6846" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/shouldfactanlysis.do,list,/WEB-INF/pages/anlysis/shouldfactanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3844,6746" />
+      <AbsolutePoint location="3844,6846" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inducemenu.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="5725,104" />
+      <AbsolutePoint location="5725,224" />
+      <AbsolutePoint location="3939,224" />
+      <AbsolutePoint location="3939,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/passedit.do,list,/WEB-INF/pages/admin/pass.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="588,4934" />
+      <AbsolutePoint location="588,5034" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inspectgroupmanage.do,saveberthseclist,/WEB-INF/pages/group/inspectgroupsaveberthsec.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1336,928" />
+      <AbsolutePoint location="1336,958" />
+      <AbsolutePoint location="174,958" />
+      <AbsolutePoint location="174,1048" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citybigorder.do,list,/WEB-INF/pages/city/citybigorderlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="995,6142" />
+      <AbsolutePoint location="995,6242" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityberthseg.do,unbindberth,/WEB-INF/pages/city/unbindberth.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2422,3122" />
+      <AbsolutePoint location="2422,3172" />
+      <AbsolutePoint location="2185,3172" />
+      <AbsolutePoint location="2185,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/alertevent.do,list,/WEB-INF/pages/city/cityalertlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="181,6746" />
+      <AbsolutePoint location="181,6846" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/withdraw.do,list,/WEB-INF/pages/parkadmin/withdraw.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="785,4330" />
+      <AbsolutePoint location="785,4430" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/colltrend.do,trend,/WEB-INF/pages/anlysis/colltrend.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="995,7048" />
+      <AbsolutePoint location="995,7148" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/orderanly.do,list,/WEB-INF/pages/anlysis/parkorderanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3122,2820" />
+      <AbsolutePoint location="3122,2870" />
+      <AbsolutePoint location="3395,2870" />
+      <AbsolutePoint location="3395,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/orderanly.do,detail,/WEB-INF/pages/anlysis/parkorderdetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3002,2820" />
+      <AbsolutePoint location="3002,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/provincesett.do,list,/WEB-INF/pages/admin/provincesetting.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="181,4934" />
+      <AbsolutePoint location="181,5034" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/sysmanage.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="7111,104" />
+      <AbsolutePoint location="7111,314" />
+      <AbsolutePoint location="3986,314" />
+      <AbsolutePoint location="3986,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parking.do,ugclist,/WEB-INF/pages/admin/park/ugclist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="651,2518" />
+      <AbsolutePoint location="651,2583" />
+      <AbsolutePoint location="512,2583" />
+      <AbsolutePoint location="512,2618" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityblack.do,list,/WEB-INF/pages/city/cityblacklist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4658,5840" />
+      <AbsolutePoint location="4658,5940" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/orgmanage.do,list,/WEB-INF/pages/auth/organizelist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2164,1894" />
+      <AbsolutePoint location="2164,2014" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citypeakalert.do,list,/WEB-INF/pages/city/citypeakalertlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4251,6746" />
+      <AbsolutePoint location="4251,6846" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/shop.do,setlist,/WEB-INF/pages/parkadmin/shopsetting.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3846,3424" />
+      <AbsolutePoint location="3846,3474" />
+      <AbsolutePoint location="3749,3474" />
+      <AbsolutePoint location="3749,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/authsetting.do,rolesetting,/WEB-INF/pages/admin/rolesetting.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1555,576" />
+      <AbsolutePoint location="1555,636" />
+      <AbsolutePoint location="2328,636" />
+      <AbsolutePoint location="2328,726" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/channelpark.do,set,/WEB-INF/pages/channel/parksetting.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3599,2216" />
+      <AbsolutePoint location="3599,2251" />
+      <AbsolutePoint location="3739,2251" />
+      <AbsolutePoint location="3739,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/compark.do,list,/WEB-INF/pages/parkadmin/compark.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3844,5236" />
+      <AbsolutePoint location="3844,5336" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/visitanlysis.do,detail,/WEB-INF/pages/anlysis/visitdetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2208,4028" />
+      <AbsolutePoint location="2208,4078" />
+      <AbsolutePoint location="2121,4078" />
+      <AbsolutePoint location="2121,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/berthtrend.do,trend,/WEB-INF/pages/anlysis/berthtrend.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="588,7048" />
+      <AbsolutePoint location="588,7148" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/vipuser.do,list,/WEB-INF/pages/parkadmin/vipuser.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1599,4330" />
+      <AbsolutePoint location="1599,4430" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/adminrole.do,adminrolelist,/WEB-INF/pages/auth/adminrolelist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1932,2820" />
+      <AbsolutePoint location="1932,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkanlysis.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="643,104" />
+      <AbsolutePoint location="643,314" />
+      <AbsolutePoint location="3767,314" />
+      <AbsolutePoint location="3767,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cartype.do,list,/WEB-INF/pages/parkadmin/cartype.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="588,5538" />
+      <AbsolutePoint location="588,5638" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkpraise.do,praisedetail,/WEB-INF/pages/admin/praisedetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2284,2518" />
+      <AbsolutePoint location="2284,2553" />
+      <AbsolutePoint location="2691,2553" />
+      <AbsolutePoint location="2691,2618" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/collector.do,cominfo,/WEB-INF/pages/admin/cominfo.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1235,1572" />
+      <AbsolutePoint location="1235,1662" />
+      <AbsolutePoint location="919,1662" />
+      <AbsolutePoint location="919,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/orgrole.do,list,/WEB-INF/pages/auth/orgrolelist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="5065,6746" />
+      <AbsolutePoint location="5065,6846" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citymoneyset.do,list,/WEB-INF/pages/city/citymoneyset.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4251,6444" />
+      <AbsolutePoint location="4251,6544" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/carower.do,orderlist,/WEB-INF/pages/admin/carowerorderlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="830,2216" />
+      <AbsolutePoint location="830,2281" />
+      <AbsolutePoint location="539,2281" />
+      <AbsolutePoint location="539,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/channel.do,setting,/WEB-INF/pages/admin/chansetting.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3610,3726" />
+      <AbsolutePoint location="3610,3776" />
+      <AbsolutePoint location="3519,3776" />
+      <AbsolutePoint location="3519,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parklogs.do,list,/WEB-INF/pages/parkadmin/parklogs.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1402,6746" />
+      <AbsolutePoint location="1402,6846" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/hotareamanage.do,list,/WEB-INF/pages/city/cityhotarealist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4464,3726" />
+      <AbsolutePoint location="4464,3776" />
+      <AbsolutePoint location="4555,3776" />
+      <AbsolutePoint location="4555,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inducel3.do,list,/WEB-INF/pages/city/cityinducel3.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4658,6142" />
+      <AbsolutePoint location="4658,6242" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/orderbonusanly.do,list,/WEB-INF/pages/anlysis/orderbounsanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3030,5236" />
+      <AbsolutePoint location="3030,5336" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/dologin.do,recorder,/WEB-INF/pages/menu/recordermenu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3734,1572" />
+      <AbsolutePoint location="3734,1662" />
+      <AbsolutePoint location="3410,1662" />
+      <AbsolutePoint location="3410,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/dologin.do,parkmanage,/WEB-INF/pages/admin/menu/home.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3941,1572" />
+      <AbsolutePoint location="3941,1602" />
+      <AbsolutePoint location="4847,1602" />
+      <AbsolutePoint location="4847,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/devicemenu.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4801,104" />
+      <AbsolutePoint location="4801,164" />
+      <AbsolutePoint location="3908,164" />
+      <AbsolutePoint location="3908,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/activity.do,detail,/WEB-INF/pages/admin/activity.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4127,4028" />
+      <AbsolutePoint location="4127,4078" />
+      <AbsolutePoint location="4046,4078" />
+      <AbsolutePoint location="4046,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityparkanly.do,column,/WEB-INF/pages/anlysis/cityparkanly.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3139,3424" />
+      <AbsolutePoint location="3139,3474" />
+      <AbsolutePoint location="3042,3474" />
+      <AbsolutePoint location="3042,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parklalaanly.do,success,/WEB-INF/pages/anlysis/parklalaanly.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="409,3726" />
+      <AbsolutePoint location="409,3776" />
+      <AbsolutePoint location="503,3776" />
+      <AbsolutePoint location="503,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/organize.do,orglist,/WEB-INF/pages/auth/orglist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2216,5538" />
+      <AbsolutePoint location="2216,5638" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/test.do,content,/WEB-INF/pages/haixin/orgtype.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="486,2820" />
+      <AbsolutePoint location="486,2855" />
+      <AbsolutePoint location="119,2855" />
+      <AbsolutePoint location="119,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/groupwithdraw.do,list,/WEB-INF/pages/group/groupwithdraw.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2623,6444" />
+      <AbsolutePoint location="2623,6544" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/workgroupmanage.do,employeelist,/WEB-INF/pages/group/workgroupemployee.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1552,1250" />
+      <AbsolutePoint location="1552,1310" />
+      <AbsolutePoint location="2274,1310" />
+      <AbsolutePoint location="2274,1370" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/berthtimeanlysis.do,icon,/WEB-INF/pages/anlysis/berthtimeanlysisicon.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4077,3122" />
+      <AbsolutePoint location="4077,3172" />
+      <AbsolutePoint location="3966,3172" />
+      <AbsolutePoint location="3966,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/logomanage.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2953,104" />
+      <AbsolutePoint location="2953,164" />
+      <AbsolutePoint location="3845,164" />
+      <AbsolutePoint location="3845,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/efparkanlysis.do,list,/WEB-INF/pages/anlysis/parkinfoanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3030,4632" />
+      <AbsolutePoint location="3030,4732" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/account.do,list,/WEB-INF/pages/admin/account.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3227,4330" />
+      <AbsolutePoint location="3227,4430" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inspectgroupmanage.do,saveemployeelist,/WEB-INF/pages/group/inspectgroupsaveemployee.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1388,928" />
+      <AbsolutePoint location="1388,988" />
+      <AbsolutePoint location="627,988" />
+      <AbsolutePoint location="627,1048" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/berthtimeanlysis.do,list,/WEB-INF/pages/anlysis/berthtimeanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4258,3122" />
+      <AbsolutePoint location="4258,3172" />
+      <AbsolutePoint location="4370,3172" />
+      <AbsolutePoint location="4370,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/sensorberth.do,list,/WEB-INF/pages/city/sensorberth.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4939,4028" />
+      <AbsolutePoint location="4939,4078" />
+      <AbsolutePoint location="5020,4078" />
+      <AbsolutePoint location="5020,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/carower.do,authusers,/WEB-INF/pages/admin/carower_auth.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1047,2216" />
+      <AbsolutePoint location="1047,2251" />
+      <AbsolutePoint location="1600,2251" />
+      <AbsolutePoint location="1600,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/function.do,list,/WEB-INF/pages/auth/funclist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1702,1894" />
+      <AbsolutePoint location="1702,2014" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/blackuser.do,list,/WEB-INF/pages/admin/blackusers.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4251,4934" />
+      <AbsolutePoint location="4251,5034" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citypark.do,set,/WEB-INF/pages/channel/parksetting.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4401,2216" />
+      <AbsolutePoint location="4401,2281" />
+      <AbsolutePoint location="3919,2281" />
+      <AbsolutePoint location="3919,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkpraise.do,commentdetail,/WEB-INF/pages/admin/commentlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2103,2518" />
+      <AbsolutePoint location="2103,2583" />
+      <AbsolutePoint location="1967,2583" />
+      <AbsolutePoint location="1967,2618" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/collectorsort.do,list,/WEB-INF/pages/admin/sharesort.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1097,3726" />
+      <AbsolutePoint location="1097,3776" />
+      <AbsolutePoint location="1190,3776" />
+      <AbsolutePoint location="1190,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/charge.do,list,/WEB-INF/pages/anlysis/chargeanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3844,4632" />
+      <AbsolutePoint location="3844,4732" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityparkaccanlysis.do,list,/WEB-INF/pages/anlysis/cityparkaccanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1726,3424" />
+      <AbsolutePoint location="1726,3474" />
+      <AbsolutePoint location="1622,3474" />
+      <AbsolutePoint location="1622,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkcamera.do,list,/WEB-INF/pages/parkadmin/camera.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2623,4934" />
+      <AbsolutePoint location="2623,5034" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/freereasons.do,list,/WEB-INF/pages/parkadmin/freereasons.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1402,5538" />
+      <AbsolutePoint location="1402,5638" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cloudlogo.do,uploadret,/WEB-INF/pages/carstop/uploadret.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2936,2216" />
+      <AbsolutePoint location="2936,2281" />
+      <AbsolutePoint location="2425,2281" />
+      <AbsolutePoint location="2425,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityled.do,list,/WEB-INF/pages/city/cityledlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3437,5840" />
+      <AbsolutePoint location="3437,5940" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/groupbindcartype.do,list,/WEB-INF/pages/group/bindcartype.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="995,6444" />
+      <AbsolutePoint location="995,6544" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/marketerpark.do,list,/WEB-INF/pages/admin/marketerparklist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4855,4330" />
+      <AbsolutePoint location="4855,4430" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/mobileanlysis.do,trend,/WEB-INF/pages/anlysis/mobilepaytrend.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3112,1894" />
+      <AbsolutePoint location="3112,1929" />
+      <AbsolutePoint location="2480,1929" />
+      <AbsolutePoint location="2480,1994" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityparkanly.do,list,/WEB-INF/pages/anlysis/cityparkanlylist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3320,3424" />
+      <AbsolutePoint location="3320,3474" />
+      <AbsolutePoint location="3417,3474" />
+      <AbsolutePoint location="3417,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/collector.do,vuser,/WEB-INF/pages/admin/collector_validate.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1132,1572" />
+      <AbsolutePoint location="1132,1602" />
+      <AbsolutePoint location="148,1602" />
+      <AbsolutePoint location="148,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkinfo.do,parkset,/WEB-INF/pages/parkadmin/parkset.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4525,3424" />
+      <AbsolutePoint location="4525,3474" />
+      <AbsolutePoint location="4431,3474" />
+      <AbsolutePoint location="4431,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citygroup.do,tree,/WEB-INF/pages/auth/tree.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1048,1894" />
+      <AbsolutePoint location="1048,1924" />
+      <AbsolutePoint location="974,1924" />
+      <AbsolutePoint location="974,2014" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/led.do,list,/WEB-INF/pages/admin/led.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1402,4934" />
+      <AbsolutePoint location="1402,5034" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/planmember.do,list,/WEB-INF/pages/parkadmin/planmember.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4658,5236" />
+      <AbsolutePoint location="4658,5336" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/synthetictest.do,list,/WEB-INF/pages/city/synthetictest.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3678,2518" />
+      <AbsolutePoint location="3678,2553" />
+      <AbsolutePoint location="4061,2553" />
+      <AbsolutePoint location="4061,2618" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/carower.do,preauthuser,/WEB-INF/pages/admin/carower_preauth.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="758,2216" />
+      <AbsolutePoint location="758,2251" />
+      <AbsolutePoint location="146,2251" />
+      <AbsolutePoint location="146,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/synthetictest.do,singlevideo,/WEB-INF/pages/city/playvideo.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3587,2518" />
+      <AbsolutePoint location="3587,2583" />
+      <AbsolutePoint location="3718,2583" />
+      <AbsolutePoint location="3718,2618" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkled.do,list,/WEB-INF/pages/parkadmin/led.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3030,4934" />
+      <AbsolutePoint location="3030,5034" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citypass.do,list,/WEB-INF/pages/city/citypasslist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2216,5840" />
+      <AbsolutePoint location="2216,5940" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/synthetictest.do,baidumap,/WEB-INF/pages/city/cityallbaidumap.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3497,2518" />
+      <AbsolutePoint location="3497,2583" />
+      <AbsolutePoint location="3366,2583" />
+      <AbsolutePoint location="3366,2618" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/authsetting.do,todmempage,/WEB-INF/pages/admin/departmembers.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1283,576" />
+      <AbsolutePoint location="1283,606" />
+      <AbsolutePoint location="145,606" />
+      <AbsolutePoint location="145,726" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkworksite.do,list,/WEB-INF/pages/parkadmin/worksite.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1809,4934" />
+      <AbsolutePoint location="1809,5034" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/group.do,list,/WEB-INF/pages/group/grouplist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="124,1894" />
+      <AbsolutePoint location="124,2014" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkingturnover.do,icon,/WEB-INF/pages/anlysis/parkingturnovericon.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3324,3122" />
+      <AbsolutePoint location="3324,3172" />
+      <AbsolutePoint location="3213,3172" />
+      <AbsolutePoint location="3213,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityrfid.do,list,/WEB-INF/pages/city/cityrfidlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="5065,5840" />
+      <AbsolutePoint location="5065,5940" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkattendant.do,uploadret,/WEB-INF/pages/carstop/uploadret.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2426,2216" />
+      <AbsolutePoint location="2426,2251" />
+      <AbsolutePoint location="2338,2251" />
+      <AbsolutePoint location="2338,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inspectgroupmanage.do,list,/WEB-INF/pages/group/inspectgroupmanage.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1543,928" />
+      <AbsolutePoint location="1543,1018" />
+      <AbsolutePoint location="1915,1018" />
+      <AbsolutePoint location="1915,1048" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/localserver.do,list,/WEB-INF/pages/admin/localserver.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="181,5538" />
+      <AbsolutePoint location="181,5638" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityworksite.do,list,/WEB-INF/pages/city/citywslist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1809,5840" />
+      <AbsolutePoint location="1809,5940" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/activity.do,list,/WEB-INF/pages/admin/activitylist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4308,4028" />
+      <AbsolutePoint location="4308,4078" />
+      <AbsolutePoint location="4389,4078" />
+      <AbsolutePoint location="4389,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/authsetting.do,authsetting,/WEB-INF/pages/admin/authsetting.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1419,576" />
+      <AbsolutePoint location="1419,696" />
+      <AbsolutePoint location="1260,696" />
+      <AbsolutePoint location="1260,726" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/authsetting.do,personmanage,/WEB-INF/pages/admin/person.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1328,576" />
+      <AbsolutePoint location="1328,636" />
+      <AbsolutePoint location="508,636" />
+      <AbsolutePoint location="508,726" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/collector.do,vusers,/WEB-INF/pages/admin/collector_validates.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1184,1572" />
+      <AbsolutePoint location="1184,1632" />
+      <AbsolutePoint location="547,1632" />
+      <AbsolutePoint location="547,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/useraccountaly.do,list,/WEB-INF/pages/anlysis/useraccountanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2623,5236" />
+      <AbsolutePoint location="2623,5336" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/vipmanage.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="7573,104" />
+      <AbsolutePoint location="7573,344" />
+      <AbsolutePoint location="4001,344" />
+      <AbsolutePoint location="4001,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/channelpark.do,list,/WEB-INF/pages/channel/parklist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3418,2216" />
+      <AbsolutePoint location="3418,2251" />
+      <AbsolutePoint location="3411,2251" />
+      <AbsolutePoint location="3411,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/authmenu.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3415,104" />
+      <AbsolutePoint location="3415,134" />
+      <AbsolutePoint location="3861,134" />
+      <AbsolutePoint location="3861,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/groupaccount.do,list,/WEB-INF/pages/city/groupaccount.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="588,6444" />
+      <AbsolutePoint location="588,6544" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citypark.do,list,/WEB-INF/pages/city/cityparklist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4582,2216" />
+      <AbsolutePoint location="4582,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/test.do,list,/WEB-INF/pages/haixin/index.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="667,2820" />
+      <AbsolutePoint location="667,2885" />
+      <AbsolutePoint location="787,2885" />
+      <AbsolutePoint location="787,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/reward.do,list,/WEB-INF/pages/anlysis/rewardanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3437,5236" />
+      <AbsolutePoint location="3437,5336" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/workgroupmanage.do,saveberthseclist,/WEB-INF/pages/group/workgroupsaveberthsec.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1294,1250" />
+      <AbsolutePoint location="1294,1280" />
+      <AbsolutePoint location="168,1280" />
+      <AbsolutePoint location="168,1370" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/orgtype.do,orgtypelist,/WEB-INF/pages/auth/orgtypelist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1809,5538" />
+      <AbsolutePoint location="1809,5638" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/authsetting.do,department,/WEB-INF/pages/admin/departmentsetting.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1374,576" />
+      <AbsolutePoint location="1374,666" />
+      <AbsolutePoint location="878,666" />
+      <AbsolutePoint location="878,726" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/order.do,carpics,/WEB-INF/pages/parkadmin/carpics.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1066,4028" />
+      <AbsolutePoint location="1066,4078" />
+      <AbsolutePoint location="1156,4078" />
+      <AbsolutePoint location="1156,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/easypass.do,detail,/WEB-INF/pages/anlysis/easypassdetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1595,3726" />
+      <AbsolutePoint location="1595,3776" />
+      <AbsolutePoint location="1502,3776" />
+      <AbsolutePoint location="1502,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityserver.do,list,/WEB-INF/pages/city/cityserverlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1402,5840" />
+      <AbsolutePoint location="1402,5940" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/bindcartype.do,list,/WEB-INF/pages/parkadmin/bindcartype.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="995,5538" />
+      <AbsolutePoint location="995,5638" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/peakgantt.do,parkgantt,/WEB-INF/pages/anlysis/peaklalertgantt.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1402,7048" />
+      <AbsolutePoint location="1402,7148" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityberthseg.do,bindberth,/WEB-INF/pages/city/ownberth.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2663,3122" />
+      <AbsolutePoint location="2663,3172" />
+      <AbsolutePoint location="2893,3172" />
+      <AbsolutePoint location="2893,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cloudlogo.do,list,/WEB-INF/pages/channel/cloudlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3117,2216" />
+      <AbsolutePoint location="3117,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/camera.do,list,/WEB-INF/pages/admin/camera.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="995,4934" />
+      <AbsolutePoint location="995,5034" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/mobileanlysis.do,mpaydetail,/WEB-INF/pages/anlysis/mobiledetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3402,1894" />
+      <AbsolutePoint location="3402,1929" />
+      <AbsolutePoint location="4015,1929" />
+      <AbsolutePoint location="4015,1994" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/mset.do,list,/WEB-INF/pages/admin/moneyset.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1402,4632" />
+      <AbsolutePoint location="1402,4732" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/dologin.do,cardoperator,/WEB-INF/pages/menu/cardoperatormenu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3631,1572" />
+      <AbsolutePoint location="3631,1602" />
+      <AbsolutePoint location="2716,1602" />
+      <AbsolutePoint location="2716,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/group.do,tree,/WEB-INF/pages/auth/tree.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="305,1894" />
+      <AbsolutePoint location="305,1954" />
+      <AbsolutePoint location="890,1954" />
+      <AbsolutePoint location="890,2014" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parking.do,ugcverify,/WEB-INF/pages/admin/park/ugcverify.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="560,2518" />
+      <AbsolutePoint location="560,2553" />
+      <AbsolutePoint location="140,2553" />
+      <AbsolutePoint location="140,2618" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/freepark.do,list,/WEB-INF/pages/admin/freeparklist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2820,4330" />
+      <AbsolutePoint location="2820,4430" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/authrole.do,editauthrole,/WEB-INF/pages/auth/editrole.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1470,2820" />
+      <AbsolutePoint location="1470,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citysensororder.do,list,/WEB-INF/pages/city/citysensororderlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2623,7048" />
+      <AbsolutePoint location="2623,7148" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/price.do,list,/WEB-INF/pages/parkadmin/price.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1192,4330" />
+      <AbsolutePoint location="1192,4430" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/shop.do,list,/WEB-INF/pages/parkadmin/shops.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4027,3424" />
+      <AbsolutePoint location="4027,3474" />
+      <AbsolutePoint location="4124,3474" />
+      <AbsolutePoint location="4124,3524" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inspectgroupmanage.do,berthseclist,/WEB-INF/pages/group/inspectgroupberthsec.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1439,928" />
+      <AbsolutePoint location="1439,1018" />
+      <AbsolutePoint location="1066,1018" />
+      <AbsolutePoint location="1066,1048" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citytransmitter.do,list,/WEB-INF/pages/city/citytransmitter.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3030,6142" />
+      <AbsolutePoint location="3030,6242" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/survey.do,survey,/WEB-INF/pages/parkadmin/survey.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3437,5538" />
+      <AbsolutePoint location="3437,5638" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/videosurvillance.do,list,/WEB-INF/pages/city/videosurvillance.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4658,6746" />
+      <AbsolutePoint location="4658,6846" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityuseraccount.do,list,/WEB-INF/pages/city/carowneraccount.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1809,6444" />
+      <AbsolutePoint location="1809,6544" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citywithdraw.do,list,/WEB-INF/pages/city/citywithdraw.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3437,6444" />
+      <AbsolutePoint location="3437,6544" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/test.do,scroller,/WEB-INF/pages/haixin/scroller.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="576,2820" />
+      <AbsolutePoint location="576,2885" />
+      <AbsolutePoint location="457,2885" />
+      <AbsolutePoint location="457,2920" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/function.do,tree,/WEB-INF/pages/auth/tree.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1521,1894" />
+      <AbsolutePoint location="1521,1954" />
+      <AbsolutePoint location="1015,1954" />
+      <AbsolutePoint location="1015,2014" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/gsurvey.do,list,/WEB-INF/pages/group/survey.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4658,5538" />
+      <AbsolutePoint location="4658,5638" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inducemodule.do,unbindpark,/WEB-INF/pages/city/induceunbindpark.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="393,3122" />
+      <AbsolutePoint location="393,3172" />
+      <AbsolutePoint location="142,3172" />
+      <AbsolutePoint location="142,3222" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/workgroupmanage.do,saveemployeelist,/WEB-INF/pages/group/workgroupsaveemployee.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1346,1250" />
+      <AbsolutePoint location="1346,1310" />
+      <AbsolutePoint location="609,1310" />
+      <AbsolutePoint location="609,1370" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/bankaccount.do,list,/WEB-INF/pages/city/bankaccount.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4658,6444" />
+      <AbsolutePoint location="4658,6544" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkmanagemenu.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1105,104" />
+      <AbsolutePoint location="1105,284" />
+      <AbsolutePoint location="3783,284" />
+      <AbsolutePoint location="3783,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/sensorberth.do,sensor,/WEB-INF/pages/city/sensorgui.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4758,4028" />
+      <AbsolutePoint location="4758,4078" />
+      <AbsolutePoint location="4678,4078" />
+      <AbsolutePoint location="4678,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/member.do,list,/WEB-INF/pages/parkadmin/member.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1725,4028" />
+      <AbsolutePoint location="1725,4078" />
+      <AbsolutePoint location="1814,4078" />
+      <AbsolutePoint location="1814,4128" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/chanmember.do,list,/WEB-INF/pages/channel/chanmember.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3844,5538" />
+      <AbsolutePoint location="3844,5638" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/sensorcarinout.do,list,/WEB-INF/pages/parkadmin/sensorcarinout.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2216,6746" />
+      <AbsolutePoint location="2216,6846" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parksetting.do,parkclientset,/WEB-INF/pages/admin/parkclientset.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2267,3726" />
+      <AbsolutePoint location="2267,3776" />
+      <AbsolutePoint location="2175,3776" />
+      <AbsolutePoint location="2175,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/grouppark.do,list,/WEB-INF/pages/group/parklist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="4094,2216" />
+      <AbsolutePoint location="4094,2251" />
+      <AbsolutePoint location="4183,2251" />
+      <AbsolutePoint location="4183,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/worksite.do,list,/WEB-INF/pages/admin/worksite.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="5065,4632" />
+      <AbsolutePoint location="5065,4732" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citysensor.do,list,/WEB-INF/pages/city/citysensorlist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2216,6142" />
+      <AbsolutePoint location="2216,6242" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityparkaccount.do,list,/WEB-INF/pages/city/parkaccount.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1402,6444" />
+      <AbsolutePoint location="1402,6544" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/easypass.do,list,/WEB-INF/pages/anlysis/easypass.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1776,3726" />
+      <AbsolutePoint location="1776,3776" />
+      <AbsolutePoint location="1869,3776" />
+      <AbsolutePoint location="1869,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/citygroup.do,list,/WEB-INF/pages/city/citygrouplist.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1229,1894" />
+      <AbsolutePoint location="1229,1924" />
+      <AbsolutePoint location="1311,1924" />
+      <AbsolutePoint location="1311,2014" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/transmittermonitor.do,list,/WEB-INF/pages/city/transmittermonitor.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="181,7048" />
+      <AbsolutePoint location="181,7148" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityinduce.do,list,/WEB-INF/pages/city/cityinduce.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3844,6142" />
+      <AbsolutePoint location="3844,6242" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkpraise.do,commentlist,/WEB-INF/pages/admin/commentdetail.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2012,2518" />
+      <AbsolutePoint location="2012,2553" />
+      <AbsolutePoint location="1593,2553" />
+      <AbsolutePoint location="1593,2618" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/dologin.do,marketer,/WEB-INF/pages/menu/marketermenu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3786,1572" />
+      <AbsolutePoint location="3786,1692" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/parkuseraccountaly.do,list,/WEB-INF/pages/anlysis/parkuseraccountanlysis.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="2216,5236" />
+      <AbsolutePoint location="2216,5336" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/inspectgroupmanage.do,saveinspectorlist,/WEB-INF/pages/group/inspectgroupsaveinspector.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1646,928" />
+      <AbsolutePoint location="1646,958" />
+      <AbsolutePoint location="2781,958" />
+      <AbsolutePoint location="2781,1048" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/carower.do,carlist,/WEB-INF/pages/admin/carinfo.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="903,2216" />
+      <AbsolutePoint location="903,2316" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/package.do,week,/WEB-INF/pages/parkadmin/week.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="3125,3726" />
+      <AbsolutePoint location="3125,3776" />
+      <AbsolutePoint location="3216,3776" />
+      <AbsolutePoint location="3216,3826" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/carplate.do,menu,/WEB-INF/pages/admin/menu/menu.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="181,104" />
+      <AbsolutePoint location="181,344" />
+      <AbsolutePoint location="3752,344" />
+      <AbsolutePoint location="3752,374" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/cityaccount.do,list,/WEB-INF/pages/city/cityaccount.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="181,6444" />
+      <AbsolutePoint location="181,6544" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+</FlowViewLayout>
+

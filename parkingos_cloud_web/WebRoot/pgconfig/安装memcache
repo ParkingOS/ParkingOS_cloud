@@ -1,0 +1,38 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+memcached安装        
+
+1. 下载, memcached需要先安装libevent
+
+2. 安装libevent
+
+# tar xzvf libevent-1.2.tar.gz
+# cd libevent-1.2
+# ./configure --prefix=/usr/local/libevent   
+# make   
+# make install  
+
+    检查是否安装成功:
+
+    #cd /usr/local/libevent/lib
+    
+    如果有libevent-1.3c.so.1  libevent-1.3c.so.1.0.3  libevent.a  libevent.la  libevent.so 这几个文件存在，说明安装成功
+
+3.安装memcached
+
+        #  tar xzvf memcached-1.2.6.tar.gz    
+       # cd memcached-1.2.6  
+       # ./configure --with-libevent=/usr/local/libevent --prefix=/usr/local/memcached  
+       # make   
+       # make install  
+
+    检查是否安装成功:
+
+    #cd /usr/local/memcached/bin
+
+    如果memcached  memcached-debug这2个文件存在，说明安装成功
+
+4.执行 
+
+ #cd /usr/local//bin
+ # ./memcached -d -p 11211 -u nobody -m 600 -c 1024 -P /var/run/memcached/memcached.pid       
+

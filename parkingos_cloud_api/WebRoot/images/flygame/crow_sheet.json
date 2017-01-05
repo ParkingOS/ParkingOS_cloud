@@ -1,0 +1,8 @@
+{
+  "framerate":10,
+  "images":["images/flygame/crow_sheet.png"],
+  "frames":{"width":250,"height":128,"count":4},
+  "animations":{
+    "fly":[0,1,2,3]
+  }
+}

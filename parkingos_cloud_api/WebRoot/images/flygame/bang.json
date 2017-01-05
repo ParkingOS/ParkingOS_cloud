@@ -1,0 +1,8 @@
+{
+  "framerate":10,
+  "images":["images/flygame/bang.png"],
+  "frames":{"width":262,"height":150,"count":3},
+  "animations":{
+    "bang":[0,2]
+  }
+}

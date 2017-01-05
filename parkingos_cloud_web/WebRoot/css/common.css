@@ -1,0 +1,476 @@
+body {
+	margin: 0;
+	padding: 0;
+	//overflow-x: hidden;
+}
+html, body {
+	/* height:95%; */
+	width: 100%;
+}
+img {
+	border: none;
+}
+* {
+	font-family: 'Î¢ÈíÑÅºÚ';
+	font-size: 12px;
+	list-style: none;
+}
+dl, dt, dd, de {
+	display: block;
+	margin: 0;
+	border-bottom: #888 1px solid;
+}
+a {
+	text-decoration: none;
+	color:#fff;
+}
+#bg {
+	background-image: url(../images/content/dotted.png);
+}
+/*×ó²à²Ëµ¥*/
+.leftsidebar_box {
+	width: 10%;
+	height: 100% !important;
+	background-color: #999;
+	float: left;
+}
+.line {
+	height: 2px;
+	width: 100%;
+	background: #999;
+	background-repeat: repeat-x;
+}
+.leftmenu {
+	height: 100%;
+	background: #999;
+}
+.leftsidebar_box dt {
+	padding-left: 30px;
+	padding-right: 5px;
+	background-repeat: no-repeat;
+	background-position: 5px center;
+	color: #f5f5f5;
+	font-size: 14px;
+	position: relative;
+	line-height: 40px;
+	cursor: pointer;
+}
+.leftsidebar_box dd {
+	/* background-color: #5ccdbe; */
+	padding-left: 40px;
+	height: 40px;
+	line-height: 40px;
+}
+.leftsidebar_box dd a {
+	color: #f5f5f5;
+	line-height: 40px;
+}
+.leftsidebar_box dt img {
+	position: absolute;
+	right: 5px;
+	top: 22px;
+}
+.system_log dt {
+	background-image: url(../images/left/system.png)
+}
+.xitong dt {
+	background-image: url(../images/left/xt.png)
+}
+.qiye dt {
+	background-image: url(../images/left/cloud.png)
+}
+.xitong dt {
+	background-image: url(../images/left/xt.png)
+}
+.renli dt {
+	background-image: url(../images/left/rl.png)
+}
+.channel dt {
+	background-image: url(../images/left/channel.png)
+}
+.app dt {
+	background-image: url(../images/left/tingcheyuan.png)
+}
+.cloud dt {
+	background-image: url(../images/left/cloud.png)
+}
+.syetem_management dt {
+	background-image: url(../images/left/syetem_management.png)
+}
+.source dt {
+	background-image: url(../images/left/source.png)
+}
+.statistics dt {
+	background-image: url(../images/left/statistics.png)
+}
+.power dt {
+	background-image: url(../images/left/power.png)
+}
+.general dt {
+	background-image: url(../images/left/general.png)
+}
+.equipment dt {
+	background-image: url(../images/left/equipment.png)
+}
+/*×ó²à²Ëµ¥*/
+.leftsidebar_box {
+	width: 14%;
+	height: 100% !important;
+	background-color: #999;
+	float: left;
+	position: fixed;
+	overflow-y: auto;
+}
+.line {
+	height: 2px;
+	width: 100%;
+	background: #999;
+	margin-top: 80px;
+	background-repeat: repeat-x;
+}
+.leftmenu {
+	height: 100%;
+	background: #999;
+}
+.leftsidebar_box de {
+	padding-left: 30px;
+	padding-right: 5px;
+	background-repeat: no-repeat;
+	background-position: 5px center;
+	color: #f5f5f5;
+	font-size: 14px;
+	position: relative;
+	line-height: 40px;
+	cursor: pointer;
+}
+.leftsidebar_box dd {
+	/* background-color: #5ccdbe; */
+	padding-left: 40px;
+	height: 40px;
+	line-height: 40px;
+}
+.leftsidebar_box dd a {
+	color: #f5f5f5;
+	line-height: 40px;
+}
+.leftsidebar_box de img {
+	position: absolute;
+	right: 5px;
+	top: 22px;
+}
+.system_log de {
+	background-image: url(../images/left/system.png)
+}
+.custom de {
+	background-image: url(../images/left/custom.png)
+}
+.channel de {
+	background-image: url(../images/left/channel.png)
+}
+.app de {
+	background-image: url(../images/left/tingcheyuan.png)
+}
+.cloud de {
+	background-image: url(../images/left/cloud.png)
+}
+.syetem_management de {
+	background-image: url(../images/left/syetem_management.png)
+}
+.source de {
+	background-image: url(../images/left/source.png)
+}
+.statistics de {
+	background-image: url(../images/left/statistics.png)
+}
+.power de {
+	background-image: url(../images/left/power.png)
+}
+.general de {
+	background-image: url(../images/left/general.png)
+}
+.equipment de {
+	background-image: url(../images/left/equipment.png)
+}
+/*¶¥²¿*/
+.header {
+	width: 100%;
+	height: 80px;
+	left: 0px;
+	top: 0px;
+	background: #5ccdbe;
+	background: url(../images/car.png) no-repeat;
+	background-size: 100% 80px;
+	position: fixed;
+	z-index: 99999;
+}
+.logo {
+	width: 200px;
+	margin-left: 19px;
+	margin-top: 22px;
+	float: left;
+}
+.logo img {
+	width: 157px;
+	height: 40px;
+}
+.menu {
+	width: 65%;
+	height: 80px;
+	float: left;
+	overflow-x:hidden;
+}
+.menu ul {
+	margin: 0px;
+	padding: 0px;
+}
+.menu li {
+	float: left;
+	margin-right: 5px;
+}
+.menu a {
+	font-size: 14px;
+	color: #fff;
+	height: 80px;
+	line-height: 80px;
+	padding: 0px 10px 2px 10px;
+	transition: 1s;
+}
+.menu a:hover {
+	border-radius: 15px;
+	background: #179080;
+	padding: 0px 10px 2px 10px;
+}
+.topclasss{
+	border-radius: 15px;
+	background: #179080;
+	padding: 0px 10px 2px 10px;
+}
+.login {
+	float: right;
+	width: 165px;
+	overflow:hidden;
+}
+.admin {
+	float: left;
+	margin-right: 22px;
+	margin-top: 30px;
+	color: #FFF;
+}
+.admin a {
+	color: #FFF;
+	font-size: 14px;
+}
+.admin img {
+	width: 16px;
+	height: 14px;
+	margin-right: 5px;
+}
+.logout {
+	cursor: pointer;
+	color: #FFF;
+	margin-top: 30px;
+}
+.logout a {
+	color: #FFF;
+	font-size: 14px;
+}
+.logout img {
+	width: 14px;
+	height: 14px;
+	margin-left: 5px;
+}
+/*ÄÚÈÝ*/
+.main {
+	width: 86%;
+	float: right;
+	margin-right: 0%;
+}
+.main2 {
+	width: 98%;
+	float: right;
+	margin-right: 1%;
+	margin-top: 80px;
+}
+.cent dt {
+	background-image: url(../images/left/jiance.png)
+}
+.container {
+	width: 100%;
+	height: 100%;
+	margin: auto;
+}
+/*¿ØÖÆÌ¨*/
+/*ÄÚÈÝ*/
+.qiehua {
+	float: left;
+	margin-left: 0px;
+}
+.qiehua a {
+	display:block;
+	height: 24px;
+    padding:5px line-height:24px;
+	color: #5ccdbe;
+	letter-spacing: 0.2em;
+	width: 60px;
+	text-align: center;
+	font-size: 16px;
+	float: left;
+	margin-left: 0px;
+	background: #fff;
+	border: #5ccdbe 1px solid;
+}
+.qiehua a:hover,.qiehua a.current{
+	height: 24px;
+    padding:5px line-height:24px;
+	color: #fff;
+	letter-spacing: 0.2em;
+	width: 60px;
+	text-align: center;
+	font-size: 16px;
+	float: left;
+	margin-left: 0px;
+	background: #5ccdbe;
+	border: #5ccdbe 1px solid;
+}
+.map {
+	width: 100%;
+	height:650px;
+	background: url(../images/map2.png) no-repeat;
+	background-size:100% 100%;
+}
+.out iframe {
+	width: 100%;
+	height: 700px;
+	float: right;
+	border: none;
+}
+/*¿ØÖÆÌ¨*/
+.search {
+	height: 40px;
+	margin: 10px 0px 10px 0px;
+	border-bottom: #5ccdbe solid 1px;
+}
+.search img {
+	height: 18px;
+	margin-bottom: -2px;
+	margin-right: 5px;
+}
+.search h4 {
+	font-size: 16px;
+	color: #666;
+	float: left;
+	height: 24px;
+	line-height: 24px;
+	margin-top: 5px;
+	font-weight: bold;
+}
+.search .kuan input {
+	width: 200px;
+	height: 28px;
+	background: #e1f8f5;
+	border: #5ccdbe solid 1px;
+	border-right: none;
+	float: right;
+}
+.search .kuan2 input {
+	width: 200px;
+	height: 24px;
+	background: #e1f8f5;
+	border: #5ccdbe solid 1px;
+	border-right: none;
+	float: right;
+}
+.search .an input {
+	width: 56px;
+	height: 28px;
+	background: url(../images/search.png) no-repeat center;
+	background-size: 56px 28px;
+	border: #5ccdbe solid 1px;
+	border-left: none;
+	float: right;
+	margin-right: 15px;
+}
+.nav {
+	width: 100%;
+	float: left;
+}
+.nav ul {
+	margin: 0px;
+	padding: 0px;
+}
+.nav ul li {
+	height: 100px;
+}
+.nav li img {
+	float: left;
+	margin-right: 20px;
+	height: auto;
+	width: auto;
+	width: 30%
+}
+.nav li span {
+	float: left;
+	color: #fff;
+	font-size: 30px;
+	width: 60%;
+}
+.nav li i {
+	float: left;
+	color: #fff;
+	font-size: 18px;
+	width: 60%;
+	font-style: normal;
+}
+.nav .li1 {
+	width: 23%;
+	height: 130px;
+	float: left;
+	margin: 1%;
+	background: #588ebd;
+	padding: 1.5%;
+	border-radius: 10px;
+}
+.nav .li2 {
+	width: 23%;
+	height: 130px;
+	float: left;
+	margin: 1%;
+	background: #e35b5b;
+	padding: 1.5%;
+	border-radius: 10px;
+}
+.nav .li3 {
+	width: 23%;
+	height: 130px;
+	float: left;
+	margin: 1%;
+	background: #44b6ae;
+	padding: 1.5%;
+	border-radius: 10px;
+}
+.nav .li4 {
+	width: 23%;
+	height: 130px;
+	float: left;
+	margin: 1%;
+	background: #2ec351;
+	padding: 1.5%;
+	border-radius: 10px;
+}
+.table {
+	width: 100%;
+	float: left;
+	margin-top: 10px;
+}
+.table ul {
+	margin: 0;
+	padding: 0px;
+}
+.table li {
+	width: 32.5%;
+	float: left;
+	margin: 0.4%;
+}
+.table li img {
+	width: 100%;
+}

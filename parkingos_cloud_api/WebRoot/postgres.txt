@@ -1,0 +1,462 @@
+20150108添加字段，com_info_tb
+isview integer DEFAULT 1, -- 是否在地图上显示 0不显示，1显示
+
+20150109添加字段，user_info_tb
+collector_pics integer DEFAULT 0, -- 收费员上传的图片个数
+collector_auditor bigint, -- 审核人员
+
+20150112
+添加字段collector_scroe_tb
+online_scroe numeric(5,2) DEFAULT 0, -- 在线积分，每10分钟积0.2分
+
+20150113
+添加字段com_info_tb
+remarks character varying, -- 备注
+
+20150119
+新增收费员账户图片，客服根据图片设置收费员账户信息
+CREATE TABLE collector_account_pic_tb
+
+新增礼包类型表
+CREATE TABLE bonus_type_tb
+
+
+20150119
+添加数据授权表dataauth_tb
+CREATE TABLE dataauth_tb
+
+20150120
+新增车主消息表
+CREATE TABLE user_message_tb
+新增车场消息表
+CREATE TABLE parkuser_message_tb
+
+20150122
+添加com_message_tb表字段
+ title character varying
+ 
+2015/1/26
+添加 用户支付账号表，记录用户支付宝或微信等支付账户
+CREATE TABLE user_payaccount_tb
+
+2015-01-29
+表register_anlysis_tb添加字段
+carnumber_count integer, -- 有车牌的注册用户
+
+2015-01-29
+添加表order_attach_tb
+
+2015-01-30
+添加视图ticket_view
+
+2015-01-30
+表com_worksite_tb添加字段net_type
+
+2015-02-02
+添加表consume_anlysis_tb
+
+2015-02-28
+表com_info_tb添加字段
+invalid_order bigint DEFAULT 0, -- 未结算的垃圾订单数量
+
+2015-03-02
+表com_info_tb添加字段
+fixed_pass_time bigint, -- 车场校验通过的时间
+
+2015-03-02
+表price_tb添加字段
+car_type integer DEFAULT 0, -- 0：通用，1：小车，2：大车
+
+表order_tb添加字段
+car_type integer DEFAULT 0, -- 0：通用，1：小车，2：大车
+
+2015-03-03
+表com_info_tb添加字段
+car_type integer DEFAULT 0, -- 是否区分大小车，0:不区分，1：区分
+
+
+2015-03-05
+表recommend_tb添加字段
+comid bigint DEFAULT (-1), -- 用户通过注册月卡会员注册车主时所在的车场id
+
+2015-03-16
+表user_info_tb添加字段
+imei character(100) ---手机串号
+client_type integer DEFAULT 0 ,--0:android ,1:ios
+新建表：order_ticket_tb,order_ticket_detail_tb,zld_black_tb
+
+2015-03-20
+表com_info_tb添加字段
+passfree integer DEFAULT 0, -- 是否允许免费结算订单，0：允许，1：不允许
+activity integer DEFAULT 0, -- 车场活动：0 没有活动 1申请活动 2:申请通过
+activity_content character varying, -- 活动内容
+
+2015-03-19
+表user_info_tb添加字段
+version character(20) ---客户端版本号
+表area_ibeacon_tb 添加字段(经纬度)
+lng numeric(10,6), lat numeric(10,6)
+
+2015-03-23
+添加表car_stops_tb
+
+2015-03-23
+表user_info_tb添加字段
+wxp_openid character varying, -- 微信公众号openid
+wxp_openid字段添加索引
+
+添加表car_stops_tb--泊车点表
+
+2015-03-24--yao
+添加表carstop_order_tb----泊车订单表
+
+
+2015-03-25--yao
+添加表user_pic_tb----用户头像表
+
+2015-03-31--wang
+添加表wxp_user_tb---微信公众号用户表
+
+2015-04-2--yao
+添加表carstops_price_tb----泊车点价格表
+
+2015-04-14--yao
+添加表park_ticket_tb---专用停车券表
+
+2015-04-23--yao
+添加表qr_code_tb --二维码管理表
+com_nfc_tb 添加字段：qrcode character varying ---二维码
+
+
+2015-04-24--yao
+com_info_tb 添加字段  upload_uin bigint, -- 上传人---车主
+
+
+2015-04-25--yao
+recommend_tb 添加字段 money numeric(8,2) DEFAULT 0, -- 推荐奖励金额  
+order_ticket_tb 添加字段 type integer DEFAULT 0, -- 类型 0普通券，1微信打折券
+
+
+2015-04-26--yao
+order_ticket_detail_tb 添加字段  btype integer DEFAULT 0, -- 红包类型 0普通红包，1微信红包
+
+
+2015-05-26--wang
+添加表shop_tb
+
+user_info_tb 添加字段shop_id bigint, -- 商户的id
+ticket_tb 添加字段shop_id-- 商户id
+qr_code_tb 添加字段ticketid bigint, -- 停车券id
+ticket_tb 添加字段bmoney numeric(8,2), -- 预支付返款后的实际作用金额
+
+alipay_log 添加字段 wxp_orderid character varying, -- 微信公众号订单号
+ticket_tb 添加字段wxp_orderid character varying, -- 微信公众号订单号=======
+order_ticket_detail_tb 添加字段  btype integer DEFAULT 0, -- 红包类型 0普通红包，1微信红包
+
+mongodb ticket_pics 字段ticketid还未加索引 
+
+20150610 --yao
+order_ticket_detail_tb 添加字段 ticketid bigint, -- 停车券编号
+user_info_Tb 添加字段:  wx_name character varying,微信名  wx_imgurl character varying, 微信头像地址
+  
+2015-06-16--yao
+添加表：parkuser_reward_tb 车主打赏收费员表
+     parkuser_comment_tb 评论收费员表
+
+2015-06-18--dai
+
+语句（comment on column carstop_order_tb.state is '状态:0车主泊车请求 1泊车员已响应泊车 2正在泊车  3泊车完成 4车主取车请求 5 泊车员已响应取车 6泊车员正在取车 7等待支付 8支付成功 9订单取消'）  
+
+com_info_tb增加字段：minprice_unit 默认值0     0（该收多少收多少）,0.5（收5毛 ）,1（收一块）
+
+2015-06-26--dai
+添加表：parkuser_work_record_tb
+
+2015-07-01-wang
+添加表：parkuser_cash_tb
+
+20150708 -yao
+添加表：zld_protocol_tb
+car_info_tb表添加字段：
+  pic_url1 character varying, -- 图片地地址1
+  pic_url2 character varying, -- 图片地地址2
+  is_comuse integer DEFAULT 0, -- 是否是常用车牌，0不是，1是
+  remark character varying, -- 说明
+  is_auth integer, -- 是否已认证 0没有，1已认证
+  
+20150714--yao
+car_info_tb 添加字段：
+  pic_url1 character varying, -- 图片地地址1
+  pic_url2 character varying, -- 图片地地址2
+  is_comuse integer DEFAULT 0, -- 是否是常用车牌，0不是，1是
+  remark character varying, -- 说明
+  is_auth integer DEFAULT 0, -- 是否已认证 0未认证，1已认证 2认证中
+  ctime bigint, -- 新建时间
+
+ 20150717-dai
+ com_info_tb 
+ 	添加字段 isshowepay integer DEFAULT 1, -- 收费员客户端是否显示直付订单 0：不显示,1：显示  默认显示
+ 			ishidehdbutton integer DEFAULT 0, -- 结算按钮（HD版）0显示  1不显示   默认0
+ carower_produc  
+ 	添加字段 name character varying, -- 会员名字
+  			address character varying, -- 会员地址
+20150721--yao
+user_info_tb 添加字段：  			
+   credit_limit numeric(10,2) DEFAULT 0, -- 信用额度
+   is_auth integer DEFAULT 0, -- 是否认证通过，0否，1是
+   
+20150722--yao
+order_ticket_tb type字段添加枚举值：3:车主认证1246专享红包（顺序发放）
+
+2015-07-24--wang
+添加表reward_account_tb
+表user_info_tb 添加字段reward_score
+表qr_code_tb 添加字段score
+
+20150730--yao
+com_account_tb 字段加类型  （对公） type integer DEFAULT 0, -- 0:公司，1个人 2对公
+withdrawer_tb  字段加类型   (对公提现)  wtype integer DEFAULT 0, -- 1个人提现，0公司提现  2对公提现
+
+添加表 20150820 --yao
+user_friend_tb
+user_liuyan_tb
+flygame_score_tb
+flygame_pool_tb
+advert_tb
+
+20150827 --yao
+表ticket_tb添加字段 resources integer DEFAULT 0, -- 来源 0停车宝，1购买
+
+is_back_money integer DEFAULT 0, -- 车主购买的停车券，未使用过期退款，0未退款，1已退款
+
+201509 --yao
+表user_info_tb添加字段：hx_name,hx_pass character varying 环信账户及密码
+表user_friend_tb 添加字段：is_add_hx integer default 0,--是否加入环信好友，0否，1是
+
+20150911 --dai
+添加表price_assist_tb
+
+20150916 --yao
+添加表 ticket_uion_tb 合体表
+    com_park_tb 车位表
+    dici_tb 地磁表
+    flygame_score_anlysis_tb  --打灰机游戏统计表，按天统计积分
+表user_friend_tb 添加字段：    
+	atype integer DEFAULT 0, -- 加入原因 0打灰机
+
+20151104 --yao
+添加表：user_preaddfriend_tb 环信准备加好友表
+
+20151104 --dai
+添加表：switch_line_tb 本地服务器切换到线上记录表
+填加表：sync_info_pool_tb  本地服务器模式车场线上更改信息记录表   （本地服务器根据它同步设置）
+添加表：local_info_tb   本地服务器信息表
+
+20151104 --dai
+表：order_tb  添加字段 need_sync 预支付订单需要同步到线下  0:不需要  1:需要  2同步完成   3本地切换到线上线上生成的需要
+
+20151116 --yao
+表 product_package_tb 添加字段：   
+  favourable_precent integer DEFAULT 100, -- 优惠百分比 100免费，其它按百分比计算
+  out_favourable_precent integer DEFAULT 0, -- 超过了时间段享受0%－100%的优惠幅度
+  free_minutes integer DEFAULT 0, -- 免费时长 单位：分钟
+  
+20151125 --yao  
+添加表 zld_organize_tb,car_type_tb,auth_role_tb,zld_orgtype_tb
+表auth_tb 添加字段：  
+sub_auth character varying, -- 子权限
+url character varying, -- 请求链接
+表：user_role_tb 添加字段
+  oid bigint DEFAULT 0, -- 组织编号---zld_organize_tb
+  resume character varying, -- 说明
+  type integer, -- 类型 0管理员
+  adminid bigint DEFAULT 0, -- 所属管理员
+表user_info_tb 添加字段
+ role_id bigint DEFAULT 0, -- 角色编号
+  
+=============接口表字段修改=================== 
+
+  
+20160303 --yao
+====修改表：
+com_info_tb 添加字段：
+ park_uuid character(50), -- 唯一编号
+ city_merchants_id bigint, -- 城市商户号	？？？？这个字段用cityid表示
+ company_id character(50) --运营公司号 		？？？？这个字段用groupid表示
+com_park_tb 车位表，添加字段
+  uuid character(50), -- 唯一编号		已同步
+  longitude numeric(10,6), -- 经度	已同步
+  latitude numeric(10,6), -- 纬度	已同步
+dici_tb 加字段：
+	cp_id bigint ,--com_park_tb id ,车位编号
+	operate_time bigint, -- 操作时间		已同步
+com_brake_tb,com_led_tb,com_camera_tb 添加字段：
+	comid bigint --所属车场		已同步
+user_info_tb 添加字段：
+ uuid character(50), -- 唯一编号
+ company_id bigint, -- 运营公司编号		？？？？？这个字段用groupid表示
+
+====添加表：
+com_hd_tb --设备表
+park_daypay_tb ---停车场每日收费汇报接口
+park_dayuse_tb ---3.3.11停车场每日停车量汇报接口
+com_etc_tb ---电子标签表
+company_tb表，运营公司表 
+org_city_merchants表，城市商户表 
+
+
+=======在海信服务器上的修改，上线前要到我先同步到我们的测试环境，再同步到线上服务器=========
+order_tb 表添加字段：
+  order_uuid character(36), -- 唯一编号
+  prepaid numeric(10,2), -- 预付金额
+  in_equipment character(20), -- 入场设备
+  car_intime bigint, -- 入场时间
+  prepaid_pay_time bigint, -- 支付时间
+  berthnumber character(10), -- 泊位号
+  chanid bigint, -- 合作方号
+  out_uid bigint, -- 出场收费员
+zld_black_tb 添加字段
+  car_number character(16), -- 车牌号		已同步
+  car_type integer, -- 车型
+  chanid bigint, -- 合作方号
+user_info_tb添加字段：
+  actno character varying, -- 市民卡号
+  certno character varying, -- 身份证卡号
+carower_product 添加字段：
+   etc_id character varying, -- 电子标签
+修改表com_info_tb
+parking_type 车位类型，0地面，1地下，2占道 3室外 4室内 5室内外	已同步
+ 
+====添加表： 
+ work_group_tb 工作组表
+ com_parkuser_check 收费员上下岗表
+ busstat_info_tb 
+ com_pos_tb POS机管理		已同步
+ com_alert_tb 报警管理		已同步
+ city_hotarea_tb 城市热点区域管理	已同步
+ com_parkstatus_tb 车场实时状态表
+ city_bike_tb 自行站点表
+ city_peakalert_tb 城市高峰预警	已同步
+ dictionary_type_tb 数据字典表
+ dictionary_content_tb 数据字典内容表
+ 
+ 
+ 20160418 --yao
+com_info_tb 添加字段：
+ 	empty integer 空闲车位数
+dici_tb 添加字段：
+    battery numeric(5,1), -- 电池电压
+    magnetism numeric(5,1), -- 电容电压
+    beart_time bigint, -- 心跳时间
+parkuser_work_record_tb 添加字段：  
+    berthsec_id bigint, -- 泊位段
+    device_code character varying, -- 设备编号
+    chanid bigint, -- 合作方号
+    uuid character varying, -- 唯一编号
+    state integer, -- 0已签到  1已签退
+    history_money numeric(10,2), -- 上岗时，泊位段上的已预收金额
+    out_log character varying, -- 签退小票内容
+ mobile_tb 添加字段
+    device_code character(1), -- 设备编号
+    device_auth integer, -- 设备是否认证 0未认证 1已认证
+    auth_user bigint, -- 认证人
+    auth_time bigint, -- 认证时间
+ user_session_tb 添加字段
+    groupid bigint, -- 集团编号
+ order_tb 添加字段
+  groupid bigint, -- 所属集团编号
+  berthesc_id bigint, -- 泊位段编号
+work_berthsec_tb 添加字段：
+  is_delete integer DEFAULT 0, -- 0 正常 1 已删除 
+
+ 添加 表
+ berth_order_tb 地磁订单表
+ work_detail_tb 工作详情 表
+ 
+ 
+ 20160427 --laoyao
+ com_park_tb 添加字段，
+   is_delete integer DEFAULT 0, -- 0正常，1已删除
+ 
+--wang 2016-05-06
+添加表remain_berth_tb
+表induce_tb添加字段is_delete integer DEFAULT 0, -- 0：正常 1：删除
+表induce_tb设置枚举值state integer DEFAULT 0, -- 状态 0：正常 1：故障
+表induce_tb添加字段did character varying, -- 硬件唯一编号
+表induce_tb添加字段total integer DEFAULT 0, -- 泊位总数
+
+表induce_ad_tb添加字段updator_id bigint DEFAULT (-1), -- 操作人编号
+
+--wang 2016-08-11
+添加表card_account_tb
+表com_nfc_tb添加字段card_name character varying, -- 卡片名称
+  device character varying, -- 开卡设备
+  is_delete integer DEFAULT 0, -- 0：正常 1：已删除
+  balance numeric(10,2) DEFAULT 0, -- 卡片余额
+  card_number character varying, -- 卡面号（印在卡面上的编号）
+  tenant_id bigint DEFAULT (-1), -- 城市商户编号
+  group_id bigint DEFAULT (-1), -- 运营集团编号
+      更改字段：state bigint DEFAULT 0, -- 0激活，1锁定，2退卡
+  
+ 添加表sub_account_tb
+ 
+ 表parkuser_cash_tb添加枚举值target integer DEFAULT 0, --  5：卡片充值
+ type integer DEFAULT 0, --  2：卡片充值
+ 添加字段card_account_id bigint DEFAULT (-1), -- 卡片充值流水编号
+ 
+ --wang 2016-10-10
+   表parkuser_cash_tb添加字段：
+ comid bigint DEFAULT (-1), -- 产生这笔流水所在的车场编号(索引)
+ berthseg_id bigint DEFAULT (-1), -- 产生这笔流水所在的泊位段编号(索引)
+ berth_id bigint, -- 产生这笔流水所在的泊位编号(索引)
+ groupid bigint DEFAULT (-1), -- 运营集团账号(索引)
+ is_delete integer DEFAULT 0, -- 账目流水状态 0：正常 1：删除
+ 
+  表no_payment_tb添加字段：
+  pursue_comid bigint DEFAULT (-1), -- 追缴订单的车场
+  pursue_berthseg_id bigint DEFAULT (-1), -- 追缴订单所在的泊位段编号
+  pursue_berth_id bigint DEFAULT (-1), -- 追缴订单所在的泊位编号
+  pursue_groupid bigint DEFAULT (-1), -- 追缴收费员所在的运营集团账号
+  berthseg_id bigint DEFAULT (-1), -- 逃单所在泊位段编号(索引)
+  berth_id bigint DEFAULT (-1), -- 逃单所在泊位编号(索引)
+  is_delete integer DEFAULT 0, -- 账目流水状态 0：正常 1：删除
+  groupid bigint DEFAULT (-1), -- 逃单所在的运营集团(索引)
+  prepay numeric(10,2) DEFAULT 0, -- 逃单已预付的金额
+  
+  表parkuser_account_tb添加字段：
+ comid bigint DEFAULT (-1), -- 产生这笔流水所在的车场编号(索引)
+ berthseg_id bigint DEFAULT (-1), -- 产生这笔流水所在的泊位段编号(索引)
+ berth_id bigint, -- 产生这笔流水所在的泊位编号(索引)
+ is_delete integer DEFAULT 0, -- 账目流水状态 0：正常 1：删除
+  groupid bigint DEFAULT (-1), -- 运营集团账号(索引)
+ 
+   表park_account_tb添加字段：
+ berthseg_id bigint DEFAULT (-1), -- 产生这笔流水所在的泊位段编号(索引)
+ berth_id bigint, -- 产生这笔流水所在的泊位编号(索引)
+ is_delete integer DEFAULT 0, -- 账目流水状态 0：正常 1：删除
+ groupid bigint DEFAULT (-1), -- 运营集团账号(索引)
+ 
+    表group_account_tb添加字段：
+ berthseg_id bigint DEFAULT (-1), -- 产生这笔流水所在的泊位段编号(索引)
+ berth_id bigint, -- 产生这笔流水所在的泊位编号(索引)
+ is_delete integer DEFAULT 0, -- 账目流水状态 0：正常 1：删除
+ 
+ 
+     表city_account_tb添加字段：
+ berthseg_id bigint DEFAULT (-1), -- 产生这笔流水所在的泊位段编号(索引)
+ berth_id bigint, -- 产生这笔流水所在的泊位编号(索引)
+ is_delete integer DEFAULT 0, -- 账目流水状态 0：正常 1：删除
+  groupid bigint DEFAULT (-1), -- 运营集团账号(索引)
+ 
+   表card_account_tb添加字段：
+ comid bigint DEFAULT (-1), -- 产生这笔流水所在的车场编号(索引)
+ berthseg_id bigint DEFAULT (-1), -- 产生这笔流水所在的泊位段编号(索引)
+ berth_id bigint, -- 产生这笔流水所在的泊位编号(索引)
+ is_delete integer DEFAULT 0, -- 账目流水状态 0：正常 1：删除
+ groupid bigint DEFAULT (-1), -- 运营集团账号(索引)
+ 
+ 表berth_order_tb添加字段：
+ berthseg_id bigint DEFAULT (-1), -- 产生这笔流水所在的泊位段编号(索引)
+ groupid bigint DEFAULT (-1), -- 运营集团账号(索引)
+ is_delete integer DEFAULT 0, -- 状态 0：正常 1：删除
+ 

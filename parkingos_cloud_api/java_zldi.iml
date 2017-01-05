@@ -1,0 +1,929 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="web" name="Web">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/WebRoot/WEB-INF/web.xml" />
+        </descriptors>
+        <webroots>
+          <root url="file://$MODULE_DIR$/WebRoot" relative="/" />
+        </webroots>
+      </configuration>
+    </facet>
+    <facet type="JRebel" name="JRebel">
+      <configuration>
+        <option name="autosync" value="false" />
+        <option name="deleteUnindexed" value="true" />
+        <option name="manualXML" value="false" />
+        <option name="masterModuleName" />
+        <option name="remotingEnabled" value="false" />
+        <option name="scanAllFiles" value="false" />
+        <option name="secure" value="true" />
+        <option name="url" />
+        <option name="xmlDir" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/WebRoot/WEB-INF/classes" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="antlr.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/antlr.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="aopalliance.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/aopalliance.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="asm-3.3.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/asm-3.3.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="asm-commons-2.2.3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/asm-commons-2.2.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="asm-util-2.2.3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/asm-util-2.2.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="aspectjlib.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/aspectjlib.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="aspectjrt.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/aspectjrt.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="aspectjweaver.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/aspectjweaver.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="bcprov-jdk16-145.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/bcprov-jdk16-145.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="c3p0-0.9.1.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/c3p0-0.9.1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="cglib-nodep-2.1_3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/cglib-nodep-2.1_3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="classes12.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/classes12.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-attributes-api.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-attributes-api.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-attributes-compiler.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-attributes-compiler.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-beanutils.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-beanutils.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-codec-1.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-codec-1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-codec.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-codec.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-collections-3.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-collections-3.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-dbcp.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-dbcp.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-digester.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-digester.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-fileupload-1.2.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-fileupload-1.2.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-fileupload.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-fileupload.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-httpclient-3.0.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-httpclient-3.0.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-httpclient.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-httpclient.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-io.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-io.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-jxpath-1.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-jxpath-1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-lang.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-lang.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-lang3-3.3.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-lang3-3.3.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-logging-1.0.3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-logging-1.0.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-logging.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-logging.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-net-2.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-net-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-pool.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-pool.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-validator.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/commons-validator.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="dom4j-1.6.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/dom4j-1.6.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="dom4j-full.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/dom4j-full.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ezmorph-1.0.6.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/ezmorph-1.0.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="freemarker.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/freemarker.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="gexin-rp-sdk-base-2.0.0.18.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/gexin-rp-sdk-base-2.0.0.18.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="gexin-rp-sdk-http-3.0.0.7.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/gexin-rp-sdk-http-3.0.0.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="gexin-rp-sdk-template-2.0.0.7.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/gexin-rp-sdk-template-2.0.0.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="gson-2.2.4.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/gson-2.2.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="httpclient-4.3.3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/httpclient-4.3.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="httpcore-4.3.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/httpcore-4.3.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="httpmime-4.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/httpmime-4.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ibatis-2.3.4.726.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/ibatis-2.3.4.726.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="iText-2.1.3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/iText-2.1.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jackson-all-1.8.5.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jackson-all-1.8.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jackson-annotations-2.3.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jackson-annotations-2.3.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jackson-core-2.3.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jackson-core-2.3.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jackson-databind-2.3.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jackson-databind-2.3.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jakarta-oro.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jakarta-oro.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jasperreports-2.0.5.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jasperreports-2.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="javapns-jdk16-163.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/javapns-jdk16-163.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jdom.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jdom.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jersey-client-1.1.5.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jersey-client-1.1.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jersey-core-1.1.5.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jersey-core-1.1.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jersey-json-1.1.5.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jersey-json-1.1.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jersey-server-1.1.5.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jersey-server-1.1.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jotm.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jotm.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jsf-api.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jsf-api.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jsf-impl.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jsf-impl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="json-lib-2.3-jdk15.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/json-lib-2.3-jdk15.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jsr311-api-1.1.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jsr311-api-1.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jstl-1.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jstl-1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jxl.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/jxl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="log4j-1.2.15.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/log4j-1.2.15.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="mongo-2.10.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/mongo-2.10.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="org.json.JsonObject.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/org.json.JsonObject.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="persistence.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/persistence.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="poi-3.9-20121203.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/poi-3.9-20121203.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="poi-ooxml-3.9-20121203.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/poi-ooxml-3.9-20121203.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="portlet-api.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/portlet-api.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="postgresql-9.2-1003.jdbc3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/postgresql-9.2-1003.jdbc3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="protobuf-java-2.5.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/protobuf-java-2.5.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="proxool-0.9.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/proxool-0.9.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="proxool-cglib.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/proxool-cglib.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="slf4j-api-1.5.6.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/slf4j-api-1.5.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="slf4j-log4j12-1.5.6.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/slf4j-log4j12-1.5.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-agent.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-agent.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-aop.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-aop.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-aspects.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-aspects.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-beans.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-beans.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-context.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-context.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-core.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-core.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-jdbc.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-jdbc.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-orm.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-orm.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-tomcat-weaver.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-tomcat-weaver.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-tx.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-tx.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-web.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-web.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-webmvc-portlet.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-webmvc-portlet.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-webmvc-struts.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-webmvc-struts.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-webmvc.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/spring-webmvc.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="struts.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/struts.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="velocity-1.5.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/velocity-1.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="velocity-tools-view-1.4.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/velocity-tools-view-1.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xapool.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/xapool.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xmemcached-1.3.8.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/xmemcached-1.3.8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xstream-1.3.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/xstream-1.3.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="poi-3.0.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../java_tcbcloud/WebRoot/WEB-INF/lib/poi-3.0.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Tomcat 7.0.42" level="application_server_libraries" />
+  </component>
+</module>

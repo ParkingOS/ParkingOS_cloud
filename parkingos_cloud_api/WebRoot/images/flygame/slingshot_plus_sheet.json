@@ -1,0 +1,8 @@
+{
+  "framerate":10,
+  "images":["images/flygame/slingshot_plus.png"],
+  "frames":{"width":329,"height":228,"count":1},
+  "animations":{
+    "normal":[0]
+  }
+}
