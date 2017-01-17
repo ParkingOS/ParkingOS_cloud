@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="88dp"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@id/iv_friend_head"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:padding="5dp"
+        android:src="@drawable/ic_chat_head_default" />
+
+    <TextView
+        android:id="@+id/tv_friend_unread"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/iv_friend_head"
+        android:layout_alignTop="@id/iv_friend_head"
+        android:background="@drawable/bg_chat_unread_count"
+        android:gravity="center"
+        android:text="2"
+        android:textColor="#ffffff"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/btn_arrow_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:background="@null"
+        android:src="@drawable/ic_arrow_gray" />
+
+    <TextView
+        android:id="@+id/tv_friend_plate"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/iv_friend_head"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/iv_friend_head"
+        android:text="车牌号未知"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_friend_reason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/iv_friend_head"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/iv_friend_head"
+        android:drawableLeft="@drawable/ic_merge_link"
+        android:drawablePadding="5dp"
+        android:text="打中飞机dddddddd" />
+
+    <TextView
+        android:id="@+id/tv_friend_wx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/tv_friend_plate"
+        android:drawableLeft="@drawable/ic_wechat"
+        android:drawablePadding="5dp"
+        android:maxWidth="150dp"
+        android:singleLine="true"
+        android:text="wmnk0022ssssssssss" />
+
+</RelativeLayout>

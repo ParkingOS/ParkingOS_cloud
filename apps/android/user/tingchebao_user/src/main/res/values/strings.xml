@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="app_name">停车宝</string>
+    <!-- string for clare -->
+    <string name="search_hint">您想去哪儿？</string>
+    <string name="TermsOfUseAndPrivacyPolicy"><u>使用条款和隐私政策</u></string>
+    <string name="monthlypay_childview_number">(剩余：%s)</string>
+    <string name="monthlypay_childview_price0">(原价%s元)</string>
+    <string name="monthlypay_groupview_distance">%s km</string>
+    <string name="monthlypay_detail_reserved">车位固定，专用车位，一人独享。</string>
+    <string name="monthlypay_detail_unreserved">车位不固定，但能保证包月用户到现场有车位可停！</string>
+    <string name="monthlypay_detail_limitday">%s之前</string>
+    <string name="coupon_money">%d元</string>
+    <string name="coupon_restday">剩%d日到期</string>
+    <string name="coupon_limitday">%1$s\n至\n%2$s</string>
+    <string name="already_use">已使用</string>
+    <string name="already_expired">已过期</string>
+    <string name="load_more">点击加载更多</string>
+    <string name="loading">正在加载&#8230;</string>
+    <string name="no_more_data">已经没有更多数据了</string>
+    <string name="map_ugc"><u>我要上传</u></string>
+    <string name="map_ugc_close"><u>关闭</u></string>
+    <!-- 客服电话 -->
+    <string name="serviceTel">010&#8211;56450585</string>
+
+    <!-- 网络连接错误信息 -->
+    <string name="err_msg_no_connection">无网络连接，点击重试！</string>
+    <string name="err_msg_network_error">网络错误，点击重试！</string>
+    <string name="err_msg_server_error">服务器出错了~</string>
+    <string name="err_msg_parse_error">数据格式错误！</string>
+    <string name="err_msg_timeout">网络超时，点击重试！</string>
+    <string name="err_msg_auth_failure">认证错误！</string>
+
+    <!-- zbar二维码 -->
+    <string name="scan_tips">请扫描停车宝新版停车卡\n或车场端主页二维码付车费</string>
+
+    <string name="label_remark">停车位置</string>
+
+    <string-array name="action_list">
+        <item>可支付车场</item>
+        <item>全部车场</item>
+    </string-array>
+    <string name="title_activity_choose_location">ChooseLocationActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_input_text">InputTextActivity</string>
+    <string name="title_activity_walking_navi">WalkingNaviActivity</string>
+
+    <string name="title_activity_wxentry">WXEntryActivity</string>
+    <string name="login_with_wx"><u>使用微信登录</u></string>
+    <string name="login_with_sms"><u>收不到验证码？点此直接登录～</u></string>
+
+</resources>

@@ -1,0 +1,186 @@
+apply plugin: 'com.android.application'
+
+def releaseTime() {
+//    return new Date().format("yyyy_MM_dd_HH_mm")
+
+    return "xl"
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('./tingchebao_user/gradle.properties').newDataInputStream())
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "23.0.1"
+
+    applicationVariants.all { variant ->
+        def name = variant.name;
+        if (name.endsWith("Release")
+                || name.endsWith("Alpha")
+        ) {
+            println "${variant.name} ======== rr"
+            variant.outputs.each { output ->
+                output.outputFile = new File(
+                        output.outputFile.parent,
+                        output.outputFile.name.replace(".apk", "_v${variant.versionName}_${releaseTime()}.apk"))
+            }
+        } else if(name.endsWith("Debug")){
+            println "${variant.name} ======== dd"
+
+//                    def task = project.tasks.create("publish${variant.name}Apk", Copy)
+//                    def outputFile;
+//                    variant.outputs.each{output ->
+//                        outputFile = output.outputFile;
+//                    }
+//                    task.from(outputFile)
+//                    task.into("e://tcb/");
+//                    task.dependsOn variant.assemble
+        }
+
+    }
+
+    defaultConfig {
+        applicationId "com.tq.zld"
+        minSdkVersion 15
+        targetSdkVersion 22
+        versionName '2.4.1'
+        versionCode 2410
+        //突破65k限制
+        multiDexEnabled true
+
+        // 默认是站点的渠道
+        try {
+            manifestPlaceholders = [BAIDU_API_VALUE: properties.getProperty("BaiduApiKeyRelease")]
+        } catch (e) {
+            throw new InvalidUserDataException("You should define BaiduApiKeyRelease and BaiduApiKeyDebug in gradle.properties.")
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    signingConfigs {
+        release {
+            try {
+                storeFile file("./tingchebao.keystore")
+                storePassword properties.getProperty("KEYSTORE_PASSWORD")
+                keyAlias "停车宝"
+                keyPassword properties.getProperty("KEY_PASSWORD")
+            }
+            catch (ex) {
+                throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
+            }
+        }
+    }
+
+    buildTypes {
+        //开发版
+        debug {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "debug", EASEMOB_APPKEY:"zld2015#imtest"]
+            //X5内核的appKey跟包名+keystore有关如果使用debug.keystore讲无法使用x5内核
+            signingConfig signingConfigs.release
+            // 显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            //环信即时通信接入
+            buildConfigField "boolean", "IM_DEBUG", "true"
+
+            versionNameSuffix "_debug"
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            debuggable true
+        }
+        //内部测试
+        alpha {
+
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "alpha", EASEMOB_APPKEY:"zld2015#imtest"]
+
+            // 显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            //环信即时通信接入
+            buildConfigField "boolean", "IM_DEBUG", "true"
+
+            signingConfig signingConfigs.release
+            versionNameSuffix "_alpha"
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            debuggable true
+        }
+        //公开测试
+        beta {
+
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "beta"]
+
+            // 不显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            versionNameSuffix "_beta"
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        //正式
+        release {
+            manifestPlaceholders = [EASEMOB_APPKEY: "zld2015#tcpim"]
+            // 不显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            //环信即时通信接入
+            buildConfigField "boolean", "IM_DEBUG", "true"
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // 这个是解决lint报错的代码
+    lintOptions {
+        abortOnError false
+        // 防止在发布的时候出现因MissingTranslation导致Build Failed!
+        disable 'MissingTranslation'
+    }
+
+    // 友盟多渠道打包
+    productFlavors {
+        Baidu {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+        }
+        _360Soft {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "360Soft"]
+        }
+        Website {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+        }
+        Xiaomi {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+        }
+        Tencent {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+        }
+        Wandoujia {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+        }
+        Huawei {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.google.zxing:core:3.2.1'
+    compile 'com.android.support:support-v4:22.2.1'
+    compile 'com.google.code.gson:gson:2.3'
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:cardview-v7:22.2.1'
+    compile 'com.github.rey5137:material:1.1.0'
+    compile 'com.soundcloud.android:android-crop:1.0.0@aar'
+    compile 'com.android.support:multidex:1.0.0'
+}

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="88dp"
+    android:background="@color/text_white"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@id/image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_chat_head_default" />
+
+    <TextView
+        android:id="@+id/tv_friend_unread"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/image"
+        android:layout_alignTop="@id/image"
+        android:background="@drawable/bg_chat_unread_count"
+        android:gravity="center"
+        android:text="2"
+        android:textColor="#ffffff"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@id/text"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/image"
+        android:text="车牌号未知"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <com.rey.material.widget.Button
+        android:id="@id/button"
+        style="@style/SolidButton.Selector"
+        android:layout_width="88dp"
+        android:layout_height="38dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="加为好友"
+        android:textSize="14sp"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+
+</RelativeLayout>

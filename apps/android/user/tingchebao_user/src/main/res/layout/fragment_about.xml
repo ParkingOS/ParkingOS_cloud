@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_about_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawablePadding="10dp"
+        android:drawableTop="@mipmap/ic_launcher"
+        android:gravity="center"
+        android:padding="40dp"
+        android:text="版本号" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#c9c9c9" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape_gray_stroke"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_about_help"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_arrow_gray"
+            android:padding="10dp"
+            android:text="常见问题" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#c9c9c9" />
+
+        <TextView
+            android:id="@+id/tv_about_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_arrow_gray"
+            android:padding="10dp"
+            android:text="意见反馈"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#c9c9c9"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_about_checkupdate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_arrow_gray"
+            android:padding="10dp"
+            android:text="检查更新" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_horizontal|bottom"
+        android:paddingBottom="20dp"
+        android:text="Copyright © 2014-2015 tingchebao.com\n真来电（北京）科技有限公司"
+        android:textColor="@color/bg_gray" />
+
+</LinearLayout>

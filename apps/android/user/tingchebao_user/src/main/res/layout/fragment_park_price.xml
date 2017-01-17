@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include layout="@layout/widget_toolbar" />
+
+    <LinearLayout
+        android:id="@+id/ll_park_price_day"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/bg_gray"
+        android:columnCount="3"
+        android:orientation="vertical"
+        android:padding="0.25dp"
+        android:rowCount="4" >
+
+        <TextView
+            android:id="@+id/tv_park_price_daytime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:background="@color/bg_lightgreen"
+            android:drawableLeft="@drawable/ic_price_day"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:text="日间（07:00-21:00）"
+            android:textColor="#FFFFFF" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/tv_park_price_dayfirsttime"
+                style="@style/ParkDetailGridLayoutCell"
+                android:layout_weight="1"
+                android:ems="4"
+                android:text="首小时内" />
+
+            <TextView
+                android:id="@+id/tv_park_price_daydefaulttime"
+                style="@style/ParkDetailGridLayoutCell"
+                android:layout_weight="1"
+                android:ems="4"
+                android:text="首小时外" />
+
+            <TextView
+                style="@style/ParkDetailGridLayoutCell"
+                android:layout_weight="1"
+                android:ems="4"
+                android:text="计价单位" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/tv_park_price_dayfirstprice"
+                style="@style/ParkDetailGridLayoutCell"
+                android:layout_weight="1"
+                android:ems="4"
+                android:text="7" />
+
+            <TextView
+                android:id="@+id/tv_park_price_dayprice"
+                style="@style/ParkDetailGridLayoutCell"
+                android:layout_weight="1"
+                android:ems="4"
+                android:text="9" />
+
+            <TextView
+                android:id="@+id/tv_park_price_dayunit"
+                style="@style/ParkDetailGridLayoutCell"
+                android:layout_weight="1"
+                android:ems="4"
+                android:text="元/小时" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_park_price_day_tips"
+            style="@style/ParkDetailGridLayoutCell"
+            android:layout_width="match_parent"
+            android:background="@android:color/white"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="20dp"
+            android:text="备注：15分钟内免费\n\t\t\t\t超过15分钟，则这15分钟也计费"
+            android:textColor="#000000" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/ll_park_price_night"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_park_price_day"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="40dp"
+        android:background="@color/bg_gray"
+        android:orientation="vertical"
+        android:padding="0.25dp" >
+
+        <TextView
+            android:id="@+id/tv_park_price_nighttime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:background="@color/bg_orange"
+            android:drawableLeft="@drawable/ic_price_night"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:text="夜间（21:00—7:00）"
+            android:textColor="#000000" />
+
+        <LinearLayout
+            android:id="@+id/ll_park_price_2ndrow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_park_price_nighttime"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/tv_park_price_nightfirsttime"
+                style="@style/ParkDetailGridLayoutCell"
+                android:layout_weight="1"
+                android:ems="4"
+                android:text="首小时内" />
+
+            <TextView
+                android:id="@+id/tv_park_price_nightdefaulttime"
+                style="@style/ParkDetailGridLayoutCell"
+                android:layout_weight="1"
+                android:ems="4"
+                android:text="首小时外" />
+
+            <TextView
+                style="@style/ParkDetailGridLayoutCell"
+                android:layout_weight="1"
+                android:ems="4"
+                android:text="计价单位" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_park_price_3rdrow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ll_park_price_2ndrow"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/tv_park_price_nightfirstprice"
+                style="@style/ParkDetailGridLayoutCell"
+                android:layout_weight="1"
+                android:ems="4"
+                android:text="7" />
+
+            <TextView
+                android:id="@+id/tv_park_price_nightprice"
+                style="@style/ParkDetailGridLayoutCell"
+                android:layout_weight="1"
+                android:ems="4"
+                android:text="9" />
+
+            <TextView
+                android:id="@+id/tv_park_price_nightunit"
+                style="@style/ParkDetailGridLayoutCell"
+                android:layout_weight="1"
+                android:ems="4"
+                android:text="元/小时" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_park_price_night_tips"
+            style="@style/ParkDetailGridLayoutCell"
+            android:layout_width="match_parent"
+            android:layout_below="@id/ll_park_price_3rdrow"
+            android:background="@android:color/white"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="20dp"
+            android:text="备注：15分钟内免费\n\t\t\t\t超过15分钟，则这15分钟也计费"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/tv_park_price_nightdisabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/tv_park_price_night_tips"
+            android:layout_below="@id/tv_park_price_nighttime"
+            android:background="#ef3c3c3c"
+            android:drawableLeft="@drawable/ic_price_night_disabled"
+            android:drawablePadding="-15dp"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:text="不支持停车"
+            android:textColor="#FF0000"
+            android:textSize="45sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/page_null" />
+
+</LinearLayout>

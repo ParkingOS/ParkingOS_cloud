@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--服务器地址-->
+    <string name="url_release">http://s.tingchebao.com/zld/</string>
+    <string name="url_local">http://192.168.199.240/zld/</string>
+    <string name="url_zld_local">http://192.168.199.251/zldlocal/</string>
+    <string name="url_zld_line">http://192.168.199.251/zldline/</string>
+    <string name="url_beta">http://180.150.188.224:8080/zld/</string>
+
+    <!-- 停车券帮助页面地址-->
+    <string name="url_coupon_help">http://mp.weixin.qq.com/s?__biz=MzA4MTAxMzA2Mg==&amp;mid=208427587&amp;idx=1&amp;sn=6cec3794e585e4d31b5079f919b01614#rd</string>
+    <!-- 信用额度帮助页面地址-->
+    <string name="url_credit_help">http://mp.weixin.qq.com/s?__biz=MzA4MTAxMzA2Mg==&amp;mid=208427120&amp;idx=1&amp;sn=6cb6719bf1520ef5a72097fe5c7fe56a#rd</string>
+    <!-- 充值帮助页面地址-->
+    <string name="url_recharge_help">http://mp.weixin.qq.com/s?__biz=MzA4MTAxMzA2Mg==&amp;mid=209376960&amp;idx=1&amp;sn=369c4bea18d70d656c4f3e30b86cc843#rd</string>
+    <!-- 合并停车券说明 -->
+    <string name="url_merge_help">http://mp.weixin.qq.com/s?__biz=MzA4MTAxMzA2Mg==&amp;mid=209338628&amp;idx=1&amp;sn=d40db1b84727c85eb6e557113ec44cb1#rd</string>
+</resources>

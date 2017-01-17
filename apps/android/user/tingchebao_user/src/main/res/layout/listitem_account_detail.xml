@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white" >
+
+    <View
+        android:id="@+id/operating_divider"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:background="@color/bg_background" />
+
+    <TextView
+        android:id="@+id/tv_operating_subject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/operating_divider"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_toLeftOf="@+id/tv_operating_money"
+        android:layout_toStartOf="@+id/tv_operating_money"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:scrollHorizontally="true"
+        android:scrollbars="horizontal"
+        android:singleLine="true"
+        android:text="全天包月-中关村停车场"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_operating_money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tv_operating_subject"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:text="-0000.00"
+        android:textColor="#ff0000"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_operating_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_operating_subject"
+        android:layout_alignStart="@+id/tv_operating_subject"
+        android:layout_below="@id/tv_operating_subject"
+        android:paddingBottom="5dp"
+        android:text="08-10 19:15:43"
+        android:textColor="@color/text_gray"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_operating_paytype"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/tv_operating_date"
+        android:layout_alignEnd="@+id/tv_operating_money"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignRight="@+id/tv_operating_money"
+        android:layout_below="@id/tv_operating_subject"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:text="余额支付"
+        android:textColor="@color/text_gray"
+        android:textSize="14sp" />
+
+</RelativeLayout>

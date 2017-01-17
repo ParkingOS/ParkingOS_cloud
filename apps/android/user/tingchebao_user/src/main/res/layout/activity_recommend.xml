@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_recommend_2"
+        android:layout_alignParentTop="true" >
+
+        <TextView
+            android:id="@+id/tv_recommend_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/iv_recommend_qrcode"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="身边没有收费员？去推荐！\n奖励您30元"
+            android:textSize="20sp" />
+
+        <ImageView
+            android:id="@+id/iv_recommend_qrcode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_recommend_qrcode"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="让收费员扫一扫注册"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_recommend_sms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@color/bg_green"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="短信推荐"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_recommend_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_recommend_sms"
+        android:layout_alignLeft="@+id/tv_recommend_sms"
+        android:text="收费员不在身边？"
+        android:textSize="14sp" />
+
+</RelativeLayout>

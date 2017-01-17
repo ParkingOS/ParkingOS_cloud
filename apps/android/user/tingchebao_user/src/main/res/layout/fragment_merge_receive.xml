@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_merge_receive"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/tv_merge_from_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="5dp"
+            android:text="来自车主京N1***01的停车券，等待合体..."
+            android:textColor="@color/text_green"
+            android:textSize="10sp" />
+
+        <ImageView
+            android:id="@+id/iv_merge_from_head"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/ic_chat_head_default" />
+
+        <TextView
+            android:id="@+id/tv_merge_from_nick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/iv_merge_from_head"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/iv_merge_from_head"
+            android:drawableLeft="@drawable/ic_wechat"
+            android:drawablePadding="5dp"
+            android:text="wmnk0022"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="10dp"
+            android:text="\?元"
+            android:textColor="@color/text_green"
+            android:textSize="34sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_merge_select"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/bg_merge_receive"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="5dp"
+            android:text="选择你想合体的停车券"
+            android:textColor="@color/text_green"
+            android:textSize="10sp" />
+
+        <ImageButton
+            android:id="@+id/btn_select_ticket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:background="@null"
+            android:src="@drawable/btn_merge_add" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_merge_ticket"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/bg_merge_receive"
+        android:padding="5dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="5dp"
+            android:text="我的停车券"
+            android:textColor="@color/text_green"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/tv_merge_ticket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="12dp"
+            android:text="3元停车券"
+            android:textColor="@color/text_green"
+            android:textSize="28sp" />
+
+        <ImageView
+            android:id="@+id/iv_merge_isbuy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_ticket_buyed"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_merge_rule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:drawableRight="@drawable/ic_action_help"
+        android:gravity="center"
+        android:text="合体规则说明" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/tv_merge_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:text="停车券金额为一奇一偶时才能合体成功"
+        android:textColor="@color/text_gray"
+        android:layout_marginBottom="10dp"
+        />
+
+    <com.rey.material.widget.Button
+        android:id="@+id/btn_begin_merge"
+        style="@style/SolidButton.Selector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:enabled="false"
+        android:text="开始合体"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+</LinearLayout>

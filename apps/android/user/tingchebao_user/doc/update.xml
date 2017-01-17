@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content>
+    <version>v2.1.10</version>
+    <force>1</force>
+    <remind>1</remind>
+    <md5>129d778fda92430771799ea8844196f0</md5>
+    <versionCode>2110</versionCode>
+    <versionName>v2.1.1</versionName>
+    <description>()新增：没有订单也可以记录停车位置了。</description>
+    <apkurl>http://d.tingchebao.com/downfiles/tingchebao.apk</apkurl>
+</content>

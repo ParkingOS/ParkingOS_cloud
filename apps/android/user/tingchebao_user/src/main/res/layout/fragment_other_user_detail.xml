@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#f0f0f0"
+    >
+
+    <RelativeLayout
+        android:background="#ffffff"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@id/iv_friend_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="5dp"
+            android:src="@drawable/ic_share_sms" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@id/iv_friend_head"
+            android:layout_alignTop="@id/iv_friend_head"
+            android:background="@drawable/bg_listitem_unread_count"
+            android:text="2"
+            android:textColor="#ffffff"
+            android:textSize="12sp" />
+
+        <ImageButton
+            android:id="@+id/btn_arrow_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@null"
+            android:src="@drawable/ic_arrow_gray" />
+
+        <TextView
+            android:id="@+id/tv_friend_plate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="12dp"
+            android:layout_toRightOf="@id/iv_friend_head"
+            android:text="京N***21"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_friend_reason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="12dp"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/iv_friend_head"
+            android:text="打中飞机" />
+
+        <TextView
+            android:id="@+id/tv_friend_wx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="12dp"
+            android:layout_toLeftOf="@id/btn_arrow_right"
+            android:drawableLeft="@drawable/ic_history_item_money"
+            android:drawablePadding="5dp"
+            android:text="wmnk0022" />
+    </RelativeLayout>
+    <TextView
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:text="他常去的停车场"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ListView
+        android:id="@id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+    <Button
+        android:id="@+id/btn_park_comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="8dp"
+        android:background="@null"
+        android:drawableLeft="@drawable/ic_pull_down"
+        android:drawablePadding="8dp"
+        android:drawableStart="@drawable/ic_pull_down"
+        android:text="点击查看更多"
+        android:textColor="@color/text_green"
+        android:textSize="16sp" />
+
+    <com.rey.material.widget.Button
+        android:id="@+id/btn_other_user_give"
+        style="@style/SolidButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:text="送他停车券，打招呼"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+
+</LinearLayout>

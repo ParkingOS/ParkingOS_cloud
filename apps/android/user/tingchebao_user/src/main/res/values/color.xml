@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 应用色 -->
+    <color name="primary_green">#32a669</color>
+    <!-- 辅助色1 -->
+    <color name="primary_green_light">#74e1c2</color>
+    <!-- 辅助色2 -->
+    <color name="primary_red">#e37479</color>
+    <!-- Toolbar背景色 -->
+    <color name="bg_toolbar">#f5f5f5</color>
+    <!-- 页面背景色 -->
+    <color name="bg_background">#f0f0f0</color>
+    <!-- 条目背景色 -->
+    <color name="bg_item">#ffffff</color>
+    <color name="red">#D25343</color>
+    <color name="bg_gray">#c9c9c9</color>
+    <color name="bg_lightgray">#EFEFEF</color>
+    <color name="bg_darkgray">#525866</color>
+    <color name="bg_green">#32a669</color>
+    <color name="bg_lightgreen">#AED65E</color>
+    <color name="bg_blue">#5F75DA</color>
+    <color name="bgPayResultDialogLeftButton">#32A667</color>
+    <color name="bgPayResultDialogRightButton">#B3B3B5</color>
+    <color name="bgPayResultDialog">#EBEBEB</color>
+    <color name="bg_darkblue">#455479</color>
+    <color name="bg_yellow">#F4CA26</color>
+    <color name="bg_red">#e37479</color>
+    <color name="bg_orange">#EB7261</color>
+    <color name="bg_darkgray_recharge">#858585</color>
+    <color name="text_orange">#F1B28B</color>
+    <color name="text_yellow">#FFB515</color>
+    <color name="text_green">#32a669</color>
+    <color name="text_black">#ff000000</color>
+    <color name="text_red">#e37479</color>
+    <color name="text_cash_pay">#7C7D80</color>
+    <color name="text_white">#ffffff</color>
+    <color name="text_gray">#999999</color>
+    <color name="text_hint_gray">#c0c0c0</color>
+    <color name="bgMenu">#f3343942</color>
+    <color name="text_cyan">#75E7C5</color>
+    <color name="text_light_gray">#D7D7D7</color>
+    <color name="text_light_black">#666666</color>
+    <color name="card_shadow">#10000000</color>
+    <color name="merge_cyan">#74E1C2</color>
+</resources>

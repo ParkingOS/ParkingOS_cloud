@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="5dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="5dp">
+
+    <TextView
+        android:id="@id/tv_chat_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/bg_chat_time"
+        android:text="上午 10:00"
+        android:textSize="10sp"
+        android:visibility="visible" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@id/iv_chat_head"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_chat_head_default" />
+
+        <TextView
+            android:id="@id/tv_chat_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/iv_chat_head"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/iv_chat_head"
+            android:background="@drawable/bg_chat_msg_text_recive"
+            android:maxWidth="220dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="8dp"
+            android:paddingTop="10dp"
+            android:text="喝和合水电费水电sdfsdfsdfsdfsdfsdfsdfsdfadsfasdfasdfa"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+</LinearLayout>

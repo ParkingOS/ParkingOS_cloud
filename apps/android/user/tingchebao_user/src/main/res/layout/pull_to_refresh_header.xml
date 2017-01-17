@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="bottom"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/pull_to_refresh_header_content"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:gravity="center_horizontal"
+        android:paddingBottom="8dp" >
+
+        <RelativeLayout
+            android:id="@+id/pull_to_refresh_header_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" >
+
+            <TextView
+                android:id="@+id/pull_to_refresh_header_hint_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="@string/pull_to_refresh_header_hint_normal"
+                android:textColor="#999999"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/pull_to_refresh_last_update_time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/pull_to_refresh_header_hint_textview"
+                android:layout_marginTop="6dp"
+                android:text="@string/pull_to_refresh_header_last_time"
+                android:textColor="#999999"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/pull_to_refresh_header_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/pull_to_refresh_header_hint_textview"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@id/pull_to_refresh_last_update_time_text"
+                android:minWidth="50dp"
+                android:textColor="#999999"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/pull_to_refresh_header_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:layout_toLeftOf="@id/pull_to_refresh_header_text"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/xsearch_msg_pull_arrow_down" />
+
+        <ProgressBar
+            android:id="@+id/pull_to_refresh_header_progressbar"
+            android:layout_width="28dip"
+            android:layout_height="28dip"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:layout_marginRight="8dp"
+            android:layout_toLeftOf="@id/pull_to_refresh_header_text"
+            android:gravity="center"
+            android:indeterminateDrawable="@anim/update_loading_progressbar_anim"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+</LinearLayout>

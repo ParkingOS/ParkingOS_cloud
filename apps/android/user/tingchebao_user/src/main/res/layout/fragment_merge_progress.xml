@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:padding="5dp">
+
+        <RelativeLayout
+            android:layout_width="160dp"
+            android:layout_height="110dp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/bg_merge_progress">
+
+            <TextView
+                android:id="@id/tv_merge_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:text="我的停车券"
+                android:textColor="@color/text_green"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@id/iv_chat_head"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/ic_chat_head_large" />
+
+            <TextView
+                android:id="@id/tv_merge_ticket"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="15dp"
+                android:text="13元"
+                android:textColor="@color/text_green"
+                android:textSize="30sp" />
+
+            <ImageView
+                android:id="@+id/iv_merge_isbuy"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="35dp"
+                android:src="@drawable/ic_ticket_buyed"
+                android:visibility="visible" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_merge_pk_2" />
+
+        <RelativeLayout
+            android:layout_width="160dp"
+            android:layout_height="110dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/bg_merge_progress">
+
+            <TextView
+                android:id="@id/tv_merge_title_other"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:maxWidth="150dp"
+                android:singleLine="true"
+                android:text="来自车主京N**01的停车券"
+                android:textColor="@color/text_green"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@id/iv_friend_head"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/ic_chat_head_large" />
+
+            <TextView
+                android:id="@id/tv_merge_ticket_other"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="15dp"
+                android:text="\?元"
+                android:textColor="@color/text_green"
+                android:textSize="30sp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="30dp"
+                android:src="@drawable/ic_ticket_buyed"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="35dp" />
+
+    <TextView
+        android:id="@id/tv_merge_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:text="正在合体，请稍后..."
+        android:textColor="@color/text_gray"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:id="@+id/ll_page_null"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_page_null"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="网络不好，点击重试"
+            android:textColor="@color/text_gray"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/iv_page_null"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/tv_page_null"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/img_page_null" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:lineSpacingMultiplier="1.5"
+        android:paddingLeft="35dp"
+        android:text="正在核对双方出的停车券是否为一奇一偶"
+        android:textSize="14sp"
+        android:visibility="gone" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/scroll_merge"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <com.tq.zld.widget.AutoTextView
+                android:id="@+id/tv_merge_own_weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.5"
+                android:paddingLeft="35dp"
+                android:text=""
+                android:visibility="invisible" />
+
+            <com.tq.zld.widget.AutoTextView
+                android:id="@+id/tv_merge_friend_weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.5"
+                android:paddingLeft="35dp"
+                android:text=""
+                android:visibility="invisible" />
+
+            <com.tq.zld.widget.AutoTextView
+                android:id="@+id/tv_merge_win_rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:lineSpacingMultiplier="1.5"
+                android:text=""
+                android:textColor="@color/text_green"
+                android:textSize="20sp"
+                android:visibility="invisible" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

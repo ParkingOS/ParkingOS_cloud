@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:gravity="center" >
+
+    <RelativeLayout
+        android:id="@+id/rl_dialog_festival_container"
+        android:layout_width="240dp"
+        android:layout_height="160dp"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:gravity="center" >
+
+        <ImageView
+            android:id="@+id/iv_dialog_festival_content"
+            android:layout_width="224dp"
+            android:layout_height="144dp"
+            android:layout_margin="8dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitXY" />
+
+        <ImageView
+            android:id="@+id/iv_dialog_festival_cancel"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/img_dialog_festival_cancel" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/map_map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true" />
+
+
+    <ImageButton
+        android:id="@+id/ib_map_remark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ib_map_location"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_map_remark" />
+
+    <ImageButton
+        android:id="@+id/ib_map_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_map_ugc"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_map_locate" />
+
+    <ImageButton
+        android:id="@+id/ib_map_order"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_map_ugc"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@null"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_map_order_nomal" />
+
+    <LinearLayout
+        android:id="@+id/ll_map_ugc"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_above="@+id/rl_map_bottom"
+        android:background="@color/bg_gray"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_map_ugc_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="4dp"
+            android:text="当前位置车场较少，你可以选择上传一个。"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5" />
+
+        <TextView
+            android:id="@+id/tv_map_ugc"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="@string/map_ugc"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tv_map_ugc_close"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="@string/map_ugc_close"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_map_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white">
+
+        <LinearLayout
+            android:id="@+id/ll_map_switcher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_map_payable"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
+                android:background="@null"
+                android:gravity="center"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:text="可支付车场"
+                android:textColor="@color/text_green"
+                android:textSize="14sp" />
+
+            <Space
+                android:layout_width="16dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tv_map_all"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
+                android:background="@null"
+                android:gravity="center"
+                android:minHeight="0dip"
+                android:minWidth="0dip"
+                android:text="全部车场"
+                android:textColor="@color/text_green"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/et_map_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/ll_map_switcher"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_toLeftOf="@+id/ib_map_menu"
+            android:layout_toStartOf="@+id/ib_map_menu"
+            android:background="@drawable/shape_green_stroke_r"
+            android:cursorVisible="true"
+            android:drawableLeft="@drawable/ic_action_search"
+            android:drawableStart="@drawable/ic_action_search"
+            android:gravity="center_vertical"
+            android:hint="@string/search_hint"
+            android:padding="4dp"
+            android:textSize="14sp" />
+
+        <ImageButton
+            android:id="@+id/ib_map_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/et_map_search"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/et_map_search"
+            android:layout_below="@+id/ll_map_switcher"
+            android:background="@android:color/transparent"
+            android:contentDescription="@null"
+            android:drawablePadding="4dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:src="@drawable/ic_map_menu_open_normal"
+            android:textColor="@color/text_green" />
+
+        <View
+            android:id="@+id/map_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/et_map_search"
+            android:background="@color/bg_gray" />
+
+        <RelativeLayout
+            android:id="@+id/ll_map_menu"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@id/map_divider"
+            android:background="@color/bg_background"
+            android:orientation="horizontal"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp">
+
+
+            <Button
+                android:id="@+id/btn_map_menu1"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="96dp"
+                android:layout_marginTop="24dp"
+                android:background="@android:color/transparent"
+                android:clickable="false"
+                android:drawablePadding="4dp"
+                android:drawableTop="@drawable/ic_map_menu_red_packet"
+                android:padding="8dp"
+                android:text="领取红包"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_map_menu1_number"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_alignEnd="@id/btn_map_menu1"
+                android:layout_alignRight="@id/btn_map_menu1"
+                android:layout_alignTop="@id/btn_map_menu1"
+                android:background="@drawable/shape_new_message_bg"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <android.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btn_map_menu2"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="96dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="24dp"
+                android:background="@android:color/transparent"
+                android:drawablePadding="4dp"
+                android:drawableTop="@drawable/ic_map_menu_play_game"
+                android:padding="8dp"
+                android:text="玩游戏"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp" />
+
+            <android.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btn_map_menu3"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="96dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="24dp"
+                android:background="@android:color/transparent"
+                android:drawablePadding="4dp"
+                android:drawableTop="@drawable/ic_map_menu_quick_pay"
+                android:padding="8dp"
+                android:text="快捷支付"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

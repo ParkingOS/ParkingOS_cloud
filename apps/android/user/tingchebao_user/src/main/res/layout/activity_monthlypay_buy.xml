@@ -1,0 +1,212 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sv_month_product_info"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".view.map.MonthlyPayBuyActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bg_darkgray"
+            android:gravity="center"
+            android:padding="10dp" >
+
+            <TextView
+                android:id="@+id/tv_monthlypay_buy_parkname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/tv_monthlypay_buy_limitday"
+                android:layout_marginBottom="10dp"
+                android:text="车场名称：停车宝演示停车场"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_monthlypay_buy_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/tv_monthlypay_buy_limitday"
+                android:layout_below="@+id/tv_monthlypay_buy_parkname"
+                android:layout_marginBottom="10dp"
+                android:text="月卡名称：包月卡测试"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_monthlypay_buy_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/tv_monthlypay_buy_limitday"
+                android:layout_below="@+id/tv_monthlypay_buy_name"
+                android:layout_marginBottom="10dp"
+                android:text="月卡类型：全天包月卡"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_monthlypay_buy_limitday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_monthlypay_buy_type"
+                android:text="有效期至：2015年10月8日"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/shape_gray_stroke" >
+
+            <TextView
+                android:id="@+id/tv_monthlypay_buy_choosebegin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_monthlypay_buy_begin"
+                android:layout_alignParentLeft="true"
+                android:layout_alignTop="@+id/tv_monthlypay_buy_begin"
+                android:layout_toLeftOf="@+id/tv_monthlypay_buy_begin"
+                android:padding="10dp"
+                android:text="选择起始日期"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_monthlypay_buy_begin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="0.5dp"
+                android:drawablePadding="10dp"
+                android:drawableRight="@drawable/ic_arrow_gray"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="2014.04.01"
+                android:textColor="@color/text_gray"
+                android:textSize="16sp" />
+
+            <View
+                android:id="@+id/monthlypay_buy_divider1"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_below="@+id/tv_monthlypay_buy_begin"
+                android:background="@color/bg_gray" />
+
+            <TextView
+                android:id="@+id/tv_monthlypay_buy_chooseduration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_monthlypay_buy_duration"
+                android:layout_alignParentLeft="true"
+                android:layout_alignTop="@+id/tv_monthlypay_buy_duration"
+                android:layout_toLeftOf="@+id/tv_monthlypay_buy_duration"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="选择包月时长"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_monthlypay_buy_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/monthlypay_buy_divider1"
+                android:drawablePadding="10dp"
+                android:drawableRight="@drawable/ic_arrow_gray"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="1个月"
+                android:textColor="@color/text_gray"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/shape_gray_stroke" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_monthlypay_buy_end"
+                android:layout_alignParentLeft="true"
+                android:layout_alignTop="@+id/tv_monthlypay_buy_end"
+                android:layout_toLeftOf="@+id/tv_monthlypay_buy_end"
+                android:padding="10dp"
+                android:text="结束日期"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_monthlypay_buy_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="0.5dp"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="2014.05.01"
+                android:textColor="@color/text_gray"
+                android:textSize="16sp" />
+
+            <View
+                android:id="@+id/monthlypay_buy_divider2"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_below="@+id/tv_monthlypay_buy_end"
+                android:background="@color/bg_gray" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_monthlypay_buy_money"
+                android:layout_alignParentLeft="true"
+                android:layout_alignTop="@+id/tv_monthlypay_buy_money"
+                android:layout_toLeftOf="@+id/tv_monthlypay_buy_money"
+                android:padding="10dp"
+                android:text="价格"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_monthlypay_buy_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/monthlypay_buy_divider2"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="￥500"
+                android:textColor="@color/text_gray"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btn_monthlypay_buy_ok"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="30dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/bg_green"
+            android:text="确认购买"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+</ScrollView>

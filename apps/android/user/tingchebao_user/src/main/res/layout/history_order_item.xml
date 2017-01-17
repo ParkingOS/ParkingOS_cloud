@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:background="@android:color/white"
+    android:padding="@dimen/activity_horizontal_margin" >
+
+    <TextView
+        android:id="@+id/tv_history_item_money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:drawableLeft="@drawable/ic_history_item_money"
+        android:drawablePadding="4dp"
+        android:drawableStart="@drawable/ic_history_item_money"
+        android:text="--"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tv_history_item_parkname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_history_item_money"
+        android:text="信息大厦停车场"
+        android:textColor="@android:color/black"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_history_item_status"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_history_item_parkname"
+        android:layout_marginTop="8dp"
+        android:text="已支付"
+        android:textColor="@color/text_green"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_history_item_parkdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tv_history_item_parkname"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:text="2014.04.08"
+        android:textColor="@color/text_gray"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tv_history_item_parkname"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_arrow_gray" />
+
+</RelativeLayout>

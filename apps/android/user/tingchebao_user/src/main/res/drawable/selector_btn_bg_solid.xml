@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:color="@color/text_light_gray" android:drawable="@drawable/shape_gray_stroke_r" android:state_activated="false" />
+    <item android:color="@color/text_white" android:drawable="@drawable/shape_solid_button_green" android:state_activated="true" />
+
+</selector>

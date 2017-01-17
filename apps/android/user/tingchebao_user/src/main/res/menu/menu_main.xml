@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.tq.zld"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.map.MapActivity">
+
+    <item
+        android:id="@+id/action_recharge_help"
+        android:icon="@drawable/ic_action_help"
+        android:orderInCategory="10"
+        android:title="帮助"
+        app:showAsAction="ifRoom" />
+</menu>

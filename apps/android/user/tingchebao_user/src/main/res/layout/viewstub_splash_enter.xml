@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v4.widget.Space
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="4" />
+
+    <com.rey.material.widget.Button
+        android:id="@+id/btn_splash_enter"
+        style="@style/SolidButton"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:text="立即体验"
+        android:textSize="20sp"
+        app:rd_delayClick="false"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Touch.MatchView" />
+
+    <com.rey.material.widget.Button
+        android:id="@+id/ib_splash_play"
+        style="@style/HollowButton"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:text="先玩游戏"
+        android:textSize="20sp"
+        app:rd_delayClick="false"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Touch.MatchView" />
+
+    <android.support.v4.widget.Space
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>

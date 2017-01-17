@@ -1,0 +1,99 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_background"
+    android:padding="@dimen/activity_horizontal_margin">
+
+    <EditText
+        android:id="@+id/et_login_mobile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="24dp"
+        android:layout_toLeftOf="@+id/btn_login_vercode"
+        android:layout_toStartOf="@+id/btn_login_vercode"
+        android:gravity="center_vertical"
+        android:hint="输入11位手机号"
+        android:inputType="phone"
+        android:maxLength="11">
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/et_login_vercode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/et_login_mobile"
+        android:layout_alignStart="@+id/et_login_mobile"
+        android:layout_below="@id/et_login_mobile"
+        android:hint="输入您收到的验证码"
+        android:inputType="number"
+        android:maxLength="4" />
+
+    <com.rey.material.widget.Button
+        android:id="@+id/btn_login_login"
+        style="@style/SolidButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_login_vercode"
+        android:layout_marginTop="24dp"
+        android:text="验证并登录"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+
+    <TextView
+        android:id="@+id/tv_login_sms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/btn_login_login"
+        android:gravity="center"
+        android:lineSpacingExtra="1dp"
+        android:padding="4dp"
+        android:text="@string/login_with_sms"
+        android:textColor="@color/text_green"
+        android:textSize="14sp" />
+
+    <com.rey.material.widget.Button
+        android:id="@+id/btn_login_vercode"
+        style="@style/SolidButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="28dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:gravity="center"
+        android:minHeight="36dp"
+        android:singleLine="true"
+        android:text="获取验证码"
+        android:textSize="14sp"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+
+    <TextView
+        android:id="@+id/tv_login_wx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/btn_login_login"
+        android:gravity="center"
+        android:lineSpacingExtra="1dp"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:text="@string/login_with_wx"
+        android:textColor="@color/text_green"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+</RelativeLayout>

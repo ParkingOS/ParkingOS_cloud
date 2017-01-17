@@ -1,0 +1,108 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_background"
+    android:padding="@dimen/activity_horizontal_margin">
+
+    <TextView
+        android:id="@+id/tv_register_failed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/et_register_plate"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/et_register_plate"
+        android:gravity="bottom"
+        android:paddingBottom="4dp"
+        android:text="车牌已被注册？点这里"
+        android:textColor="@color/text_green"
+        android:textSize="12sp" />
+
+    <EditText
+        android:id="@+id/et_register_plate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp"
+        android:layout_toLeftOf="@id/tv_register_failed"
+        android:layout_toStartOf="@id/tv_register_failed"
+        android:background="@android:color/transparent"
+        android:cursorVisible="true"
+        android:inputType="text"
+        android:maxLength="7"
+        android:padding="4dp"
+        android:textAllCaps="true"
+        android:textSize="16sp"
+        android:textStyle="bold">
+
+        <requestFocus />
+    </EditText>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@id/et_register_plate"
+        android:background="@color/bg_green" />
+
+    <TextView
+        android:id="@+id/tv_register_tips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_register_plate"
+        android:drawableEnd="@drawable/ic_exclamatory"
+        android:drawablePadding="4dp"
+        android:drawableRight="@drawable/ic_exclamatory"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:paddingTop="4dp"
+        android:text="请勿填写他人车牌号"
+        android:textColor="@color/text_gray"
+        android:textSize="12sp" />
+
+    <LinearLayout
+        android:id="@+id/ll_register_terms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_register_plate"
+        android:layout_marginTop="72dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/cb_register_terms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="已阅读并同意"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_register_terms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/TermsOfUseAndPrivacyPolicy"
+            android:textColor="@color/text_green"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <com.rey.material.widget.Button
+        android:id="@+id/btn_register"
+        style="@style/SolidButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_register_terms"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="完成注册"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+
+</RelativeLayout>

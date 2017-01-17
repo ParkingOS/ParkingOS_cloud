@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="5dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="5dp">
+
+    <TextView
+        android:id="@id/tv_chat_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/bg_chat_time"
+        android:text="上午 10:00"
+        android:textSize="10sp"
+        android:visibility="visible" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@id/iv_chat_head"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_chat_head_default" />
+
+        <LinearLayout
+            android:id="@+id/ll_chat_merge"
+            android:layout_width="215dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/iv_chat_head"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/iv_chat_head"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chat_merge_recive"
+                android:padding="12dp">
+
+                <ImageView
+                    android:id="@+id/iv_merge_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="8dp"
+                    android:src="@drawable/btn_chat_merge" />
+
+                <TextView
+                    android:id="@id/tv_merge_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@id/iv_merge_logo"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/iv_merge_logo"
+                    android:text="停车券求合体"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/iv_merge_logo"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/iv_merge_logo"
+                    android:text="查看详情"
+                    android:textColor="@color/text_gray"
+                    android:textSize="12sp" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@id/tv_merge_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chat_merge_recive_bottom"
+                android:paddingBottom="5dp"
+                android:paddingLeft="20dp"
+                android:paddingTop="5dp"
+                android:singleLine="true"
+                android:text="若合体成功，赢家获得一张大额券"
+                android:textColor="@color/text_white"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    android:background="@android:color/white"
+    android:paddingBottom="4dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_horizontal_margin">
+
+    <TextView
+        android:id="@+id/tv_certify_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="上传行驶证照"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_certify_rule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_certify_title"
+        android:layout_marginTop="32dp"
+        android:lineSpacingMultiplier="1.5"
+        android:text="1、车牌号需清晰可见，其余可挡\n2、需拍摄两种不同遮挡方式的照片\n3、盗用/伪造行驶证，手机号、账号永久停用" />
+
+    <ImageButton
+        android:id="@+id/ib_certify_take_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@android:color/transparent"
+        android:contentDescription="@null"
+        android:src="@drawable/img_take_photo" />
+
+    <Button
+        android:id="@+id/btn_certify_example"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="4dp"
+        android:background="@android:color/transparent"
+        android:minHeight="24dp"
+        android:text="查看示例照片 > "
+        android:textColor="@color/primary_green_light"
+        android:textSize="16sp" />
+</RelativeLayout>

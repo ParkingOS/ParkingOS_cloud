@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_gray_stroke"
+    android:gravity="center_vertical"
+    android:padding="8dp"
+    app:rd_delayClick="true"
+    app:rd_enable="true"
+    app:rd_style="@style/Material.Drawable.Ripple.Wave">
+
+    <ImageView
+        android:id="@+id/iv_listitem_payfee_photo"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@null" />
+
+    <TextView
+        android:id="@+id/tv_listitem_payfee_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/iv_listitem_payfee_photo"
+        android:layout_toEndOf="@+id/iv_listitem_payfee_photo"
+        android:layout_toRightOf="@+id/iv_listitem_payfee_photo"
+        android:ellipsize="middle"
+        android:singleLine="true"
+        android:text="张三（编号：10700）"
+        android:textColor="@android:color/black"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_listitem_payfee_park"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_listitem_payfee_photo"
+        android:layout_alignLeft="@+id/tv_listitem_payfee_name"
+        android:layout_alignStart="@+id/tv_listitem_payfee_name"
+        android:layout_below="@+id/tv_listitem_payfee_name"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:text="上帝嘉华大厦停车场"
+        android:textColor="@color/text_gray"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_listitem_payfee_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/tv_listitem_payfee_name"
+        android:layout_toLeftOf="@+id/iv_listitem_payfee_arrow"
+        android:layout_toStartOf="@+id/iv_listitem_payfee_arrow"
+        android:gravity="center_vertical"
+        android:text="昨天19:02"
+        android:textColor="@color/text_gray"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/iv_listitem_payfee_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_arrow_gray" />
+
+</RelativeLayout>

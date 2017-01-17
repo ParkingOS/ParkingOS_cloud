@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="auto_focus" type="id"/>
+    <item name="decode" type="id"/>
+    <item name="decode_failed" type="id"/>
+    <item name="decode_succeeded" type="id"/>
+    <item name="restart_preview" type="id"/>
+    <item name="widget_toolbar" type="id"/>
+    <item name="quit" type="id"/>
+    <item name="listview" type="id"/>
+    <item name="iv_chat_head" type="id"/>
+    <item name="iv_friend_head" type="id"/>
+    <item name="tv_chat_time" type="id"/>
+    <item name="tv_chat_content" type="id"/>
+    <item name="ll_chat_send" type="id"/>
+    <item name="et_chat_content" type="id"/>
+    <item name="btn_chat_send" type="id"/>
+    <item name="btn_chat_merge" type="id"/>
+    <item name="btn_close" type="id"/>
+    <item name="btn_ok" type="id"/>
+    <item name="tv_merge_title" type="id"/>
+    <item name="tv_merge_title_other" type="id"/>
+    <item name="tv_merge_ticket" type="id"/>
+    <item name="tv_merge_ticket_other" type="id"/>
+    <item name="tv_merge_desc" type="id"/>
+    <item name="iv_chat_fail" type="id" />
+    <item name="pb_chat_progress" type="id" />
+
+    <item name="text" type="id"/>
+    <item name="edit" type="id"/>
+    <item name="image" type="id"/>
+    <item name="button" type="id"/>
+    <item name="progress" type="id"/>
+
+</resources>

@@ -1,0 +1,13 @@
+.gradle/
+.idea/
+build/
+tingchebao_user/build/
+
+*.iml
+*.apk
+
+tingchebao_user/class_files.txt
+tingchebao_user/seeds.txt
+tingchebao_user/unused.txt
+tingchebao_user/mapping.txt
+

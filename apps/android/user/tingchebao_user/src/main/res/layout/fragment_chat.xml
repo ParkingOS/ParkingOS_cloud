@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/ll_chat_send">
+
+        <ListView
+            android:id="@id/listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@id/ll_chat_send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/text_white"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <EditText
+            android:id="@id/et_chat_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_chat_input"
+            android:hint="给他发消息"
+            android:padding="10dp"
+            android:textColorHint="@color/text_hint_gray"
+            android:textSize="14sp"
+            />
+
+        <ImageButton
+            android:id="@id/btn_chat_merge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_chat_merge_add"
+            android:visibility="visible" />
+
+        <com.rey.material.widget.Button
+            android:id="@+id/btn_chat_send"
+            style="@style/SolidButton.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="38.1dp"
+            android:layout_gravity="bottom"
+            android:singleLine="true"
+            android:gravity="center"
+            android:text="发送"
+            android:visibility="gone"
+            app:rd_delayClick="true"
+            app:rd_enable="true"
+            app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+    </LinearLayout>
+
+</RelativeLayout>

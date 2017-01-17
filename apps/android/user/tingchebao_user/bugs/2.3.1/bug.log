@@ -1,0 +1,11 @@
+issue23101 android.content.ActivityNotFoundException: Unable to find explicit activity class {com.tq.zld/com.tq.zld.view.park.ParkingRecordsActivity}; have you declared this activity in your AndroidManifest.xml?	2.3.1	9 天前	2015-09-24 10:48:40	55
+issue23102 Caused by: java.lang.NullPointerException	2.3.1	4 天前	2015-09-21 08:22:41	9
+issue23103 java.lang.NullPointerException	2.3.1	大约 18 小时	2015-09-23 17:35:30	2
+issue23104 android.view.WindowManager$BadTokenException: Unable to add window -- token android.os.BinderProxy@45486e98 is not valid; is your activity running?	2.3.1	7 天前	2015-09-18 18:14:21	2
+issue23105 java.lang.NullPointerException	2.3.1	大约 18 小时	2015-09-23 17:35:30	1
+issue23106 java.lang.NullPointerException	2.3.1	大约 21 小时	2015-09-23 14:17:49	1
+issue23107 java.lang.IllegalArgumentException: Receiver not registered: android.widget.ZoomButtonsController$1@1f11426	2.3.1	2 天前	2015-09-22 11:11:49	1
+issue23108 java.lang.IllegalArgumentException: Receiver not registered: android.widget.ZoomButtonsController$1@42563fe0	2.3.1	3 天前	2015-09-21 08:08:35	1
+issue23109 java.lang.NullPointerException	2.3.1	4 天前	2015-09-20 21:15:39	1
+issue231010 java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState	2.3.1	4 天前	2015-09-20 12:00:36	1
+issue231011 Caused by: java.lang.NullPointerException	2.3.1	8 天前	2015-09-16 12:48:39	1

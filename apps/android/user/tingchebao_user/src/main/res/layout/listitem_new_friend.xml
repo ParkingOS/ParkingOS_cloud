@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="88dp"
+    android:background="@color/text_white"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@id/iv_friend_head"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_chat_head_default" />
+
+    <com.rey.material.widget.Button
+        android:id="@id/button"
+        style="@style/SolidButton.Selector"
+        android:layout_width="68dp"
+        android:layout_height="28dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="接受"
+        android:textSize="14sp"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/iv_friend_head"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_friend_plate"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="车牌号未知"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_friend_reason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left|bottom"
+            android:maxLines="2"
+            android:minLines="2"
+            android:maxWidth="192dp"
+            android:layout_marginTop="5dp"
+            android:text="ddddddddsdfsdfsdfsdfdf"
+            android:textColor="@color/text_hint_gray" />
+    </LinearLayout>
+
+</RelativeLayout>

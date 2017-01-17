@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/widget_toolbar" />
+
+    <TextView
+        android:id="@+id/tv_my_redpackets_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="亲，领完红包可以去我的停车券查看！"
+        android:textColor="@color/text_orange"
+        android:textSize="15sp" />
+
+    <ListView
+        android:id="@+id/lv_my_redpackets"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:divider="@null"
+        android:dividerHeight="12dp" />
+
+    <include layout="@layout/page_null" />
+
+</LinearLayout>

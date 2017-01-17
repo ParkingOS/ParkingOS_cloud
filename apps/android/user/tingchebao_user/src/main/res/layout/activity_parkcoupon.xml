@@ -1,0 +1,104 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/bg_background" >
+
+    <android.support.v7.widget.Toolbar
+        xmlns:app="http://schemas.android.com/apk/res/com.tq.zld"
+        android:id="@+id/toolbar_coupon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_toolbar"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextAppearance="@style/MyToolbarTitleStyle" >
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:id="@+id/ll_parking_title"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar_coupon"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tv_parking_current"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/selector_coupon_btn_bg"
+            android:gravity="center"
+            android:padding="3dp"
+            android:text="当\t前"
+            android:textColor="@drawable/selector_recharge_quickinput_text"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tv_parking_history"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/selector_coupon_btn_bg"
+            android:gravity="center"
+            android:padding="3dp"
+            android:text="历\t史"
+            android:textColor="@drawable/selector_recharge_quickinput_text"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_parking_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_parking_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
+        android:padding="0.25dp" >
+
+        <TextView
+            android:id="@+id/tv_parking_coupon_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/bg_yellow"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/rv_parking_current"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ll_parking_hint"
+        android:background="#ffffff"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="3dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:visibility="visible" >
+    </ListView>
+
+    <ListView
+        android:id="@+id/rv_parking_history"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ll_parking_hint"
+        android:background="#ffffff"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="3dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:visibility="invisible" >
+    </ListView>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ll_parking_title"
+        layout="@layout/page_null" />
+
+</RelativeLayout>

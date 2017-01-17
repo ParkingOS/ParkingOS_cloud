@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.tq.zld"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.tq.zld.view.map.ParkingRedPacketsActivity">
+
+    <item
+        android:id="@+id/menu_coupon_help"
+        android:icon="@drawable/ic_action_help_white"
+        android:orderInCategory="10"
+        android:title="查看帮助"
+        app:showAsAction="ifRoom" />
+
+</menu>

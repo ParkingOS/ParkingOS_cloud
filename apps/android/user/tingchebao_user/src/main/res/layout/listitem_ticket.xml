@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_background"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="16dp">
+
+    <RelativeLayout
+        android:id="@+id/rl_listitem_ticket_maininfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_listitem_ticket_background"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="4dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/listitem_ticket_divider"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/tv_listitem_ticket_type"
+            android:contentDescription="@null"
+            android:src="@drawable/img_listitem_ticket_car" />
+
+        <ImageView
+            android:id="@+id/iv_listitem_ticket_isbuy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="4dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_ticket_buyed"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tv_listitem_ticket_money1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tv_listitem_ticket_money"
+            android:gravity="center_vertical|end"
+            android:text="￥"
+            android:textColor="@drawable/selector_listitem_ticket_text"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/tv_listitem_ticket_money"
+            android:layout_width="wrap_content"
+            android:layout_height="88dp"
+            android:layout_toEndOf="@+id/tv_listitem_ticket_money1"
+            android:layout_toRightOf="@+id/tv_listitem_ticket_money1"
+            android:ems="1"
+            android:gravity="center|start"
+            android:text="3"
+            android:textColor="@drawable/selector_listitem_ticket_text"
+            android:textSize="60sp" />
+
+        <TextView
+            android:id="@+id/tv_listitem_ticket_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/tv_listitem_ticket_money"
+            android:layout_toRightOf="@+id/tv_listitem_ticket_money"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="5dp"
+            android:text="停车优惠券"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="5dp"
+            android:layout_below="@+id/tv_listitem_ticket_type"
+            android:layout_toEndOf="@+id/tv_listitem_ticket_money"
+            android:layout_toRightOf="@+id/tv_listitem_ticket_money"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_marginBottom="6dp"
+                android:id="@+id/tv_listitem_ticket_park"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="4dp"
+                android:ellipsize="end"
+                android:gravity="top|start"
+                android:maxLines="2"
+                android:text="金隅嘉华大厦停车场"
+                android:textColor="@drawable/selector_listitem_ticket_text_green"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_listitem_ticket_rule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="满3元可用"
+                android:textColor="@drawable/selector_listitem_ticket_text_light_black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+
+        <View
+            android:id="@+id/listitem_ticket_divider"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_below="@+id/tv_listitem_ticket_money"
+            android:background="@drawable/shape_listitem_ticket_divider"
+            android:layerType="software" />
+
+        <TextView
+            android:id="@+id/tv_listitem_ticket_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/listitem_ticket_divider"
+            android:padding="2dp"
+            android:text="已使用"
+            android:textColor="@color/text_green"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_listitem_ticket_validity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/listitem_ticket_divider"
+            android:padding="2dp"
+            android:text="有效期至："
+            android:textColor="@drawable/selector_listitem_ticket_text"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_listitem_ticket_limit"
+        android:layout_width="wrap_content"
+        android:layout_height="129dp"
+        android:background="@drawable/bg_ticket_select_mask"
+        android:gravity="center"
+        android:text="本次停车可抵扣3元"
+        android:textColor="@color/text_green"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+
+</RelativeLayout>

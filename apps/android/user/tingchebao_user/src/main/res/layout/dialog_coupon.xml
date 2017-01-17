@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_horizontal_margin">
+
+    <ImageButton
+        android:id="@+id/ib_dialog_coupon_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="end"
+        android:background="@android:color/transparent"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_action_navigation_close" />
+
+    <TextView
+        android:id="@+id/tv_dialog_coupon_people"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ib_dialog_coupon_close"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:text="领取%1$s(%2$s)的车场专用券成功"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/iv_dialog_coupon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_dialog_coupon_people"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="12dp"
+        android:contentDescription="@null"
+        android:src="@drawable/img_dialog_coupon" />
+
+    <TextView
+        android:id="@+id/tv_dialog_coupon_money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_dialog_coupon_park"
+        android:layout_alignStart="@+id/tv_dialog_coupon_park"
+        android:layout_below="@id/iv_dialog_coupon"
+        android:layout_gravity="center_horizontal"
+        android:singleLine="true"
+        android:text="专用券金额：%d元"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_dialog_coupon_park"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_dialog_coupon_money"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="12dp"
+        android:gravity="center"
+        android:text="可使用停车场：%s"
+        android:textSize="14sp" />
+
+    <com.rey.material.widget.Button
+        android:id="@+id/btn_dialog_coupon_detail"
+        style="@style/SolidButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_dialog_coupon_park"
+        android:background="@drawable/shape_solid_button_red"
+        android:text="停车券详情"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+</RelativeLayout>

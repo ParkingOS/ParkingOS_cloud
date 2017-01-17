@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:background="@drawable/listitem_red_packet_bg">
+
+    <ImageView
+        android:id="@+id/iv_listitem_red_packet_icon"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_centerVertical="true"
+        android:contentDescription="@null" />
+
+    <TextView
+        android:id="@+id/tv_listitem_red_packet_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="6dp"
+        android:layout_toEndOf="@id/iv_listitem_red_packet_icon"
+        android:layout_toRightOf="@id/iv_listitem_red_packet_icon"
+        android:text="充值停车券礼包"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_listitem_red_packet_limit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/tv_listitem_red_packet_title"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@id/tv_listitem_red_packet_title"
+        android:text="xx月xx日 xx:xx前领取有效"
+        android:textColor="@color/text_gray"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_listitem_red_packet_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:text="立即领取"
+        android:textSize="14sp" />
+
+</RelativeLayout>

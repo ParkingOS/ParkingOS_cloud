@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_share_2"
+        android:layout_alignParentTop="true" >
+
+        <TextView
+            android:id="@+id/tv_share_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/iv_share_qrcode"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="推荐小伙伴，来用停车宝"
+            android:textColor="@color/text_green"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/iv_share_qrcode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_share_qrcode"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="让好友扫描二维码下载"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_share_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_share_social"
+        android:layout_marginLeft="16dp"
+        android:text="分享到："
+        android:textSize="12sp" />
+
+    <LinearLayout
+        android:id="@+id/ll_share_social"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="8dp" >
+
+        <TextView
+            android:id="@+id/tv_share_qq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/ic_share_qq"
+            android:ems="4"
+            android:gravity="center"
+            android:text="QQ好友"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_share_wx_session"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/ic_share_wx_session"
+            android:ems="4"
+            android:gravity="center"
+            android:text="微信好友"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_share_wx_timeline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/ic_share_wx_timeline"
+            android:ems="4"
+            android:gravity="center"
+            android:text="朋友圈"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_share_sms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/ic_share_sms"
+            android:ems="4"
+            android:gravity="center"
+            android:text="短 信"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.tq.zld.view.fragment.PlateAuthExampleFragment">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="240dp"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:contentDescription="@null"
+        android:src="@drawable/img_plate_auth_example_1" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="240dp"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:contentDescription="@null"
+        android:src="@drawable/img_plate_auth_example_2" />
+
+</LinearLayout>

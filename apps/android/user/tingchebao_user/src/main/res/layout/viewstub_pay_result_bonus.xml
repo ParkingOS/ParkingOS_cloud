@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <com.rey.material.widget.Button
+        android:id="@+id/btn_pay_result_left"
+        style="@style/HollowButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/shape_red_stroke_r"
+        android:minHeight="36dp"
+        android:text="去评论"
+        android:textColor="@color/text_red"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+
+    <Space
+        android:layout_width="8dp"
+        android:layout_height="wrap_content" />
+
+    <com.rey.material.widget.Button
+        android:id="@+id/btn_pay_result_right"
+        style="@style/HollowButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/shape_solid_button_red"
+        android:minHeight="36dp"
+        android:text="查看礼包"
+        android:textColor="@android:color/white"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+
+</LinearLayout>

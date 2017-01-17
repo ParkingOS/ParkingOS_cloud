@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_order_park"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:id="@+id/iv_order_park"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_order_park" />
+
+        <TextView
+            android:id="@+id/tv_order_park"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_toEndOf="@+id/iv_order_park"
+            android:layout_toRightOf="@+id/iv_order_park"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="--"
+            android:textColor="@color/text_gray"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignLeft="@+id/tv_order_park"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/tv_order_park"
+            android:background="@color/bg_gray" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_order_start"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:id="@+id/iv_order_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_order_date" />
+
+        <TextView
+            android:id="@+id/tv_order_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_toEndOf="@+id/iv_order_start"
+            android:layout_toRightOf="@+id/iv_order_start"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="--"
+            android:textColor="@color/text_gray"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_order_duration"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="24dp"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:id="@+id/iv_order_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_order_duration" />
+
+        <TextView
+            android:id="@+id/tv_order_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/iv_order_duration"
+            android:layout_toRightOf="@+id/iv_order_duration"
+            android:text="--"
+            android:textColor="@color/text_gray"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignLeft="@+id/tv_order_duration"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/tv_order_duration"
+            android:background="@color/bg_gray"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_order_alarm"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@android:color/white"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/iv_order_alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_order_remark" />
+
+        <TextView
+            android:id="@+id/tv_order_alarm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/iv_order_alarm"
+            android:layout_toRightOf="@+id/iv_order_alarm"
+            android:text="--"
+            android:textColor="@color/text_gray"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btn_order_alarm"
+            style="@style/SolidButton"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:text="提醒" />
+    </RelativeLayout>
+
+</LinearLayout>

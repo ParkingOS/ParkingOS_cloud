@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <uk.co.senab.photoview.PhotoView
+        android:id="@+id/pv_remark_photo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_remark_bottom" />
+
+    <LinearLayout
+        android:id="@+id/ll_remark_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:id="@+id/btn_remark_take_photo"
+            android:layout_width="72dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:drawablePadding="-8dp"
+            android:drawableTop="@drawable/ic_action_retry"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:text="重拍"
+            android:textColor="@color/text_white"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/white" />
+
+        <FrameLayout
+            android:id="@+id/fl_remark_add_tips"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_remark_add_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:clickable="false"
+                android:gravity="center_vertical|start"
+                android:padding="4dp"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btn_remark_add_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent"
+                android:clickable="false"
+                android:drawableLeft="@drawable/ic_action_add"
+                android:drawableStart="@drawable/ic_action_add"
+                android:gravity="center"
+                android:text="添加详细说明"
+                android:textColor="@color/text_white"
+                android:textSize="18sp" />
+
+        </FrameLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/remark_center_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_centerVertical="true" />
+
+    <TextView
+        android:id="@+id/tv_remark_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/ll_remark_bottom"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:text="1970-01-01 00:00"
+        android:textColor="@color/text_yellow" />
+
+    <ImageButton
+        android:id="@+id/ib_remark_locate"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_above="@id/ll_remark_bottom"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:background="@android:color/transparent"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_remark_locate" />
+
+    <TextView
+        android:id="@+id/tv_remark_floor"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_above="@id/remark_center_line"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:background="@drawable/ic_remark_floor_normal"
+        android:contentDescription="@null"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
+</RelativeLayout>

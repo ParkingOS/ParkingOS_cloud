@@ -1,0 +1,66 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_background">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_ticket"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_toolbar"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextAppearance="@style/MyToolbarTitleStyle" />
+
+    <com.rey.material.widget.TabPageIndicator
+        android:id="@+id/tab_ticket"
+        style="@style/Material.Widget.TabPageIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_below="@id/toolbar_ticket"
+        android:background="@color/bg_toolbar"
+        android:textAppearance="@style/TabTitleTextAppearance"
+        app:tpi_indicatorColor="@color/primary_green"
+        app:tpi_indicatorHeight="2dp"
+        app:tpi_mode="fixed"
+        app:tpi_tabPadding="2dp" />
+
+    <com.rey.material.widget.Button
+        android:id="@+id/btn_ticket_buy"
+        style="@style/SolidButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:text="购买停车券"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+
+    <com.tq.zld.widget.HackyViewPager
+        android:id="@+id/vp_ticket"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btn_ticket_buy"
+        android:layout_below="@+id/tab_ticket" />
+
+    <ImageButton
+        android:id="@+id/ib_ticket_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btn_ticket_buy"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_ticket_play"
+        android:visibility="gone" />
+
+</RelativeLayout>

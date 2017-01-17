@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F0F0F0"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_merge_result_tip"
+            android:padding="15dp">
+
+            <TextView
+                android:id="@+id/tv_merger_begin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/shape_merge_result_bg_white"
+                android:paddingBottom="5dp"
+                android:paddingLeft="25dp"
+                android:paddingRight="25dp"
+                android:paddingTop="5dp"
+                android:text="合并前"
+                android:textColor="@color/text_green" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/merge_cyan"
+            android:paddingBottom="15dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:background="@drawable/bg_merge_result"
+                android:paddingBottom="8dp"
+                android:paddingTop="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@id/tv_merge_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="我的停车券"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@id/tv_merge_title_other"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:singleLine="true"
+                        android:text="来自车主京N1**01ddddddddddd"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@id/tv_merge_ticket"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="3元"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:id="@id/tv_merge_ticket_other"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="2元"
+                        android:textSize="28sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/iv_merge_pk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:paddingBottom="5dp"
+                    android:src="@drawable/ic_merge_pk" />
+
+                <ImageView
+                    android:id="@+id/iv_merge_isbuy"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignTop="@id/iv_merge_pk"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@id/iv_merge_pk"
+                    android:src="@drawable/ic_ticket_buyed"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:id="@+id/iv_merge_friend_isbuy"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/iv_merge_pk"
+                    android:layout_marginRight="20dp"
+                    android:src="@drawable/ic_ticket_buyed"
+                    android:visibility="invisible" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_merge_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_merge_result_tip"
+                android:padding="15dp">
+
+                <TextView
+                    android:id="@+id/tv_merge_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/shape_merge_result_bg_white"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="25dp"
+                    android:paddingRight="25dp"
+                    android:paddingTop="5dp"
+                    android:text="合并成功"
+                    android:textColor="@color/text_green" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/merge_cyan"
+                android:orientation="vertical"
+                android:paddingBottom="15dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp">
+
+                <RelativeLayout
+                    android:id="@+id/rl_merge_own"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_merge_result_after">
+
+                    <ImageView
+                        android:id="@id/iv_chat_head"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_chat_head_large" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignRight="@id/iv_chat_head"
+                        android:layout_alignTop="@id/iv_chat_head"
+                        android:layout_marginTop="12dp"
+                        android:src="@drawable/ic_me" />
+                    <!-- 废弃 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignRight="@id/iv_chat_head"
+                        android:layout_alignTop="@id/iv_chat_head"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/ic_me"
+                        android:textColor="@color/text_white"
+                        android:textSize="10sp"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/iv_chat_head"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_merge_own_tip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:text="获得一张5元券"
+                            android:textColor="@color/merge_cyan"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tv_merge_own_tip_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="18dp"
+                            android:drawablePadding="5dp"
+                            android:drawableRight="@drawable/ic_action_help_small"
+                            android:text="获得两张第二关游戏资格卡"
+                            android:textColor="@color/merge_cyan"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_merge_own_win"
+                        android:layout_width="48dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_horizontal"
+                        android:text="获胜"
+                        android:textColor="@color/merge_cyan"
+                        android:textSize="18sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_merge_friend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/bg_merge_result_after">
+
+                    <ImageView
+                        android:id="@id/iv_friend_head"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_chat_head_large" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/iv_friend_head"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_merge_friend_tip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:text="失去2元停车券"
+                            android:textColor="@color/text_red"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tv_merge_friend_tip_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="18dp"
+                            android:drawablePadding="5dp"
+                            android:drawableRight="@drawable/ic_action_help_small"
+                            android:text="获得两张第二关游戏资格卡"
+                            android:textColor="@color/merge_cyan"
+                            android:textSize="14sp"
+                            android:visibility="visible" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_merge_friend_win"
+                        android:layout_width="48dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_horizontal"
+                        android:text="失败"
+                        android:textColor="@color/text_red"
+                        android:textSize="18sp" />
+                </RelativeLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!--    <TextView
+                android:id="@+id/tv_merge_rule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:gravity="center_horizontal"
+                android:text="查看合体停车券规则"
+                android:textColor="@color/text_green"
+                android:visibility="gone" />-->
+        <TextView
+            android:id="@+id/tv_merge_rule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:drawableRight="@drawable/ic_action_help"
+            android:gravity="center"
+            android:text="合体规则说明" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+
+        <com.rey.material.widget.Button
+            android:id="@+id/btn_merge_play_again"
+            style="@style/SolidButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center"
+            android:text="再和其他好友玩"
+            app:rd_delayClick="true"
+            app:rd_enable="true"
+            app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+
+        <com.rey.material.widget.Button
+            android:id="@+id/btn_merge_play_wechat"
+            style="@style/SolidButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_green_stroke_r"
+            android:gravity="center"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:text="和微信好友玩"
+            android:textColor="@color/text_green"
+            android:visibility="gone"
+            app:rd_delayClick="true"
+            app:rd_enable="true"
+            app:rd_style="@style/Material.Drawable.Ripple" />
+
+    </LinearLayout>
+</ScrollView>

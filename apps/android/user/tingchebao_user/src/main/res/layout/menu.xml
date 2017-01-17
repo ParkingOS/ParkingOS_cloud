@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_background"
+    android:orientation="vertical">
+
+    <com.tq.zld.widget.RippleLinearLayout
+        android:id="@+id/ll_menu_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/activity_horizontal_margin"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave">
+
+        <com.tq.zld.widget.CircleImageView
+            android:id="@+id/civ_menu_photo"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/img_menu_photo" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_menu_plate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:text="登录/注册"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_menu_mobile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:text="--"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:drawableEnd="@drawable/ic_arrow_gray"
+            android:drawablePadding="4dp"
+            android:drawableRight="@drawable/ic_arrow_gray"
+            android:gravity="center_vertical"
+            android:text="余额、券"
+            android:textColor="@color/text_gray"
+            android:textSize="16sp" />
+    </com.tq.zld.widget.RippleLinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_gray" />
+
+    <com.tq.zld.widget.RippleRelativeLayout
+        android:id="@+id/rl_menu_order"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave">
+
+        <ImageView
+            android:id="@+id/iv_menu_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_menu_order" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/iv_menu_order"
+            android:layout_toRightOf="@+id/iv_menu_order"
+            android:text="历史订单"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/iv_menu_order_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_new"
+            android:visibility="gone" />
+    </com.tq.zld.widget.RippleRelativeLayout>
+
+    <!-- 我的消息 -->
+    <com.tq.zld.widget.RippleRelativeLayout
+        android:id="@+id/rl_menu_message"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave">
+
+        <ImageView
+            android:id="@+id/iv_menu_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_menu_message" />
+
+        <TextView
+            android:id="@+id/tv_menu_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/iv_menu_message"
+            android:layout_toRightOf="@+id/iv_menu_message"
+            android:text="我的消息"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <View
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignLeft="@+id/tv_menu_message"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/tv_menu_message"
+            android:background="@color/bg_gray" />
+
+        <ImageView
+            android:id="@+id/iv_menu_message_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_new"
+            android:visibility="gone" />
+    </com.tq.zld.widget.RippleRelativeLayout>
+
+    <!-- 我的车友 -->
+    <com.tq.zld.widget.RippleRelativeLayout
+        android:id="@+id/rl_menu_friend"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave">
+
+        <ImageView
+            android:id="@+id/iv_menu_friend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_menu_friend" />
+
+        <TextView
+            android:id="@+id/tv_menu_friend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/iv_menu_friend"
+            android:layout_toRightOf="@+id/iv_menu_friend"
+            android:text="我的车友"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignLeft="@+id/tv_menu_friend"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/tv_menu_friend"
+            android:background="@color/bg_gray" />
+
+        <ImageView
+            android:id="@+id/iv_menu_friend_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_new"
+            android:visibility="gone" />
+    </com.tq.zld.widget.RippleRelativeLayout>
+
+    <com.tq.zld.widget.RippleRelativeLayout
+        android:id="@+id/rl_menu_recommend"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave">
+
+        <ImageView
+            android:id="@+id/iv_menu_recommend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_menu_recommend" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/iv_menu_recommend"
+            android:layout_toRightOf="@+id/iv_menu_recommend"
+            android:text="我要推荐"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/iv_menu_recommend_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_new"
+            android:visibility="gone" />
+    </com.tq.zld.widget.RippleRelativeLayout>
+
+    <com.tq.zld.widget.RippleRelativeLayout
+        android:id="@+id/rl_menu_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave">
+
+        <ImageView
+            android:id="@+id/iv_menu_feedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_menu_feedback" />
+
+        <TextView
+            android:id="@+id/tv_menu_feedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/iv_menu_feedback"
+            android:layout_toRightOf="@+id/iv_menu_feedback"
+            android:text="我要反馈"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignLeft="@+id/tv_menu_feedback"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/tv_menu_feedback"
+            android:background="@color/bg_gray" />
+
+        <ImageView
+            android:id="@+id/iv_menu_feedback_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_new"
+            android:visibility="gone" />
+    </com.tq.zld.widget.RippleRelativeLayout>
+
+    <com.tq.zld.widget.RippleRelativeLayout
+        android:id="@+id/rl_menu_setting"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave">
+
+        <ImageView
+            android:id="@+id/iv_menu_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_menu_setting" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/iv_menu_setting"
+            android:layout_toRightOf="@+id/iv_menu_setting"
+            android:text="设置"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/iv_menu_setting_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_new"
+            android:visibility="gone" />
+    </com.tq.zld.widget.RippleRelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.rey.material.widget.Button
+        android:id="@+id/tv_menu_servicetel"
+        style="@style/Material.Drawable.Ripple.Wave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:background="@null"
+        android:drawableLeft="@drawable/ic_menu_servicetel"
+        android:drawablePadding="@dimen/activity_horizontal_margin"
+        android:drawableStart="@drawable/ic_menu_servicetel"
+        android:gravity="center_vertical"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:text="@string/serviceTel"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:rd_delayClick="true"
+        app:rd_enable="true" />
+
+</LinearLayout>

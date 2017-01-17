@@ -1,0 +1,138 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Application theme. -->
+    <style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+
+        <item name="drawerArrowStyle">@style/Widget.AppCompat.DrawerArrowToggle</item>
+        <item name="colorPrimary">@color/primary_green</item>
+        <item name="colorAccent">@color/primary_green</item>
+        <item name="android:windowBackground">@color/bg_background</item>
+        <!-- 设置EditText等控件的ContextMenu覆盖在Toolbar上而不是将其推下-->
+        <item name="windowActionModeOverlay">true</item>
+        <!-- <item name="colorControlNormal">@color/primary_green</item> -->
+    </style>
+
+    <style name="TabTitleTextAppearance" parent="@style/Base.TextAppearance.AppCompat.Subhead">
+        <item name="android:textColor">@drawable/selector_tab_title_text</item>
+    </style>
+
+    <style name="LoginActivity" parent="AppTheme">
+        <item name="android:windowAnimationStyle">@style/PresentAnimation</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="PresentAnimation">
+        <item name="android:windowEnterAnimation">@anim/activity_in_from_bottom</item>
+        <item name="android:windowExitAnimation">@anim/activity_out_from_top</item>
+    </style>
+
+    <style name="AppTheme.DrawerArrowToggle" parent="Base.Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@color/text_gray</item>
+    </style>
+
+    <style name="MyToolbarTitleStyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/text_light_black</item>
+    </style>
+
+    <style name="MyToolbarTitleStyle2" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!-- 实心绿底白字Button -->
+    <style name="SolidButton" parent="@style/Widget.AppCompat.Light.ActionButton">
+        <item name="android:background">@drawable/shape_solid_button_green</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="SolidButton.Small">
+        <item name="android:background">@drawable/shape_solid_button_green_corner_small</item>
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="SolidButton.Selector" parent="SolidButton">
+        <item name="android:background">@drawable/selector_solid_button_green_gray</item>
+    </style>
+
+    <!-- 空心白底绿字Button -->
+    <style name="HollowButton" parent="@style/Widget.AppCompat.Light.ActionButton">
+        <item name="android:background">@drawable/shape_green_stroke_r</item>
+        <item name="android:textColor">@color/text_green</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="ParkDetailGridLayoutCell">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">fill</item>
+        <item name="android:layout_margin">0.25dp</item>
+        <item name="android:background">#FFFFFF</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="ParkEvaluationGridViewCell">
+        <item name="android:layout_gravity">fill</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:background">#525866</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Transparent" parent="@style/AppTheme">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="TransparentDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <!-- activity不变暗 -->
+    </style>
+
+    <style name="SplashActivity" parent="@style/AppTheme">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="SearchActivity" parent="@style/AppTheme">
+        <item name="windowActionModeOverlay">false</item>
+    </style>
+
+    <style name="MaterialChatButton" parent="Material.Drawable.Ripple.Wave">
+        <item name="rd_cornerRadius">0dp</item>
+        <item name="rd_topLeftCornerRadius">0dp</item>
+        <item name="rd_topRightCornerRadius">0dp</item>
+        <item name="rd_bottomLeftCornerRadius">0dp</item>
+        <item name="rd_bottomRightCornerRadius">0dp</item>
+    </style>
+
+    <style name="DialogFull" parent="@android:style/Theme.Dialog" >
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+</resources>

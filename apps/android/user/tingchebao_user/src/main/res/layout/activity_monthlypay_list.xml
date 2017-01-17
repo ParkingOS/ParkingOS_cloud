@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#EEEEEE" >
+
+    <TextView
+        android:id="@+id/tv_monthly_product_current_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:drawableLeft="@drawable/ic_monthlypay_detail_distance"
+        android:drawablePadding="3dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:text="北京市海淀区信息路嘉华大厦A座1205"
+        android:textColor="@color/bg_darkgray_recharge"
+        android:textSize="16sp" />
+
+    <ExpandableListView
+        android:id="@+id/elv_the_month_product"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_monthly_product_current_address"
+        android:background="#ffffff"
+        android:childIndicator="@null"
+        android:groupIndicator="@null"
+        android:paddingBottom="5dp"
+        android:visibility="invisible" >
+    </ExpandableListView>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/page_null" />
+
+</RelativeLayout>

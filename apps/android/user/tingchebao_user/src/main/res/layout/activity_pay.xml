@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_background"
+    android:orientation="vertical">
+
+    <include layout="@layout/widget_toolbar" />
+
+    <TextView
+        android:id="@+id/tv_pay_subject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="支付停车费-嘉华大厦停车场"
+        android:textColor="@android:color/black"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_pay_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="￥--"
+        android:textColor="@android:color/black"
+        android:textSize="32sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/ll_pay_coupon"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/white"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:drawableLeft="@drawable/ic_account_coupon"
+            android:drawablePadding="8dp"
+            android:drawableStart="@drawable/ic_account_coupon"
+            android:gravity="center"
+            android:text="使用停车券"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tv_pay_coupon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:drawableEnd="@drawable/ic_arrow_gray"
+            android:drawablePadding="4dp"
+            android:drawableRight="@drawable/ic_arrow_gray"
+            android:maxLines="2"
+            android:text="已选择--元券"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:text="请选择支付方式"
+        android:textColor="@color/text_gray"
+        android:textSize="14sp" />
+
+    <RelativeLayout
+        android:id="@+id/rl_pay_balance"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@android:color/white"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <ImageView
+            android:id="@+id/iv_pay_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_pay_balance" />
+
+        <TextView
+            android:id="@+id/tv_pay_balance_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/iv_pay_balance"
+            android:layout_toRightOf="@+id/iv_pay_balance"
+            android:gravity="center"
+            android:text="余额支付"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_pay_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/cb_pay_balance"
+            android:layout_toStartOf="@+id/cb_pay_balance"
+            android:text="￥--"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+
+        <CheckBox
+            android:id="@+id/cb_pay_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:checked="true"
+            android:clickable="false" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignLeft="@+id/tv_pay_balance_name"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/tv_pay_balance_name"
+            android:background="@color/bg_gray" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_pay_wxpay"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@android:color/white"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <ImageView
+            android:id="@+id/iv_pay_wxpay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_pay_wxpay" />
+
+        <TextView
+            android:id="@+id/tv_pay_wxpay_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/iv_pay_wxpay"
+            android:layout_toRightOf="@+id/iv_pay_wxpay"
+            android:gravity="center"
+            android:text="微信支付"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_pay_wxpay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/cb_pay_wxpay"
+            android:layout_toStartOf="@+id/cb_pay_wxpay"
+            android:text="￥--"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+
+        <CheckBox
+            android:id="@+id/cb_pay_wxpay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:clickable="false" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignLeft="@+id/tv_pay_wxpay_name"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/tv_pay_wxpay_name"
+            android:background="@color/bg_gray" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_pay_alipay"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@android:color/white"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <ImageView
+            android:id="@+id/iv_pay_alipay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_pay_alipay" />
+
+        <TextView
+            android:id="@+id/tv_pay_alipay_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/iv_pay_alipay"
+            android:layout_toRightOf="@+id/iv_pay_alipay"
+            android:gravity="center"
+            android:text="支付宝支付"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_pay_alipay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/cb_pay_alipay"
+            android:layout_toStartOf="@+id/cb_pay_alipay"
+            android:text="￥--"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+
+        <CheckBox
+            android:id="@+id/cb_pay_alipay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:clickable="false" />
+    </RelativeLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.rey.material.widget.Button
+        android:id="@+id/btn_pay_pay"
+        style="@style/SolidButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:text="立即支付"
+        app:rd_delayClick="true"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+
+</LinearLayout>

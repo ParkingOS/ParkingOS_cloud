@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sp_setting_low_recharge">lowRecharge</string>
+    <string name="sp_mobile">mobile</string>
+    <string name="sp_hx">hx</string>
+    <string name="sp_login_mobile">loginmobile</string>
+    <string name="sp_plate">plate</string>
+    <string name="sp_plate_state">plateState</string>
+    <string name="sp_plate_all">plates</string>
+    <string name="sp_url_server">serverurl</string>
+    <string name="sp_festival">festival</string>
+    <string name="sp_pay_type">paytype</string>
+    <string name="sp_last_latitude">lastLatitude</string>
+    <string name="sp_last_longitude">lastLongitude</string>
+    <string name="sp_search_history">searchHistory</string>
+    <string name="sp_recently_msg_id">lastReadMsgid</string>
+    <string name="sp_remark">remarks</string>
+    <string name="sp_remark_image_path">imageuri</string>
+    <string name="sp_geitui_msg_id">msgid</string>
+    <string name="sp_splash_version">splashVersion</string>
+    <string name="sp_ignore_version">versionCode</string>
+    <!-- 停车标记纬度-->
+    <string name="sp_remark_latitude">remarkLat</string>
+    <!-- 停车标记经度-->
+    <string name="sp_remark_longitude">remarkLng</string>
+    <!-- 停车标记是否已删除 -->
+    <string name="sp_remark_delete">remarkDel</string>
+    <!-- 标记的时间-->
+    <string name="sp_remark_time">remarkTime</string>
+    <!-- 是否手动定位过-->
+    <string name="sp_remark_located">remarkLocated</string>
+    <!-- 选择的停车楼层-->
+    <string name="sp_remark_floor">remarkFloor</string>
+    <!-- 停车标注-->
+    <string name="sp_remark_tips">remarkTips</string>
+    <string name="sp_flag_x5_init">x5_init</string>
+    <string name="sp_im_user_head_init">im_user_head_init</string>
+    <string name="sp_im_image_url">im_image_url</string>
+    <string name="sp_im_account">im_account</string>
+</resources>

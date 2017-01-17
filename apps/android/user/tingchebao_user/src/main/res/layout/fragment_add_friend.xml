@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="15dp"
+    android:orientation="vertical">
+
+    <EditText
+        android:visibility="gone"
+        android:id="@+id/et_add_plate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/text_white"
+        android:drawableLeft="@drawable/ic_plate_search"
+        android:drawablePadding="10dp"
+        android:hint="车牌号"
+        android:textColorHint="@color/text_hint_gray"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:layout_marginBottom="15dp"
+        android:paddingBottom="15dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="15dp" />
+
+    <RelativeLayout
+        android:id="@+id/rl_add_park_friend"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:background="@color/text_white"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/iv_add_park_friend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/ic_park_friend" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/iv_add_park_friend"
+            android:text="常去车场车友"
+            android:textColor="@color/text_black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/iv_add_park_friend"
+            android:text="添加去相同车场停车的车友"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@null"
+            android:src="@drawable/ic_arrow_gray" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_add_playgame"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/text_white"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/iv_add_playgame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/ic_playgame" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/iv_add_playgame"
+            android:text="打灰机加车友"
+            android:textColor="@color/text_black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/iv_add_playgame"
+            android:text="打中谁的灰机，就能添加谁为车友"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@null"
+            android:src="@drawable/ic_arrow_gray" />
+    </RelativeLayout>
+
+</LinearLayout>
