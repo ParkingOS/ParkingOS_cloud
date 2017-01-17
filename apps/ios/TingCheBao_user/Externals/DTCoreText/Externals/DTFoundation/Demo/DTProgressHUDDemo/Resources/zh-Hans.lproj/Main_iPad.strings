@@ -1,0 +1,18 @@
+
+/* Class = "IBUIButton"; normalTitle = "Show status with Image (fade)"; ObjectID = "9jZ-Iw-KyG"; */
+"9jZ-Iw-KyG.normalTitle" = "Show status with Image (fade)";
+
+/* Class = "IBUIButton"; normalTitle = "Hide"; ObjectID = "GTM-AY-TLO"; */
+"GTM-AY-TLO.normalTitle" = "Hide";
+
+/* Class = "IBUIButton"; normalTitle = "Show pie progress (gravity roll)"; ObjectID = "T60-gJ-A3x"; */
+"T60-gJ-A3x.normalTitle" = "Show pie progress (gravity roll)";
+
+/* Class = "IBUIButton"; normalTitle = "Show infinite progress (gravity)"; ObjectID = "dy7-0X-Pw4"; */
+"dy7-0X-Pw4.normalTitle" = "Show infinite progress (gravity)";
+
+/* Class = "IBUIButton"; normalTitle = "Show pie progress (snap)"; ObjectID = "rcv-k2-VBg"; */
+"rcv-k2-VBg.normalTitle" = "Show pie progress (snap)";
+
+/* Class = "IBUIButton"; normalTitle = "Show infinite progress (gravity tilt)"; ObjectID = "zbz-s3-hQX"; */
+"zbz-s3-hQX.normalTitle" = "Show infinite progress (gravity tilt)";

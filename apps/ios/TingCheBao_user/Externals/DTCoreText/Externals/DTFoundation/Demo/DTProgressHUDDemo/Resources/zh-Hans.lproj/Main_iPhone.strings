@@ -1,0 +1,21 @@
+
+/* Class = "IBUIButton"; normalTitle = "Show DTActionSheet"; ObjectID = "8Ce-MQ-aMo"; */
+"8Ce-MQ-aMo.normalTitle" = "Show DTActionSheet";
+
+/* Class = "IBUIButton"; normalTitle = "Show pie progress (gravity roll)"; ObjectID = "DJh-Fe-y6C"; */
+"DJh-Fe-y6C.normalTitle" = "Show pie progress (gravity roll)";
+
+/* Class = "IBUIButton"; normalTitle = "Show status with Image (fade)"; ObjectID = "JyR-G9-NUt"; */
+"JyR-G9-NUt.normalTitle" = "Show status with Image (fade)";
+
+/* Class = "IBUIButton"; normalTitle = "Show pie progress (snap)"; ObjectID = "UdA-xj-qh9"; */
+"UdA-xj-qh9.normalTitle" = "Show pie progress (snap)";
+
+/* Class = "IBUIButton"; normalTitle = "Show infinite progress (gravity)"; ObjectID = "bhl-G4-Opf"; */
+"bhl-G4-Opf.normalTitle" = "Show infinite progress (gravity)";
+
+/* Class = "IBUIButton"; normalTitle = "Show infinite progress (gravity tilt)"; ObjectID = "jb8-0v-n9D"; */
+"jb8-0v-n9D.normalTitle" = "Show infinite progress (gravity tilt)";
+
+/* Class = "IBUIButton"; normalTitle = "Hide"; ObjectID = "yTU-xt-6ui"; */
+"yTU-xt-6ui.normalTitle" = "Hide";

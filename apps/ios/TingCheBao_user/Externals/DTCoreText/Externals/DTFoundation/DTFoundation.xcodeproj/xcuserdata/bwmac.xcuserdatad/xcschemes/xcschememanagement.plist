@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>DTASN1 (iOS).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>19</integer>
+		</dict>
+		<key>DTAWS (iOS).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>18</integer>
+		</dict>
+		<key>DTAnimatedGIF (iOS).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>17</integer>
+		</dict>
+		<key>DTAnimatedGIF Demo.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>31</integer>
+		</dict>
+		<key>DTHTMLParser (Mac).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>21</integer>
+		</dict>
+		<key>DTHTMLParser (iOS).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>20</integer>
+		</dict>
+		<key>DTProgressHUD (iOS).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>22</integer>
+		</dict>
+		<key>DTProgressHUD Demo.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>DTReachability (Mac).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>24</integer>
+		</dict>
+		<key>DTReachability (iOS).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>23</integer>
+		</dict>
+		<key>DTReachability Demo.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>DTSQLite (Mac).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>26</integer>
+		</dict>
+		<key>DTSQLite (iOS).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>25</integer>
+		</dict>
+		<key>DTSidePanels Demo.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>DTUTI (Mac).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>28</integer>
+		</dict>
+		<key>DTUTI (iOS).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>27</integer>
+		</dict>
+		<key>DTZipArchive (Mac).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>30</integer>
+		</dict>
+		<key>DTZipArchive (iOS).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>29</integer>
+		</dict>
+		<key>DTZipArchive Demo.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
+		<key>Documentation.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>15</integer>
+		</dict>
+		<key>Static Framework.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>16</integer>
+		</dict>
+		<key>Static Library (Mac).xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>9</integer>
+		</dict>
+		<key>Static Library.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>8</integer>
+		</dict>
+		<key>Unit Tests.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>10</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>3D7CE53D166613B60028D339</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A70B4CE61486637E00873A4A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A70D74CF1743AFBC00E6E626</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A710A4FF1607556000437D36</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A72121D9173BFFB1003C6F0A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A72121E9173BFFED003C6F0A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A78220B9168060CA005B602D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A78381C21963F8D700AF09D3</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A7917C76191A312600964D63</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A79D999B1792D1F50082BC06</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A7AC21AE196417830009E1B9</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A7BAD10D1483F934000E2B6A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A7C92B79174FB8900019D70A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A7C92B8B174FB9720019D70A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A7D8C7AF1723174600025675</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A7D9D62C1758C89800C29B6F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A7E383C1160DFEDB00CF72D6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A7E383D9160DFF8600CF72D6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A7E889A316A9B190009EF0DF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A7F4DFED147FBAC600F4059A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>F88FF6771920A83300120808</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>F88FF6861920AAB600120808</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>FA9CB80B17ABDEF200A596C5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>FAF37A1F17AFDD93009AC27C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>

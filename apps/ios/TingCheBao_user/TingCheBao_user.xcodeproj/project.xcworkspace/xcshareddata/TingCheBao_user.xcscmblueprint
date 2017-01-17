@@ -1,0 +1,25 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "d82a9576-5a3b-8d4a-8132-3ac207b17d4a",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "d82a9576-5a3b-8d4a-8132-3ac207b17d4a" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "d82a9576-5a3b-8d4a-8132-3ac207b17d4a" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "0F41A4ED-91D1-46BD-88B2-0958AFF81649",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "d82a9576-5a3b-8d4a-8132-3ac207b17d4a" : "user\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "TingCheBao_user",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "TingCheBao_user\/TingCheBao_user.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/120.132.53.108\/svn\/zld_ios",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "d82a9576-5a3b-8d4a-8132-3ac207b17d4a"
+    }
+  ]
+}

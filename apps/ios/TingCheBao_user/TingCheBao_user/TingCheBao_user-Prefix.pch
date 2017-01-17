@@ -1,0 +1,37 @@
+//
+//  Prefix header
+//
+//  The contents of this file are implicitly included at the beginning of every source file.
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_5_0
+#warning "This project uses features only available in iOS SDK 5.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import "TFoundations.h"
+    #import "BNCoreServices.h"
+    #import "EMAlertView.h"
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#endif
+//
+////#ifdef DLOG
+//#	define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+////#else
+////#	define DLog(...)
+////#endif
+//
+//#if TARGET_IPHONE_SIMULATOR
+//#   define SLog(fmt, ...)  NSLog(fmt, ##__VA_ARGS__)
+//#else
+//#   define SLog(...)
+//#endif
+//
+#ifdef __OPTIMIZE__
+# define NSLog(...) {}
+#else
+# define NSLog(...) NSLog(__VA_ARGS__)
+#endif

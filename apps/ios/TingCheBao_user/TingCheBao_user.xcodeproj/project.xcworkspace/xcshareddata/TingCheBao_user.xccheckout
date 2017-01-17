@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>0F41A4ED-91D1-46BD-88B2-0958AFF81649</string>
+	<key>IDESourceControlProjectName</key>
+	<string>TingCheBao_user</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>d82a9576-5a3b-8d4a-8132-3ac207b17d4a++8657</key>
+		<string>https://120.132.53.108/svn/zld_ios/TingCheBao_user</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>TingCheBao_user.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>d82a9576-5a3b-8d4a-8132-3ac207b17d4a++8657</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>d82a9576-5a3b-8d4a-8132-3ac207b17d4a++8657</key>
+		<string>https://120.132.53.108/svn/zld_ios</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://120.132.53.108/svn/zld_ios/TingCheBao_user/TingCheBao_user.xcodeproj</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>d82a9576-5a3b-8d4a-8132-3ac207b17d4a++8657</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>d82a9576-5a3b-8d4a-8132-3ac207b17d4a++8657</string>
+			<key>IDESourceControlWCCName</key>
+			<string>tingchebao</string>
+		</dict>
+	</array>
+</dict>
+</plist>
