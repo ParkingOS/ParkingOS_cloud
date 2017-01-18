@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+		http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>pcloud</artifactId>
+		<groupId>com.zld</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<groupId>com.zld</groupId>
+	<artifactId>pcloud-sensor</artifactId>
+	<version>0.0.2-SNAPSHOT</version>
+	<name>pcloud-sensor</name>
+	<url>http://maven.apache.org</url>
+	<!-- 不同打包环境 -->
+	<profiles>
+		<profile>
+	    	<id>dev</id>
+	    	<properties>
+	        	<env>dev</env>
+	    	</properties>
+	    	<activation>
+	        	<activeByDefault>true</activeByDefault>
+	    	</activation>
+		</profile>
+		<profile>
+	    	<id>pre</id>
+	    	<properties>
+	        	<env>pre</env>
+	  		</properties>
+		</profile>
+		<profile>
+	    	<id>prod</id>
+	     	<properties>
+	        	<env>prod</env>
+	    	</properties>
+		</profile>
+	</profiles>
+	<build>
+		<filters>
+    		<filter>src/main/filters/${env}.properties</filter>
+    	</filters>
+    	<resources>
+        	<resource>
+            	<directory>src/main/resources</directory>
+            	<filtering>true</filtering>
+        	</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>  
+	            <artifactId>maven-javadoc-plugin</artifactId> 
+			</plugin>
+			<plugin>
+				<!-- 默认Maven生成的JAR包只包含了编译生成的.class文件和项目资源文件，
+					而要得到一个可以直接在命令行通过java命令运行的JAR文件可以借助maven-shade-plugin插件 -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>com.zld.pcloud_sensor.SensorServer</mainClass>
+								</transformer>
+								<!-- 如果项目中用到了Spring Framework，将依赖打到一个jar包中，运行时会出现读取XML schema文件出错。
+									原因是Spring Framework的多个jar包中包含相同的文件spring.handlers和spring.schemas，如果生成一个jar包会互相覆盖。
+									为了避免互相影响，可以使用AppendingTransformer来对文件内容追加合并 -->
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/spring.handlers</resource>
+								</transformer>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/spring.schemas</resource>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<!-- netty包，就一个 -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>5.0.0.Alpha1</version>
+		</dependency>
+		<!-- httpclient -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.3.3</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpasyncclient</artifactId>
+		    <version>4.0.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpcore-nio</artifactId>
+		    <version>4.3.3</version>
+		</dependency>
+		<!-- springframe start -->
+	    <dependency>
+	      <groupId>org.springframework</groupId>
+	      <artifactId>spring-core</artifactId>
+	    </dependency>
+	
+	    <dependency>
+	      <groupId>org.springframework</groupId>
+	      <artifactId>spring-context-support</artifactId>
+	    </dependency>
+	
+	    <dependency>
+	      <groupId>org.springframework</groupId>
+	      <artifactId>spring-test</artifactId>
+	    </dependency>
+	    <!-- springframe end -->
+	    <!-- xmemcached缓存 -->
+	    <dependency>
+		    <groupId>com.googlecode.xmemcached</groupId>
+		    <artifactId>xmemcached</artifactId>
+		    <version>2.0.0</version>
+		</dependency>
+		<!-- google的实例序列化工具 -->
+		<dependency>  
+            <groupId>com.google.protobuf</groupId>  
+            <artifactId>protobuf-java</artifactId>  
+            <version>2.5.0</version>  
+        </dependency> 
+	</dependencies>
+</project>

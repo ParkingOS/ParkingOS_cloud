@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd  
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd"> 
+	<!-- 引入xmemcached.properties -->
+	<context:property-placeholder location="xmemcached.properties" />
+	<!-- 参考：http://www.tuicool.com/articles/2eQVZfE -->
+	<!-- memcached config -->
+    <bean name="memcachedClientBuilder" class="net.rubyeye.xmemcached.XMemcachedClientBuilder">
+		<constructor-arg>  
+            <list>  
+                <bean class="java.net.InetSocketAddress">  
+                    <constructor-arg>  
+                        <value>${memcached.server.host}</value>  
+                    </constructor-arg>  
+                    <constructor-arg>  
+                        <value>${memcached.server.port}</value>  
+                    </constructor-arg>  
+                </bean>
+            </list>  
+        </constructor-arg>
+        <!-- 连接池 -->
+		<property name="connectionPoolSize" value="${memcached.connectionPoolSize}"></property>
+		<!-- xmemcached的通讯层是基于非阻塞IO的，那么在请求发送给memcached之后，需要等待应答的到来，这个等待时间默认是1秒，
+			如果超过1秒就抛出java.util.TimeoutExpcetion给用户。如果你频繁抛出此异常，可以尝试将全局的等待时间设置长一些 -->
+		<property name="opTimeout" value="${memcached.opTimeout}"></property>
+		<!-- 连接超时 -->
+		<property name="connectTimeout" value="${memcached.connectTimeout}"></property>
+		<!-- 宕机报警 -->
+		<property name="failureMode" value="${memcached.failureMode}"></property>
+		<!-- 使用二进制文件   -->
+		<property name="commandFactory">
+			<bean class="net.rubyeye.xmemcached.command.BinaryCommandFactory"></bean>
+		</property>
+		<!-- 使用一致性哈希算法（Consistent Hash Strategy）   -->
+		<property name="sessionLocator">
+			<bean class="net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator"></bean>
+		</property>
+		<!-- 使用序列化传输编码 -->
+		<property name="transcoder">
+			<bean class="net.rubyeye.xmemcached.transcoders.SerializingTranscoder" />
+		</property>
+	</bean>
+	<bean name="memcachedClient" factory-bean="memcachedClientBuilder"
+		factory-method="build" destroy-method="shutdown">
+		<!-- 关闭心跳检测，减小系统开销 -->
+		<property name="enableHeartBeat" value="${memcached.enableHeartBeat}"></property>
+	</bean>
+</beans>
