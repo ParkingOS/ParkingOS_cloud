@@ -2,6 +2,8 @@ package com.zld.struts.city;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.zld.AjaxUtil;
 import com.zld.impl.CommonMethods;
 import com.zld.service.PgOnlyReadService;
+import com.zld.utils.Constants;
 import com.zld.utils.HttpProxy;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.StringUtils;
@@ -97,10 +100,15 @@ public class SyntheticTestAction extends Action {
 					return mapping.findForward("singlevideo");
 				}
 			}
+		}else if(action.equals("getpda")){
+			String result = getPda(request);
+			AjaxUtil.ajaxOutput(response, result);
 		}
 		return null;
 	}
   //获取公交
+
+
 
 	private String getBusSttion(HttpServletRequest request) {
 		Double lon = RequestUtil.getDouble(request, "lon", 0.0);
@@ -441,7 +449,36 @@ public class SyntheticTestAction extends Action {
 		}
 		return "[]";
 	}
-			
+	//获取PDA数据
+	private String getPda(HttpServletRequest request) {
+		
+		String sql = "SELECT ui.id, ui.nickname, ui.phone, ul.is_onseat, ul.ctime, ul.lat, ul.lon,ul.ctime"+ 
+						" from user_info_tb as ui left join user_local_tb as ul on ui.id = ul.uid"+
+						" where ui.cityid = ? and ui.auth_flag = "+Constants.AUTH_FLAG_COLLECTOR+
+						" and (ul.ctime = (select max(ult.ctime) from user_local_tb as ult where ult.uid = ui.id) or ul.ctime is null)";
+		Long Cityid = (Long)request.getSession().getAttribute("cityid");
+		long time = System.currentTimeMillis()/1000 - 30*60;
+		List<Map<String, Object>> result = onlyReadService.getAll(sql, new Object[]{Cityid});
+		String str = "[";
+		if(result != null){
+			for(int i = 0 ; i < result.size() ; ++i){
+				Map<String,Object> map = result.get(i);
+				String update_time = "";
+				if(map.get("ctime") != null){
+					Date date = new Date(((Long)map.get("ctime"))*1000);
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					update_time = sdf.format(date);
+				}
+				str += "{\"uid\":"+map.get("id")+", \"latitude\":"+map.get("lat")+
+						",\"longtitude\":"+map.get("lon")+", \"is_onseat\":"+map.get("is_onseat")+
+						",\"nickname\":\""+map.get("nickname")+"\""+
+						",\"update_time\":\""+ update_time +"\"},";
+				//str += "{\"uid\":1, \"latitude\":25.279087,\"longtitude\":110.29663, \"is_onseat\":1},";
+			}	
+		}
+		str += "]";
+		return str;
+	}	
 
 		
 
