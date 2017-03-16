@@ -19,7 +19,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-attributes-api.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-attributes-compiler.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-beanutils.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-codec-1.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-codec.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-dbcp.jar"/>

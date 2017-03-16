@@ -68,6 +68,7 @@
         <a id ="ctsid" href="synthetictest.do?authid=${authid}&datatype=induce" class="induce">诱导屏</a>&nbsp;
         <a id ="ctsid" href="synthetictest.do?authid=${authid}&datatype=trans" class="trans">基站</a>&nbsp;
         <a id ="ctsid" href="synthetictest.do?authid=${authid}&datatype=video" class="video">视频</a>
+        <a id ="ctsid" href="synthetictest.do?authid=${authid}&datatype=pda" class="pda">PDA</a>
       
         </div>
         <form action="" method="get">
@@ -80,12 +81,15 @@
         <img src="images/icons/warnbike.png" width="15" height="15""/>车位正常
         <img src="images/icons/normalcharge.png" width="15" height="15"/>桩位正常
         <img src="images/icons/warncharge.png" width="15" height="15"/>桩位紧张 -->
+        <img src="images/icons/normalcharge.png" width="15" height="15"/>PDA正常
+        <img src="images/icons/warncharge.png" width="15" height="15"/>PDA故障
           </div>
           <div class="kuan2">
         <img src="images/icons/normaltrans.png" width="15" height="15"/>基站正常
         <img src="images/icons/faulttrans.png" width="15" height="15"/>基站故障
         <img src="images/icons/normalvideo.png" width="15" height="15"/>视频正常
         <img src="images/icons/faultvideo.png" width="15" height="15"/>视频故障
+         
           </div>
         </form>
       </div>
@@ -116,6 +120,10 @@
  	var threeinduceIcon=new BMap.Icon("images/icons/threeinduce.png",new BMap.Size(20, 20));
 	var secondinduceIcon =new BMap.Icon("images/icons/secondinduce.png",new BMap.Size(20, 20));
 	
+	var myPDAIcon="";
+    var normalPDAIcon = new BMap.Icon("images/icons/normalcharge.png", new BMap.Size(20, 20));
+    var warnPDAIcon = new BMap.Icon("images/icons/warncharge.png", new BMap.Size(20, 20));
+    
 	map = new BMap.Map("allmap");
 	map.centerAndZoom(new BMap.Point(gps.split(',')[0],gps.split(',')[1]), 16);
 	map.enableScrollWheelZoom(true);
@@ -128,6 +136,7 @@
 	var data_park_info = eval(T.A.sendData("synthetictest.do?action=getparktation&lon="+x+"&lat="+y));
 	var data_trans_info=eval(T.A.sendData("synthetictest.do?action=gettransmitter&lon="+x+"&lat="+y));//基站数据
 	var data_induce_info=eval(T.A.sendData("synthetictest.do?action=getinduce&lon="+x+"&lat="+y)); //诱导数据
+	var data_pda_info = eval(T.A.sendData("synthetictest.do?action=getpda&lon="+x+"&lat="+y));//pda数据
 		//停车场
 	if(type=='all'||type=='park'){
 		for(var i=0;i<data_park_info.length;i++){
@@ -225,6 +234,25 @@
 			addClickHandler(indoue_content,marker);
 		} 
 	}
+
+	if(type == 'all' || type == 'pda'){
+		for(var i=0;i<data_pda_info.length;i++){
+		      if(data_pda_info[i].is_onset== 1){
+	               		 myparkIcon=normalPDAIcon;
+	            	 }else{
+		                myparkIcon=warnPDAIcon ;
+		             }
+			var marker = new BMap.Marker(new BMap.Point(data_pda_info[i].longtitude,data_pda_info[i].latitude),{
+                      enableDragging: false,
+                      raiseOnDrag: true,
+                      icon: myparkIcon
+                  });  // 创建标注
+		 map.addOverlay(marker);   
+		 var content =  "收费员:"+data_pda_info[i].nickname+"<br>是否在位:"+ (data_pda_info[i].is_onseat == 1?"是":"否") +"<br>更新时间:"+data_pda_info[i].update_time;       // 将标注添加到地图中
+			addClickHandler(content,marker);
+		} 
+	}
+
 	var opts = {
 				width : 250,     // 信息窗口宽度
 				height: 245,     // 信息窗口高度
