@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/tv_item_send_ticket_carnumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center|left"
+        android:paddingLeft="5dp"
+        android:text=""
+        android:textColor="@color/red_package"
+        android:textSize="16dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_item_send_ticket_detials"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_item_send_ticket_carnumber"
+        android:gravity="center"
+        android:paddingLeft="5dp"
+        android:text=""
+        android:textColor="#A2A2A2"
+        android:textSize="12dp" />
+
+    <CheckBox
+        android:id="@+id/cb_item_send_ticket"
+        style="@style/CustomCheckboxTheme_red"
+        android:layout_width="30dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:textSize="12dp" />
+
+</RelativeLayout>

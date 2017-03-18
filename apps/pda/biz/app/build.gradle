@@ -1,0 +1,76 @@
+apply plugin: 'com.android.application'
+android {
+    compileSdkVersion 23
+    buildToolsVersion '23.0.3'
+
+    defaultConfig {
+        applicationId "com.zhenlaidian"
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1410
+        versionName "1.4.1"
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    signingConfigs {
+        release {
+            try {
+                storeFile file("./zhenlaidian.keystore")
+//                storeFile file("Z:/WORKSPACE/biz/app/zhenlaidian.keystore")
+//                storePassword properties.getProperty("KEYSTORE_PASSWORD")
+                storePassword "zhenlaidian500"
+                keyAlias "zhenlaidian"
+//                keyPassword properties.getProperty("KEY_PASSWORD")
+                keyPassword "zhenlaidian500"
+            }
+            catch (ex) {
+//                ex.printStackTrace();
+                throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
+            }
+        }
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+        }
+
+        release {
+//            manifestPlaceholders = [EASEMOB_APPKEY: "yxyz2015#tcpim"]
+            // 不显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        // 这个是解决lint报错的代码
+        lintOptions {
+            abortOnError false
+            // 防止在发布的时候出现因MissingTranslation导致Build Failed!
+            disable 'MissingTranslation'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':android-support-v7-appcompat')
+    testCompile 'junit:junit:4.12'
+    compile 'com.google.code.gson:gson:2.3.1'
+//    compile 'com.mcxiaoke.volley:library:1.0.19'
+    compile files('src/main/lib/android_auth.jar')
+    compile files('src/main/lib/bcprov-ext-jdk15-146.jar')
+    compile files('src/main/lib/ksoap2-android-assembly-2.4-jar-with-dependencies.jar')
+    compile files('src/main/lib/pki.jar')
+    compile files('src/main/lib/plate_id_sdk.jar')
+    compile files('src/main/lib/rskapi.jar')
+    compile files('src/main/lib/platform_sdk_v2.3.706.jar')
+}

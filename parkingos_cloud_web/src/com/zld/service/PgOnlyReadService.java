@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zld.dao.PgOnlyReadDao;
-import com.zld.utils.StringUtils;
 
 @Service
 public class PgOnlyReadService {
@@ -110,7 +109,6 @@ public class PgOnlyReadService {
 				objects[i]=values.get(i);
 			}
 		}
-		System.err.println(sql+",params:"+StringUtils.objArry2String(objects));
 		return userDao.getAll(sql, objects);
 	}
 	

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F0F0F0"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <AutoCompleteTextView
+            android:id="@+id/at_login_account"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="40dp"
+            android:completionThreshold="1"
+            android:dropDownHorizontalOffset="20dp"
+            android:ems="10"
+            android:hint="账号"
+            android:maxLength="7"
+            android:numeric="integer"
+            android:singleLine="true"
+            android:textColor="#000000"
+            android:textCursorDrawable="@null">
+
+            <requestFocus />
+        </AutoCompleteTextView>
+
+        <EditText
+            android:id="@+id/et_login_password"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="20dp"
+            android:hint="密码"
+            android:inputType="textPassword"
+            android:maxLength="32"
+            android:singleLine="true"
+            android:textColor="#000000"
+            android:textCursorDrawable="@null" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/bt_longin_login"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/shape_login_button"
+                android:text="登录"
+                android:textColor="#ffffff"
+                android:textSize="16sp"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center|left"
+                android:orientation="horizontal">
+
+                <Button
+                    android:visibility="gone"
+                    android:id="@+id/bt_longin_register"
+                    android:layout_width="135dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="#F0F0F0"
+                    android:gravity="center|left"
+                    android:paddingLeft="11dp"
+                    android:text="@string/regist"
+                    android:textColor="@color/tv_leaveItem_state_green"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center|right"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/bt_longin_forget"
+                    android:layout_width="80dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="10dp"
+                    android:background="#F0F0F0"
+                    android:text="忘记密码"
+                    android:textColor="@color/tv_leaveItem_state_green"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="right"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/et_login_voice"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="20dp"
+            android:hint=""
+            android:textColor="#000000"
+            android:textCursorDrawable="@null"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_version_name"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:text="当前版本号"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/ll_login_change_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/bt_longin_url_server"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/gray"
+                android:text="正式"
+                android:textColor="@color/tv_leaveItem_state_green"
+                android:textSize="15sp" />
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="match_parent"
+                android:background="@color/tv_leaveItem_state_green" />
+
+            <Button
+                android:id="@+id/bt_longin_url_oldyao"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/gray"
+                android:text="老姚"
+                android:textColor="@color/tv_leaveItem_state_green"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="match_parent"
+                android:background="@color/tv_leaveItem_state_green" />
+
+            <Button
+                android:id="@+id/bt_longin_url_oldwang"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/gray"
+                android:text="海翔"
+                android:textColor="@color/tv_leaveItem_state_green"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="match_parent"
+                android:background="@color/tv_leaveItem_state_green" />
+
+            <Button
+                android:id="@+id/bt_longin_url_xiaohui"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/gray"
+                android:text="荣辉"
+                android:textColor="@color/tv_leaveItem_state_green"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="match_parent"
+                android:background="@color/tv_leaveItem_state_green" />
+
+            <Button
+                android:id="@+id/bt_longin_url_ceshi"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@color/gray"
+                android:text="预上线"
+                android:textColor="@color/tv_leaveItem_state_green"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

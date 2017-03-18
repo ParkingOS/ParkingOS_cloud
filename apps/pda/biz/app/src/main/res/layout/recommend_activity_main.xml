@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/shape_recommend"
+            android:padding="5dp" >
+
+            <ImageView
+                android:id="@+id/iv_recommend_qrcode_biz"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:focusable="true"
+                android:clickable="true"
+                android:focusableInTouchMode="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/img_qrcode_biz" />
+
+            <TextView
+                android:id="@+id/tv_recommend_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="5dp"
+                android:layout_toRightOf="@+id/iv_recommend_qrcode_biz"
+                android:text="" />
+
+            <EditText
+                android:id="@+id/et_recommend_mobile_biz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/tv_recommend_1"
+                android:layout_marginBottom="5dp"
+                android:layout_toRightOf="@+id/iv_recommend_qrcode_biz"
+                android:background="@drawable/shape_recommend_edittext"
+                android:hint="输入停车员手机号"
+                android:inputType="phone"
+                android:padding="5dp"
+                android:textColorHint="#D5D5D5"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_recommend_biz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/et_recommend_mobile_biz"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="3dp"
+                android:layout_toRightOf="@+id/iv_recommend_qrcode_biz"
+                android:background="@drawable/shape_recommend_owner"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="推荐"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/tv_recommend_share_biz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/tv_recommend_biz"
+                android:layout_toRightOf="@+id/iv_recommend_qrcode_biz"
+                android:background="@drawable/shape_recommend_owner"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="分享"
+                android:textColor="@android:color/white" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/shape_recommend"
+            android:padding="5dp" >
+
+            <ImageView
+                android:id="@+id/iv_recommend_qrcode_user"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/img_qrcode_user" />
+
+            <TextView
+                android:id="@+id/tv_recommend_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="5dp"
+                android:layout_toRightOf="@+id/iv_recommend_qrcode_user"
+                android:text="" />
+
+            <EditText
+                android:id="@+id/et_recommend_mobile_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/tv_recommend_2"
+                android:layout_marginBottom="5dp"
+                android:layout_toRightOf="@+id/iv_recommend_qrcode_user"
+                android:background="@drawable/shape_recommend_edittext"
+                android:hint="输入车主手机号"
+                android:inputType="phone"
+                android:padding="5dp"
+                android:textColorHint="#D5D5D5"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_recommend_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/et_recommend_mobile_user"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="3dp"
+                android:layout_toRightOf="@+id/iv_recommend_qrcode_user"
+                android:background="@drawable/shape_recommend_owner"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="推荐"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/tv_recommend_share_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/tv_recommend_user"
+                android:layout_toRightOf="@+id/iv_recommend_qrcode_user"
+                android:background="@drawable/shape_recommend_owner"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="分享"
+                android:textColor="@android:color/white" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/shape_recommend"
+            android:orientation="horizontal"
+            android:padding="8dp" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="我的推荐码"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_recommend_qrcode"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text=""
+                android:textColor="#ff0000"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_recommend_recommended_biz"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/shape_recommend"
+            android:drawableRight="@drawable/right_arrow"
+            android:gravity="center_vertical"
+            android:padding="8dp"
+            android:text="已推荐车场"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_recommend_recommended_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/shape_recommend"
+            android:drawableRight="@drawable/right_arrow"
+            android:gravity="center_vertical"
+            android:padding="8dp"
+            android:text="已推荐车主"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DADDE1" >
+
+    <RelativeLayout
+        android:id="@+id/rl_bankcard_nobinded"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:text="暂无银行卡，点击右上角 &quot;＋&quot; 添加" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_bandcard_binddone"
+        android:layout_margin="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/rl_bankcard_nobinded"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"    
+        android:background="#ffffff"
+        android:visibility="invisible"    
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/rl_bankcard_nobinded"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+             >
+
+            <TextView
+                android:id="@+id/tv_bank_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:text="中国建设银行" />
+
+            <TextView
+                android:layout_marginTop="8dp"
+                android:id="@+id/tv_card_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#C0C0C0"
+                android:text="**** **** **** 1164" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_marginRight="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="right|center_vertical"
+            android:textColor="#C0C0C0"
+            android:textSize="15sp"
+            android:text="储蓄卡" />
+    </LinearLayout>
+
+</RelativeLayout>

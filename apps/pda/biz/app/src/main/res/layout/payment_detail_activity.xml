@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_payment_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/bt_payment_detail_all"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/shape_payment_detail_blue"
+            android:gravity="center"
+            android:text="全部"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/bt_payment_detail_income"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/shape_payment_detail_gray"
+            android:gravity="center"
+            android:text="收入" />
+
+        <Button
+            android:id="@+id/bt_payment_detail_withdraw"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/shape_payment_detail_gray"
+            android:gravity="center"
+            android:text="提现" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_payment_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_weight="50" />
+
+    <Button
+        android:id="@+id/bt_query_pay_log"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="2dp"
+        android:layout_weight="1"
+        android:background="@color/tv_leaveItem_state_green"
+        android:text="查询车主付费记录"
+        android:textColor="@color/white" />
+
+    <LinearLayout
+        android:id="@+id/ll_payment_detail_null"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:src="@drawable/gray_car" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="暂无收支明细" />
+    </LinearLayout>
+
+</LinearLayout>

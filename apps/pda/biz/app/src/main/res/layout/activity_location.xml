@@ -1,0 +1,100 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.clare.locationdemo.LocationActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/mapview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true" />
+
+    <RelativeLayout
+        android:id="@+id/rl_location_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="105dp"
+        android:layout_alignParentBottom="true"
+        android:background="#F6F6F6"
+        android:paddingBottom="5dp" >
+
+        <Button
+            android:id="@+id/btn_location_ok"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="5dp"
+            android:background="@drawable/shape_login_button"
+            android:text="完成"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_location_tv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btn_location_ok"
+            android:layout_alignLeft="@id/btn_location_ok"
+            android:gravity="center_vertical|right"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="位置："
+            android:textColor="#0000ff"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_location_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btn_location_ok"
+            android:layout_alignBaseline="@id/tv_location_tv1"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/tv_location_tv1"
+            android:singleLine="true"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@id/tv_location_tv1"
+            android:background="#DCDCDC" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_above="@id/tv_location_tv1"
+            android:background="#DCDCDC" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textview1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#eeffffff"
+        android:gravity="center"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="拖动地图，p 标点下方对准您要选择的位置！"
+        android:textColor="#ff0000"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/iv_location_marker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/my_location_location2" />
+
+    <ImageView
+        android:id="@+id/iv_location_myposition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textview1"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/mylocbtn" />
+
+</RelativeLayout>

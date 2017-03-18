@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/add_bank_card"
+        android:icon="@drawable/addcard"
+        android:menuCategory="secondary"
+        android:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/edit_bank_card"
+        android:icon="@drawable/editcard"
+        android:menuCategory="secondary"
+        android:showAsAction="ifRoom"/>
+
+</menu>

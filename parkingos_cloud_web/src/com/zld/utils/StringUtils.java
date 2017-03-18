@@ -4,6 +4,7 @@ package com.zld.utils;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -520,11 +521,19 @@ public class StringUtils {
 	/**
 	 * Éú³ÉMD5
 	 */
-	public static String MD5(String s) throws Exception {
-		MessageDigest messagedigest = MessageDigest.getInstance("MD5");
-		messagedigest.reset();
-		byte abyte0[] = messagedigest.digest(s.getBytes());
-		return byteToString(abyte0);
+	public static String MD5(String s) {
+		//System.err.println(s);
+		try {
+			MessageDigest messagedigest = MessageDigest.getInstance("MD5");
+			messagedigest.reset();
+			byte abyte0[] = messagedigest.digest(s.getBytes("utf-8"));
+			return byteToString(abyte0);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 	private static String byteToString(byte abyte0[]) {
 		int i = abyte0.length;
@@ -947,4 +956,19 @@ public class StringUtils {
 		 int rang = new Random().nextInt(passes.length);
 		 return passes[rang];
 	 }
+	 public static String createLinkString(Map<String, Object> params) {
+			List<String> keys = new ArrayList<String>(params.keySet());
+			Collections.sort(keys);
+			String prestr = "";
+			for (int i = 0; i < keys.size(); i++) {
+				String key = keys.get(i);
+				Object value = params.get(key);
+				if (value == null || value.toString().trim().equals(""))
+					continue;
+				prestr += key + "=" + value + "&";
+			}
+			if (prestr.endsWith("&"))
+				prestr = prestr.substring(0, prestr.length() - 1);
+			return prestr;
+		}
 }

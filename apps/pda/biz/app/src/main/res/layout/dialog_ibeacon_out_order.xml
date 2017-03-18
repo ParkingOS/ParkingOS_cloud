@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:background="#E9E9E9"
+        android:orientation="horizontal" >
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="#c9c9c9" />
+
+        <TextView
+            android:id="@+id/tv_ibeacon_out_number"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_weight="7"
+            android:background="@drawable/y_carnumber"
+            android:gravity="center_horizontal|center_vertical"
+            android:text=""
+            android:textColor="#FFFFFF"
+            android:textSize="23sp" >
+        </TextView>
+
+        <LinearLayout
+            android:id="@+id/ll_leaveitem_change_money"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="3dp"
+            android:layout_weight="6"
+            android:background="@drawable/shape_leaveitem_change_money"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/tv_ibeacon_out_change_money_subtract"
+                android:layout_width="45dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="—"
+                android:textSize="18sp" />
+
+            <View
+                android:layout_width="0.6dp"
+                android:layout_height="match_parent"
+                android:background="#222222" />
+
+            <EditText
+                android:id="@+id/et_ibeacon_out_change_money_money"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="50"
+                android:background="@null"
+                android:gravity="center"
+                android:maxLength="7"
+                android:inputType="numberDecimal"
+                android:singleLine="true"
+                android:text=""
+                android:textSize="14sp" />
+
+            <View
+                android:layout_width="0.6dp"
+                android:layout_height="match_parent"
+                android:background="#222222" />
+
+            <TextView
+                android:id="@+id/tv_ibeacon_out_change_money_add"
+                android:layout_width="45dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="+"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="#c9c9c9" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#E9E9E9"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tv_ibeacon_out_time"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:gravity="center_vertical|left"
+            android:text=""
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_ibeacon_out_accomplish"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/tv_leaveItem_state_green"
+        android:gravity="center"
+        android:text="确认放行"
+        android:textColor="#ffffff"
+        android:textSize="20sp" />
+
+</LinearLayout>

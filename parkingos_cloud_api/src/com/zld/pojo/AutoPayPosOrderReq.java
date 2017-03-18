@@ -14,7 +14,16 @@ public class AutoPayPosOrderReq implements Serializable {
 	private Integer version = -1;//版本号
 	private Long groupId = -1L;//收费员所在运营集团编号
 	private Long curTime = System.currentTimeMillis()/1000;
+	private Integer payType=0;
 	
+	
+	
+	public Integer getPayType() {
+		return payType;
+	}
+	public void setPayType(Integer payType) {
+		this.payType = payType;
+	}
 	public Long getUid() {
 		return uid;
 	}

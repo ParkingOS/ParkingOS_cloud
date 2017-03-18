@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/car_order_item_order"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:orientation="horizontal" >-->
+
+        <!--<RelativeLayout-->
+            <!--android:layout_width="115dp"-->
+            <!--android:layout_height="match_parent" >-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/car_order_item_number"-->
+                <!--android:layout_width="115dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@color/tv_parknumber_blue"-->
+                <!--android:gravity="center"-->
+                <!--android:text=""-->
+                <!--android:textColor="#ffffff"-->
+                <!--android:textSize="20dp"-->
+                <!--android:textStyle="bold" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/car_order_item_isvip"-->
+                <!--android:layout_width="45dp"-->
+                <!--android:layout_height="30dp"-->
+                <!--android:background="@drawable/vip_order"-->
+                <!--android:visibility="visible" />-->
+        <!--</RelativeLayout>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/car_order_item_intime"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="50"-->
+            <!--android:background="#f0f0f0"-->
+            <!--android:gravity="center"-->
+            <!--android:text=""-->
+            <!--android:textSize="16dp"-->
+            <!--android:textStyle="bold" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/car_order_item_cash"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="#caded3"-->
+            <!--android:gravity="center|right"-->
+            <!--android:paddingRight="10dp"-->
+            <!--android:text="结算"-->
+            <!--android:textColor="@color/tv_leaveItem_state_green"-->
+            <!--android:textSize="16dp"-->
+            <!--android:textStyle="bold" />-->
+    <!--</LinearLayout>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/car_order_item_loadmore"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:layout_margin="3dp"-->
+        <!--android:background="@drawable/shape_load_more"-->
+        <!--android:gravity="center"-->
+        <!--android:text="加载更多..."-->
+        <!--android:textColor="#ffffff"-->
+        <!--android:textSize="16dp"-->
+        <!--android:visibility="invisible" />-->
+
+</LinearLayout>

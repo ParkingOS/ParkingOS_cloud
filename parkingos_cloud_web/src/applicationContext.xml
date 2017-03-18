@@ -206,14 +206,17 @@
 	<bean name="/peakgantt" class="com.zld.struts.anlysis.PeakAlertAnlysisAction"></bean>
 	<bean name="/feebypark" class="com.zld.struts.anlysis.CollectByParkAnlysisAction"></bean>
 	<bean name="/feebycoll" class="com.zld.struts.anlysis.CollectByCollectorAnlyAction"></bean>
+	<bean name="/feebygroup" class="com.zld.struts.anlysis.CollectByGroupAnlyAction"></bean>
 	<bean name="/staticfeebycoll" class="com.zld.struts.anlysis.CollectByCollectorStaticAnlyAction"></bean>
+	<bean name="/staticfeebypark" class="com.zld.struts.anlysis.CollectByParkStaticAnlysisAction"></bean>
+	<bean name="/staticfeebygroup" class="com.zld.struts.anlysis.CollectByGroupStaticAnlysisAction"></bean>
 	<bean name="/citysensororder" class="com.zld.struts.city.CitySensorOrderAction"></bean>
 	<bean name="/sensorberth" class="com.zld.struts.city.SensorBerthCompareAction"></bean>
 	<bean name="/inducemodule" class="com.zld.struts.city.CityInduceModuleAction"></bean>
 	<bean name="/card" class="com.zld.struts.group.GroupCardManageAction"></bean>
 	<bean name="/cardaccount" class="com.zld.struts.group.GroupCardAccountAction"></bean>
-	
 	<bean name="/statsaccount" class="com.zld.struts.anlysis.StatsAccountAction"></bean>
+	<bean name="/worktime" class="com.zld.struts.city.WorkTimeManageAction"></bean>
 	<!--/////////////// 客户端交互===车场 -->
 	<!-- 红包统计  -->
 	<bean name="/bonusanly" class="com.zld.struts.anlysis.BonusAnlysisAction"></bean>

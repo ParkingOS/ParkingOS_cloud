@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0EFED"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/tv_bandcard_photo_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:paddingLeft="5dp"
+        android:text="您可以将信息写在纸上,拍照上传"
+        android:textColor="@color/tv_leaveItem_state_green"
+        android:textSize="19sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_bandcard_photo_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="3dp"
+        android:paddingLeft="10dp"
+        android:text="如下："
+        android:textColor="@color/black"
+        android:textSize="16dp" />
+
+    <ImageView
+        android:id="@+id/iv_bandcard_photo_img"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/bank_card_photo"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/tv_bandcard_photo_warn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:paddingLeft="5dp"
+        android:text="停车宝会将您的信息严格保密，仅供提现使用"
+        android:textColor="@color/red"
+        android:textSize="15dp" />
+
+    <Button
+        android:id="@+id/bt_bandcard_photo_take"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/shape_login_button"
+        android:text="去拍照"
+        android:textColor="@android:color/white" />
+
+    <LinearLayout
+        android:id="@+id/ll_bandcard_photo_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <Button
+            android:id="@+id/bt_bandcard_photo_retake "
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/shape_make_vip_card_"
+            android:gravity="center"
+            android:text="重拍"
+            android:textColor="@color/tv_leaveItem_state_green"
+            android:textSize="17sp" />
+
+        <Button
+            android:id="@+id/bt_bandcard_photo_ok"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/shape_login_button"
+            android:text="完成"
+            android:textColor="#ffffff" />
+    </LinearLayout>
+
+</LinearLayout>

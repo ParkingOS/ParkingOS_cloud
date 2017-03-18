@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tv_my_comment_carnumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="京A99887"
+            android:textColor="@color/input_dialog_black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_my_comment_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:padding="8dp"
+            android:text="下午 03:50"
+            android:textColor="@color/input_dialog_black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_my_comment_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_my_comment_carnumber"
+            android:maxLength="200"
+            android:padding="5dp"
+            android:text="人不错。热情，指引到位；"
+            android:textColor="@color/input_dialog_black"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/tv_my_comment_comment"
+            android:background="#DAD9D9" />
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 正式百度key -->
+    <string name="baidukey0">elSuZIYwjPjp5zelbIIq7job</string>
+    <!-- 调试版百度Key -->
+    <string name="baidukey">k0XC18nUQ0Mdl24zg1VPCnW5</string>
+    <string name="rule">http://s.tingchebao.com/zld/lalarule.jsp</string>
+
+    <!--<string name="updataurl">http://d.tingchebao.com/update/parkuser/update.xml</string>-->
+    <string name="updataurl">http://d.tingchebao.com/update/parkusertest/update.xml</string>
+
+</resources>

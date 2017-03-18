@@ -22,6 +22,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.zld.AjaxUtil;
+
 public class ZldTest {
 	public static String anlysisPhoneLocal(){
 		String filenname="c:\\mobile.txt";
@@ -313,22 +315,23 @@ public class ZldTest {
 	
 	//·¢ËÍ¶ÌÐÅ
 	public static void main(String[] args) {
-		  String inXml = "<?xml version=\"1.0\" encoding=\"GBK\"?>" +
-	        		"<ROOT><STNO1>1</STNO1><STNO2>2000</STNO2><CURRPAGE>0</CURRPAGE><PAGENO>0</PAGENO></ROOT>" ;
-	        String msg = 
-	        		"<ROOT>" +
-	        		"<ActNo>6222621410000535967</ActNo>" +
-	        		"<TeLNum>13579370660</TeLNum>" +
-	        		"<CertNo>65290119880321044X</CertNo>"+
-	        		"<CurrPage>0</CurrPage>"+
-	        		"<PageNo>20</PageNo>"+
-	        		"<BeginTime>20160301100000</BeginTime>" +
-	        		"<EndTime>20160330100000</EndTime>" +
-	        		"</ROOT>" ;
-	        	//	"<PageNo></PageNo>";
-	        String detailXmlString="<?xml version=\"1.0\" encoding=\"GBK\"?>"+
-	"<ROOT><ACTNO>6222621410000535967</ACTNO><CERTNO>13579370660</CERTNO><TELNUM>65290119880312044X</TELNUM><BEGINTIME>20160304000000</BEGINTIME><ENDTIME>20160330235959</ENDTIME><CURRPAGE>1</CURRPAGE><PAGENO>25</PAGENO></ROOT>";
-	     //   System.out.println( service.queryLeaseRecXML("<?xml version=\"1.0\" encoding=\"GBK\"?>"+msg.toUpperCase()));
+		System.err.println(AjaxUtil.decodeUTF8("http%3a%2f%2fyxiudongyeahnet.vicp.cc:50803%2fzld%2fwxpfast.do%3faction%3dsweepcom%26from%3dbolink%26codeid%3d33"));
+//		  String inXml = "<?xml version=\"1.0\" encoding=\"GBK\"?>" +
+//	        		"<ROOT><STNO1>1</STNO1><STNO2>2000</STNO2><CURRPAGE>0</CURRPAGE><PAGENO>0</PAGENO></ROOT>" ;
+//	        String msg = 
+//	        		"<ROOT>" +
+//	        		"<ActNo>6222621410000535967</ActNo>" +
+//	        		"<TeLNum>13579370660</TeLNum>" +
+//	        		"<CertNo>65290119880321044X</CertNo>"+
+//	        		"<CurrPage>0</CurrPage>"+
+//	        		"<PageNo>20</PageNo>"+
+//	        		"<BeginTime>20160301100000</BeginTime>" +
+//	        		"<EndTime>20160330100000</EndTime>" +
+//	        		"</ROOT>" ;
+//	        	//	"<PageNo></PageNo>";
+//	        String detailXmlString="<?xml version=\"1.0\" encoding=\"GBK\"?>"+
+//	"<ROOT><ACTNO>6222621410000535967</ACTNO><CERTNO>13579370660</CERTNO><TELNUM>65290119880312044X</TELNUM><BEGINTIME>20160304000000</BEGINTIME><ENDTIME>20160330235959</ENDTIME><CURRPAGE>1</CURRPAGE><PAGENO>25</PAGENO></ROOT>";
+//	     //   System.out.println( service.queryLeaseRecXML("<?xml version=\"1.0\" encoding=\"GBK\"?>"+msg.toUpperCase()));
 //	        IYZBikeInterFaceserviceClient client = new IYZBikeInterFaceserviceClient();
 //	        
 //			//create a default service endpoint

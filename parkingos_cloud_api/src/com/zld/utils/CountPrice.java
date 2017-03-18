@@ -125,8 +125,17 @@ public class CountPrice {
 	 * @return
 	 */
 	public static Map<String, Object> getAccount(Long start,Long end,Map dayMap,Map nightMap,double minPriceUnit,Map assistPrice){
+		
 		if(dayMap!=null){
 			Long comid = (Long)dayMap.get("comid");
+			String wenlinPrice = CustomDefind.WENLINPRICE;//湿岭价格
+			if(wenlinPrice!=null&&Check.isNumber(wenlinPrice)){
+				if(comid.equals(Long.valueOf(wenlinPrice))){
+					return getWenlinPrice(start, end,dayMap,assistPrice);
+				}
+			}
+			
+			
 			String threePrice = CustomDefind.getValue("TZCOMIDS");
 			if(threePrice!=null&&comid!=null){
 				String ids [] = threePrice.split("\\|");
@@ -240,6 +249,50 @@ public class CountPrice {
 		resultMap.put("collect", StringUtils.formatDouble(total));
 		return resultMap;
 	}
+
+	private static Map<String, Object> getWenlinPrice(Long start, Long end,
+			Map dayMap, Map assistPrice) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		// 温岭价格
+		Long dur = (end -start)/60;//分钟 
+		if((end-start)%60!=0)
+			dur +=1;
+		Long subDur  = dur%(24*60);
+		Double price = 0.0;
+		Long day = dur/(24*60);
+		if(subDur>0){
+			if(day>0){
+				if(subDur<=4*60){//四小时(含)内3元
+					price = 3.0;
+				}else if(subDur<=12*60){//12小时内(含)6元
+					price = 6.0;
+				}else if(subDur<=24*60){//24小时内(含)15元
+					price = 15.0;
+				}
+			}else {
+				if(subDur>60) {//不足1小时(含)不收费
+					if(subDur<=4*60){//四小时(含)内3元
+						 price = 3.0;
+					}else if(subDur<=12*60){//12小时内(含)6元
+						price = 6.0;
+					}else if(subDur<=24*60){//24小时内(含)15元
+						price = 15.0;
+					}
+				}
+			}
+		}
+		price += day*15.0;
+		resultMap.put("total", StringUtils.formatDouble((price)));
+		resultMap.put("discount",0);//折扣
+		resultMap.put("duration", StringUtils.getTimeString(dur*60));
+		resultMap.put("btime", TimeTools.getTime_MMdd_HHmm(start*1000).substring(6));
+		resultMap.put("etime", TimeTools.getTime_MMdd_HHmm(end*1000).substring(6));
+		resultMap.put("collect", StringUtils.formatDouble(price));
+		System.err.println("three>>>" + TimeTools.getTime_yyyyMMdd_HHmmss(start * 1000) + 
+				"  ,end:" + TimeTools.getTime_yyyyMMdd_HHmmss(end * 1000) + " ,result:" + resultMap);
+		return resultMap;
+	}
+
 
 	public static Map<String, Object> getAccount24(Long start,Long end,Map dayMap,Map nightMap,double minPriceUnit,Map assistPrice){
 		Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -414,7 +467,7 @@ public class CountPrice {
 		Long ts0 = calendar.getTimeInMillis()/1000;
 		
 		if(nightMap==null){//没有夜间价格时，如果进场时间在夜间，则从日间计价时间开始计时
-			if(start<ts){
+			if(start<ts&&end>ts){
 				start = ts;
 				calendar.setTimeInMillis(start*1000);
 				sh = calendar.get(Calendar.HOUR_OF_DAY);//订单开始小时
@@ -755,7 +808,6 @@ public class CountPrice {
 		if(minPriceUnit!=0.00){
 			price = dealPrice(price,minPriceUnit);
 		}
-		
 	//	printList(dayTimes);
 	//	System.err.println("=============");
 	//	printList(nightTimes);

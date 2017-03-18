@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="timewarn">
+        <item>不提醒</item>
+        <item>15分钟</item>
+        <item>30分钟</item>
+    </string-array>
+ <string-array name="voicer_cloud_entries">
+       	<item>小燕</item>
+		<item>小宇</item>
+		<item>凯瑟琳</item>
+		<item>亨利</item>
+		<item>玛丽</item>
+		<item>小研</item>
+		<item>小琪</item>
+		<item>小峰</item>
+		<item>小梅</item>
+		<item>小莉</item>
+		<item>小蓉</item>
+		<item>小芸</item>
+		<item>小坤</item>
+		<item>小强 </item>
+		<item>小莹</item>
+		<item>小新</item>
+		<item>楠楠</item>
+		<item>老孙</item>
+    </string-array>
+    <string-array name="voicer_cloud_values">
+		<item>xiaoyan</item>
+		<item>xiaoyu</item>
+		<item>Catherine</item>
+		<item>henry</item>
+		<item>vimary</item>
+		<item>vixy</item>
+		<item>vixq</item>
+		<item>vixf</item>
+		<item>vixm</item>
+		<item>vixl</item>
+		<item>vixr</item>
+		<item>vixyun</item>
+		<item>vixk</item>
+		<item>vixqa</item>
+		<item>vixying</item>
+		<item>vixx</item>
+		<item>vinn</item>
+		<item>vils</item>
+    </string-array>
+</resources>

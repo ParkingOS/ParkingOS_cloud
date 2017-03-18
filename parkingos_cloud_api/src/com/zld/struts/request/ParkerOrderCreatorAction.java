@@ -296,7 +296,9 @@ public class ParkerOrderCreatorAction extends Action{
 							result = daService.update("insert into order_tb(id,create_time,uin,comid,c_type,uid,car_number,state,imei,car_type,in_passid,ishd) values" +
 									"(?,?,?,?,?,?,?,?,?,?,?,?)", new Object[]{neworderid,ntime,uin,comId,ctype,uid,carNumber,0,imei,car_type,in_passid,isHd})+"";
 						}
-						
+						if(ctype!=5&&result.equals("1")){//不是月卡第一辆车，上传订单到泊链
+							publicMethods.sendOrderToBolink(neworderid, carNumber, comId);
+						}
 						logger.error("preaddorder>>>orderid:"+neworderid+",uin:"+uin+",进场通道："+in_passid);
 						if(add_carnumber == 1){//补录车牌记录
 							int r = daService.update("insert into order_attach_tb(add_carnumber,order_id) values(?,?)", new Object[]{1, neworderid});

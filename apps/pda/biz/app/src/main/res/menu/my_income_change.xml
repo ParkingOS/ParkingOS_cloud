@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:zhenlaidian="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/income_change_parking"
+        android:menuCategory="secondary"
+        android:showAsAction="ifRoom"
+        android:title="@string/income_change"/>
+    <item
+        android:id="@+id/income_change_me"
+        android:menuCategory="secondary"
+        android:showAsAction="ifRoom"
+        android:title="@string/income_changeme"/>
+
+</menu>

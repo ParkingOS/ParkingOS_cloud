@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000">
+
+    <LinearLayout
+        android:id="@+id/photo_ln"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <FrameLayout
+                android:id="@+id/camera_preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/bar1"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="#ffffff"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/bar2"
+                android:layout_width="5dp"
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/bar3"
+                android:layout_width="5dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="#ffffff"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/bar4"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_alignParentBottom="true"
+                android:background="#ffffff"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/flash"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/bg_radius" />
+        </RelativeLayout>
+
+        <ImageButton
+            android:id="@+id/button_capture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/camera_icon"
+            android:rotation="270" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/preview_ln"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <com.zhenlaidian.camera.ZoomImageView
+            android:id="@+id/preview_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:rotation="270"
+            android:scaleType="centerInside" />
+
+        <Button
+            android:id="@+id/preview_refresh"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="20dp"
+            android:background="@drawable/img_cancel"
+            android:gravity="center"
+            android:rotation="270"
+            android:text=""
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/preview_ok"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="top|right"
+            android:layout_margin="20dp"
+            android:background="@drawable/bt_green48"
+            android:gravity="center"
+            android:rotation="270"
+            android:text=""
+            android:textColor="@color/white" />
+
+    </FrameLayout>
+
+</FrameLayout>

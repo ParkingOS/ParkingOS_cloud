@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="30.0dip"
+        android:background="#ffffff" >
+
+        <TextView
+            android:id="@+id/tv_reward_ranking_today_score"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="今日积分榜"
+            android:textColor="#666666"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="#3DAA6F" />
+
+        <TextView
+            android:id="@+id/tv_reward_ranking_week_reward"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="本周赏金榜"
+            android:textColor="#666666"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_reward_ranking"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#f0f0f0"
+        android:contentDescription="@drawable/viewpage"
+        android:scaleType="matrix"
+        android:src="@drawable/viewpage" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager_reward_ranking"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="3dp"
+        android:layout_weight="50" >
+    </android.support.v4.view.ViewPager>
+
+</LinearLayout>

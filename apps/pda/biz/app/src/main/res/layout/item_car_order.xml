@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/car_order_item_order"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/car_order_item_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:text=""
+            android:textColor="@color/app_gray_font"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/car_order_item_hasimg"
+            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/car_order_item_number"
+            android:background="@drawable/icon_car_img" />
+
+        <TextView
+            android:id="@+id/car_order_item_orderid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/car_order_item_isvip"
+            android:text=""
+            android:textColor="@color/app_gray_font"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/car_order_item_orderid"
+            android:text="订单号:"
+            android:textColor="@color/app_gray_font"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/car_order_item_intime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/car_order_item_number"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="6dp"
+            android:text=""
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/car_order_item_isvip"
+            android:layout_width="45dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/vip_yellow"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/car_order_item_cash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/car_order_item_isvip"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="5dp"
+            android:text="去结算"
+            android:drawablePadding="5dp"
+            android:drawableRight="@drawable/right_arrow_gray"
+            android:textColor="@color/tv_leaveItem_state_green"
+            android:textSize="19sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/car_order_item_loadmore"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="3dp"
+        android:background="@drawable/shape_load_more"
+        android:gravity="center"
+        android:text="加载更多..."
+        android:textColor="#ffffff"
+        android:textSize="16dp"
+        android:visibility="gone" />
+
+</RelativeLayout>

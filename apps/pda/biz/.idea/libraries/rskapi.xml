@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="rskapi">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/src/main/lib/rskapi.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

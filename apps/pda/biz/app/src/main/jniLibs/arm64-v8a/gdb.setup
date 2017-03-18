@@ -1,0 +1,2 @@
+set solib-search-path ./obj/local/armeabi
+directory D:/software/android/ndk/android-ndk-r7-crystax-5.beta2-windows/platforms/android-9/arch-arm/usr/include D:/software/android/ndk/android-ndk-r7-crystax-5.beta2-windows/sources/crystax/include D:/software/android/ndk/android-ndk-r7-crystax-5.beta2-windows/sources/cxx-stl/stlport/stlport D:/software/android/ndk/android-ndk-r7-crystax-5.beta2-windows/sources/cxx-stl//gabi++/include jni D:/software/android/ndk/android-ndk-r7-crystax-5.beta2-windows/sources/objc/gnu-libobjc

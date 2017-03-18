@@ -13,18 +13,22 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.zld.AjaxUtil;
+import com.zld.CustomDefind;
 import com.zld.impl.PublicMethods;
 import com.zld.service.DataBaseService;
 import com.zld.service.LogService;
 import com.zld.service.PgOnlyReadService;
 import com.zld.utils.Check;
+import com.zld.utils.HttpsProxy;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SendMessage;
 import com.zld.utils.SqlInfo;
+import com.zld.utils.StringUtils;
 /**
  * 车主管理（客户管理 ） ，在总管理员后台
  * @author Administrator
@@ -63,8 +67,14 @@ public class CarOwerManageAction extends Action{
 			}else {
 				return mapping.findForward("list");
 			}
+		}else if(action.equals("unioncarowner")){
+			return mapping.findForward("unioncarower");
+		}else if(action.equals("unioncarowerupload")){
+			request.setAttribute("unionId", CustomDefind.getValue("UNIONID"));
+			request.setAttribute("serverId", CustomDefind.getValue("SERVERID"));
+			request.setAttribute("unionKey", CustomDefind.getValue("UNIONKEY"));
+			return mapping.findForward("unioncarowerupload");
 		}else if(action.equals("quickquery")){
-			
 			String sql = "select u.*,c.car_number,c.is_comuse,c.is_auth,c.remark " +
 					"from user_info_tb u left join car_info_tb c on u.id=c.uin where auth_flag=? ";
 			String countSql = "select count(u.*) " +
@@ -84,6 +94,173 @@ public class CarOwerManageAction extends Action{
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
+		}else if(action.equals("queryunion")){
+			//不包含车牌查询的sql
+			String sql = "select u.*,c.car_number from user_info_tb u " +
+					"left join car_info_tb c on u.id=c.uin where auth_flag=? and union_state>?";
+			String countSql = "select count(u.*) from user_info_tb u " +
+					"left join car_info_tb c on u.id=c.uin where auth_flag=?  and union_state>?";
+			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
+			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
+			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
+			SqlInfo base = new SqlInfo("1=1", new Object[]{4,0});
+			SqlInfo sqlInfo = RequestUtil.customSearch(request,"user_info","u",new String[]{"car_number"});
+			String car_number = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "car_number"));
+			List<Object> params = null;
+			if(sqlInfo!=null){
+				sqlInfo = SqlInfo.joinSqlInfo(base,sqlInfo, 2);
+				countSql+=" and "+ sqlInfo.getSql();
+				sql +=" and "+sqlInfo.getSql();
+				params = sqlInfo.getParams();
+			}else {
+				params = base.getParams();
+			}
+			if(!car_number.equals("")){
+				sql += " and c.car_number like ? ";
+				countSql += " and c.car_number like ? ";
+				car_number = "%" + car_number + "%";
+				params.add(car_number);
+			}
+			
+			Long count= pService.getCount(countSql, params);
+			List list = null;
+			if(count>0){
+				list = pService.getAll(sql+" order by id desc", params, pageNum, pageSize);
+				System.out.print(params);
+			}
+			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
+			AjaxUtil.ajaxOutput(response, json);
+			return null;
+		}else if(action.equals("queryunionupload")){
+			//不包含车牌查询的sql
+			String sql = "select u.*,c.car_number from user_info_tb u " +
+					"left join car_info_tb c on c.uin = u.id "+
+					"left join user_profile_tb p on p.uin = u.id "+
+					"where auth_flag=? and  u.union_state =? and c.state=? "+
+					"and p.auto_cash is not null";
+			String countSql = "select count(u.*) from user_info_tb u " +
+					"left join car_info_tb c on c.uin = u.id "+
+					"left join user_profile_tb p on p.uin = u.id "+
+					"where auth_flag=? and  u.union_state =? and c.state=? "+
+					"and p.auto_cash is not null";
+			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
+			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
+			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
+		//	Double upMoney = StringUtils.formatDouble(CustomDefind.USERUPMONEY);
+			SqlInfo base = new SqlInfo("1=1", new Object[]{4,0,1});
+			SqlInfo sqlInfo = RequestUtil.customSearch(request,"user_info","u",new String[]{"car_number"});
+			String car_number = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "car_number"));
+			List<Object> params = null;
+			if(sqlInfo!=null){
+				sqlInfo = SqlInfo.joinSqlInfo(base,sqlInfo, 2);
+				countSql+=" and "+ sqlInfo.getSql();
+				sql +=" and "+sqlInfo.getSql();
+				params = sqlInfo.getParams();
+			}else {
+				params = base.getParams();
+			}
+			if(!car_number.equals("")){
+				sql += " and c.car_number like ? ";
+				countSql += " and c.car_number like ? ";
+				car_number = "%" + car_number + "%";
+				params.add(car_number);
+			}
+			
+			Long count= pService.getCount(countSql, params);
+			List list = null;
+			if(count>0){
+				list = pService.getAll(sql+" order by id desc", params, pageNum, pageSize);
+				System.out.print(params);
+			}
+			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
+			AjaxUtil.ajaxOutput(response, json);
+			return null;
+		}else if(action.equals("uploadcarowertounion")){
+			String ids = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "seleids"));
+			String []sids = ids.split(",");
+			int uploadCount = 0;
+			int unUploadCount=0;
+			if(sids.length>0){
+				Object[] params = new Object[sids.length];
+				String paramStr ="";
+				for(int i=0;i<sids.length;i++){
+					params[i]=Long.valueOf(sids[i]);
+					if(i>0)
+						paramStr+=",";
+					paramStr+="?";
+				}
+				List<Map<String, Object>> list = pService.getAll(
+						"select u.id,u.balance,c.car_number,p.auto_cash,p.limit_money " +
+						"from user_info_tb u " +
+						"left join car_info_tb c on c.uin=u.id " +
+						"left join user_profile_tb p on p.uin=u.id " +
+						"where u.id in ("+paramStr+") ",params) ;
+				if(list!=null&&list.size()>0){
+					List<String> haveUpList = new ArrayList<String>();//缓存本次上传过的车牌，有的车主有两个相同的车牌号
+					String url = CustomDefind.UNIONIP+"user/adduser";
+					for(Map<String, Object> map : list){
+						String carNumber = (String)map.get("car_number");
+						if(carNumber==null||haveUpList.contains(carNumber)
+								||carNumber.equals("")
+								||(carNumber.length()!=7&&carNumber.length()!=8)){//验证车牌是否传过，或是否为空，或是否是7或8位
+							logger.error("不上传了，carnumber:"+carNumber+",uplist:"+haveUpList);;
+							continue;
+						}
+						//String url = "https://127.0.0.1/api-web/user/adduser";
+						//String url = "https://s.bolink.club/unionapi/park/addpark";
+						Map<String, Object> paramMap = new HashMap<String, Object>();
+						paramMap.put("user_id", map.get("id"));
+						paramMap.put("plate_number", carNumber);
+						
+						//取用户设置的限额
+						Double balance = StringUtils.formatDouble(map.get("balance"));
+						Integer auto = (Integer)map.get("auto_cash");
+						Double limit  = StringUtils.formatDouble(map.get("limit_money"));
+						if(auto!=null){
+							if(auto==0)//不自动支付，在泊链的限额为0，
+								balance=0.0;
+							else {
+								if(balance>limit)//设置了自动支付，但余额大于了支付限额，按余额大小设置
+									balance=limit;
+							}
+						}
+						paramMap.put("balance", balance);
+						paramMap.put("union_id", CustomDefind.UNIONID);
+						paramMap.put("rand", Math.random());
+						String ret = "";
+						try {
+							logger.error(paramMap);
+							String linkParams = StringUtils.createLinkString(paramMap)+"key="+CustomDefind.UNIONKEY;
+							System.out.println(linkParams);
+							String sign =StringUtils.MD5(linkParams).toUpperCase();
+							logger.error(sign);
+							paramMap.put("sign", sign);
+							//param = DesUtils.encrypt(param,"NQ0eSXs720170114");
+							String param = StringUtils.createJson(paramMap);
+							logger.error(param);
+							ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
+							JSONObject object = new JSONObject(ret);
+							if(object!=null){
+								Integer uploadState = object.getInt("state");
+								if(uploadState==1){
+									daService.update("update user_info_tb set upload_union_time=?,union_state=? " +
+											"where id =?", new Object[]{System.currentTimeMillis()/1000,1,map.get("id")});
+									uploadCount++;
+									daService.update("update user_profile_tb set bolink_limit=? where uin = ? ", new Object[]{balance,map.get("id")});
+									haveUpList.add(carNumber);
+								}else {
+									logger.error(object.get("errmsg"));
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						logger.error(ret);
+					}
+					unUploadCount = list.size()-uploadCount;
+				}
+			}
+			AjaxUtil.ajaxOutput(response, "上传"+sids.length+"个车场，成功"+uploadCount+"个，未成功"+unUploadCount+"个");
 		}else if(action.equals("query")){
 			//不包含车牌查询的sql
 			String sql = "select u.*,c.car_number,c.pic_url1,c.pic_url2,c.is_auth isauth from user_info_tb u " +
@@ -451,6 +628,15 @@ public class CarOwerManageAction extends Action{
 			int r = 0;
 			if(uin>0&&carnumber.length()>5){
 				r = daService.update("delete from car_info_tb where uin = ? and car_number = ? ",new Object[]{uin,carnumber});
+			}
+			if(r==1){//删除后，如果已同步到泊链，删除些车牌
+				Map userMap = daService.getMap("select union_state from user_info_tb where id =? ", new Object[]{uin});
+				if(userMap!=null){
+					Integer unionState =(Integer)userMap.get("union_state");
+					if(unionState>0){
+						publicMethods.syncDeltePlateNumber(uin,carnumber);
+					}
+				}
 			}
 			logger.error("后台管理员解除绑定车牌："+carnumber+",uin："+uin+",r："+r);
 			AjaxUtil.ajaxOutput(response,r+"");

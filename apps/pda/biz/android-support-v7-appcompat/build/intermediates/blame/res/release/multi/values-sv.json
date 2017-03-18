@@ -1,0 +1,254 @@
+[
+    {
+        "outputFile": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\build\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-sv\\values-sv.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 105,
+                    "endOffset": 156
+                },
+                "from": {
+                    "file": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\res\\values-sv\\strings.xml",
+                    "position": {
+                        "startLine": 19,
+                        "startColumn": 4,
+                        "startOffset": 908,
+                        "endColumn": 105,
+                        "endOffset": 1009
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 161,
+                    "endColumn": 102,
+                    "endOffset": 259
+                },
+                "from": {
+                    "file": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\res\\values-sv\\strings.xml",
+                    "position": {
+                        "startLine": 20,
+                        "startColumn": 4,
+                        "startOffset": 1015,
+                        "endColumn": 102,
+                        "endOffset": 1113
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 4,
+                    "startColumn": 4,
+                    "startOffset": 264,
+                    "endColumn": 110,
+                    "endOffset": 370
+                },
+                "from": {
+                    "file": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\res\\values-sv\\strings.xml",
+                    "position": {
+                        "startLine": 21,
+                        "startColumn": 4,
+                        "startOffset": 1119,
+                        "endColumn": 110,
+                        "endOffset": 1225
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 5,
+                    "startColumn": 4,
+                    "startOffset": 375,
+                    "endColumn": 84,
+                    "endOffset": 455
+                },
+                "from": {
+                    "file": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\res\\values-sv\\strings.xml",
+                    "position": {
+                        "startLine": 18,
+                        "startColumn": 4,
+                        "startOffset": 822,
+                        "endColumn": 84,
+                        "endOffset": 902
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 6,
+                    "startColumn": 4,
+                    "startOffset": 460,
+                    "endColumn": 101,
+                    "endOffset": 557
+                },
+                "from": {
+                    "file": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\res\\values-sv\\strings.xml",
+                    "position": {
+                        "startLine": 28,
+                        "startColumn": 4,
+                        "startOffset": 1859,
+                        "endColumn": 101,
+                        "endOffset": 1956
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 7,
+                    "startColumn": 4,
+                    "startOffset": 562,
+                    "endColumn": 112,
+                    "endOffset": 670
+                },
+                "from": {
+                    "file": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\res\\values-sv\\strings.xml",
+                    "position": {
+                        "startLine": 27,
+                        "startColumn": 4,
+                        "startOffset": 1745,
+                        "endColumn": 112,
+                        "endOffset": 1853
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 8,
+                    "startColumn": 4,
+                    "startOffset": 675,
+                    "endColumn": 105,
+                    "endOffset": 776
+                },
+                "from": {
+                    "file": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\res\\values-sv\\strings.xml",
+                    "position": {
+                        "startLine": 24,
+                        "startColumn": 4,
+                        "startOffset": 1429,
+                        "endColumn": 105,
+                        "endOffset": 1530
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 9,
+                    "startColumn": 4,
+                    "startOffset": 781,
+                    "endColumn": 99,
+                    "endOffset": 876
+                },
+                "from": {
+                    "file": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\res\\values-sv\\strings.xml",
+                    "position": {
+                        "startLine": 23,
+                        "startColumn": 4,
+                        "startOffset": 1328,
+                        "endColumn": 99,
+                        "endOffset": 1423
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 10,
+                    "startColumn": 4,
+                    "startOffset": 881,
+                    "endColumn": 95,
+                    "endOffset": 972
+                },
+                "from": {
+                    "file": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\res\\values-sv\\strings.xml",
+                    "position": {
+                        "startLine": 22,
+                        "startColumn": 4,
+                        "startOffset": 1231,
+                        "endColumn": 95,
+                        "endOffset": 1322
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 11,
+                    "startColumn": 4,
+                    "startOffset": 977,
+                    "endColumn": 104,
+                    "endOffset": 1077
+                },
+                "from": {
+                    "file": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\res\\values-sv\\strings.xml",
+                    "position": {
+                        "startLine": 25,
+                        "startColumn": 4,
+                        "startOffset": 1536,
+                        "endColumn": 104,
+                        "endOffset": 1636
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 12,
+                    "startColumn": 4,
+                    "startOffset": 1082,
+                    "endColumn": 101,
+                    "endOffset": 1179
+                },
+                "from": {
+                    "file": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\res\\values-sv\\strings.xml",
+                    "position": {
+                        "startLine": 26,
+                        "startColumn": 4,
+                        "startOffset": 1642,
+                        "endColumn": 101,
+                        "endOffset": 1739
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 13,
+                    "startColumn": 4,
+                    "startOffset": 1184,
+                    "endColumn": 101,
+                    "endOffset": 1281
+                },
+                "from": {
+                    "file": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\res\\values-sv\\strings.xml",
+                    "position": {
+                        "startLine": 30,
+                        "startColumn": 4,
+                        "startOffset": 2080,
+                        "endColumn": 101,
+                        "endOffset": 2177
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 14,
+                    "startColumn": 4,
+                    "startOffset": 1286,
+                    "endColumn": 116,
+                    "endOffset": 1398
+                },
+                "from": {
+                    "file": "E:\\xulu\\biz_simple\\biz\\android-support-v7-appcompat\\res\\values-sv\\strings.xml",
+                    "position": {
+                        "startLine": 29,
+                        "startColumn": 4,
+                        "startOffset": 1962,
+                        "endColumn": 116,
+                        "endOffset": 2074
+                    }
+                }
+            }
+        ]
+    }
+]

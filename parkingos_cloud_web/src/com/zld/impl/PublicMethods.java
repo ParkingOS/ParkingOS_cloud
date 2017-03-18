@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,6 +35,8 @@ import com.zld.service.LogService;
 import com.zld.service.PgOnlyReadService;
 import com.zld.utils.Check;
 import com.zld.utils.CountPrice;
+import com.zld.utils.ExecutorsUtil;
+import com.zld.utils.HttpsProxy;
 import com.zld.utils.SendMessage;
 import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
@@ -2640,5 +2643,38 @@ public class PublicMethods {
 	public void updateShopTicket(Long orderid, Long uin){
 		int r = daService.update("update ticket_tb set state=?,uin=?,utime=? where orderid=? ", 
 				new Object[]{1, uin, System.currentTimeMillis()/1000, orderid});
+	}
+	/**
+	 * 同步车主余额到泊链
+	 * @param uin
+	 * @param money
+	 */
+	public void syncDeltePlateNumber(final Long uin,final String plateNumber){
+		ExecutorService messagePool=ExecutorsUtil.getExecutorService();
+		messagePool.execute(new Runnable() {
+			@Override
+			public void run() {
+				logger.error("delete user plateNumber,需要同步到泊链平台");
+				String url = CustomDefind.UNIONIP+"user/updateuser";
+				Map<String, Object> paramMap = new HashMap<String, Object>();
+				paramMap.put("user_id", uin);
+				paramMap.put("type",4);//1结算订单  2修改订单金额 4删除车牌
+				paramMap.put("plate_number", plateNumber);
+				paramMap.put("union_id", CustomDefind.UNIONID);
+				paramMap.put("rand", Math.random());
+				String ret = "";
+				try {
+					String linkParams = StringUtils.createLinkString(paramMap);
+					logger.error("delete user plateNumbe:"+linkParams);
+					String sign =StringUtils.MD5(linkParams+"key="+CustomDefind.UNIONKEY).toUpperCase();
+					paramMap.put("sign", sign);
+					String param = StringUtils.createJson(paramMap);
+					ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
+					logger.error("delete user plateNumbe ret :"+ret);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

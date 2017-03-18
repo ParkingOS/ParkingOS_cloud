@@ -134,7 +134,7 @@ public class LogService {
 	 * @mtype  0:订单消息，1：车位预定消息  2:充值购买产品  3直付订单消息（收费员用） 4Ibeacon解绑消息(收费员) 5:打赏消息 6首页通知消息  7车主领券消息 8推荐奖到帐通知9Ibeacon支付消息
 	 */
 	public void insertParkUserMessage(Long comId,Integer state,Long uin,String body,Long orderId,
-			Double total,String duration,Integer isSale,Long  btime,Long etime,Integer mtype){
+			Double total,String duration,Integer isSale,Long  btime,Long etime,Integer mtype, String msg){
 		Long id = databasedao.getLong("SELECT nextval('seq_order_message_tb'::REGCLASS) AS newid", null);
 		int result = databasedao.update("insert into order_message_tb (id,comid,state,uin,create_time,car_number," +
 				"orderid,order_total,duartion,is_sale,btime,etime,message_type) values (?,?,?,?,?,?,?,?,?,?,?,?,?)", 
@@ -174,6 +174,9 @@ public class LogService {
 				infomMap.put("total",total);
 				infomMap.put("state",state);//0:未支付 1：已支付 
 				infomMap.put("orderid",orderId);
+				if(msg != null && !"".equals(msg)){
+					infomMap.put("message", msg);
+				}
 				String json = StringUtils.createJson(infomMap);
 				ret= "{\"mtype\":"+mtype+",\"info\":"+json+"}";
 			}

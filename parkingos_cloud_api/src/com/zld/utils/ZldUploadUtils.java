@@ -11,6 +11,7 @@ import pay.AlipayUtil;
 import com.zld.AjaxUtil;
 import com.zld.CustomDefind;
 import com.zld.TableField;
+import com.zld.service.DataBaseService;
 
 /**
  * 接口上传数据工具
@@ -603,4 +604,126 @@ public class ZldUploadUtils {
 		return paramName;
 	}
 	
+	/**
+	 * 计算订单金额
+	 * @param start
+	 * @param end
+	 * @param comId
+	 * @param car_type 0：通用，1：小车，2：大车
+	 * @return 订单金额_是否优惠
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public  String getPrice(Long start,Long end,Long comId,Integer car_type,DataBaseService daService){
+//		String pid = CustomDefind.CUSTOMPARKIDS;
+//		if(pid.equals(comId.toString())){//定制价格策略
+//			return "待结算";
+//		}
+//		
+		if(car_type == 0){//0:通用
+			Long count = daService.getLong("select count(*) from com_info_tb where id=? and car_type=?", new Object[]{comId,1});
+			if(count > 0){//区分大小车
+				car_type = 1;//默认成小车计费策略
+			}
+		}
+		Map priceMap1=null;
+		Map priceMap2=null;
+		List<Map> priceList=daService.getAll("select * from price_tb where comid=? " +
+				"and state=? and pay_type=? and car_type=? order by id desc", new Object[]{comId, 0, 0, car_type});
+		if(priceList==null||priceList.size()==0){
+			//查按次策略
+			priceList=daService.getAll("select * from price_tb where comid=? " +
+					"and state=? and pay_type=? and car_type=? order by id desc", new Object[]{comId,0,1,car_type});
+			if(priceList==null||priceList.size()==0){//没有任何策略
+				return "0.0";
+			}else {//有按次策略，返回N次的收费
+				Map timeMap =priceList.get(0);
+				Object ounit  = timeMap.get("unit");
+				Double total = Double.valueOf(timeMap.get("price")+"");
+				try {
+					if(ounit!=null){
+						Integer unit = Integer.valueOf(ounit.toString());
+						if(unit>0){
+							Long du = (end-start)/60;//时长秒
+							int times = du.intValue()/unit;
+							if(du%unit!=0)
+								times +=1;
+							total = times*total;
+							
+						}
+					}
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
+				return StringUtils.formatDouble(total)+"";
+			}
+		}else {
+			priceMap1=priceList.get(0);
+			boolean pm1 = false;//找到map1,必须是结束时间大于开始时间
+			boolean pm2 = false;//找到map2
+			Integer payType = (Integer)priceMap1.get("pay_type");
+			if(payType==0&&priceList.size()>1){
+				for(Map map : priceList){
+					if(pm1&&pm2)
+						break;
+					payType = (Integer)map.get("pay_type");
+					Integer btime = (Integer)map.get("b_time");
+					Integer etime = (Integer)map.get("e_time");
+					if(payType==0&&etime>btime){
+						if(!pm1){
+							priceMap1 = map;
+							pm1=true;
+						}else {
+							priceMap2=map;
+							pm2=true;
+						}
+					}else {
+						if(!pm2){
+							priceMap2=map;
+							pm2=true;
+						}
+					}
+				}
+			}
+		}
+		double minPriceUnit = getminPriceUnit(comId,daService);
+		Map assistMap = daService.getMap("select * from price_assist_tb where comid = ? and type = ?", new Object[]{comId, 0});
+		priceMap1 = getPriceMap1(priceMap1,comId);
+		Map orderInfp = CountPrice.getAccount(start, end, priceMap1, priceMap2, minPriceUnit, assistMap);
+
+		//Double count= StringUtils.getAccount(start, end, priceMap1, priceMap2);
+		return StringUtils.formatDouble(orderInfp.get("collect"))+"";	
+	}
+	
+	private double getminPriceUnit(Long comId,DataBaseService daService){
+		Map com =daService.getPojo("select * from com_info_tb where id=? "
+				, new Object[]{comId});
+		double minPriceUnit = Double.valueOf(com.get("minprice_unit") + "");
+		return minPriceUnit;
+	}
+	
+	/**
+	 * 如果是桂林1,2,3类车场   价格为空将comid传过去 （20160719目前不支持那边价格）
+	 * @param priceMap1
+	 * @param comId
+	 * @return
+	 */
+	private static Map<String, Object> getPriceMap1(Map priceMap1,Long comId) {
+		if ((priceMap1 == null || priceMap1.size() == 0)) {
+			String GLCOMIDS1 = CustomDefind.GLCOMIDS1+"|"+CustomDefind.GLCOMIDS2+"|"+CustomDefind.GLCOMIDS3;
+			if (GLCOMIDS1 != null && comId != null) {
+				String ids[] = GLCOMIDS1.split("\\|");
+				if (ids.length > 0) {
+					for (String id : ids) {
+						if (id != null && Check.isLong(id)) {
+							if (comId.equals(Long.valueOf(id))) {
+								priceMap1 = new HashMap();
+								priceMap1.put("comid",comId);
+							}
+						}
+					}
+				}
+			}
+		}
+		return priceMap1;
+	}
 }

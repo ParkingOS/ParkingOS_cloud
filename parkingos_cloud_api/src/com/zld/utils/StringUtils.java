@@ -3,6 +3,7 @@ package com.zld.utils;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,7 +19,11 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.math.RandomUtils;
+
+import com.zld.CustomDefind;
 
 public class StringUtils {
 
@@ -346,8 +351,25 @@ public class StringUtils {
 	        if(prestr.endsWith("&"))
 	        	prestr = prestr.substring(0,prestr.length()-1);
 	        return prestr;
-	    }
-	
+	 }
+	 
+	 
+	 public static String createLinkString(Map<String, Object> params,int type) {
+			List<String> keys = new ArrayList<String>(params.keySet());
+			Collections.sort(keys);
+			String prestr = "";
+			for (int i = 0; i < keys.size(); i++) {
+				String key = keys.get(i);
+				Object value = params.get(key);
+				if (value == null || value.toString().trim().equals(""))
+					continue;
+				prestr += key + "=" + value + "&";
+			}
+			if (prestr.endsWith("&"))
+				prestr = prestr.substring(0, prestr.length() - 1);
+			return prestr;
+	}
+	 
 	public static String createLinkedJson(Map<String, String > info){
 		
 		String json = "";
@@ -591,6 +613,24 @@ public class StringUtils {
 		byte abyte0[] = messagedigest.digest(s.getBytes());
 		return byteToString(abyte0);
 	}
+	/**
+	 * Éú³ÉMD5
+	 */
+	public static String MD5(String s,String charset) {
+		//System.err.println(s);
+		try {
+			MessageDigest messagedigest = MessageDigest.getInstance("MD5");
+			messagedigest.reset();
+			byte abyte0[] = messagedigest.digest(s.getBytes("utf-8"));
+			return byteToString(abyte0);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+	
 	private static String byteToString(byte abyte0[]) {
 		int i = abyte0.length;
 		char ac[] = new char[i * 2];
@@ -787,13 +827,16 @@ public class StringUtils {
 		return out;
 	}
 	 public static void main(String[] args) {
+		 double lng = 116.316416;
+		 double lat = 40.042474;
 //		 getBonusIngteger(100,25,12);
 //			System.out.println(distance(116.306970,40.042474,116.316416,40.042474));
 			//double d1 = 0.002346;
 			//double d2 = 0.001792;
 //			double d1 = 0.009446*2*1.243;//0.023482756
 //			double d2 = 0.007232*2*1.243;//0.017978752
-			System.out.println(distanceByLnglat(116.316416,40.042474,116.325862,40.042474));
+		 
+			System.out.println(distance(lng,lat,lng+0.000011734,lat));
 			//0.007232
 //			System.out.println(">>>"+distance(116.313572,40.041845,116.627951,39.933272));
 			//double lon = 116.306970;
@@ -888,4 +931,34 @@ public class StringUtils {
 		 int rang = new Random().nextInt(passes.length);
 		 return passes[rang];
 	 }
+	 
+    public static String getIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if(ip != null && !"".equals(ip)) {
+        	if(ip.indexOf(",")>0) {
+        		ip = ip.split(",")[0];
+        	}
+        }
+//	        System.out.println("Redirecting com_ip 01 ==> " + ip);
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+//	            System.out.println("Redirecting com_ip 02 ==> " + ip);
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+//	            System.out.println("Redirecting com_ip 03 ==> " + ip);
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+           ip = request.getRemoteAddr();
+//	           System.out.println("Redirecting com_ip 04 ==> " + ip);
+       }
+       return ip;
+   }
+    
+    public static void createSign(Map<String, Object> paramMap){
+    	String linkParams = StringUtils.createLinkString(paramMap,0);
+		String sign =StringUtils.MD5(linkParams+"key="+CustomDefind.UNIONKEY,"utf-8").toUpperCase();
+		paramMap.put("sign", sign);
+    }
+    
 }

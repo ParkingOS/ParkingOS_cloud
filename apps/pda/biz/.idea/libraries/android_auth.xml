@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="android_auth">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/src/main/lib/android_auth.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

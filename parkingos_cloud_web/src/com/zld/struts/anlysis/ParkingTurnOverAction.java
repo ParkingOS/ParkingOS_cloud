@@ -14,6 +14,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import sun.util.logging.resources.logging;
+
 import com.zld.AjaxUtil;
 import com.zld.impl.CommonMethods;
 import com.zld.service.PgOnlyReadService;
@@ -46,13 +48,12 @@ public class ParkingTurnOverAction extends Action {
 		if(action.equals("")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			request.setAttribute("btime", df2.format(System.currentTimeMillis()));
-			//request.setAttribute("etime",  df2.format(System.currentuTimeMillis()));
 			return mapping.findForward("list");
 		}else if(action.equals("query")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			String nowtime= df2.format(System.currentTimeMillis());
-			String sql = "select count(a.id) as parktimes ,a.comid ,round( (count(a.id)*0.01*100)/(b.parking_total*0.01*100),2) as parkingturn ," +
-					"b.company_name ,b.parking_total from order_tb as a  left join com_info_tb as  b on a.comid=b.id where a.end_time between ? and ? and ";
+			String sql = "select count(a.id) as parktimes ,a.comid ,b.company_name ,b.parking_total from " +
+					" order_tb as a  left join com_info_tb as  b on a.comid=b.id where a.end_time between ? and ? and ";
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			List<Map<String, Object>> list = null;
 			int count = 0;
@@ -87,15 +88,12 @@ public class ParkingTurnOverAction extends Action {
 				list = pgOnlyReadService.getAllMap(sql,params);
 				if(list != null && !list.isEmpty()){
 					count = list.size();
+					setList(list);
 				}
 			}
-			
-			//setList(list);
 			String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"comid");
-			//json = StringUtils.createJson(list);
 			AjaxUtil.ajaxOutput(response, json);
-		}
-		else if(action.equals("echarts")){
+		}else if(action.equals("echarts")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			String nowtime= df2.format(System.currentTimeMillis());
 			String sql = "select count(a.id) as parktimes ,a.comid ,round( (count(a.id)*0.01*100)/(b.parking_total*0.01*100),2) as parkingturn ," +
@@ -154,6 +152,21 @@ public class ParkingTurnOverAction extends Action {
 		return null;
 	}
 	
-
-	
+	private void setList(List<Map<String, Object>> list){
+		try {
+			if(list != null && !list.isEmpty()){
+				for(Map<String, Object> map : list){
+					Long parktimes = (Long)map.get("parktimes");
+					Integer parking_total = (Integer)map.get("parking_total");
+					double parkingturn = 0;
+					if(parking_total > 0){
+						parkingturn = StringUtils.formatDouble((parktimes*0.01*100)/(parking_total*0.01*100));
+						map.put("parkingturn", parkingturn);
+					}
+				}
+			}
+		} catch (Exception e) {
+			
+		}
+	}
 }

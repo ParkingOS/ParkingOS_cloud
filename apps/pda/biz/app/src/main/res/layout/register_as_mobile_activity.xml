@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F0F0"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/et_register_mobile_mobile"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="50"
+            android:hint="请输入手机号："
+            android:maxLength="11"
+            android:numeric="integer"
+            android:textSize="14dp" />
+
+        <Button
+            android:id="@+id/bt_register_mobile_get"
+            android:layout_width="130dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/shape_login_button"
+            android:text="获取验证码"
+            android:textColor="#ffffff"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/et_register_mobile_chick_code"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="50"
+            android:hint="输入验证码："
+            android:maxLength="4"
+            android:numeric="integer"
+            android:textSize="14dp" />
+
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:gravity="center|bottom"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/tv_register_mobile_send_message"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:text="收不到验证码？点我发送短信登录！"
+                android:textColor="@color/tv_leaveItem_state_green"
+                android:textSize="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/tv_leaveItem_state_green"
+                android:gravity="bottom" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/bt_register_mobile_next"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/shape_login_button"
+        android:text="下一步"
+        android:textColor="#ffffff" />
+
+</LinearLayout>

@@ -23,14 +23,14 @@ public class MessageUtils {
 	
 	private MessageUtils(){};
 	
-	private static final  String sendUrl="http://112.74.139.4:8002/sms3_api/xmlapi/send.jsp";
+	private static final  String sendUrl="";
 	
-	private static final  String statusUrl="http://112.74.139.4:8002/sms3_api/xmlapi/report.jsp";
+	private static final  String statusUrl="";
 	
-	private static final  String upUrl="http://112.74.139.4:8002/sms3_api/xmlapi/upmsg.jsp";
+	private static final  String upUrl="";
 	
-	private static final String userid = "201350";
-	private static final String password = "db3971874d0fc29b37b9fb06f86996ef";
+	private static final String userid = "";
+	private static final String password = "";
 	
 	public static String sendMsg(String phone,String content) throws HttpException, IOException{
 		

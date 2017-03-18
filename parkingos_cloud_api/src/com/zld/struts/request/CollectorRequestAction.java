@@ -64,6 +64,7 @@ import com.zld.pojo.CardInfoResp;
 import com.zld.pojo.CollectorSetting;
 import com.zld.pojo.GenPosOrderFacadeReq;
 import com.zld.pojo.GenPosOrderFacadeResp;
+import com.zld.pojo.Group;
 import com.zld.pojo.ManuPayPosOrderFacadeReq;
 import com.zld.pojo.ManuPayPosOrderResp;
 import com.zld.pojo.Order;
@@ -383,7 +384,7 @@ public class CollectorRequestAction extends Action{
 			//http://127.0.0.1/zld/collectorrequest.do?action=getberths&token=522b6bc2abd903eacf6b9a4ae3359815&berthid=15&devicecode=357143047019192
 			result =getBerths(request,uin,comId,token, groupId);
 			result= result==null?"{}":result.replace("null", "");
-			logger.error("签到："+result);
+			//logger.error("签到："+result);
 		}else if(action.equals("workout")){//签退操作
 			//http://127.0.0.1/zld/collectorrequest.do?action=workout&token=f0f8f63ebd720c34077ee6b302b15cff&berthid=-1&workid=44068&from=1
 			result = workOut(request,uin);
@@ -1090,18 +1091,27 @@ public class CollectorRequestAction extends Action{
 	private String queryEscOrder(HttpServletRequest request, Long uin, Long comId, Long groupId) {
 		try {
 			Long berthSgeId = RequestUtil.getLong(request, "berthid",-1L);
-			String carNumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number"));
+			String carNumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number")).toUpperCase().trim();
 			Integer version = RequestUtil.getInteger(request, "version", -1);//版本号
 			
-			logger.error("berthSgeId:"+berthSgeId+",carNumber:"+carNumber+",version:"+version);
+			logger.error("berthSgeId:"+berthSgeId+",carNumber:"+carNumber+",version:"+version+",groupid:"+groupId);
 			String ret = "1";
 			String errmsg = "";
 			String orders = "[]";
 			if(groupId != null && groupId > 0){
 				List<Object> params = new ArrayList<Object>();
-				List<Object> comList = commonMethods.getParks(groupId);
+				boolean isPursue = commonMethods.pursueInCity(groupId);
+				logger.error("isPursue:"+isPursue);
+				List<Object> comList = null;
+				if(isPursue){
+					Group group = pService.getPOJO("select cityid from org_group_tb where id=? and cityid>? ",
+							new Object[]{groupId, 0}, Group.class);
+					comList = commonMethods.getparks(group.getCityid());
+				} else {
+					comList = commonMethods.getParks(groupId);
+				}
 				if(comList != null && !comList.isEmpty()){
-					String preParams  ="";
+					String preParams = "";
 					for(Object parkid : comList){
 						if(preParams.equals(""))
 							preParams ="?";
@@ -1132,6 +1142,22 @@ public class CollectorRequestAction extends Action{
 					}
 					
 					if(version >= 1390){//2016-12-14日添加
+						boolean isInpark = commonMethods.isInparkInCity(groupId);
+						logger.error("isInpark是否同一车牌可否在城市内重复入场:"+isInpark);
+						if(!isInpark){//不可以入场，时，要查城市内所有车场
+							Group group = pService.getPOJO("select cityid from org_group_tb where id=? and cityid>? ",
+									new Object[]{groupId, 0}, Group.class);
+							comList = commonMethods.getparks(group.getCityid());
+						} else {
+							comList = commonMethods.getParks(groupId);
+						}
+						preParams  = "";
+						for(Object parkid : comList){
+							if(preParams.equals(""))
+								preParams ="?";
+							else
+								preParams += ",?";
+						}
 						params.clear();
 						params.add(carNumber);
 						params.add(0);
@@ -1161,7 +1187,7 @@ public class CollectorRequestAction extends Action{
 							Long count = pService.getLong("select count(s.id) from collector_set_tb s,user_info_tb u where " +
 									" s.role_id=u.role_id and s.is_duplicate_order=? and u.id=? ", new Object[]{0, uin});
 							logger.error("count:"+count);
-							if(count > 0){
+							if(count > 0||!isInpark){
 								ret = "-3";//同一辆车在不同车场不能重复生成在场订单
 							} else {
 								ret = "-2";
@@ -1273,9 +1299,16 @@ public class CollectorRequestAction extends Action{
 				workBerthSegSqlMap.put("values", new Object[]{0, bid, 0});
 				bathSql.add(workBerthSegSqlMap);
 				//签退操作
+				
+				boolean off = commonMethods.checkWorkTime(uid, ntime);
+				int logoff_state = 0;
+				if(!off){
+					logoff_state = 1;
+				}
+				logger.error("logoff_state:"+logoff_state);
 				Map<String, Object> workRecordSqlMap = new HashMap<String, Object>();
-				workRecordSqlMap.put("sql", "update parkuser_work_record_tb set end_time=?,state=? where id =? ");
-				workRecordSqlMap.put("values", new Object[]{ntime, 1, workId});
+				workRecordSqlMap.put("sql", "update parkuser_work_record_tb set end_time=?,state=?,logoff_state=? where id =? ");
+				workRecordSqlMap.put("values", new Object[]{ntime, 1, logoff_state, workId});
 				bathSql.add(workRecordSqlMap);
 				//标为离线
 				Map<String, Object> onlineSqlMap = new HashMap<String, Object>();
@@ -1550,6 +1583,8 @@ public class CollectorRequestAction extends Action{
 					StatsWorkRecordInfo info10 = new StatsWorkRecordInfo();
 					info10.setName("逃单金额：");
 					info10.setValue(escapeFee + " 元");
+					info10.setFontColor("#FF0000");
+					info10.setFontSize(16);
 					infos.add(info10);
 					StatsWorkRecordInfo info9 = new StatsWorkRecordInfo();
 					info9.setName("上缴金额：");
@@ -1572,14 +1607,14 @@ public class CollectorRequestAction extends Action{
 			Long ntime = System.currentTimeMillis()/1000;
 			Long berthSegId = RequestUtil.getLong(request, "berthid", -1L);
 			String device_code = RequestUtil.getString(request, "devicecode");
-			logger.error(berthSegId+","+device_code);
+			//logger.error(berthSegId+","+device_code);
 			if(berthSegId > 0){
 				Map<String, Object> deviceMap = pService.getMap("select device_auth from mobile_tb where device_code=? ",
 						new Object[]{device_code});
-				logger.error("deviceMap:"+deviceMap);
-				if(deviceMap != null){
+				//logger.error("deviceMap:"+deviceMap);
+				if(deviceMap != null&&!deviceMap.isEmpty()){
 					int device_auth = (Integer)deviceMap.get("device_auth");
-					logger.error("device_auth:"+device_auth);
+					//logger.error("device_auth:"+device_auth);
 					if(device_auth == 1){
 						BerthSeg berthSeg = pService.getPOJO("select comid from com_berthsecs_tb where id =? ",
 								new Object[]{berthSegId}, BerthSeg.class);
@@ -1612,13 +1647,17 @@ public class CollectorRequestAction extends Action{
 							Long workId = (Long)signMap.get("workId");
 							if(workId != null && workId > 0){
 								String errmsg = (String)signMap.get("errmsg");
+								logger.error("签到成功");
 								return "{\"state\":\"1\",\"workid\":\"" + workId + "\",\"comid\":\"" + parkId + "\",\"cname\":\"" + parkName + "\",\"errmsg\":\""+errmsg+"\",\"data\":"+StringUtils.createJson(berths)+",\"car_type\":"+carType+"}";
 							}
 						}
+						logger.error("签到失败");
 						return "{\"state\":\"-1\",\"workid\":\"-1\",\"comid\":\"" + parkId + "\",\"cname\":\"" + parkName + "\",\"errmsg\":\"签到失败，请稍候重试！\",\"data\":[],\"car_type\":"+carType+"}";
 					}
+					logger.error("签到失败");
 					return "{\"state\":\"0\",\"workid\":\"-2\",\"comid\":\"-1\",\"cname\":\"\",\"errmsg\":\"设备未审核，请联系管理员\",\"data\":[],\"car_type\":[]}";
 				}
+				logger.error("签到失败");
 				return "{\"state\":\"0\",\"workid\":\"-1\",\"comid\":\"-1\",\"cname\":\"\",\"errmsg\":\"设备未注册，请联系管理员\",\"data\":[],\"car_type\":[]}";
 			}
 		} catch (Exception e) {
@@ -1642,12 +1681,18 @@ public class CollectorRequestAction extends Action{
 					" and berthsec_id=? and state=? order by id desc limit ? ", 
 					new Object[]{uid, berthSegId, 0, 1}, WorkRecord.class);
 			if(workRecord == null){
+				boolean logon = commonMethods.checkWorkTime(uid, ntime);
+				int logon_state = 0;
+				if(!logon){
+					logon_state = 1;
+				}
+				logger.error("logon_state:"+logon_state);
 				List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
 				Map<String, Object> workRecordSqlMap = new HashMap<String, Object>();
 				Long workId  = daService.getkey("seq_parkuser_work_record_tb");
-				workRecordSqlMap.put("sql", "insert into parkuser_work_record_tb (id,berthsec_id,start_time,uid,state,device_code) " +
-						" values(?,?,?,?,?,?)");
-				workRecordSqlMap.put("values", new Object[]{workId, berthSegId, ntime, uid, 0, device_code});
+				workRecordSqlMap.put("sql", "insert into parkuser_work_record_tb (id,berthsec_id,start_time,uid,state,device_code,logon_state) " +
+						" values(?,?,?,?,?,?,?)");
+				workRecordSqlMap.put("values", new Object[]{workId, berthSegId, ntime, uid, 0, device_code, logon_state});
 				bathSql.add(workRecordSqlMap);
 				
 				Map<String, Object> workBerthSegSqlMap = new HashMap<String, Object>();
@@ -3261,7 +3306,7 @@ public class CollectorRequestAction extends Action{
 		}
 		ccount = pService.getLong("select count(*) from order_tb where create_time>? and  comid=? and state=? ",
 				new Object[]{ntime-30*86400,comId,0});
-		tcount = pService.getLong("select count(1) from order_tb where create_time between ? and ?  comid=? and state=? "
+		tcount = pService.getLong("select count(1) from order_tb where create_time between ? and ? and comid=? and state=? "
 				, new Object[]{btime,etime,comId,0});
 		String result = "{\"ccount\":\""+ccount+"\",\"ocount\":\""+ocount+"\",\"tcount\":\""+tcount+"\",\"total\":\""+StringUtils.formatDouble(total)+"\"}";		
 		//test:http://127.0.0.1/zld/collectorrequest.do?action=corder&token=b4e6727f914157c8745f6f2c023c8c96
@@ -3820,6 +3865,12 @@ public class CollectorRequestAction extends Action{
 			if(resp != null){
 				JSONObject object = JSONObject.fromObject(resp);
 				logger.error(object.toString());
+				Integer result = object.getInt("result");
+				Integer ctype = object.getInt("ctype");
+				if(result==1&&(ctype!=null&&ctype!=5)){//进场成功,不是月卡车辆时，传订单到泊链平台
+					Long orderid = object.getLong("orderid");//订单号
+					publicMethods.sendOrderToBolink(orderid, carNumber, comId);
+				}
 				return object.toString();
 			}
 		} catch (Exception e) {
@@ -4576,7 +4627,7 @@ public class CollectorRequestAction extends Action{
 				bathSql.add(comSqlMap);
 				//更新车主余额
 				Map<String, Object> userSqlMap = new HashMap<String, Object>();
-				userSqlMap.put("sql", "update user_info_Tb set balance = balance+? where id =?");
+				userSqlMap.put("sql", "update user_info_tb set balance = balance+? where id =?");
 				userSqlMap.put("values", new Object[]{total,uid});
 				bathSql.add(userSqlMap);
 				boolean result = daService.bathUpdate(bathSql);

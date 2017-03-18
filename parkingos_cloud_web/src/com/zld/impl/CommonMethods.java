@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zld.CustomDefind;
 import com.zld.pojo.WorkRecord;
+import com.zld.pojo.WorkTime;
 import com.zld.service.DataBaseService;
 import com.zld.service.PgOnlyReadService;
 import com.zld.utils.RequestUtil;
@@ -37,7 +38,44 @@ public class CommonMethods {
 	private PublicMethods publicMethods;
 	@Autowired
 	private MongoDbUtils mongoDbUtils;
-	
+	/**
+	 * 检查签入签退是否在正常上班时间内
+	 * @param role_id 角色
+	 * @param time	签入签退时间
+	 * @param type	0：签入 1：签退
+	 * @return
+	 */
+	public boolean checkWorkTime(Long uin, long time){
+		try {
+			if(uin != null && uin > 0 && time > 0){
+				Map<String, Object> userMap = pgOnlyReadService.getMap("select role_id from user_info_tb where id=? and role_id>? ",
+						new Object[]{uin, 0});
+				if(userMap != null){
+					Long role_id = (Long)userMap.get("role_id");
+					long offsetTime = time - TimeTools.getToDayBeginTime();
+					logger.error("offsetTime:"+offsetTime);
+					List<WorkTime> workTimes = pgOnlyReadService.getPOJOList("select * from work_time_tb " +
+							" where role_id=? and is_delete=? ", new Object[]{role_id, 0}, WorkTime.class);
+					if(workTimes != null && !workTimes.isEmpty()){
+						for(WorkTime workTime : workTimes){
+							int b_hour = workTime.getB_hour();
+							int b_minute = workTime.getB_minute();
+							int e_hour = workTime.getE_hour();
+							int e_minute = workTime.getE_minute();
+							int start = b_hour * 60 * 60 + b_minute * 60;
+							int end = e_hour * 60 * 60 + e_minute * 60;
+							if(offsetTime > start && offsetTime < end){//上班期间签入签出都算异常
+								return false;
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("检查上班状态异常", e);
+		}
+		return true;
+	}
 	/**
 	 * 主页控制台跳转到其他页面，返回时需要主页的授权编号
 	 * @return
@@ -137,7 +175,7 @@ public class CommonMethods {
 						"sum(pfee_card) as pfee_card,sum(charge_card_cash) charge_card_cash,sum(return_card_count) return_card_count," +
 						"sum(return_card_fee) return_card_fee,sum(act_card_count) act_card_count,sum(act_card_fee) act_card_fee," +
 						"sum(reg_card_count) reg_card_count,sum(reg_card_fee) reg_card_fee,sum(bind_card_count) bind_card_count from " +
-						"parkuser_income_anlysis_tb where create_time between ? and ? and uin in ("+preParam+") and type=? group by create_time ";
+						"parkuser_income_anlysis_tb where create_time between ? and ? and uin in ("+preParam+") and type=? group by create_time order by create_time ";
 				List<Map<String, Object>> list = pgOnlyReadService.getAllMap(sql, params);
 				return list;
 			}

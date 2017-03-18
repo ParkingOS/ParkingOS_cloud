@@ -311,6 +311,7 @@ public class ParkCollectorLoginAction extends Action{
 					infoMap.put("signoutvalid", setting.getSignout_valid());//hidedetail integer DEFAULT 0, -- 0不隐藏 1隐藏首页收费汇总
 					infoMap.put("is_show_card", setting.getIs_show_card());
 					infoMap.put("print_order_place2", setting.getPrint_order_place2());
+					infoMap.put("is_print_name", setting.getIs_print_name());
 					ispos=true; 
 				}
 				//查询是否已签到过

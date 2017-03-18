@@ -169,9 +169,15 @@ public class WeixinPublicHandle extends HttpServlet {
 					Map<String, Object> userMap = daService.getMap(
 							"select * from user_info_tb where wxp_openid=? ",
 							new Object[] { openid });
+					boolean isBolinkUser = false;//是否是泊链用户
 					if(userMap == null){//未绑定账户
 						bind_flag = 0;
+					}else{
+						Integer unionState = (Integer)userMap.get("union_state");//有同步状态，已同步到泊链了
+						if(unionState>0)
+							isBolinkUser=true;
 					}
+						
 					Integer ret = -1;
 					if(bind_flag == 0){//未绑定账户，操作虚拟账户
 						Map<String, Object> nobindMap= daService.getMap("select * from wxp_user_tb where openid=? ",
@@ -190,7 +196,7 @@ public class WeixinPublicHandle extends HttpServlet {
 							uin = (Long)userMap.get("id");
 						}
 						if(uin != null){
-							ret = daService.update("update user_info_Tb set balance =balance+? where id=?  ",
+							ret = daService.update("update user_info_tb set balance =balance+? where id=?  ",
 									new Object[] { wx_total, uin });//先充值
 						}
 						
@@ -265,7 +271,7 @@ public class WeixinPublicHandle extends HttpServlet {
 									_state = 2;
 									ret = 1;
 									// 发支付成功消息给收费员
-									logService.insertParkUserMessage(comId,_state,uid,carNumber,orderId,money, "", 0,ntime,ntime+10, 0);
+									logService.insertParkUserMessage(comId,_state,uid,carNumber,orderId,money, "", 0,ntime,ntime+10, 0, null);
 									// 发消息给车主
 									logService.insertMessage(comId,_state, uin, carNumber,orderId,money,"", 0, ntime,ntime+10, 0);
 								}else if(ret == -7){
@@ -286,7 +292,7 @@ public class WeixinPublicHandle extends HttpServlet {
 									ret = daService.update("update carstop_order_tb set state=? ,pay_type=?, amount=? where id =? ", new Object[]{8,payType,money,orderId});
 									logger.error(">>>>>weixin pay :type:泊车费,更新订单:"+ret+" total:"+money+",wx_total:"+wx_total+",paytype:"+payType);
 									// 发支付成功消息给收费员
-									logService.insertParkUserMessage(-1L,2,uid,carNumber,-1L,money,payctype, 0,ntime,ntime+10, 0);
+									logService.insertParkUserMessage(-1L,2,uid,carNumber,-1L,money,payctype, 0,ntime,ntime+10, 0, null);
 									logger.error(">>>>>weixin pay :type:泊车费,已发消息给收费员");
 								}
 							}else if(type == 2){//充值并购买月卡
@@ -394,7 +400,7 @@ public class WeixinPublicHandle extends HttpServlet {
 									daService.update("insert into money_record_tb(comid,create_time,amount,uin,type,pay_type,remark) values (?,?,?,?,?,?,?)",
 													new Object[] {-1L,System.currentTimeMillis() / 1000,wx_total, uin,
 															ZLDType.MONEY_RECARGE,9, "停车费充值-" + cname });
-									Integer r = publicMethods.payOrder(orderMap, money, uin, 2, ptype, ticketId, wxp_orderid,-1L,uid);
+									Integer r = publicMethods.payOrder(orderMap, money, uin, 2, ptype, ticketId, wxp_orderid, -1L, uid);
 									logger.error("支付订单:" + r);
 									int _state = -1;// 默认支付不成功
 									String carNumber = publicMethods.getCarNumber(uin);
@@ -409,10 +415,17 @@ public class WeixinPublicHandle extends HttpServlet {
 											String sr = commonMethods.sendOrderState2Baohe(Long.valueOf(orderId), 1, money,ptype);
 											logger.error(">>>>>>>>>>>>>baohe sendresult:"+sr+",orderid:"+orderId+",state:1,total:"+money);
 										}
+										String msg = null;
+										Integer orderState = (Integer)orderMap.get("state");
+										String car_number = (String)orderMap.get("car_number");
+										if(orderState == 2){
+											logger.error("逃单追缴");
+											msg = car_number + "电子补缴" + money + "元" + "，补缴时间：" + TimeTools.getTime_yyyyMMdd_HHmmss(ntime * 1000) + "，订单号：" + orderId;
+										}
 										// 发支付成功消息给收费员
 										logService.insertParkUserMessage((Long) orderMap.get("comid"),_state,(Long) orderMap.get("uid"),carNumber,
 												Long.valueOf(orderId),money, "", 0,
-												(Long) orderMap.get("create_time"),System.currentTimeMillis()/1000, 0);
+												(Long) orderMap.get("create_time"),System.currentTimeMillis()/1000, 0, msg);
 										// 发消息给车主
 									}
 								}
@@ -441,12 +454,17 @@ public class WeixinPublicHandle extends HttpServlet {
 											logger.error("今日打赏已达上限uid:"+uid+",tscore:"+tscore+",uin:"+uin);
 										}
 									}
-									logService.insertParkUserMessage(comid,2,uid,carNumber,uin,money, ""+recount, 0,ntime,ntime+10,5);
+									logService.insertParkUserMessage(comid,2,uid,carNumber,uin,money, ""+recount, 0,ntime,ntime+10,5, null);
 								}
 							}else if(type == 7){
 								logger.error("buyticket online>>>uin:"+uin+",wx_pay:"+wx_total+",money:"+money);
 								int r = publicMethods.buyTickets(uin,ticketmoney,ticketnum,ptype);
 								logger.error("buyticket online>>>uin:"+uin+"r:"+r);
+							}else if(type==9){//泊链订单预支付
+								logger.error("需要同步到泊链账户中......");
+								String carNumber = publicMethods.getCarNumber(uin);
+								if(!isBolinkUser)
+									publicMethods.syncUserToBolink(uin);
 							}
 						} else {
 							logService.insertMessage(-1L, 0, uin, "", 0L,wx_total, "写入用户余额失败", 0, 0L, 0L, 2);

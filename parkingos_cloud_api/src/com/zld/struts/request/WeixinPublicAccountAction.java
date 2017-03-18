@@ -119,6 +119,7 @@ public class WeixinPublicAccountAction extends Action {
 			//其他参数
 			
 //			String openid = "oRoektybTsv33_vSKKUwLAsJAquc";
+//			openid = "oRoekt7uy9abm5hrUBCWYHHDF5sY";
 			
 			request.setAttribute("openid", openid);
 			Map<String, Object> userMap = daService
@@ -760,15 +761,20 @@ public class WeixinPublicAccountAction extends Action {
 			request.setAttribute("domain", Constants.WXPUBLIC_REDIRECTURL);
 			request.setAttribute("bonusid", -1);
 			request.setAttribute("openid", userMap.get("wxp_openid"));
+			
 			Map<String, Object> orderMap = pService.getMap(
 					"select * from order_tb where id=? ", new Object[] {orderid});
 			if(orderMap == null){
 				return mapping.findForward("error");
 			}
 			Integer state = (Integer)orderMap.get("state");
+			Double prepay = Double.valueOf(orderMap.get("prepaid") + "");
 			request.setAttribute("state",state);
 			request.setAttribute("btime",TimeTools.getTime_yyyyMMdd_HHmm((Long)orderMap.get("create_time")*1000));
-			
+			request.setAttribute("prepay", prepay);
+			if(state == 2 && prepay == 0){
+				request.setAttribute("escapeUrl", "http://"+Constants.WXPUBLIC_REDIRECTURL+"/zld/wxpfast.do?action=beginprepay&orderid="+orderid+"&openid="+userMap.get("wxp_openid")+"&paytype=1");
+			}
 			if(orderMap.get("end_time") != null){
 				etime = (Long)orderMap.get("end_time");
 				request.setAttribute("etime",TimeTools.getTime_yyyyMMdd_HHmm(etime*1000));
@@ -911,14 +917,14 @@ public class WeixinPublicAccountAction extends Action {
 			if(userMap != null){
 				if(pageNum == 1){
 					List<Map<String, Object>> orderList = pService.getAll(
-							"select * from order_tb where uin=? and state=? order by create_time desc",
-							new Object[] { userMap.get("id"), 0 });
+							"select * from order_tb where uin=? and state in (?,?) order by state,create_time desc",
+							new Object[] { userMap.get("id"), 0, 2 });
 					if(orderList != null){
 						for(Map<String, Object> map : orderList){
 							Map<String, Object> info = new HashMap<String, Object>();
 							Long comid = (Long)map.get("comid");
-							Map<String, Object> comMap = pService
-									.getMap("select company_name from com_info_tb where id=? ",
+							Integer state = (Integer)map.get("state");
+							Map<String, Object> comMap = pService.getMap("select company_name from com_info_tb where id=? ",
 											new Object[] { comid });
 							if(comMap != null){
 								info.put("parkname", comMap.get("company_name"));
@@ -926,14 +932,18 @@ public class WeixinPublicAccountAction extends Action {
 							Long ctime = (Long)map.get("create_time");
 							Integer pid = (Integer)map.get("pid");
 							Integer car_type = (Integer)map.get("car_type");//0：通用，1：小车，2：大车
-							if(pid>-1){
-								info.put("total", Double.valueOf(publicMethods.getCustomPrice(ctime, System.currentTimeMillis()/1000, pid)));
-							}else {
-								info.put("total", Double.valueOf(publicMethods.getPrice(ctime, System.currentTimeMillis()/1000, (Long)map.get("comid"), car_type)));
+							if(state == 0){
+								if(pid>-1){
+									info.put("total", Double.valueOf(publicMethods.getCustomPrice(ctime, System.currentTimeMillis()/1000, pid)));
+								}else {
+									info.put("total", Double.valueOf(publicMethods.getPrice(ctime, System.currentTimeMillis()/1000, (Long)map.get("comid"), car_type)));
+								}
+							}else if(state == 2){
+								info.put("total", map.get("total"));
 							}
 							info.put("date", TimeTools.getTimeStr_yyyy_MM_dd(ctime*1000));
 							info.put("orderid", map.get("id"));
-							info.put("state", 0);
+							info.put("state", state);
 							infoMapList.add(info);
 						}
 					}

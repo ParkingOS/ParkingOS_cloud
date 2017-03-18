@@ -300,7 +300,7 @@ public class ZhifubaoHandle extends HttpServlet{
 						result=result=daService.update("update wxp_user_tb set balance =balance+? where uin=?  ", 
 								new Object[]{Double.valueOf(total),uin});
 					}else {
-						result=daService.update("update user_info_Tb set balance =balance+? where id=?  ", 
+						result=daService.update("update user_info_tb set balance =balance+? where id=?  ", 
 								new Object[]{Double.valueOf(total),uin});
 					}
 					try {
@@ -431,7 +431,7 @@ public class ZhifubaoHandle extends HttpServlet{
 									_state  = 2;
 									result = 1;
 									//发支付成功消息给收费员
-									logService.insertParkUserMessage((Long)orderMap.get("comid"), _state, (Long)orderMap.get("uid"),carNumber, Long.valueOf(orderId),ordermoney,"", 0, (Long)orderMap.get("create_time"), endTime,0);
+									logService.insertParkUserMessage((Long)orderMap.get("comid"), _state, (Long)orderMap.get("uid"),carNumber, Long.valueOf(orderId),ordermoney,"", 0, (Long)orderMap.get("create_time"), endTime,0, null);
 									//发消息给车主
 								}else if(result==-7){
 									logService.insertUserMesg(0, uin, "由于网络原因，"+cname+"，停车费"+total+"元，支付宝支付失败", "支付失败提醒");
@@ -452,7 +452,7 @@ public class ZhifubaoHandle extends HttpServlet{
 								_state = 2;
 								result = 1;
 								// 发支付成功消息给收费员
-								logService.insertParkUserMessage(comId,_state,uid,carNumber,Long.valueOf(orderId),money, "", 0,ntime,ntime+10, 0);
+								logService.insertParkUserMessage(comId,_state,uid,carNumber,Long.valueOf(orderId),money, "", 0,ntime,ntime+10, 0, null);
 								// 发消息给车主
 							}else if(result==-7){
 								logService.insertUserMesg(0, uin, "直付停车费"+total+"元，支付宝支付失败，充值金额已进入你的账户", "支付失败提醒");
@@ -480,7 +480,7 @@ public class ZhifubaoHandle extends HttpServlet{
 										logger.error("今日打赏已达上限uid:"+uid+",tscore:"+tscore+",uin:"+uin);
 									}
 								}
-								logService.insertParkUserMessage(comid,2,uid,carNumber,uin,money, ""+recount, 0,ntime,ntime+10,5);
+								logService.insertParkUserMessage(comid,2,uid,carNumber,uin,money, ""+recount, 0,ntime,ntime+10,5, null);
 								logService.insertMessage(-1L, 1, uin,carNumber,  0L,StringUtils.formatDouble(total),"", 0,ntime,ntime+10,2);
 							}else if(ret==-2){
 								logService.insertMessage(-1L, 0, uin,carNumber,  0L,StringUtils.formatDouble(total),"已打赏过", 0,ntime,ntime+10,2);
@@ -545,7 +545,7 @@ public class ZhifubaoHandle extends HttpServlet{
 									result = 1;
 								}
 								//发支付成功消息给收费员
-								logService.insertParkUserMessage((Long)orderMap.get("comid"), _state, uid,carNumber, Long.valueOf(orderId),Double.valueOf(total),"", 0, (Long)orderMap.get("create_time"), endTime,0);
+								logService.insertParkUserMessage((Long)orderMap.get("comid"), _state, uid,carNumber, Long.valueOf(orderId),Double.valueOf(total),"", 0, (Long)orderMap.get("create_time"), endTime,0, null);
 								//更新车主账户到订单
 								daService.update("update order_tb set uin=? where id = ? ", new Object[]{uin,Long.valueOf(orderId)});
 							}

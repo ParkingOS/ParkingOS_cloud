@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/ll_onekey_park_checking"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:background="#E6E6E6" >
+
+            <TextView
+                android:id="@+id/tv_onekey_checking_park_warn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="单位： 元"
+                android:textColor="@color/check_gray" />
+
+            <LinearLayout
+                android:id="@+id/ll_onekey_checking_park_today_total"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_weight="5"
+                android:background="@drawable/check_total_green"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tv_onekey_checking_park_today_total_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:gravity="center"
+                    android:text="今日车场总停车费"
+                    android:textColor="@color/white"
+                    android:textSize="13dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_onekey_checking_park_today_total"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/white"
+                    android:textSize="26dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:text="仅显示停车费 不包括其它"
+                    android:textColor="@color/white"
+                    android:textSize="10dp" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/v_onekey_checking"
+                android:layout_width="15dp"
+                android:layout_height="65dp"
+                android:layout_below="@+id/ll_onekey_checking_park_today_total"
+                android:layout_centerInParent="true" />
+
+            <LinearLayout
+                android:id="@+id/ll_onekey_checking_park_phone_total"
+                android:layout_width="150dp"
+                android:layout_height="65dp"
+                android:layout_below="@+id/ll_onekey_checking_park_today_total"
+                android:layout_toLeftOf="@+id/v_onekey_checking"
+                android:background="@drawable/check_epay"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tv_onekey_checking_park_phone_total_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginTop="15dp"
+                    android:gravity="left"
+                    android:text="手机收费"
+                    android:textColor="@color/tv_leaveItem_state_green"
+                    android:textSize="17dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_onekey_checking_park_phone_total"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:gravity="left"
+                    android:text=""
+                    android:textColor="@color/tv_leaveItem_state_green"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_onekey_checking_park_cash_total"
+                android:layout_width="150dp"
+                android:layout_height="65dp"
+                android:layout_below="@+id/ll_onekey_checking_park_today_total"
+                android:layout_toRightOf="@+id/v_onekey_checking"
+                android:background="@drawable/chenk_cash_total"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tv_onekey_checking_park_cash_total_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginTop="15dp"
+                    android:gravity="left"
+                    android:text="现金收费"
+                    android:textColor="#646464"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_onekey_checking_park_cash_total"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:gravity="left"
+                    android:text=""
+                    android:textColor="#646464"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:background="#E6E6E6"
+                android:gravity="center"
+                android:paddingLeft="7dp"
+                android:text="停车费明细"
+                android:textColor="@color/check_gray"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="center"
+                    android:paddingLeft="7dp"
+                    android:text="姓名"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="手机收费"
+                    android:textColor="@color/tv_leaveItem_state_green"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    android:paddingRight="5dp"
+                    android:text="现金收费"
+                    android:textColor="@color/check_gray"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/tv_leaveItem_state_green" />
+
+            <ListView
+                android:id="@+id/lv_onekey_checking_park_employee"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+            </ListView>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_onekey_check_park_query_null"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="200dp"
+        android:gravity="center"
+        android:text="网络不给力，请重试！"
+        android:textColor="#232323"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+</LinearLayout>

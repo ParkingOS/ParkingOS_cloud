@@ -182,6 +182,19 @@ public class CarOwerLoginAction extends Action{
 		}else if(action.equals("login")){//车主登录，帐号不存在时，注册上，返回验证码
 			String sql = "select * from user_info_tb where mobile=? and auth_flag=? ";
 			Map user = daService.getPojo(sql, new Object[]{mobile,4});
+			String ip = StringUtils.getIpAddr(request);
+			logger.error("car user login ip:"+ip);
+//			if(!memcacheUtils.addLock("login_action_"+ip, 1)){//1秒重复请求不处理
+//				AjaxUtil.ajaxOutput(response, "-1");
+//				logger.error("login action,mobile="+mobile+",小于秒请求，不处理");
+//				return null;
+//			}
+			
+			if(!memcacheUtils.addLock("login_action_"+mobile, 1)){//1秒重复请求不处理
+				AjaxUtil.ajaxOutput(response, "-1");
+				logger.error("login action,mobile="+mobile+",小于秒请求，不处理");
+				return null;
+			}
 			Long uin = null;
 			if(user==null){
 				//注册车主 
@@ -220,27 +233,35 @@ public class CarOwerLoginAction extends Action{
 					AjaxUtil.ajaxOutput(response, "-7");
 					return null;
 				}
-				Integer code = new SendMessage().sendMessageToCarOwer(mobile);
-				if(code!=null){
-					logger.error("code:"+code+",mobile:"+mobile+" ,uin="+uin);
-					//保存验证码
-					//删除已经保存但没有验证过的验证码（已无效的验证码）
-					try {
-						daService.update("delete from verification_code_tb where uin =?",new Object[]{uin});
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					int r =daService.update("insert into verification_code_tb (verification_code,uin,create_time,state)" +
-							" values (?,?,?,?)", new Object[]{code,uin,System.currentTimeMillis()/1000,0});
-					logger.error("code:"+code+",mobile:"+mobile+" ,uin="+uin+"，保存验证码："+r);
-					Map verificationMap = daService.getPojo("select verification_code from verification_code_tb" +
-							" where uin=? and state=? ", new Object[]{uin,0});
-					logger.error(verificationMap);
-					if(r==1)
-						AjaxUtil.ajaxOutput(response, "0");
-					else{
-						AjaxUtil.ajaxOutput(response, "-7");
-						return null;
+				Map userCode = daService.getMap("select verification_code from " +
+						"verification_code_tb where create_time >? and  uin =? ", new Object[]{TimeTools.getToDayBeginTime(),uin});
+				Integer code = 0;
+				if(userCode!=null){
+					code=(Integer)userCode.get("verification_code");
+				}
+				if(code==null||code==0){
+					code = new SendMessage().sendMessageToCarOwer(mobile);
+					if(code!=null){
+						logger.error("code:"+code+",mobile:"+mobile+" ,uin="+uin);
+						//保存验证码
+						//删除已经保存但没有验证过的验证码（已无效的验证码）
+						try {
+							daService.update("delete from verification_code_tb where uin =?",new Object[]{uin});
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						int r =daService.update("insert into verification_code_tb (verification_code,uin,create_time,state)" +
+								" values (?,?,?,?)", new Object[]{code,uin,System.currentTimeMillis()/1000,0});
+						logger.error("code:"+code+",mobile:"+mobile+" ,uin="+uin+"，保存验证码："+r);
+//						Map verificationMap = daService.getPojo("select verification_code from verification_code_tb" +
+//								" where uin=? and state=? ", new Object[]{uin,0});
+//						logger.error(verificationMap);
+						if(r==1)
+							AjaxUtil.ajaxOutput(response, "0");
+						else{
+							AjaxUtil.ajaxOutput(response, "-7");
+							return null;
+						}
 					}
 				}else {
 					AjaxUtil.ajaxOutput(response, "-3");
@@ -289,7 +310,7 @@ public class CarOwerLoginAction extends Action{
 				daService.update(updateSql, values);
 				//是否是黑名单用户
 				boolean isBack=doValidateBlackByImei(imei,uin,mobile);
-				if(!isBack){//不在黑名单内，处理红包登录表，如果有，写入该用户的停车券表中
+				/*if(!isBack){//不在黑名单内，处理红包登录表，如果有，写入该用户的停车券表中
 					if(!methods.checkBonus(mobile,uin)){//没有停车券，默认送一张10元
 						Long count = daService.getLong("select count(id) from ticket_tb where uin =? ", new Object[]{uin});
 						if(count==0)
@@ -308,7 +329,7 @@ public class CarOwerLoginAction extends Action{
 								e.printStackTrace();
 							}
 					}
-				}
+				}*/
 				
 				
 				//查询是否已填写过车牌
@@ -319,12 +340,12 @@ public class CarOwerLoginAction extends Action{
 				logger.error(carNumber);
 				if(carNumber!=null){
 					//处理推荐返现
-					if(!isBack){//不是黑名单时，处理推荐奖励
+					/*if(!isBack){//不是黑名单时，处理推荐奖励
 						Long recomCode = (Long)user.get("recom_code");
 						//handleRecommendCode(uin, recomCode,mobile);
 						//用户通过注册月卡会员注册车主，给车场返现
 						//handleVipRegister(uin);//2016-09-07
-					}
+					}*/
 					result="1";
 				}else{
 					//result="2";

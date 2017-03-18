@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/ll_item_reward_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tv_item_reward_rank"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="12"
+            android:gravity="center|left"
+            android:paddingLeft="15dp"
+            android:text="1"
+            android:textSize="14dp" />
+
+        <TextView
+            android:id="@+id/tv_item_reward_name"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="11"
+            android:gravity="center|left"
+            android:text="张*****"
+            android:textSize="13dp" />
+
+        <TextView
+            android:id="@+id/tv_item_reward_parkname"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="10"
+            android:gravity="center|left"
+            android:text="金*****车场"
+            android:textSize="13dp" />
+
+        <TextView
+            android:id="@+id/tv_item_reward_money"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="9"
+            android:gravity="center"
+            android:paddingRight="5dp"
+            android:text="1589元"
+            android:textSize="13dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_item_reward_addmore"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="3dp"
+        android:background="@drawable/shape_load_more"
+        android:gravity="center"
+        android:text="上拉加载更多..."
+        android:textSize="14dp"
+        android:textStyle="bold"
+        android:visibility="visible" />
+
+</LinearLayout>

@@ -26,6 +26,7 @@ import com.zld.impl.MongoDbUtils;
 import com.zld.pojo.QueryCount;
 import com.zld.pojo.QueryList;
 import com.zld.pojo.QuerySum;
+import com.zld.service.DataBaseService;
 import com.zld.service.PgOnlyReadService;
 import com.zld.utils.Check;
 import com.zld.utils.ExecutorsUtil;
@@ -39,6 +40,8 @@ import com.zld.utils.TimeTools;
 public class CityOrderManageAction extends Action {
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
+	@Autowired
+	private DataBaseService dataBaseService;
 	@Autowired
 	private CommonMethods commonMethods; 
 	@Autowired
@@ -203,14 +206,14 @@ public class CityOrderManageAction extends Action {
 		}else if(action.equals("exportExcel")){
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			String orderfield = RequestUtil.processParams(request, "orderfield");
-			SqlInfo sqlInfo = RequestUtil.customSearch(request,"order_tb","o",new String[]{});
+			SqlInfo sqlInfo = RequestUtil.customSearch(request,"order_tb");
 			SqlInfo sqlInfo1 = getSuperSqlInfo(request);
 			List<Map<String, Object>> list = null;
 			List<Object> params = new ArrayList<Object>();
-			String sql = "select o.*,(o.end_time-o.create_time) as duration,b.berthsec_name,p.cid from order_tb o left join " +
-					" com_park_tb p on o.berthnumber=p.id left join com_berthsecs_tb b on o.berthsec_id=b.id where o.state=? and o.ishd=? ";
 			params.add(1);
 			params.add(0);
+			String sql = "select *,(end_time-create_time) as duration from order_tb where state=? and ishd=? ";
+			
 			List<Object> parks = null;
 			if(cityid > 0){
 				parks = commonMethods.getparks(cityid);
@@ -225,7 +228,7 @@ public class CityOrderManageAction extends Action {
 					else
 						preParams += ",?";
 				}
-				sql += " and o.comid in ("+preParams+") ";
+				sql += " and comid in ("+preParams+") ";
 				params.addAll(parks);
 				
 				if(sqlInfo!=null){
@@ -237,13 +240,15 @@ public class CityOrderManageAction extends Action {
 					params.addAll(sqlInfo1.getParams());
 				}
 				if(orderfield.equals("")){
-					orderfield = " o.end_time ";
+					orderfield = " end_time ";
 				}
 				sql += " order by " + orderfield + " nulls last ";
 				list = pgOnlyReadService.getAllMap(sql,params);
 				getCollector(list);
 				getPassName(list);
 				getParkname(list);
+				getBerthName(list);
+				getBerthSegName(list);
 			}
 			
 			List<List<String>> bodyList = new ArrayList<List<String>>();
@@ -453,6 +458,70 @@ public class CityOrderManageAction extends Action {
 						Long id = (Long)map2.get("id");
 						if(comid.intValue() == id.intValue()){
 							map.put("company_name", map2.get("company_name"));
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private void getBerthSegName(List<Map<String, Object>> list){
+		if(list != null && !list.isEmpty()){
+			List<Object> idList = new ArrayList<Object>();
+			String preParams = "";
+			for(Map<String, Object> order : list){
+				if(!idList.contains(order.get("berthsec_id"))){
+					idList.add(order.get("berthsec_id"));
+					if(preParams.equals(""))
+						preParams ="?";
+					else
+						preParams += ",?";
+				}
+			}
+			
+			List<Map<String, Object>> rlist = pgOnlyReadService.getAllMap("select id,berthsec_name from com_berthsecs_tb where id in ("
+					+ preParams + ") ", idList);
+			if(rlist != null && !rlist.isEmpty()){
+				for(Map<String, Object> map : list){
+					Long berthsec_id = (Long)map.get("berthsec_id");
+					if(berthsec_id != null && berthsec_id > 0){
+						for(Map<String, Object> map2 : rlist){
+							Long id = (Long)map2.get("id");
+							if(berthsec_id.intValue() == id.intValue()){
+								map.put("berthsec_name", map2.get("berthsec_name"));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private void getBerthName(List<Map<String, Object>> list){
+		if(list != null && !list.isEmpty()){
+			List<Object> idList = new ArrayList<Object>();
+			String preParams = "";
+			for(Map<String, Object> order : list){
+				if(!idList.contains(order.get("berthnumber"))){
+					idList.add(order.get("berthnumber"));
+					if(preParams.equals(""))
+						preParams ="?";
+					else
+						preParams += ",?";
+				}
+			}
+			
+			List<Map<String, Object>> rlist = pgOnlyReadService.getAllMap("select id,cid from com_park_tb where id in ("
+					+ preParams + ") ", idList);
+			if(rlist != null && !rlist.isEmpty()){
+				for(Map<String, Object> map : list){
+					Long berthnumber = (Long)map.get("berthnumber");
+					if(berthnumber != null && berthnumber > 0){
+						for(Map<String, Object> map2 : rlist){
+							Long id = (Long)map2.get("id");
+							if(berthnumber.intValue() == id.intValue()){
+								map.put("cid", map2.get("cid"));
+							}
 						}
 					}
 				}

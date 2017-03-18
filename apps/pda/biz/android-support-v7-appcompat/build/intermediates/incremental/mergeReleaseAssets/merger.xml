@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="E:\xulu\biz_simple\biz\android-support-v7-appcompat\assets"/><source path="E:\xulu\biz_simple\biz\android-support-v7-appcompat\build\generated\assets\shaders\release"/></dataSet><dataSet config="release"><source path="E:\xulu\biz_simple\biz\android-support-v7-appcompat\build-types\release\assets"/></dataSet></merger>

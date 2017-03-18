@@ -317,7 +317,7 @@ public class COGetParkinfoAction extends Action{
 			logger.error(">>>>payable:"+payable+">>>>"+info);
 			AjaxUtil.ajaxOutput(response, info);
 			//http://192.168.199.240/zld/getpark.do?lon=116.31363&lat=40.041917&action=getlocal&time=24
-		}   //http://192.168.199.240/zld/getpark.do?action=getlocal&lon=116.31354&lat=39.989200&time=24
+		}   //http://127.0.0.1/zld/getpark.do?action=getlocal&lon=116.315630&lat=40.044054&time=24
 		else if(action.equals("get2kpark")){
 			Double lon = RequestUtil.getDouble(request, "lng", 0d);
 			Double lat = RequestUtil.getDouble(request, "lat", 0d);
@@ -342,10 +342,13 @@ public class COGetParkinfoAction extends Action{
 					Integer isfixed = (Integer)map.get("isfixed");
 					map.put("epay", epay*isfixed);
 					map.remove("isfixed");
-					map.put("free", 0L);
-					pids.add((Long)map.get("id"));
-					preIds +="?,";
-					shareNumMap.put((Long)map.get("id"), (Integer)map.get("share_number"));
+					map.put("free",  map.get("share_number"));
+					Long id = (Long)map.get("id");
+					if(id<800000){
+						pids.add(id);
+						preIds +="?,";
+						shareNumMap.put((Long)map.get("id"), (Integer)map.get("share_number"));
+					}
 //					if(payable==1){//返回可支付的车场
 //						if(type==1||epay==0||isfixed==0)
 //							continue;
@@ -355,8 +358,14 @@ public class COGetParkinfoAction extends Action{
 					//查询价格
 					//Integer type = (Integer)map.get("type");
 					/**停车宝价格***/
-					if(type==0)//收费，查价格
-						map.put("price", getPrice((Long)map.get("id")));
+					if(type==0){//收费，查价格
+						if(id<8000000)
+							map.put("price", getPrice((Long)map.get("id")));
+						else {
+							map.put("price", map.get("resume"));
+							map.put("free",  map.get("empty"));
+						}
+					}
 					/*else {//免费，返回-1
 						map.put("price", "-1"); 
 					}*/
@@ -376,7 +385,7 @@ public class COGetParkinfoAction extends Action{
 					//System.out.println(distance+":id:"+map.get("id")+":"+map.get("name"));
 					if(d==0||distance<d){
 						d=distance;
-						suggestId= (Long)map.get("id");
+						suggestId= id;
 					}
 					
 				}
@@ -389,6 +398,7 @@ public class COGetParkinfoAction extends Action{
 				params.add(0);
 				params.addAll(pids);
 				List<Map<String, Object>> list2 = pgOnlyReadService.getAllMap("select sum(amount) free,sum(total) total,comid from remain_berth_tb where state=? and comid in ("+preIds+") group by comid ", params);
+				System.err.println(list2);
 				if(list2 != null && !list2.isEmpty()){
 					for(Map<String, Object> map : list2){
 						Long comid = (Long)map.get("comid");
@@ -403,8 +413,10 @@ public class COGetParkinfoAction extends Action{
 						for(Map<String, Object> map2 : list){
 							Long cid = (Long)map2.get("id");
 							if(comid.intValue() == cid.intValue()){
-								map2.put("total", total);
+								if(total>0)
+									map2.put("total", total);
 								map2.put("free", free);
+								break;
 							}
 						}
 					}
@@ -419,7 +431,7 @@ public class COGetParkinfoAction extends Action{
 			reslut ="{\"suggid\":\""+suggestId+"\",\"lack\":\""+lack+"\",\"data\":"+reslut+"}";
 			logger.error(reslut);
 			AjaxUtil.ajaxOutput(response, reslut);
-			//http://127.0.0.1/zld/getpark.do?action=get2kpark&lng=119.356394&lat=32.392063
+			//http://127.0.0.1/zld/getpark.do?action=get2kpark&lng=116.315630&lat=40.043057
 			
 		}
 		return null;

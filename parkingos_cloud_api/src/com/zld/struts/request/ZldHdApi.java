@@ -194,7 +194,7 @@ public class ZldHdApi {
 			comid = (Integer)diciMap.get("comid");
 		}
 		paramMap.put("source", "InsertSensor");
-		writeToMongodb("zld_hdbeart_logs", paramMap, comid.longValue());
+		//writeToMongodb("zld_hdbeart_logs", paramMap, comid.longValue());
 	}
 	/**
 	 * 获取基站心跳/电压列表
@@ -213,6 +213,7 @@ public class ZldHdApi {
 		ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(context);
 		DataBaseService daService = (DataBaseService) ctx.getBean("dataBaseService");
 		CommonMethods commonMethods = (CommonMethods)ctx.getBean("commonMethods");
+		PgOnlyReadService pService = (PgOnlyReadService) ctx.getBean("pgOnlyReadService");
 		String sql = "update sites_tb set heartbeat=? where uuid=? ";
 		Object []values = new Object[]{System.currentTimeMillis()/1000,paramMap.get("transmitternumber")};
 		Double vol = StringUtils.formatDouble(paramMap.get("voltagecaution"));
@@ -226,7 +227,7 @@ public class ZldHdApi {
 		commonMethods.deviceRecover(1, paramMap.get("transmitternumber"), System.currentTimeMillis()/1000);
 		Integer comid=-1;
 		if(ret>0){
-			Map diciMap = daService.getMap("select comid from dici_tb where did = ? and is_delete=? ",
+			Map diciMap = pService.getMap("select comid from dici_tb where did = ? and is_delete=? ",
 					new Object[]{paramMap.get("transmitternumber"), 0});
 			if(diciMap!=null&&diciMap.get("comid")!=null){
 				comid = (Integer)diciMap.get("comid");
@@ -278,6 +279,7 @@ public class ZldHdApi {
 		ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(context);
 		DataBaseService daService = (DataBaseService) ctx.getBean("dataBaseService");
 		MemcacheUtils  memcacheUtils=(MemcacheUtils)ctx.getBean("memcacheUtils");
+		PgOnlyReadService pService = (PgOnlyReadService) ctx.getBean("pgOnlyReadService");
 		//CarInTime 进场时间
 		//Indicate 配对标示
 		//SensorNumber 车检器编号
@@ -306,7 +308,7 @@ public class ZldHdApi {
 			AjaxUtil.ajaxOutput(response, StringUtils.createXML1(paramMap));
 			return;
 		}
-		Map diciMap = daService.getMap("select id,comid from dici_tb where did = ? and is_delete=? ",
+		Map diciMap = pService.getMap("select id,comid from dici_tb where did = ? and is_delete=? ",
 				new Object[]{paramMap.get("sensornumber"), 0});
 		Long comId = -1L;
 		Long dici_id = -1L;
@@ -316,7 +318,7 @@ public class ZldHdApi {
 		logger.error("did:"+paramMap.get("sensornumber")+",dici_id:"+dici_id);
 		if(dici_id > 0){
 			//根据地磁编号查找是否已注册到车位
-			Map<String, Object> comParkMap = daService.getMap("select id,berthsec_id,comid,state,order_id from com_park_tb " +
+			Map<String, Object> comParkMap = pService.getMap("select id,berthsec_id,comid,state,order_id from com_park_tb " +
 					"where is_delete=? and  dici_id =? ", new Object[]{0,dici_id});
 			logger.error("did:"+paramMap.get("sensornumber")+",comParkMap:"+comParkMap+",dici_id:"+dici_id);
 			Long bid =-1L;
@@ -326,7 +328,7 @@ public class ZldHdApi {
 				Integer state = (Integer)comParkMap.get("state");
 				Long uin = -1L;
 				sql ="select uid from parkuser_work_record_tb where state=? and start_time>? and  berthsec_id =? ";
-				Map userMap = daService.getMap(sql, new Object[]{0,0,comParkMap.get("berthsec_id")});
+				Map userMap = pService.getMap(sql, new Object[]{0,0,comParkMap.get("berthsec_id")});
 				logger.error("InsertCarAdmission find user:"+userMap);
 				if(userMap!=null&&userMap.get("uid")!=null){//查到了收费员
 					uin = (Long)userMap.get("uid");
@@ -400,6 +402,7 @@ public class ZldHdApi {
 		MemcacheUtils  memcacheUtils=(MemcacheUtils)ctx.getBean("memcacheUtils");
 		CommonMethods  commonMethods=(CommonMethods)ctx.getBean("commonMethods");
 		PublicMethods  publicMethods=(PublicMethods)ctx.getBean("publicMethods");
+		PgOnlyReadService pService = (PgOnlyReadService) ctx.getBean("pgOnlyReadService");
 		//CarOutTime 出场时间
 		//Indicate  配对标示
 		//SensorNumber 车检器编号
@@ -432,12 +435,12 @@ public class ZldHdApi {
 		Double total = 0.0;
 		Long intime = null;
 		Integer comId = -1;
-		Map diciMap = daService.getMap("select id,comid from dici_tb where did = ? and is_delete=? ",
+		Map diciMap = pService.getMap("select id,comid from dici_tb where did = ? and is_delete=? ",
 				new Object[]{paramMap.get("sensornumber"), 0});
 		if(diciMap!=null&&diciMap.get("comid")!=null){
 			comId = (Integer)diciMap.get("comid");
 		}
-		Map botMap = daService.getMap("select id,in_time,orderid from berth_order_tb where berth_id=? and indicate=? and state=? order by in_time desc limit ? ", 
+		Map botMap = pService.getMap("select id,in_time,orderid from berth_order_tb where berth_id=? and indicate=? and state=? order by in_time desc limit ? ", 
 				new Object[]{paramMap.get("sensornumber"),paramMap.get("indicate"),0, 1});
 		logger.error("sensor come out>>>comId:"+comId+",botMap:"+botMap);
 		Long bid = -1L;
@@ -467,7 +470,7 @@ public class ZldHdApi {
 								total = Double.valueOf(publicMethods.getCustomPrice(intime, outtime, pid));
 							}else {
 								int isspecialcar = 0;
-								Map map = daService.getMap("select typeid from car_number_type_tb where car_number = ? and comid=?", 
+								Map map = pService.getMap("select typeid from car_number_type_tb where car_number = ? and comid=?", 
 										new Object[]{carNumber, comId.longValue()});
 								if(map!=null&&map.size()>0){
 									isspecialcar = 1;
@@ -493,7 +496,7 @@ public class ZldHdApi {
 		}
 		logger.error("bid:"+bid+",ret:"+ret);
 		//根据地磁编号查找是否已注册到车位
-		Map<String, Object> comParkMap = daService.getMap("select id,berthsec_id,comid from com_park_tb " +
+		Map<String, Object> comParkMap = pService.getMap("select id,berthsec_id,comid from com_park_tb " +
 				"where is_delete=? and  dici_id =(select id from dici_tb where did=? and is_delete=? )  ", 
 				new Object[]{0,paramMap.get("sensornumber"), 0});
 		Long uin = -1L;
@@ -502,7 +505,7 @@ public class ZldHdApi {
 			sql ="select uid from parkuser_work_record_tb where state=? and start_time>? and  berthsec_id =? ";
 //					"(select berthsec_id from com_park_tb where is_delete=? and dici_id ="+
 //					"(select id from dici_tb where did= ?))";
-			Map userMap = daService.getMap(sql, new Object[]{0,0,comParkMap.get("berthsec_id")});
+			Map userMap = pService.getMap(sql, new Object[]{0,0,comParkMap.get("berthsec_id")});
 			logger.error("InsertCarEntrance find user:"+userMap);
 			String pid =comParkMap.get("id")+"";	
 //			if(comParkMap!=null&&comParkMap.get("id")!=null){
@@ -530,7 +533,7 @@ public class ZldHdApi {
 					paramMap.put("berthsecid",berthId+"");
 				}
 				//没有收费员在岗就把绑定的POS机未结算订单置为逃单
-				escape(bid, total, daService, commonMethods);
+				escape(bid, total, pService, commonMethods);
 			}
 		}else {
 			logger.error("InsertCarEntrance...地磁没有绑定车位..."+paramMap);
@@ -681,7 +684,7 @@ public class ZldHdApi {
 		return count;
 	}
 	
-	private void escape(Long bid, Double total,DataBaseService daService, CommonMethods commonMethods){
+	private void escape(Long bid, Double total,PgOnlyReadService daService, CommonMethods commonMethods){
 		logger.error("bid:"+bid+",total:"+total);
 		try {
 			if(bid != null && bid > 0){

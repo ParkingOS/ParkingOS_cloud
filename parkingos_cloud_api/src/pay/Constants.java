@@ -7,32 +7,21 @@ public class Constants {
 	public static final String WXPAY_PARTNERID = "";
 	public static final String WXPAY_APPSECRET = "";
 	public static final String WXPAY_PARTNERKEY = "";
-	public static final String WXPAY_APPKEY = "";
+	public static final String WXPAY_APPKEY = "kkyTJVjVnxOYDh7hhRQinfxWyIYEDBSRSm72VZWvKyxwpczPjODQpqRHdy3JIHuVJKjlJS0UwaINGBx5HziqfERh0W8tQ3v0aXmheFLIzscSdBA0vrkjkLeoyOffA2PW";
 
 	public static final String WXPAY_GETTOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="
 			+ WXPAY_APPID + "&secret=" + WXPAY_APPSECRET;
 	public static final String WXPAY_GETPREPAYID_URL = "https://api.weixin.qq.com/pay/genprepay";
 	
 	//----------------------Î¢ÐÅ¹«ÖÚºÅ-------------------------------------
-	//----------------------²âÊÔ-----------------------------------------
-//	public static String WXPUBLIC_APPID = "";
-//	public static String WXPUBLIC_SECRET = "";
-//	public static  String WXPUBLIC_REDIRECTURL = ""; 
-	
-//	public static  String WXPUBLIC_REDIRECTURL = ""; 
-
-///	==============yao test
-//	public static  String WXPUBLIC_APPID =  "";
-//	public static  String WXPUBLIC_SECRET = "";
-//	public static  String WXPUBLIC_REDIRECTURL = ""; 
 
 	public static  String WXPUBLIC_APPID = "";
 	public static  String WXPUBLIC_SECRET = "";
-	//public static  String WXPUBLIC_REDIRECTURL = "";
 	public static  String WXPUBLIC_REDIRECTURL = "";
+	
 	public static  String LOCAL_NAME = "zld";
 	
-//	public static  String WXPUBLIC_REDIRECTURL = "";
+//	public static  String WXPUBLIC_REDIRECTURL = "192.168.199.239";
 //	public static  String LOCAL_NAME = "zldi";
 	
 	public static  String WXPUBLIC_S_DOMAIN = "";

@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.zhenlaidian">
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <!--<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />-->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- 访问internet权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 访问震动权限 -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!--
+    guangda
+    <uses-permission android:name="cybertech.pstore.permission.COMPONENT" />
+    <uses-permission android:name="cybertech.permission.READ_PSTORE_USERINFO" />
+    <uses-permission android:name="cybertech.permission.READ_PSTORE_LINKINFO" />
+    -->
+    <!-- 禁用Home键 -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
+    <uses-permission android:name="android.permission.DISABLE_STATUS_BAR" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- 关机权限 -->
+    <!-- 读取机器各种ID的权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- 在SDCard中创建与删除文件权限 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <!-- 往SDCard写入数据权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 关闭该包下的所有应用程序 -->
+    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
+
+    <uses-permission android:name="cybertech.pstore.permission.COMPONENT" />
+    <uses-permission android:name="cybertech.permission.READ_PSTORE_USERINFO" />
+    <uses-permission android:name="cybertech.permission.READ_PSTORE_LINKINFO" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera.flash" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <!--&lt;!&ndash;西安的权限&ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
+    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+    <!--&lt;!&ndash; 在SDCard中创建与删除文件权限 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />-->
+    <!--&lt;!&ndash; 往SDCard写入数据权限 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <!--&lt;!&ndash; 关闭该包下的所有应用程序 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.RESTART_PACKAGES" />-->
+    <!--&lt;!&ndash; 访问internet权限 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <!--&lt;!&ndash; 访问震动权限 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.VIBRATE" />-->
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <!--<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <!--<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />-->
+
+    <!--&lt;!&ndash;-->
+    <!--guangda-->
+    <!--<uses-permission android:name="cybertech.pstore.permission.COMPONENT" />-->
+    <!--<uses-permission android:name="cybertech.permission.READ_PSTORE_USERINFO" />-->
+    <!--<uses-permission android:name="cybertech.permission.READ_PSTORE_LINKINFO" />-->
+
+
+    <!--&ndash;&gt;-->
+
+    <!--<uses-feature android:name="android.hardware.camera" />-->
+    <!--<uses-feature android:name="android.hardware.camera.autofocus" />-->
+
+    <!--<uses-permission android:name="android.permission.CAMERA" />-->
+    <!--<uses-permission android:name="android.permission.FLASHLIGHT" />-->
+    <!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
+    <!--<uses-permission android:name="android.permission.RECORD_AUDIO" />-->
+    <!--<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />-->
+    <!--&lt;!&ndash; 禁用Home键 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
+    <!--<uses-permission android:name="android.permission.DISABLE_KEYGUARD" />-->
+    <!--<uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />-->
+    <!--<uses-permission android:name="android.permission.DISABLE_STATUS_BAR" />-->
+
+    <!--&lt;!&ndash; 权限 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
+    <!--<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />-->
+    <!--<uses-permission android:name="android.permission.CAMERA" />-->
+
+    <!--<uses-feature android:name="android.hardware.camera" />-->
+    <!--<uses-feature android:name="android.hardware.camera.autofocus" />-->
+
+    <!--<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" >-->
+    <!--</uses-permission>-->
+    <!--&lt;!&ndash;-->
+    <!--屏蔽HOME键需要的权限-->
+    <!--<uses-permission android:name = "android.permission.DISABLE_KEYGUARD"/>-->
+
+
+    <!--&ndash;&gt;-->
+    <!--&lt;!&ndash; 关机权限 &ndash;&gt;-->
+
+
+    <!--&lt;!&ndash; 读取机器各种ID的权限 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+    <!--&lt;!&ndash; 在SDCard中创建与删除文件权限 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />-->
+    <!--&lt;!&ndash; 往SDCard写入数据权限 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <!--&lt;!&ndash; 关闭该包下的所有应用程序 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.RESTART_PACKAGES" />-->
+    <!--&lt;!&ndash; 访问internet权限 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <!--<uses-permission android:name="cybertech.pstore.permission.COMPONENT" />-->
+    <!--<uses-permission android:name="cybertech.permission.READ_PSTORE_USERINFO" />-->
+    <!--<uses-permission android:name="cybertech.permission.READ_PSTORE_LINKINFO" />-->
+
+    <!--<uses-feature android:name="android.hardware.camera" />-->
+    <!--<uses-feature android:name="android.hardware.camera.autofocus" />-->
+
+    <!--<uses-permission android:name="android.permission.CAMERA" />-->
+    <!--<uses-permission android:name="android.permission.FLASHLIGHT" />-->
+    <!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
+    <!--<uses-permission android:name="android.permission.RECORD_AUDIO" />-->
+    <!--<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />-->
+    <!--<uses-permission android:name="android.permission.VIBRATE" />-->
+    <!--<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />-->
+    <!--<uses-permission android:name="android.permission.BLUETOOTH" />-->
+    <!--&lt;!&ndash; 禁用Home键添加android:launchMode="singleInstance"启动模式 &ndash;&gt;-->
+    <!--&lt;!&ndash; 开机自启权限 &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
+    <!--&lt;!&ndash;西安的权限&ndash;&gt;-->
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/app_icon"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+        <activity
+            android:name="com.zhenlaidian.ui.HelloActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.LoginActivity"
+            android:label="@string/loginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.LeaveActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:taskAffinity="com.zhenlaidian"
+            android:windowSoftInputMode="adjustPan">
+            <span
+                style="font-size:14px;"
+                android:excludeFromRecents="true"
+                android:noHistory="true" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="philn" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="www.tingchebao.com"
+                    android:pathPrefix="/"
+                    android:scheme="http" />
+            </intent-filter>
+
+            <!--
+                  <meta-data
+                android:name="android.support.UI_OPTIONS"
+                android:value="splitActionBarWhenNarrow" />
+            -->
+        </activity>
+        <activity
+            android:name="com.zbar.lib.CaptureActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Light.NoTitleBar" />
+        <activity
+            android:name=".ui.ParkingInfoActivity"
+            android:label="@string/parkingInfoActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CurrentOrderActivity"
+            android:label="@string/currentOrderActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.HistoryOrderActivity"
+            android:label="@string/historyOrderActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CurrentOrderDetailsActivity"
+            android:label="@string/currentOrderDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.HistoryOrderDetailsActivity"
+            android:label="@string/historyOrderDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.RegisterSuccessActivity"
+            android:label="@string/RegisterSuccessActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ChangeParkingInfo"
+            android:label="@string/ChangeParkingInfo"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.RankingActivity"
+            android:label="@string/RankingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SetActivity"
+            android:label="@string/SetActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.LastRankingactivity"
+            android:label="@string/LastRankingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.GetPasswordActivity"
+            android:label="@string/GetPasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.RecommendCashierActivity"
+            android:label="@string/RecommendActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.PriceSettingActivity"
+            android:label="@string/FeeScaleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.TakePhotoActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/TakePhoto"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.TakePhotoUpdateActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/TakePhoto"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.ShowPriceSettingActivity"
+            android:label="@string/ShowPriceSettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ShowMaxPhotoActivity"
+            android:label="@string/ShowMaxPhotoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.MyScoreActivity"
+            android:label="@string/MyMarkActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ScoreRuleActivity"
+            android:label="@string/ScoreRuleActivity"
+            android:screenOrientation="portrait" />
+        <!--<activity-->
+        <!--android:name=".ui.LocationActivity"-->
+        <!--android:label="@string/LocationActivity"-->
+        <!--android:screenOrientation="portrait" />-->
+        <activity
+            android:name=".ui.OneKeyQueryActivity"
+            android:label="@string/OneKeyQueryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.OldOneKeyQueryActivity"
+            android:label="@string/OldOneKeyQueryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.OnekeyQurryParkActivity"
+            android:label="@string/OnekeyQurryParkActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ParkingActivity"
+            android:label="@string/ParkingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.park_account.ParkingAccountActivity"
+            android:label="@string/ParkingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.MyHomeActivity"
+            android:label="@string/MyHomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ChangePassWordActivity"
+            android:label="@string/ChangePassWordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".photo.MyCaptureActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/MyCaptureActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".photo.PosCaptureActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/MyCaptureActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ChangeMyInfoActivity"
+            android:label="@string/ChangeMyInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".photo.CheckNumberActivity"
+            android:label="@string/CheckNumberActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".photo.PosCheckNumberActivity"
+            android:label="@string/CheckNumberActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".photo.InCarDialogActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/dialog" />
+        <activity
+            android:name=".photo.InputCarNumberActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/InputCarNumber"
+            android:launchMode="singleTop"
+            android:persistent="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" />
+        <activity
+            android:name=".photo.CarOrderActivity"
+            android:label="@string/CarOrderActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".ui.LostOrderRecordActivity"
+            android:label="@string/LostOrderRecord"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.PriceChangesAndCash"
+            android:label="@string/PriceChangesAndCash"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SetCollectActivity"
+            android:label="@string/SetCollectActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.HistoryOrderLostOrderActivity"
+            android:label="@string/HistoryOrderLostOrderActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.LostOrderRecordDetailsActivity"
+            android:label="@string/LostOrderRecordDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.person_account.MyWalletActivity"
+            android:label="@string/MyWalletActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.person_account.WithdrawalActivity"
+            android:label="@string/WithdrawalActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.person_account.EditBankCardActivity"
+            android:label="@string/AddBankCardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.person_account.MyBankCardActivity"
+            android:label="@string/MyBankCardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.park_account.ParkBankCardActivity"
+            android:label="@string/ParkBankActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.person_account.PaymentDetailActivity"
+            android:label="@string/PaymentDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.person_account.MyIncomeDetailsActivity"
+            android:label="@string/MyIncomeDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.person_account.CarOwnersPayLogActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.person_account.TakePhotoForBankCardActivity"
+            android:label="@string/TakePhotoForBankCardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.person_account.HowToGetSubbranch"
+            android:label="@string/HowToGetSubbranch"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.MakeVIPCardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.MySelfActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.park_account.ParkPaymentDetailActivity"
+            android:label="@string/PaymentDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.park_account.ParkWithdrawalActivity"
+            android:label="@string/WithdrawalActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.park_account.ParkEditBankCardActivity"
+            android:label="@string/AddBankCardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.register.RegisterAsMobileActivity"
+            android:label="@string/RegisterAsMobile"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.register.RegisterAsOtherPhoto"
+            android:label="@string/RegisterAsOtherPhoto"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.register.RegisterAsLocationActivity"
+            android:label="@string/RegisterAsLocationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.register.RegisterAsDocumentPhotoActivity"
+            android:label="@string/RegisterAsDocumentPhotoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.RecommendRecordActivity"
+            android:label="@string/RecommendRecordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.MyReceivedCommentActivity"
+            android:label="@string/MyReceivedComment"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.RecommendOwnersActivity"
+            android:label="@string/RecommendOwnersActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CenterMessageActivity"
+            android:label="@string/CenterMessageActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.score.RewardScoreActivity"
+            android:label="@string/RewardScoreActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.score.SelectTicketActicity"
+            android:label="@string/SelectTicketActicity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.score.SendTicketsActicity"
+            android:label="@string/SendTicketsActicity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.score.RewardRankingActivity"
+            android:label="@string/RewardRankingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.score.ParkingRedPacketsActivity"
+            android:label="@string/ParkingRedPacketsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.parking.InTheVehicleActivity"
+            android:label="@string/InTheVehicleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.score.ScanMyCodeActivity"
+            android:label="@string/ScanMyCodeActivity"
+            android:screenOrientation="portrait" />
+        <!-- 我的 -->
+        <activity
+            android:name=".ui.InputCarNumberActivity"
+            android:label="输入车牌"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.InTheVehicleStepActivity"
+            android:label="选择泊位"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".ui.PrePayParkingActivity"
+            android:label="预收停车费"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ZhuiJiaoListActivity"
+            android:label="追缴查询"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ZhuiJiaoOrderActivity"
+            android:label="追缴订单"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.OrderJieSuanActivity"
+            android:label="订单结算"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.ShouFeiDetail"
+            android:label="收费汇总"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ui.OpenCardActivity"
+            android:label="开通会员卡"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ui.AdvancedLoginActivity"
+            android:label="高级登录"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ui.CardChargeActivity"
+            android:label="卡片充值"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".camera.CameraActivity"
+            android:label="相机"
+            android:screenOrientation="landscape" />
+
+        <service
+            android:name="com.wintone.plateid.AuthService"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="wintone.plateid.authservice" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.wintone.plateid.RecogService"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="wintone.plateid.recogService" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".plate_wentong.MemoryCameraActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:label="车牌识别"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Light.NoTitleBar" />
+        <activity
+            android:name=".plate_wentong.MemoryResultActivity"
+            android:label="车牌识别"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Light.NoTitleBar" />
+
+
+        <service android:name=".service.PullMsgService">
+            <intent-filter>
+                <action android:name="com.zhenlaidian.service.PullMsgService" />
+            </intent-filter>
+        </service>
+        <service android:name=".service.BLEService">
+            <intent-filter>
+                <action android:name="com.zhenlaidian.service.BLEService" />
+            </intent-filter>
+        </service>
+        <!-- &lt;!&ndash; -->
+        <!-- 开机启动广播事件 -->
+        <receiver android:name=".receiver.StartupReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+        </receiver>
+
+        <!--<service-->
+        <!--android:name="com.baidu.location.f"-->
+        <!--android:enabled="true"-->
+        <!--android:process=":remote" />-->
+        <!-- <meta-data -->
+        <!-- android:name="com.baidu.lbsapi.API_KEY" -->
+        <!-- android:value="@string/baidukey" /> -->
+        <!--<meta-data-->
+        <!--android:name="com.baidu.lbsapi.API_KEY"-->
+        <!--android:value="@string/baidukey0" />-->
+
+        <activity
+            android:name="com.umeng.fb.ConversationActivity"
+            android:theme="@android:style/Theme.NoTitleBar" />
+        <activity
+            android:name="com.umeng.fb.ContactActivity"
+            android:theme="@android:style/Theme.NoTitleBar" />
+
+        <meta-data
+            android:name="android.support.UI_OPTIONS"
+            android:value="splitActionBarWhenNarrow" />
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="53aba66156240b97d301abac" />
+        <!--
+          	<meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="" />
+        -->
+
+
+        <!-- 渠道名称： Baidu  Tencent Wandoujia 360Soft Website -->
+
+
+        <!-- ShareSDK -->
+
+        <activity
+            android:name="com.mob.tools.MobUIShell"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+
+            <!--
+            	AuthorizeAdapter表示一个继承自cn.sharesdk.framework.authorize.AuthorizeAdapter
+            	的类，这个类可以监听到页面的生命周期，也可以获取授权页面的各种UI控件。 
+            	开发者可以通过继承AuthorizeAdapter，重写其方法，并获取各种UI来自定义这个页面的行为。
+            -->
+            <meta-data
+                android:name="AuthorizeAdapter"
+                android:value="cn.sharesdk.demo.MyAdapter" />
+
+            <!--
+            	QZoneWebShareAdapter表示一个继承自cn.sharesdk.tencent.qzone.QZoneWebShareAdapter
+            	的类，这个类可以监听到页面的生命周期，也可以获QQ空间网页分享权页面的各种UI控件。 
+            	开发者可以通过继承QZoneWebShareAdapter，重写其方法，并获取各种UI来自定义这个页面的行为。
+            	
+            <meta-data android:name="QZoneWebShareAdapter" android:value="cn.sharesdk.demo.MyQZoneWebShareAdapter" />
+            -->
+            <!--
+            	Dropbox的SSO功能需要在此处添加一个对ACTION_VIEW事件的过滤器，其中的scheme是
+            	“db-”前缀再开发者应用的加上appKey。如果此过滤器不设置，则不能完成SSO功能授权
+            -->
+            <intent-filter>
+                <data android:scheme="db-7janx53ilz11gbs" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <!--
+            	如果集成QQ分享，或者使用QQ客户端来进行QQ空间的分享，须要在此处添加一个对ACTION_VIEW
+            	事件的过滤器，其中的scheme是“tencent”前缀再开发者应用的加上appId。如果此过滤器不设置，
+            	则分享结束以后不能得到正确的回调
+            -->
+            <intent-filter>
+                <data android:scheme="tencent100371282" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+
+        <!-- 微信分享回调 -->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!--&lt;!&ndash; 设置环信应用的appkey &ndash;&gt;-->
+        <!--<meta-data-->
+        <!--android:name="EASEMOB_APPKEY"-->
+        <!--android:value="zld2015#imtest" />-->
+        <!--&lt;!&ndash; 声明sdk所需的service SDK核心功能 &ndash;&gt;-->
+        <!--<service android:name="com.easemob.chat.EMChatService" />-->
+
+        <!--开机启动 -->
+
+        <!--<activity-->
+        <!--android:name=".LoginActivity"-->
+        <!--android:label="@string/title_activity_login"></activity>-->
+    </application>
+
+</manifest>

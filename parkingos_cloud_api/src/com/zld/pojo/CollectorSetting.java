@@ -22,7 +22,8 @@ public class CollectorSetting implements Serializable {
 	private Integer signout_valid;//客户端签退是否需要密码验证 0：不需要 1：需要
 	private Integer is_show_card;//是否在收费汇总和打印小票处显示出来卡片的数据（有些运营集团没有卡片） 0：显示 1：不显示
 	private Integer print_order_place2;//桂林提出要在点击结算订单的时候就打印小票（已经有一个打印订单小票的地方，此处为第二个地方）0：不打印 1：打印
-	
+	private Integer is_duplicate_order;//同一车辆在同一运营集团不同车场能否同时存在在场订单 1：是 0：否
+	private Integer is_print_name;//控制打印小票要不要显示收费员名字（有的车场矫情，不让显示名字）1：打印 0：不打印
 	public Long getId() {
 		return id;
 	}
@@ -163,9 +164,25 @@ public class CollectorSetting implements Serializable {
 		this.print_order_place2 = print_order_place2;
 	}
 
+	public Integer getIs_duplicate_order() {
+		return is_duplicate_order;
+	}
+
+	public void setIs_duplicate_order(Integer is_duplicate_order) {
+		this.is_duplicate_order = is_duplicate_order;
+	}
+
+	public Integer getIs_print_name() {
+		return is_print_name;
+	}
+
+	public void setIs_print_name(Integer is_print_name) {
+		this.is_print_name = is_print_name;
+	}
+
 	@Override
 	public String toString() {
-		return "CollecterSetting [id=" + id + ", role_id=" + role_id
+		return "CollectorSetting [id=" + id + ", role_id=" + role_id
 				+ ", photoset=" + photoset + ", change_prepay=" + change_prepay
 				+ ", view_plot=" + view_plot + ", print_sign=" + print_sign
 				+ ", prepayset=" + prepayset + ", isprepay=" + isprepay
@@ -173,6 +190,9 @@ public class CollectorSetting implements Serializable {
 				+ is_sensortime + ", password=" + password
 				+ ", signout_password=" + signout_password + ", signout_valid="
 				+ signout_valid + ", is_show_card=" + is_show_card
-				+ ", print_order_place2=" + print_order_place2 + "]";
+				+ ", print_order_place2=" + print_order_place2
+				+ ", is_duplicate_order=" + is_duplicate_order
+				+ ", is_print_name=" + is_print_name + "]";
 	}
+	
 }

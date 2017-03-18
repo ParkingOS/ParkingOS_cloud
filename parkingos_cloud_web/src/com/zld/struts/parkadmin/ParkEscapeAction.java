@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -61,6 +62,7 @@ public class ParkEscapeAction extends Action{
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long loginuin = (Long)request.getSession().getAttribute("loginuin");
+		logger.error(action);
 		Integer isAdmin =(Integer)request.getSession().getAttribute("isadmin");
 		if(loginuin == null){
 			response.sendRedirect("login.do");
@@ -191,7 +193,11 @@ public class ParkEscapeAction extends Action{
 		}else if(action.equals("recover")){
 			int r = Recover(request, groupid);
 			AjaxUtil.ajaxOutput(response, "" + r);
-		}else if(action.equals("export")){
+		}else if(action.equals("exportExcel")){
+			List<Map<String, Object>> list = null;
+			list = queryData(request,groupid,cityid,comid);
+			exportExcel(response, list);
+		}else if(action.equals("exportExcel")){
 			String sql = "select *,(total-prepay) overdue from no_payment_tb where is_delete=? " +
 					" and groupid=? and state=? and end_time<?";
 			List<Map<String, Object>> list = null;
@@ -269,7 +275,52 @@ public class ParkEscapeAction extends Action{
 			e.printStackTrace();
 		}
 	}
-	
+	private void exportExcel(HttpServletResponse response, List<Map<String, Object>> list){
+		try {
+			if(list != null && !list.isEmpty()){
+				String heards[] = new String[]{"所属车场","所属泊位段","泊位编号","进场时间"
+						,"出场时间"
+						,"车牌号"
+						//,"车主编号","订单编号",
+						//"订单金额","预付金额"
+						,"欠费金额"};
+				List<List<String>> bodyList = new ArrayList<List<String>>();
+				for(Map<String, Object> map : list){
+					List<String> valueList = new ArrayList<String>();
+					valueList.add(map.get("company_name") + "");
+					valueList.add(map.get("berthsec_name") + "");
+					
+					valueList.add(map.get("cid") + "");
+					valueList.add(map.get("ctime") + "");
+					valueList.add(map.get("etime") + "");
+					
+					valueList.add(map.get("car_number") + "");
+					//valueList.add(map.get("uin") + "");
+					//valueList.add(map.get("order_id") + "");
+					
+					//valueList.add(map.get("total") + "");
+					//valueList.add(map.get("prepay") + "");
+					valueList.add(map.get("overdue") + "");
+					bodyList.add(valueList);
+				}
+				String fname = "逃单记录";
+				java.io.OutputStream os = response.getOutputStream();
+				response.reset();
+				response.setHeader("Content-disposition", "attachment; filename="
+						+ StringUtils.encodingFileName(fname) + ".xls");
+				ExportExcelUtil importExcel = new ExportExcelUtil("逃单记录",
+						heards, bodyList);
+				importExcel.mulitHeadList = null;
+				Map<String, String> headInfoMap=new HashMap<String, String>();
+				headInfoMap.put("length", heards.length - 1 + "");
+				headInfoMap.put("content", fname);
+				importExcel.headInfo = headInfoMap;
+				importExcel.createExcelFile(os);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	private void setName(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> parkIdList = new ArrayList<Object>();
@@ -456,5 +507,61 @@ public class ParkEscapeAction extends Action{
 					new Object[]{ "%"+nickname+"%" });
 		}
 		return sqlInfo1;
+	}
+	
+	public List queryData(HttpServletRequest request,Long groupid ,Long cityid,Long comid) throws InterruptedException, ExecutionException{
+		String sql = "select *,(total-prepay) overdue from no_payment_tb where is_delete=? and " +
+				" state=?  ";
+		if(groupid == -1){
+			groupid= RequestUtil.getLong(request, "groupid_start", -1L);
+		}
+		SqlInfo sqlInfo = RequestUtil.customSearch(request,"no_payment_tb", "", new String[]{"cid","nickname"});
+		SqlInfo sqlInfo2 = getSuperSqlInfo(request);
+		SqlInfo sqlinfo3 = getSuperSqlInfo1(request);
+		List<Map<String, Object>> list = null;
+		
+		ArrayList<Object> params = new ArrayList<Object>();
+		params.add(0);
+		params.add(0);
+		
+		List<Object> parks = new ArrayList<Object>();
+		if(groupid > 0){
+			sql += " and groupid =? ";
+			params.add(groupid);
+		}else if(cityid > 0){
+			parks = commonMethods.getparks(cityid);
+		}else if(comid > 0){
+			parks.add(comid);
+		}
+		if(parks != null && !parks.isEmpty()){
+			String preParams  ="";
+			for(Object parkid : parks){
+				if(preParams.equals(""))
+					preParams ="?";
+				else
+					preParams += ",?";
+			}
+			sql += " and comid in ("+preParams+") ";
+			params.addAll(parks);
+			
+			//setParkUser(list);
+		}
+		if(sqlInfo != null){
+			sql +=" and "+sqlInfo.getSql();
+			params.addAll(sqlInfo.getParams());
+		}
+		if(sqlInfo2 != null){
+			sql +=" and "+sqlInfo2.getSql();
+			params.addAll(sqlInfo2.getParams());
+		}if(sqlinfo3 != null){
+			sql +=" and "+sqlinfo3.getSql();
+			params.addAll(sqlinfo3.getParams());
+		}
+		sql += " order by id desc ";
+		logger.error(sql+":"+StringUtils.objArry2String(params.toArray()));
+		list = pService.getAll(sql, params,1,60000);
+		logger.error(list==null?"0":list.size());
+		setName(list);
+		return list;
 	}
 }

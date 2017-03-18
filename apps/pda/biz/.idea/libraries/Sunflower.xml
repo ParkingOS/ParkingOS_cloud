@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Sunflower">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/Sunflower.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

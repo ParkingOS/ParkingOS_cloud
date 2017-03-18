@@ -50,7 +50,7 @@ public class QrFilter {
 			@Context ServletContext context)throws IOException {
 			
 		System.err.println("code:"+code);
-		if(!code.startsWith("z")&&!code.startsWith("d"))
+		if(!code.startsWith("z")&&!code.startsWith("d")&&!code.startsWith("B0liNk"))
 			return ;
 		boolean isclient = false;
 		Map<String, String> map = getparam(code);
@@ -67,7 +67,17 @@ public class QrFilter {
 		DataBaseService daService = (DataBaseService) ctx.getBean("dataBaseService");
 		PgOnlyReadService pgOnlyReadService = (PgOnlyReadService) ctx.getBean("pgOnlyReadService");
 		//System.err.println(daService);
-		Map<String, Object> codeMap = daService.getMap("select * from qr_code_tb where code=?", new Object[]{code});
+		Map<String, Object> codeMap = null;
+		String from ="";
+		if(code.startsWith("B0liNk")){//²´Á´¶þÎ¬Âë
+			codeMap=daService.getMap("select * from qr_thirdpark_code where code=?", new Object[]{code});
+			if(codeMap!=null){
+				from = "bolink";
+				codeMap.put("type", 4);
+			}
+		}else {
+			codeMap=daService.getMap("select * from qr_code_tb where code=?", new Object[]{code});
+		}
 		System.out.println(codeMap);
 		Long orderId = -1L;
 		if(codeMap!=null){
@@ -186,7 +196,7 @@ public class QrFilter {
 					response.sendRedirect(_eUrl);
 					break;*/
 				case 5://¼õÃâÈ¯¶þÎ¬Âë
-					String rUrl = "http%3a%2f%2f"+Constants.WXPUBLIC_REDIRECTURL+"%2fzld%2fwxpfast.do%3faction%3dsweepcom%26codeid%3d"+codeMap.get("id");
+					String rUrl = "http%3a%2f%2f"+Constants.WXPUBLIC_REDIRECTURL+"%2fzld%2fwxpfast.do%3faction%3dsweepcom%26from%3d"+from+"%26codeid%3d"+codeMap.get("id");
 					String _rUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+Constants.WXPUBLIC_APPID+"&redirect_uri="+rUrl+
 							"&response_type=code&scope=snsapi_base&state=123#wechat_redirect";
 					System.out.println(rUrl);

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_car_order_back"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#232323"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#232323"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@drawable/left"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/et_car_order_number"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="100"
+            android:drawableLeft="@drawable/search"
+            android:drawablePadding="3dp"
+            android:hint="输入部分车牌数字或完整订单号!"
+            android:numeric="integer"
+            android:singleLine="true"
+            android:textColor="#ffffff"
+            android:textSize="12dp" />
+
+        <LinearLayout
+            android:id="@+id/ll_car_order_delete"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#232323"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="35dp"
+                android:layout_height="25dp"
+                android:background="@drawable/delete" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/carorder_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_weight="100">
+        <GridView
+            android:visibility="gone"
+            android:id="@+id/gv_in_vehicle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/rl_main_leave_order"
+            android:layout_below="@+id/deletebar"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="50"
+            android:gravity="center"
+            android:horizontalSpacing="6dp"
+            android:numColumns="2"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="5dp"></GridView>
+        <ListView
+
+            android:id="@+id/lv_car_order_orders"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#EFF0F1"
+            android:dividerHeight="3dp" />
+
+        <TextView
+            android:id="@+id/tv_car_order_null"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="100dp"
+            android:gravity="center"
+            android:text="暂无当前订单！"
+            android:textColor="#c9c9c9"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+    <Button
+        android:visibility="gone"
+        android:id="@+id/bt_car_order_scanqrcode"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/shape_already_recommend"
+        android:text="扫描入场凭条二维码结算"
+        android:textColor="@color/white" />
+</LinearLayout>

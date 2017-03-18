@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,8 +27,12 @@ import com.zld.CustomDefind;
 import com.zld.impl.CommonMethods;
 import com.zld.impl.MemcacheUtils;
 import com.zld.impl.PublicMethods;
+import com.zld.pojo.AutoPayPosOrderReq;
+import com.zld.pojo.AutoPayPosOrderResp;
+import com.zld.pojo.Order;
 import com.zld.service.DataBaseService;
 import com.zld.service.LogService;
+import com.zld.service.PayPosOrderService;
 import com.zld.service.PgOnlyReadService;
 import com.zld.utils.Check;
 import com.zld.utils.CountPrice;
@@ -53,6 +58,9 @@ public class NFCHandleAction extends Action {
 	private CommonMethods methods;
 	@Autowired
 	private MemcacheUtils memcacheUtils;
+	@Autowired
+	@Resource(name = "bolinkPay")
+	private PayPosOrderService payBolinkService;
 	/**
 	 * 返回值：
 	 * 0：进场确认
@@ -732,6 +740,45 @@ public class NFCHandleAction extends Action {
 			Integer pay_flag = RequestUtil.getInteger(request, "pay", -1);//-1:默认，0：预支付新版本1:预支付新版本现金结算
 			String isclick = RequestUtil.getString(request, "isclick");
 			System.err.println("isclick:"+isclick+",orderid:"+orderId);
+			String imei  =  RequestUtil.getString(request, "imei");//手机串号
+			
+			/**泊链支付****/
+			if(orderId>0&&money>0){
+				Object orderObject = daService.getPOJO("select * from order_tb where id=? ", 
+						new Object[]{orderId}, Order.class);
+				if(orderObject!=null){
+					Order order = (Order)orderObject;
+					double prePay = order.getPrepaid();
+					Integer cType =order.getC_type();
+					Long comid = order.getComid();
+					Long userId = order.getUin();
+					if(prePay<=0&&cType!=5){
+						AutoPayPosOrderResp autoPayResp = null;
+						AutoPayPosOrderReq autoPayReq = new AutoPayPosOrderReq();
+						autoPayReq.setOrder(order);
+						autoPayReq.setMoney(money);
+						autoPayReq.setImei(imei);
+						autoPayReq.setUid(uid);
+						autoPayReq.setUserId(userId);
+						autoPayReq.setEndTime(System.currentTimeMillis()/1000);
+						autoPayReq.setGroupId(publicMethods.getGroup(comid));
+						String bolinkPayRes =publicMethods.sendPayOrderToBolink(orderId,
+								System.currentTimeMillis()/1000,money,order.getComid());
+						if(bolinkPayRes.equals("app")){//泊链平台已经电子支付，这里处理为电子支付
+							logger.error("泊链结算>>>"+autoPayReq.toString());
+							autoPayResp = payBolinkService.autoPayPosOrder(autoPayReq);
+							logger.error("泊链结算>>>"+autoPayResp.toString());
+							if(autoPayResp.getResult() == 1){
+								logService.insertParkUserMessage(comId, 2, uid, order.getCar_number(), orderId, money,StringUtils.getTimeString(ntime-order.getCreate_time()),0, order.getCreate_time(), ntime,0, null);
+								AjaxUtil.ajaxOutput(response, "1");
+								return null;
+							}
+						}
+					}
+				}
+			}
+			/**泊链支付****/
+			
 			Integer isClick = isclick.equals("true")?1:0;//0自动结算 1手动结算
 			Map orderMap = null;
 			String carnumber =AjaxUtil.decodeUTF8(RequestUtil.getString(request, "carnumber"));
@@ -748,7 +795,7 @@ public class NFCHandleAction extends Action {
 			logger.error("completeorder orderid:"+orderId+",carnumber:"+carnumber+",money"+money);
 			if("车牌号未知".equals(carnumber))
 				carnumber="";
-			String imei  =  RequestUtil.getString(request, "imei");
+			
 			Long neworderId = -1L;//结算时如果无订单编号，创建新订单	
 			if(orderId==-1){//按次直接结算时，没有订单编号，需要先生成订单 20150204
 				Long uin = RequestUtil.getLong(request, "uin", -1L);
@@ -1043,7 +1090,7 @@ public class NFCHandleAction extends Action {
 								String cname = (String) daService.getObject("select company_name from com_info_tb where id=?",
 										new Object[] { comId },String.class);
 								logService.insertUserMesg(2, uin,cname+"，停车费"+money+"元，自动支付成功。", "自动支付提醒");
-								logService.insertParkUserMessage(comId, state, uid, carnumber, orderId, money,duration,0, btime, etime,0);
+								logService.insertParkUserMessage(comId, state, uid, carnumber, orderId, money,duration,0, btime, etime,0, null);
 								
 								if(userMap.get("wxp_openid") != null){
 									String openid = (String)userMap.get("wxp_openid");

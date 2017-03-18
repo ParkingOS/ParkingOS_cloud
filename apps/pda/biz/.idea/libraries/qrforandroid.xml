@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="qrforandroid">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/qrforandroid.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

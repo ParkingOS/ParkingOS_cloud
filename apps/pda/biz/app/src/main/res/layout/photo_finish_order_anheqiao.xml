@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="310dp"
+        android:layout_height="50dp"
+        android:background="#36A56A"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:text="结算订单:"
+            android:textColor="#ffffff"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_nfc_finish_anheqiao_duration"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight="100"
+            android:gravity="center_vertical"
+            android:text="已停时间"
+            android:textColor="#ffffff"
+            android:textSize="16dp" />
+
+        <LinearLayout
+            android:id="@+id/ll_nfc_finish_anheqiao_isuser"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible" >
+
+            <TextView
+                android:id="@+id/tv_nfc_finish_anheqiao_isuser"
+                android:layout_width="69dp"
+                android:layout_height="49dp"
+                android:background="@drawable/finish_order_vip"
+                android:gravity="center" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view_nfc_finish_anheqiao_bar"
+        android:layout_width="310dp"
+        android:layout_height="0.5dp"
+        android:background="#c9c9c9" >
+    </View>
+
+    <LinearLayout
+        android:layout_width="310dp"
+        android:layout_height="200dp"
+        android:background="#ffffff"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/ll_nfc_finish_anheqiao_write_carnunber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_recommend_code"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tv_nfc_finish_anheqiao_carnunber_no_carnumber"
+                    android:layout_width="140dp"
+                    android:layout_height="90dp"
+                    android:background="@drawable/finish_order_photo"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_nfc_finish_anheqiao_carnunber_hint"
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="车牌号："
+                    android:textColor="#36A56A"
+                    android:textSize="22dp" />
+
+                <TextView
+                    android:id="@+id/tv_nfc_finish_anheqiao_carnunber"
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="#36A56A"
+                    android:textSize="28dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="150dp"
+                android:layout_height="90dp" >
+
+                <TextView
+                    android:id="@+id/tv_nfc_finish_anheqiao_cash_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:gravity="center|left"
+                    android:paddingLeft="5dp"
+                    android:text=""
+                    android:textColor="#D55949"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_nfc_finish_anheqiao_time_money"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginBottom="6dp"
+                    android:background="@drawable/rmb" />
+
+                <TextView
+                    android:id="@+id/tv_nfc_finish_anheqiao_time_collect"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toRightOf="@+id/tv_nfc_finish_anheqiao_time_money"
+                    android:gravity="bottom"
+                    android:paddingBottom="3dp"
+                    android:paddingLeft="3dp"
+                    android:textColor="#000000"
+                    android:textSize="25dp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/et_nfc_finish_anheqiao_time_collect"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toRightOf="@+id/tv_nfc_finish_anheqiao_time_money"
+                    android:gravity="bottom"
+                    android:hint="输入金额"
+                    android:maxLength="8"
+                    android:numeric="integer|decimal"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <Spinner
+                    android:id="@+id/sp_nfc_finish_order_anheqiao_collect"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toRightOf="@+id/tv_nfc_finish_anheqiao_time_money"
+                    android:gravity="left"
+                    android:visibility="gone" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="150dp"
+                android:layout_height="90dp"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tv_nfc_finish_anheqiao_parktime"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:gravity="center|left"
+                    android:paddingLeft="5dp"
+                    android:text=""
+                    android:textColor="#696767"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_nfc_finish_anheqiao_time_cash"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="8dp" >
+
+                    <TextView
+                        android:id="@+id/tv_nfc_finish_anheqiao_time"
+                        android:layout_width="90dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentBottom="true"
+                        android:gravity="center|left"
+                        android:text="临时停车"
+                        android:textColor="@color/tv_leaveItem_state_green"
+                        android:textSize="16dp"
+                        android:textStyle="bold" />
+
+                    <CheckBox
+                        android:id="@+id/cb_nfc_finish_anheqiao_timecash"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:clickable="false"
+                        android:focusable="false" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_nfc_finish_anheqiao_cash"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="6dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="40dp" >
+
+                <TextView
+                    android:id="@+id/tv_nfc_finish_order_anheqiao_time"
+                    android:layout_width="90dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="center|left"
+                    android:text="包天停车"
+                    android:textColor="@color/tv_leaveItem_state_green"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:id="@+id/cb_nfc_finish_anheqiao_cash"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:clickable="false"
+                    android:focusable="false" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="310dp"
+        android:layout_height="50dp"
+        android:background="#36A56A"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/bt_nfc_finish_anheqiao_ok"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#36A56A"
+            android:text="确定"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
+
+        <View
+            android:id="@+id/view_nfc_anheqiao_view"
+            android:layout_width="0.5dp"
+            android:layout_height="30dp"
+            android:background="#c9c9c9" />
+
+        <Button
+            android:id="@+id/bt_nfc_finish_anheqiao_cancle"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#36A56A"
+            android:text="取消"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+</LinearLayout>

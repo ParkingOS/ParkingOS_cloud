@@ -1,7 +1,6 @@
 package com.zld.struts.request;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +18,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.aspectj.internal.lang.annotation.ajcDeclareAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import pay.Constants;
@@ -136,7 +136,10 @@ public class WeixinPublicFastPassAction extends Action {
 			String openid = RequestUtil.processParams(request, "openid");
 			Integer delaytime = RequestUtil.getInteger(request, "delaytime", 0);
 			Long ticketId = RequestUtil.getLong(request, "ticketid", -1L);
-			Integer paytype = RequestUtil.getInteger(request, "paytype", 0);
+			Integer isbolink=RequestUtil.getInteger(request, "isbolink", 0);//是否是泊链订单
+			Integer paytype = RequestUtil.getInteger(request, "paytype", 0);//0直付 1支付订单 2预付泊链订单
+			String carnumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number"));
+			String parkId = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "park_id"));
 			if(orderid == -1 || openid.equals("")){
 				return mapping.findForward("error");
 			}
@@ -153,49 +156,63 @@ public class WeixinPublicFastPassAction extends Action {
 			//**************************获取订单信息*****************************************//
 			Integer showorder = 0;
 			Integer noticetype = 0;
-			Map<String, Object> orderMap = commonMethods.getOrderInfo(orderid, -1L, curtime + delaytime * 60);
+			Map<String, Object> orderMap = null;
+			if(isbolink==1){
+				orderMap = publicMethods.catBolinkOrder(null,null,carnumber, parkId,delaytime);
+				if(orderMap!=null){
+					orderMap.put("aftertotal", orderMap.get("money"));
+					orderMap.put("uid", -1L);
+					orderMap.put("out_uid", -1L);
+				}
+			}else {
+				orderMap=commonMethods.getOrderInfo(orderid, -1L, curtime + delaytime * 60);
+			}
 			logger.error("orderMap:"+orderMap);
 			if(orderMap != null){
-				Long uid = (Long)orderMap.get("uid");
 				Double aftertotal = Double.valueOf(orderMap.get("aftertotal") + "");//使用减免券之后的金额
-				Double beforetotal = Double.valueOf(orderMap.get("beforetotal") + "");
-				Double distotal = Double.valueOf(orderMap.get("distotal") + "");
-				Long comid = (Long)orderMap.get("comid");
-				Long end_time = (Long)orderMap.get("end_time");
-				Long disTicketId = (Long)orderMap.get("shopTicketId");
-				//*******************************判断车场是否支持电子支付*****************************//
-				Long count = pService.getLong("select count(id) from com_info_tb where id=? " +
-						" and epay=? ", new Object[]{comid, 1});
-				if(count == 0){//不支持电子支付
-					showorder = 2;
-					request.setAttribute("showorder", showorder);
-					return mapping.findForward("toprepaypage");
-				}
-				//*******************************选停车宝券**************************************//
 				Double tcbTMoney = 0d;
 				Double tcbTLimit = 0d;
-				if(ticketId == -1){
-					logger.error("choose ticket auto>>>ticketid:"+ticketId+",orderid:"+orderid);
-					Map<String, Object> ticketparam = new HashMap<String, Object>();
-					ticketparam.put("total", aftertotal + "");
-					ticketparam.put("uin", uin);
-					ticketparam.put("uid", uid);
-					ticketparam.put("orderid", orderid);
-					ticketparam.put("bindflag", bindflag);
-					ticketparam.put("openid", openid);
-					ticketparam.put("mobile", mobile);
-					Map<String, Object> tMap = getTicket(ticketparam);
-					ticketId = (Long)tMap.get("ticketId");
-					tcbTLimit = Double.valueOf(tMap.get("limit") + "");
-					tcbTMoney = Double.valueOf(tMap.get("ticket_money") + "");
-				}else if(ticketId > 0){
-					logger.error("choose ticket unauto>>>ticketid:"+ticketId+",orderid:"+orderid);
-					tcbTLimit = publicMethods.getTicketMoney(ticketId, 2, uid, aftertotal, 2, comid, orderid);
-				}if(ticketId == -2){
-					logger.error("主动放弃使用券>>>ticketid:"+ticketId+",uin:"+uin);
-					ticketId = -1L;
+				Long uid = -1L;
+				
+				if(isbolink==0){//不是泊链订单，查用券
+					uid = (Long)orderMap.get("uid");
+					Long out_uid = (Long)orderMap.get("out_uid");
+					if(out_uid > 0){
+						uid = out_uid;
+					}
+					Long comid = (Long)orderMap.get("comid");
+					//*******************************判断车场是否支持电子支付*****************************//
+					Long count = pService.getLong("select count(id) from com_info_tb where id=? " +
+							" and epay=? ", new Object[]{comid, 1});
+					if(count == 0){//不支持电子支付
+						showorder = 2;
+						request.setAttribute("showorder", showorder);
+						return mapping.findForward("toprepaypage");
+					}
+					//*******************************选停车宝券**************************************//
+					if(ticketId == -1){
+						logger.error("choose ticket auto>>>ticketid:"+ticketId+",orderid:"+orderid);
+						Map<String, Object> ticketparam = new HashMap<String, Object>();
+						ticketparam.put("total", aftertotal + "");
+						ticketparam.put("uin", uin);
+						ticketparam.put("uid", uid);
+						ticketparam.put("orderid", orderid);
+						ticketparam.put("bindflag", bindflag);
+						ticketparam.put("openid", openid);
+						ticketparam.put("mobile", mobile);
+						Map<String, Object> tMap = getTicket(ticketparam);
+						ticketId = (Long)tMap.get("ticketId");
+						tcbTLimit = Double.valueOf(tMap.get("limit") + "");
+						tcbTMoney = Double.valueOf(tMap.get("ticket_money") + "");
+					}else if(ticketId > 0){
+						logger.error("choose ticket unauto>>>ticketid:"+ticketId+",orderid:"+orderid);
+						tcbTLimit = publicMethods.getTicketMoney(ticketId, 2, uid, aftertotal, 2, comid, orderid);
+					}if(ticketId == -2){
+						logger.error("主动放弃使用券>>>ticketid:"+ticketId+",uin:"+uin);
+						ticketId = -1L;
+					}
+					logger.error("orderid:"+orderid+",ticketId:"+ticketId+"tcbTLimit:"+tcbTLimit);
 				}
-				logger.error("orderid:"+orderid+",ticketId:"+ticketId+"tcbTLimit:"+tcbTLimit);
 				//****************************计算用户需要付款的金额*************************//
 				Double balance_pay = StringUtils.formatDouble(aftertotal - tcbTLimit);//余额支付的金额
 				if(balance_pay > balance){//余额不足
@@ -203,15 +220,19 @@ public class WeixinPublicFastPassAction extends Action {
 				}
 				Double wx_pay = StringUtils.formatDouble(aftertotal - tcbTLimit - balance_pay);
 				logger.error("orderid:"+orderid+"wx_pay:"+wx_pay+",balance_pay:"+balance_pay);
+				
+				
 				if(wx_pay > 0){
 					try {
 						Map<String, Object> attachMap = new HashMap<String, Object>();
 						attachMap.put("uid", uid);//收费员ID
 						attachMap.put("money", aftertotal);//
-						if(paytype == 0){
-							attachMap.put("type", 4);//
+						if(isbolink==1){
+							attachMap.put("type", 9);//泊链充值预付
+						}else if(paytype == 0){
+							attachMap.put("type", 4);//直付
 						}else{
-							attachMap.put("type", 5);//
+							attachMap.put("type", 5);//订单预支付
 						}
 						attachMap.put("ticketId", ticketId);//停车券
 						attachMap.put("orderid", orderid);
@@ -236,34 +257,38 @@ public class WeixinPublicFastPassAction extends Action {
 				/*============停车券类型逻辑begin==============*/
 				Integer tickettype = 0;//普通券
 				String ticketdescp = "无可用停车券";
-				if(ticketId > 0){
-					Map<String, Object> ticketMap = daService.getMap(
-							"select type,resources,money from ticket_tb where id=? ",
-							new Object[] { ticketId });
-					if(ticketMap != null){
-						tickettype = (Integer)ticketMap.get("type");
-						Integer resources = (Integer)ticketMap.get("resources");
-						tcbTMoney = Double.valueOf(ticketMap.get("money") + "");
-						if(tickettype == 0){
-							if(resources == 0){
-								ticketdescp = "已选择"+tcbTMoney+"元普通券";
-							}else if(resources == 1){
-								ticketdescp = "已选择"+tcbTMoney+"元购买券";
+				
+				if(isbolink==0){
+					if(ticketId > 0){
+						Map<String, Object> ticketMap = daService.getMap(
+								"select type,resources,money from ticket_tb where id=? ",
+								new Object[] { ticketId });
+						if(ticketMap != null){
+							tickettype = (Integer)ticketMap.get("type");
+							Integer resources = (Integer)ticketMap.get("resources");
+							tcbTMoney = Double.valueOf(ticketMap.get("money") + "");
+							if(tickettype == 0){
+								if(resources == 0){
+									ticketdescp = "已选择"+tcbTMoney+"元普通券";
+								}else if(resources == 1){
+									ticketdescp = "已选择"+tcbTMoney+"元购买券";
+								}
+							}else if(tickettype == 1){
+								ticketdescp = "已选择"+tcbTMoney+"元专用券";
 							}
-						}else if(tickettype == 1){
-							ticketdescp = "已选择"+tcbTMoney+"元专用券";
+						}
+					}else if(ticketId == -100){
+						ticketdescp = "首单8折券";
+						tickettype = 2;
+					}else if(ticketId == -2){
+						ticketdescp = "不使用停车券";
+					}else{
+						if(!memcacheUtils.readUseTicketCache(uin)){
+							ticketdescp = "超过每日使用次数限制";
 						}
 					}
-				}else if(ticketId == -100){
-					ticketdescp = "首单8折券";
-					tickettype = 2;
-				}else if(ticketId == -2){
-					ticketdescp = "不使用停车券";
-				}else{
-					if(!memcacheUtils.readUseTicketCache(uin)){
-						ticketdescp = "超过每日使用次数限制";
-					}
 				}
+				
 				request.setAttribute("notice_type", noticetype);
 				request.setAttribute("uid", uid);
 				request.setAttribute("mobile", mobile);
@@ -286,20 +311,36 @@ public class WeixinPublicFastPassAction extends Action {
 			request.setAttribute("orderid", orderid);
 			request.setAttribute("paytype", paytype);
 			request.setAttribute("showorder", showorder);
+			//泊链参数
+			request.setAttribute("isbolink", isbolink);
+			request.setAttribute("car_number", carnumber);
+			request.setAttribute("park_id", parkId);
+			request.setAttribute("is_delay", orderMap.get("is_delay"));
+			
 			return mapping.findForward("toprepaypage");
 		}else if(action.equals("getprice")){//获取预支付金额
 			Long orderid = RequestUtil.getLong(request, "orderid", -1L);
+			Integer isBolink=RequestUtil.getInteger(request, "isbolink", 0);
 			Integer delaytime = RequestUtil.getInteger(request, "delaytime", -1);
 			logger.error("getprice>>>orderid："+orderid+",delaytime:"+delaytime);
-			if(orderid == -1 || delaytime == -1 ){
-				AjaxUtil.ajaxOutput(response, "-1");
-				return null;
-			}
 			Map<String, Object> infoMap = new HashMap<String, Object>();
-			Long end_time = curtime + delaytime * 60;
-			Map<String, Object> map = commonMethods.getOrderInfo(orderid, -1L, end_time);
-			infoMap.put("aftertotal", map.get("aftertotal"));
-			infoMap.put("parktime", map.get("parktime"));
+			if(isBolink==1){//泊链订单，需要调用泊链服务器查询
+				String carnumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number"));
+				String parkId = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "park_id"));
+				Map<String, Object>orderMap = publicMethods.catBolinkOrder(null,null,carnumber, parkId,delaytime);
+				infoMap.put("aftertotal", orderMap.get("money"));
+				Long startTime=Long.valueOf(orderMap.get("start_time")+"");
+				infoMap.put("parktime",StringUtils.getTimeString(startTime, System.currentTimeMillis()/1000+delaytime*60));
+			}else {
+				if(orderid == -1 || delaytime == -1 ){
+					AjaxUtil.ajaxOutput(response, "-1");
+					return null;
+				}
+				Long end_time = curtime + delaytime * 60;
+				Map<String, Object> map = commonMethods.getOrderInfo(orderid, -1L, end_time);
+				infoMap.put("aftertotal", map.get("aftertotal"));
+				infoMap.put("parktime", map.get("parktime"));
+			}
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(infoMap));
 			return null;
 		}else if(action.equals("prepayorder")){
@@ -307,19 +348,26 @@ public class WeixinPublicFastPassAction extends Action {
 			String openid = RequestUtil.processParams(request, "openid");
 			Long ticketId = RequestUtil.getLong(request, "ticketid", -1L);
 			Double total = RequestUtil.getDouble(request, "total", 0d);
-			if(orderid == -1 || openid.equals("") || total == 0){
-				return mapping.findForward("error");
-			}
-			//**************************根据openid获取用户信息*******************************//
+			Integer isbolink = RequestUtil.getInteger(request, "isbolink", 0);
+			Long uin = -1L;
 			Map<String, Object> userinfoMap = commonMethods.getUserinfoByOpenid(openid);
 			if(userinfoMap == null || (Long)userinfoMap.get("uin") < 0){
 				return mapping.findForward("error");
 			}
-			Long uin = (Long)userinfoMap.get("uin");
-			Integer bindflag = (Integer)userinfoMap.get("bindflag");
-			Map orderMap = daService.getMap("select * from order_tb where id=? ", new Object[]{orderid});
-			int re = publicMethods.prepay(orderMap, total, uin, ticketId, 0, bindflag, null);
-			AjaxUtil.ajaxOutput(response, re + "");
+			uin = (Long)userinfoMap.get("uin");
+			if(isbolink==0){
+				if(orderid == -1 || openid.equals("") || total == 0){
+					return mapping.findForward("error");
+				}
+				//**************************根据openid获取用户信息*******************************//
+				Integer bindflag = (Integer)userinfoMap.get("bindflag");
+				Map orderMap = daService.getMap("select * from order_tb where id=? ", new Object[]{orderid});
+				int re = publicMethods.prepay(orderMap, total, uin, ticketId, 0, bindflag, null);
+				AjaxUtil.ajaxOutput(response, re + "");
+			}else {//泊链预支付，只同步用户余额到泊链
+				publicMethods.syncUserToBolink(uin);
+				AjaxUtil.ajaxOutput(response, "5");
+			}
 			return null;
 		}else if(action.equals("epay")){//直付
 			Long uid = RequestUtil.getLong(request, "uid", -1L);// 收费员id
@@ -656,37 +704,55 @@ public class WeixinPublicFastPassAction extends Action {
 			return mapping.findForward("toepay");
 		}else if(action.equals("checkorder")){
 			Long orderid = RequestUtil.getLong(request, "orderid", -1L);
+			Integer isbolink = RequestUtil.getInteger(request, "isbolink", 0);
 			logger.error("检查该订单是否已经结算，orderid:"+orderid);
-			if(orderid == -1){
-				AjaxUtil.ajaxOutput(response, "-1");
-				logger.error("该订单不存在，orderid："+orderid);
-				return null;
-			}
-			Long count = daService.getLong(
-					"select count(*) from order_tb where state=? and id=? ",
-					new Object[] { 1, orderid });
-			if(count > 0){
-				logger.error("该订单已结算，orderid："+orderid);
-				Map orderMap = daService.getMap("select * from order_tb where end_time>? and pay_type=? and (c_type=? or c_type=? or c_type=?) and id=? ",
-								new Object[] {curtime - 15*60, 1, 2, 3, 0, orderid });
-				if(orderMap != null){
-					AjaxUtil.ajaxOutput(response, "-3");
-				}else{
-					AjaxUtil.ajaxOutput(response, "-2");
+			if(isbolink==0){
+				if(orderid == -1){
+					AjaxUtil.ajaxOutput(response, "-1");
+					logger.error("该订单不存在，orderid："+orderid);
+					return null;
 				}
-			}else{
-				logger.error("该订单未结算，orderid："+orderid);
-				AjaxUtil.ajaxOutput(response, "1");
+				Long count = daService.getLong(
+						"select count(*) from order_tb where state=? and id=? ",
+						new Object[] { 1, orderid });
+				if(count > 0){
+					logger.error("该订单已结算，orderid："+orderid);
+					Map orderMap = daService.getMap("select * from order_tb where end_time>? and pay_type=? and (c_type=? or c_type=? or c_type=?) and id=? ",
+							new Object[] {curtime - 15*60, 1, 2, 3, 0, orderid });
+					if(orderMap != null){
+						AjaxUtil.ajaxOutput(response, "-3");
+					}else{
+						AjaxUtil.ajaxOutput(response, "-2");
+					}
+				}else{
+					logger.error("该订单未结算，orderid："+orderid);
+					AjaxUtil.ajaxOutput(response, "1");
+				}
+			}else {
+				String carnumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number"));
+				String parkId = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "park_id"));
+				Integer delaytime = RequestUtil.getInteger(request, "delaytime", 0);
+				Double totalFee = RequestUtil.getDouble(request, "total_fee", 0.0);
+				Map<String, Object> orderMap = publicMethods.catBolinkOrder(null,null,carnumber, parkId,delaytime);
+				if(orderMap!=null){
+					Double money = StringUtils.formatDouble(orderMap.get("money"));
+					logger.error("泊链支付：prepay total="+totalFee+",now fee="+money);
+					if(totalFee>0&&money>0&&money>totalFee){
+						logger.error("泊链支付：该订单现在金额已大于支付金额，orderid："+orderid);
+						AjaxUtil.ajaxOutput(response, "-3");
+					}
+				}
 			}
 			return null;
 		}else if(action.equals("sweepcom")){
 			Long codeid = RequestUtil.getLong(request, "codeid", -1L);
 			String openid = RequestUtil.processParams(request, "openid");
 			String carnumber = RequestUtil.processParams(request, "carnumber");
-			
+			//http://yxiudongyeahnet.vicp.cc:50803/zld/wxpfast.do?action=sweepcom&codeid=1&from=bolink&openid=oRoekt9RN8LxHDLq43QJqRhoc0t8
 //			openid = "oRoektybTsv33_vSKKUwLAsJAquc";
 //			openid = "oRoekt8iW7wwwv2CVq3Bj6rB38EM";
 //			openid = "oRoekt7uy9abm5hrUBCWYHHDF5sY";
+			//openid ="oRoekt9RN8LxHDLq43QJqRhoc0t8";
 			
 			if(openid.equals("")){
 				String code = RequestUtil.processParams(request, "code");
@@ -714,12 +780,24 @@ public class WeixinPublicFastPassAction extends Action {
 			request.setAttribute("codeid", codeid);
 			request.setAttribute("openid", openid);
 			//**************************根据二维码获取车场信息*******************************//
+			boolean isBolinkPark = false;
+			String parkId = "";
 			Map<String, Object> codeMap = daService.getMap("select * from qr_code_tb where id=? and comid is not null ",
 					new Object[] { codeid });
 			if(codeMap == null){
+				codeMap= daService.getMap("select * from qr_thirdpark_code where id=? ", new Object[] { codeid });
+				if(codeMap!=null){
+					isBolinkPark=true;//泊链平台
+					codeMap.put("type", 4);
+					codeMap.put("comid", -1L);
+					parkId = (String)codeMap.get("park_id");
+				}
+			}
+			if(codeMap==null){
 				return mapping.findForward("error");
 			}
 			Long comid = (Long)codeMap.get("comid");
+				
 			//**************************根据openid获取用户信息*******************************//
 			Map<String, Object> userinfoMap = commonMethods.getUserinfoByOpenid(openid);
 			if(userinfoMap == null || (Long)userinfoMap.get("uin") < 0){
@@ -736,7 +814,7 @@ public class WeixinPublicFastPassAction extends Action {
 						carnumber = (String)carMap.get("car_number");
 					}
 				}else if(bindflag == 1){
-					Map<String, Object> carMap = daService.getMap("select car_number from car_info_tb where uin=? and state=? limit ?",
+					Map<String, Object> carMap = daService.getMap("select car_number from car_info_tb where uin=? and state=? order by id desc limit ?",
 							new Object[] { uin, 1, 1 });
 					if(carMap != null && carMap.get("car_number") != null){
 						carnumber = (String)carMap.get("car_number");
@@ -748,70 +826,96 @@ public class WeixinPublicFastPassAction extends Action {
 				return mapping.findForward("addcarnum");
 			}
 			//***********************能够取到车牌号，根据车牌号查寻订单并获取信息****************************//
-			Long orderId = -1L;
+			String orderId = "-1";
 			Long shopTicketId = -1L;
 			Integer ownerflag = 0;
 			if((Integer)codeMap.get("type") == 5 && codeMap.get("ticketid") != null){//扫描减免券二维码
 				shopTicketId = (Long)codeMap.get("ticketid");
 			}
-			Map<String, Object> orderMap = pService.getMap("select id,total from order_tb where comid=? and car_number=? and state=? order by create_time desc limit ? ", 
-					new Object[]{comid, carnumber, 0, 1});
-			if(orderMap != null){
-				if(orderMap.get("uin") != null && (Long)orderMap.get("uin") > 0){
-					Long orderowner = (Long)orderMap.get("uin");
-					if(orderowner.intValue() != uin.intValue()){
-						ownerflag = 1;
+			Integer is_delay = 1;
+			Map<String, Object> orderMap =null;
+			if(isBolinkPark){//泊链平台上的车场，需要调用接口查询
+				orderMap = publicMethods.catBolinkOrder(null,null,carnumber, parkId,15);
+				if(orderMap!=null)
+					is_delay = (Integer)orderMap.get("is_delay");
+			}else {
+				orderMap=pService.getMap("select id,total,uin from order_tb where comid=? and car_number=? and state=? order by create_time desc limit ? ", 
+						new Object[]{comid, carnumber, 0, 1});
+			}
+			if(!isBolinkPark){
+				if(orderMap != null){
+					if(orderMap.get("uin") != null && (Long)orderMap.get("uin") > 0){
+						Long orderowner = (Long)orderMap.get("uin");
+						if(orderowner.intValue() != uin.intValue()){
+							ownerflag = 1;
+						}
 					}
-				}
-				if(ownerflag == 0){
-					orderId = (Long)orderMap.get("id");
-					Long end_time = curtime + 15*60;
-					if(orderMap.get("total") != null){
-						Double pretotal = Double.valueOf(orderMap.get("total") + "");
+					if(ownerflag == 0){
+						orderId = orderMap.get("id")+"";
+						Long end_time = curtime + 15*60;
+						if(orderMap.get("total") != null){
+							Double pretotal = Double.valueOf(orderMap.get("total") + "");
+							if(pretotal > 0){
+								end_time = curtime;
+							}
+						}
+						
+						Map<String, Object> map = commonMethods.getOrderInfo(Long.valueOf(orderId), shopTicketId, end_time);
+						logger.error("orderid:"+orderId+",map:"+map);
+						String descp = "";
+						Double pretotal = Double.valueOf(map.get("pretotal") + "");
+						Integer prestate = 0;//预支付状态 0：没有预支付 1：已经预支付
 						if(pretotal > 0){
-							end_time = curtime;
+							prestate = 1;
 						}
-					}
-					
-					Map<String, Object> map = commonMethods.getOrderInfo(orderId, shopTicketId, end_time);
-					logger.error("orderid:"+orderId+",map:"+map);
-					String descp = "";
-					Double pretotal = Double.valueOf(map.get("pretotal") + "");
-					Integer prestate = 0;//预支付状态 0：没有预支付 1：已经预支付
-					if(pretotal > 0){
-						prestate = 1;
-					}
-					if(map.get("shopticketid") != null){
-						shopTicketId = (Long)map.get("shopticketid");
-					}
-					Integer ticketstate =  (Integer)map.get("ticketstate");
-					Integer tickettype = (Integer)map.get("tickettype");
-					Integer tickettime = (Integer)map.get("tickettime");
-					Double beforetotal = Double.valueOf(map.get("beforetotal") + "");
-					Double aftertotal = Double.valueOf(map.get("aftertotal") + "");
-					if(ticketstate == 1){
-						if(tickettype == 3){
-							descp = tickettime + "小时";
-						}else if(tickettype == 4){
-							descp = "免费";
+						if(map.get("shopticketid") != null){
+							shopTicketId = (Long)map.get("shopticketid");
 						}
-					}else if(ticketstate == 0){
-						descp = "该券已使用";
+						Integer ticketstate =  (Integer)map.get("ticketstate");
+						Integer tickettype = (Integer)map.get("tickettype");
+						Integer tickettime = (Integer)map.get("tickettime");
+						Double beforetotal = Double.valueOf(map.get("beforetotal") + "");
+						Double aftertotal = Double.valueOf(map.get("aftertotal") + "");
+						if(ticketstate == 1){
+							if(tickettype == 3){
+								descp = tickettime + "小时";
+							}else if(tickettype == 4){
+								descp = "免费";
+							}
+						}else if(ticketstate == 0){
+							descp = "该券已使用";
+						}
+						request.setAttribute("starttime", map.get("starttime"));
+						request.setAttribute("parktime", map.get("parktime"));
+						request.setAttribute("beforetotal", map.get("beforetotal"));
+						request.setAttribute("aftertotal", map.get("aftertotal"));
+						request.setAttribute("distotal", StringUtils.formatDouble(beforetotal - aftertotal));
+						request.setAttribute("prestate", prestate);
+						request.setAttribute("pretotal", pretotal);
+						request.setAttribute("descp", descp);
+						
+						request.setAttribute("isbolink", 0);
 					}
-					request.setAttribute("starttime", map.get("starttime"));
-					request.setAttribute("parktime", map.get("parktime"));
-					request.setAttribute("beforetotal", map.get("beforetotal"));
-					request.setAttribute("aftertotal", map.get("aftertotal"));
-					request.setAttribute("distotal", StringUtils.formatDouble(beforetotal - aftertotal));
-					request.setAttribute("prestate", prestate);
-					request.setAttribute("pretotal", pretotal);
-					request.setAttribute("descp", descp);
 				}
+			}else if(orderMap.size()>1){
+				Long startTime=Long.valueOf(orderMap.get("start_time")+"");
+				request.setAttribute("starttime",TimeTools.getTime_MMdd_HHmm(startTime*1000));
+				request.setAttribute("parktime",StringUtils.getTimeString(startTime, System.currentTimeMillis()/1000));
+				request.setAttribute("beforetotal",0);
+				request.setAttribute("aftertotal", orderMap.get("money"));
+				request.setAttribute("distotal", 0);
+				request.setAttribute("prestate", 0);
+				request.setAttribute("pretotal", 0);
+				request.setAttribute("descp", "");
+				orderId= orderMap.get("order_id")+"";
+				request.setAttribute("isbolink", 1);
+				request.setAttribute("park_id", parkId);
 			}
 			request.setAttribute("swpcomflag", 1);
 			request.setAttribute("carnumber", carnumber);
-			request.setAttribute("orderid", orderId);
 			request.setAttribute("shopticketid", shopTicketId);
+			request.setAttribute("is_delay", is_delay);
+			request.setAttribute("orderid", orderId);
 			return mapping.findForward("prepay");
 		}else if(action.equals("toaddcnum")){
 			Long codeid = RequestUtil.getLong(request, "codeid", -1L);
@@ -1537,7 +1641,7 @@ public class WeixinPublicFastPassAction extends Action {
 						carNumber = publicMethods.getCarNumber(uin);
 					}
 					//发支付成功消息给收费员
-					logService.insertParkUserMessage(comId, 2, uid, carNumber, orderId, total, duration, 0, btime, etime,0);
+					logService.insertParkUserMessage(comId, 2, uid, carNumber, orderId, total, duration, 0, btime, etime,0, null);
 				}
 				
 			}

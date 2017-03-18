@@ -29,6 +29,7 @@ public class CustomDefind {
 	public static String ETCPARK = getValue("ETCPARK");
 	public static String LOCALMAXVERSION = getValue("LOCALMAXVERSION");
 	public static String TASKTYPE = getValue("TASKTYPE");
+	public static String WENLINPRICE = getValue("WENLINPRICE");//温岭价格	
 	public static String taskdetail0 = CustomDefind.getValue("TASKDETAIl0");
 	public static String taskdetail1 = CustomDefind.getValue("TASKDETAIl1");
 	public static String taskdetail2 = CustomDefind.getValue("TASKDETAIl2");
@@ -36,6 +37,14 @@ public class CustomDefind {
 	public static String GLCOMIDS2 = CustomDefind.getValue("GLCOMIDS2");
 	public static String GLCOMIDS3 = CustomDefind.getValue("GLCOMIDS3");
 	public static String GROUP_CARD_USER = CustomDefind.getValue("GROUP_CARD_USER");
+	
+	public static String ISUPTOUNION = CustomDefind.getValue("ISUPTOUNION");//泊链平台地址
+	public static String UNIONIP = CustomDefind.getValue("UNIONIP");//泊链平台地址
+	public static String UNIONID = CustomDefind.getValue("UNIONID");//泊链平台账户
+	public static String SERVERID = CustomDefind.getValue("SERVERID");//泊链平台服务商号
+	public static String UNIONKEY = CustomDefind.getValue("UNIONKEY");//泊链平台身份密钥
+	public static String USERUPMONEY = CustomDefind.getValue("USERUPMONEY");//车主在泊链平台的限额
+	
 	public static String getValue(String key){
 		String fileName ="config.properties";
 		//System.out.println(">>>00>>>>config file path:"+fileName);

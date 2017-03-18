@@ -234,7 +234,7 @@ public class IbeaconHandleAction extends Action {
 				return "{\"result\":\"3\",\"info\":\"余额不足，请先充值!\"}";
 			}
 			//给收费员发消息
-			logService.insertParkUserMessage(comid, 1, uid,carNumber, orderId, StringUtils.formatDouble(price),duration, 0, start, etime,0);
+			logService.insertParkUserMessage(comid, 1, uid,carNumber, orderId, StringUtils.formatDouble(price),duration, 0, start, etime,0, null);
 			return "{\"result\":\"1\",\"info\":\"收费员正在结算\"}";
 		} else {// 错误，没有可结算的订单
 			return "{\"result\":\"0\",\"info\":\"没有可结算的订单\"}";

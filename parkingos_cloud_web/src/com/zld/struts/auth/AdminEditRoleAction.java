@@ -249,6 +249,7 @@ public class AdminEditRoleAction extends Action {
 			Integer is_show_card = RequestUtil.getInteger(request, "is_show_card", 0);
 			Integer print_order_place2 = RequestUtil.getInteger(request, "print_order_place2", 0);
 			Integer is_duplicate_order = RequestUtil.getInteger(request, "is_duplicate_order", 1);
+			Integer is_print_name = RequestUtil.getInteger(request, "is_print_name", 1);
 			if(collpwd.equals("")) collpwd = null;
 			int ret =0;
 			String photoset ="["+photoset1+","+photoset2+","+photoset3+"]";
@@ -279,16 +280,17 @@ public class AdminEditRoleAction extends Action {
 			if(id==-1){//新建
 				ret = daService.update("insert into collector_set_tb(photoset,prepayset,print_sign,change_prepay," +
 						"view_plot,role_id,isprepay,hidedetail,is_sensortime,password,signout_password,signout_valid," +
-						"is_show_card,print_order_place2,is_duplicate_order) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", 
+						"is_show_card,print_order_place2,is_duplicate_order,is_print_name) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", 
 						new Object[]{photoset, prepayset, print_sign, changePrePay, view_plot, roleId, isprepay,
 						hidedetail, is_sensortime, collpwd, signpwd, signout_valid, is_show_card, print_order_place2,
-						is_duplicate_order});
+						is_duplicate_order,is_print_name});
 			}else {//更新
 				ret = daService.update("update collector_set_tb set photoset=?,prepayset=?,print_sign=?,change_prepay=?," +
 						"view_plot=?,isprepay=?,hidedetail=?,is_sensortime=?,password=?,signout_password=?,signout_valid=?," +
-						"is_show_card=?,print_order_place2=?,is_duplicate_order=? where role_id=?", 
+						"is_show_card=?,print_order_place2=?,is_duplicate_order=?,is_print_name=? where role_id=?", 
 						new Object[]{photoset, prepayset, print_sign, changePrePay, view_plot, isprepay, hidedetail, 
-						is_sensortime, collpwd, signpwd, signout_valid, is_show_card, print_order_place2, is_duplicate_order, roleId});
+						is_sensortime, collpwd, signpwd, signout_valid, is_show_card, print_order_place2, is_duplicate_order,
+						is_print_name, roleId});
 			}
 			AjaxUtil.ajaxOutput(response, "设置成功，请关闭当前页面");
 		}

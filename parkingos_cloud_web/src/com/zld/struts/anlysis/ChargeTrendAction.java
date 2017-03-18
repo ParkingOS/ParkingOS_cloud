@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.zld.AjaxUtil;
 import com.zld.impl.CommonMethods;
 import com.zld.service.PgOnlyReadService;
+import com.zld.utils.ExportExcelUtil;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
@@ -71,8 +72,86 @@ public class ChargeTrendAction extends Action {
 			}
 			String json = StringUtils.createJson(list);
 			AjaxUtil.ajaxOutput(response, json);
+		}else if(action.equals("list")){
+			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Long today = TimeTools.getToDayBeginTime();
+			request.setAttribute("btime", df2.format(today * 1000 - 7 * 24 * 60 * 60 *1000));
+			request.setAttribute("etime",  df2.format(today * 1000 -1));
+			return mapping.findForward("list");
+		}else if(action.equals("querylist")){
+			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
+			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
+			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
+			String btime = RequestUtil.processParams(request, "btime");
+			String etime = RequestUtil.processParams(request, "etime");
+			Long b = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(btime) + 24 * 60 *60;
+			Long e = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime) + 24 * 60 *60;
+			List<Map<String, Object>> list = null;
+			List<Object> collectors = null;
+			if(cityid > 0){
+				collectors = commonMethods.getcollctors(cityid);
+			}else if(groupid > 0){
+				collectors = commonMethods.getCollctors(groupid);
+			}
+			if(collectors != null && !collectors.isEmpty()){
+				list = setList(collectors, b, e);
+			}
+			int count = 0;
+			if(list != null){
+				count = list.size();
+			}
+			String json = JsonUtil.Map2Json(list, pageNum, count, fieldsstr, "create_time");
+			AjaxUtil.ajaxOutput(response, json);
+		}else if(action.equals("export")){
+			String btime = RequestUtil.processParams(request, "btime");
+			String etime = RequestUtil.processParams(request, "etime");
+			Long b = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(btime) + 24 * 60 *60;
+			Long e = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime) + 24 * 60 *60;
+			List<Map<String, Object>> list = null;
+			List<Object> collectors = null;
+			if(cityid > 0){
+				collectors = commonMethods.getcollctors(cityid);
+			}else if(groupid > 0){
+				collectors = commonMethods.getCollctors(groupid);
+			}
+			if(collectors != null && !collectors.isEmpty()){
+				list = setList(collectors, b, e);
+				export(response, list, btime, etime);
+			}
 		}
 		return null;
+	}
+	
+	private void export(HttpServletResponse response, List<Map<String, Object>> list, String btime, String etime){
+		try {
+			if(list != null && !list.isEmpty()){
+				String heards[] = new String[]{"日期","现金收费","电子收费","刷卡收费","总收费"};
+				List<List<String>> bodyList = new ArrayList<List<String>>();
+				for(Map<String, Object> map : list){
+					List<String> valueList = new ArrayList<String>();
+					valueList.add(map.get("time") + "");
+					valueList.add(map.get("cashTotalFee") + "");
+					valueList.add(map.get("ePayTotalFee") + "");
+					valueList.add(map.get("cardTotalFee") + "");
+					valueList.add(map.get("totalFee") + "");
+					bodyList.add(valueList);
+				}
+				String fname = "停车费报表" + btime + "至" + etime;
+				java.io.OutputStream os = response.getOutputStream();
+				response.reset();
+				response.setHeader("Content-disposition", "attachment; filename="
+						+ StringUtils.encodingFileName(fname) + ".xls");
+				ExportExcelUtil importExcel = new ExportExcelUtil("停车费报表",
+						heards, bodyList);
+				Map<String, String> headInfoMap=new HashMap<String, String>();
+				headInfoMap.put("length", heards.length - 1 + "");
+				headInfoMap.put("content", fname);
+				importExcel.headInfo = headInfoMap;
+				importExcel.createExcelFile(os);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private List<Map<String, Object>> setList(List<Object> collectors, Long startTime, Long endTime){
@@ -168,10 +247,12 @@ public class ChargeTrendAction extends Action {
 								cardAddFee + cardPursueFee - cardRefundFee);
 						
 						Map<String, Object> map = new HashMap<String, Object>();
+						map.put("create_time", create_time);
 						map.put("time", TimeTools.getTimeStr_yyyy_MM_dd(create_time * 1000 - 24*60*60));
 						map.put("cashTotalFee", cashTotalFee);
 						map.put("ePayTotalFee", ePayTotalFee);
 						map.put("cardTotalFee", cardTotalFee);
+						map.put("totalFee", StringUtils.formatDouble(cashTotalFee + ePayTotalFee + cardTotalFee));
 						rList.add(map);
 					}
 				}

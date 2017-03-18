@@ -7,21 +7,26 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.zld.AjaxUtil;
+import com.zld.CustomDefind;
 import com.zld.impl.CommonMethods;
 import com.zld.impl.MemcacheUtils;
 import com.zld.impl.PublicMethods;
@@ -29,7 +34,7 @@ import com.zld.service.DataBaseService;
 import com.zld.service.LogService;
 import com.zld.service.PgOnlyReadService;
 import com.zld.utils.GetLocalCode;
-import com.zld.utils.ImportExcelUtil;
+import com.zld.utils.HttpsProxy;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
@@ -55,10 +60,15 @@ public class ParkManageAction extends Action {
 	private PgOnlyReadService onlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
+	Logger logger = Logger.getLogger(ParkManageAction.class);
+	
+	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
+		
+		
 		String action = RequestUtil.processParams(request, "action");
 		Integer state = RequestUtil.getInteger(request, "state", 0);
 		String userId = (String)request.getSession().getAttribute("userid");
@@ -76,6 +86,126 @@ public class ParkManageAction extends Action {
 			else {//未审核UGC停车场
 				return mapping.findForward("ugcverify");
 			}
+		}else if(action.equals("unionparks")){
+			return mapping.findForward(action);
+		}else if(action.equals("uploadparks")){
+			request.setAttribute("unionId", CustomDefind.getValue("UNIONID"));
+			request.setAttribute("serverId", CustomDefind.getValue("SERVERID"));
+			request.setAttribute("unionKey", CustomDefind.getValue("UNIONKEY"));
+			return mapping.findForward(action);
+		}else if(action.equals("queryunionpark")){
+			String sql = "select * from com_info_tb  where union_state>? ";
+			String countSql = "select count(*) from com_info_tb where union_state>?  " ;
+			Long count = daService.getLong(countSql,new Object[]{0});
+			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
+			List list = null;//daService.getPage(sql, null, 1, 20);
+			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
+			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
+			List<Object> params = new ArrayList<Object>();
+			params.add(0);
+			if(count>0){
+				list = daService.getAll(sql +" order by id desc ",params, pageNum, pageSize);
+			}
+			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
+			AjaxUtil.ajaxOutput(response, json);
+			return null;
+		}else if(action.equals("uploadpark")){
+			String sql = "select * from com_info_tb  where state =? and union_state=?" +
+					" and isfixed=? and longitude>? and latitude>? and parking_total> ?";
+			String countSql = "select count(*) from com_info_tb where  state =? and union_state=?" +
+					" and isfixed= ? and longitude>? and latitude>? and parking_total> ?" ;
+			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
+			List list = null;//daService.getPage(sql, null, 1, 20);
+			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
+			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
+			List<Object> params = new ArrayList<Object>();
+			params.add(0);
+			params.add(0);
+			params.add(1);
+			params.add(0.0);
+			params.add(0.0);
+			params.add(0);
+			SqlInfo sqlInfo = RequestUtil.customSearch(request,"com_info");
+			if(sqlInfo!=null){
+				countSql+=" and "+ sqlInfo.getSql();
+				sql +=" and "+sqlInfo.getSql();
+				params.addAll(sqlInfo.getParams());
+			}
+			Long count = daService.getCount(countSql,params);
+			if(count>0){
+				list = daService.getAll(sql +" order by id desc ",params, pageNum, pageSize);
+			}
+			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
+			AjaxUtil.ajaxOutput(response, json);
+			return null;
+		}else if(action.equals("sendparktounion")){
+			String ids = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "seleids"));
+			String []sids = ids.split(",");
+			int uploadCount = 0;
+			int unUploadCount=0;
+			if(sids.length>0){
+				Object[] params = new Object[sids.length];
+				String paramStr ="";
+				for(int i=0;i<sids.length;i++){
+					params[i]=Long.valueOf(sids[i]);
+					if(i>0)
+						paramStr+=",";
+					paramStr+="?";
+				}
+				List<Map<String, Object>> list = onlyReadService.getAll(
+						"select id,address,company_name,phone,longitude,latitude,parking_total,remarks " +
+						"from com_info_tb where id in ("+paramStr+")",params);
+				if(list!=null&&list.size()>0){
+					for(Map<String, Object> map : list){
+						//String url = "https://127.0.0.1/api-web/park/addpark";
+						String url = CustomDefind.UNIONIP+"park/addpark";
+						//String url = "https://s.bolink.club/unionapi/park/addpark";
+						Map<String, Object> paramMap = new HashMap<String, Object>();
+						paramMap.put("park_id", map.get("id"));
+						paramMap.put("name", map.get("company_name"));
+						paramMap.put("address", map.get("address"));
+						paramMap.put("phone", map.get("phone"));
+						paramMap.put("lng",  map.get("longitude")+"");
+						paramMap.put("lat",  map.get("latitude")+"");
+						paramMap.put("total_plot",  map.get("parking_total"));
+						paramMap.put("empty_plot",  map.get("parking_total"));
+						paramMap.put("price_desc", getPrice(Long.valueOf(map.get("id")+"")));
+						paramMap.put("remark",map.get("remarks"));
+						paramMap.put("union_id", CustomDefind.UNIONID);
+						paramMap.put("server_id", CustomDefind.SERVERID);
+						paramMap.put("rand", Math.random());
+						String ret = "";
+						try {
+							logger.error(paramMap);
+							String linkParams = StringUtils.createLinkString(paramMap)+"key="+CustomDefind.UNIONKEY;
+							System.out.println(linkParams);
+							String sign =StringUtils.MD5(linkParams).toUpperCase();
+							logger.error(sign);
+							paramMap.put("sign", sign);
+							//param = DesUtils.encrypt(param,"NQ0eSXs720170114");
+							String param = StringUtils.createJson(paramMap);
+							logger.error(param);
+							ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
+							JSONObject object = new JSONObject(ret);
+							if(object!=null){
+								Integer uploadState = object.getInt("state");
+								if(uploadState==1){
+									daService.update("update com_info_tb set upload_union_time=?,union_state=? " +
+											"where id =?", new Object[]{System.currentTimeMillis()/1000,2,map.get("id")});
+								uploadCount++;
+								}else {
+									logger.error(object.get("errmsg"));
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						logger.error(ret);
+					}
+					unUploadCount = list.size()-uploadCount;
+				}
+			}
+			AjaxUtil.ajaxOutput(response, "上传"+sids.length+"个车场，成功"+uploadCount+"个，未成功"+unUploadCount+"个");
 		}else if(action.equals("quickquery")){
 			String sql = "select * from com_info_tb  where state=? and upload_uin= ? ";
 			String countSql = "select count(*) from com_info_tb where state=? and upload_uin= ? " ;
@@ -283,7 +413,7 @@ public class ParkManageAction extends Action {
 			Double longitude =RequestUtil.getDouble(request, "longitude",0.0);
 			Double latitude =RequestUtil.getDouble(request, "latitude",0.0);
 			String resume = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "resume"));
-			System.err.println(">>>>>>>>>>>>>>>>>>resume="+resume);
+			logger.error(">>>>>>>>>>>>>>>>>>resume="+resume);
 			String uin = RequestUtil.processParams(request, "uin");//客户端传来的帐号
 			//share_number = getShareNumber(Long.valueOf(id), share_number);
 			if(state==-1)
@@ -397,7 +527,7 @@ public class ParkManageAction extends Action {
 		}else if(action.equals("getver")){//查询审核数据
 			String name = RequestUtil.getString(request, "type");
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			//System.err.println(id+","+name);
+			//logger.error(id+","+name);
 			String ret = "0/0";
 			if(id!=-1){
 				List<Map<String, Object>> list = daService.getAll("select "+name+ " from park_verify_tb where comid=?" , new Object[]{id});
@@ -491,11 +621,11 @@ public class ParkManageAction extends Action {
 					"create_time,update_time,state,type,mobile,remarks,chanid,groupid,cityid) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			System.out.println(sql);
 			for(Object [] v: values){
-				System.err.println(StringUtils.objArry2String(v));
+				logger.error(StringUtils.objArry2String(v));
 			}
-			///System.err.println(set.size());
+			///logger.error(set.size());
 //			for(Object [] va: values){
-//				System.err.println(StringUtils.objArry2String(va));
+//				logger.error(StringUtils.objArry2String(va));
 //			}
 			int ret = 0;
 			ret = daService.bathInsert(sql, values, new int[]{12,4,12,4,4,3,3,4,4,4,4,12,12,4,4,4});
@@ -508,12 +638,12 @@ public class ParkManageAction extends Action {
 			List<Map<String, Object>> aliList = onlyReadService.getAll("select notify_no,create_time,money,uin,comid,wxp_orderid from alipay_log" +
 					" where length(notify_no)< ? and create_time between ? and ? order by uin ", new Object[]{20,1437926400L,1443628800L});
 			Map<String, Object> idMoneyMap = new HashMap<String, Object>();
-			System.err.println(aliList.size());
+			logger.error(aliList.size());
 			for(Map<String, Object>map :aliList){
 				String oid = (String)map.get("wxp_orderid");
 				idMoneyMap.put(oid, map.get("money"));
 			}
-			System.err.println(idMoneyMap.size());
+			logger.error(idMoneyMap.size());
 			weixin(idMoneyMap);
 		}
 		else if(action.equals("wx")){
@@ -614,14 +744,14 @@ public class ParkManageAction extends Action {
 								map.put("payid", m.get("notify_no"));
 								map.put("wxp_orderid", m.get("wxp_orderid")+"_");
 								map.put("userpay", usrwxpay);
-								//System.err.println(m.get("wxp_orderid"));
+								//logger.error(m.get("wxp_orderid"));
 								break;
 							}
 						}else if(Math.abs(obtime-ltime)<500||Math.abs(oetime-ltime)<500){
 							map.put("payid", m.get("notify_no"));
 							map.put("wxp_orderid", m.get("wxp_orderid")+"_");
 							map.put("userpay", usrwxpay);
-							//System.err.println(m.get("wxp_orderid"));
+							//logger.error(m.get("wxp_orderid"));
 							break;
 						}
 					}
@@ -666,7 +796,7 @@ public class ParkManageAction extends Action {
 					index++;
 					if(index%500==0){
 						writer.write(line);
-						System.err.println("已写到第"+index+"条;");
+						logger.error("已写到第"+index+"条;");
 						line = "";
 					}
 				}
@@ -765,7 +895,70 @@ public class ParkManageAction extends Action {
 		}*/
 		return null;
 	}
-	
+	/**
+	 * 取首小时价格
+	 * @param parkId
+	 * @return
+	 */
+	private String getPrice(Long parkId){
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+		//开始小时
+		int bhour = calendar.get(Calendar.HOUR_OF_DAY);
+		List<Map> priceList=daService.getAll("select * from price_tb where comid=? " +
+				"and state=? and pay_type=? order by id desc", new Object[]{parkId,0,0});
+		if(priceList==null||priceList.size()==0){//没有按时段策略
+			//查按次策略
+			priceList=daService.getAll("select * from price_tb where comid=? " +
+					"and state=? and pay_type=? order by id desc", new Object[]{parkId,0,1});
+			if(priceList==null||priceList.size()==0){//没有按次策略，返回提示
+				return "0元/次";
+			}else {//有按次策略，直接返回一次的收费
+				Map timeMap =priceList.get(0);
+				Integer unit = (Integer)timeMap.get("unit");
+				if(unit!=null&&unit>0){
+					if(unit>60){
+						String t = "";
+						if(unit%60==0)
+							t = unit/60+"小时";
+						else
+							t = unit/60+"小时 "+unit%60+"分钟";
+						return timeMap.get("price")+"元/"+t;
+					}else {
+						return timeMap.get("price")+"元/"+unit+"分钟";
+					}
+				}else {
+					return timeMap.get("price")+"元/次";
+				}
+			}
+			//发短信给管理员，通过设置好价格
+		}else {//从按时段价格策略中分拣出日间和夜间收费策略
+			if(priceList.size()>0){
+				//logger.error(priceList);
+				for(Map map : priceList){
+					Integer btime = (Integer)map.get("b_time");
+					Integer etime = (Integer)map.get("e_time");
+					Double price = Double.valueOf(map.get("price")+"");
+					Double fprice = Double.valueOf(map.get("fprice")+"");
+					Integer ftime = (Integer)map.get("first_times");
+					if(ftime!=null&&ftime>0){
+						if(fprice>0)
+							price = fprice;
+					}
+					if(btime<etime){//日间 
+						if(bhour>=btime&&bhour<etime){
+							return price+"元/"+map.get("unit")+"分钟";
+						}
+					}else {
+						if(bhour>=btime||bhour<etime){
+							return price+"元/"+map.get("unit")+"分钟";
+						}
+					}
+				}
+			}
+		}
+		return "0.0元/小时";
+	}
+		
 	private String getCity(Integer ciyt) {
 	
 		Map<Integer,String> cities = new HashMap<Integer, String>();
@@ -895,7 +1088,7 @@ public class ParkManageAction extends Action {
 					writer.write(result);
 					//writer.flush();
 					result ="";
-					System.err.println(i);
+					logger.error(i);
 				}
 				i++;
 			}

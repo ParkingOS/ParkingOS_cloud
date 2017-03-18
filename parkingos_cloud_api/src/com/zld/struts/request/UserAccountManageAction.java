@@ -226,7 +226,7 @@ public class UserAccountManageAction extends Action{
 					//ø€≥˝’ ∫≈”‡∂Ó//–¥Ã·œ÷…Í«Î±Ì
 					List<Map<String, Object>> sqlList = new ArrayList<Map<String,Object>>();
 					Map<String, Object> userSqlMap = new HashMap<String, Object>();
-					userSqlMap.put("sql", "update user_info_Tb set balance = balance-? where id= ?");
+					userSqlMap.put("sql", "update user_info_tb set balance = balance-? where id= ?");
 					userSqlMap.put("values", new Object[]{money,uid});
 					Map<String, Object> withdrawSqlMap = new HashMap<String, Object>();
 					withdrawSqlMap.put("sql", "insert into withdrawer_tb  (comid,amount,create_time,acc_id,uin,wtype) values(?,?,?,?,?,?)");

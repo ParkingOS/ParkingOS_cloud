@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/shape_current_order"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="310dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tv_dialog_repayment_nfcorder_collect"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/warn"
+            android:drawablePadding="5dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:text="还需向车主补收0元现金"
+            android:textColor="@color/tv_leaveItem_state_red"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view_nfc_finish_bar"
+        android:layout_width="310dp"
+        android:layout_height="0.5dp"
+        android:background="#36A56A" >
+    </View>
+
+    <LinearLayout
+        android:layout_width="310dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="140dp"
+                android:layout_height="29dp"
+                android:gravity="center|left"
+                android:paddingLeft="5dp"
+                android:text="微信专享5折用户"
+                android:textColor="#999999"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_dialog_repayment_nfcorder_total"
+                android:layout_width="140dp"
+                android:layout_height="29dp"
+                android:gravity="center|left"
+                android:paddingLeft="5dp"
+                android:text="停车费			00元"
+                android:textColor="#606060"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_dialog_repayment_nfcorder_prefee"
+                android:layout_width="140dp"
+                android:layout_height="29dp"
+                android:gravity="center|left"
+                android:paddingLeft="5dp"
+                android:text="微信预付		00元"
+                android:textColor="#606060"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view_nfc_finish_view"
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="#36A56A" >
+        </View>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center|left"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="5dp"
+                android:gravity="center|left"
+                android:text="请告知车主补交："
+                android:textColor="#606060"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:layout_width="148dp"
+                android:layout_height="55dp" >
+
+                <TextView
+                    android:id="@+id/tv_dialog_repayment_nfcorder_collect1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="55dp"
+                    android:layout_centerInParent="true"
+                    android:text="0.0"
+                    android:textColor="#36A56A"
+                    android:textSize="40dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tv_dialog_repayment_nfcorder_collect1"
+                    android:layout_marginLeft="6dp"
+                    android:layout_toRightOf="@+id/tv_dialog_repayment_nfcorder_collect1"
+                    android:text="元"
+                    android:textColor="#36A56A"
+                    android:textSize="16dp" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/accomplish"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/bt_dialog_repayment_nfcorder_ok"
+            android:layout_width="310dp"
+            android:layout_height="40dp"
+            android:background="#36A56A"
+            android:text="已确认补收现金"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+</LinearLayout>

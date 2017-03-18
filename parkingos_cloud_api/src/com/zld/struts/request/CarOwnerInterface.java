@@ -2258,8 +2258,11 @@ public class CarOwnerInterface extends Action {
 			if(ccount>0){
 				return "{\"result\":\"-6\",\"errmsg\":\"车牌已注册过，请重新输入！\"}";
 			}
-			logger.error("carowner:"+mobile+",update car_number,old:"+oldcarid+",new:"+carid+",ret:"+
-					service.update("update car_info_tb set car_number=? where uin=? and car_number=? ", new Object[]{carid,uin,oldcarid}));
+			int rs = service.update("update car_info_tb set car_number=? where uin=? and car_number=? ", new Object[]{carid,uin,oldcarid});
+			logger.error("carowner:"+mobile+",update car_number,old:"+oldcarid+",new:"+carid+",ret:"+rs);
+			if(rs==1){
+				publicMethods.syncUserCarNumber(uin, oldcarid, carid);
+			}
 		}else {
 			if(!isHasCarId){
 				if(cnum<3){
@@ -2276,6 +2279,7 @@ public class CarOwnerInterface extends Action {
 						if(uuid==null&&cityId!=null&&cityId==321000){
 							publicMethods.sendMessageToThird(uin, null, mobile, carid, userMap.get("strid")+"", 0);
 						}
+						publicMethods.syncUserCarNumber(uin, carid, "");
 					}
 					logger.error("carowner:"+mobile+",add car_number:"+carid+",ret:"+ret+",curr carnumber count:"+(cnum+1));
 				}else {
@@ -2924,9 +2928,17 @@ public class CarOwnerInterface extends Action {
 		 */
 		//车场名，电话，空闲/车位总数，图片，地址，价格，描述
 		if(pid!=null&&pid>0){
-			Map<String,Object> comMap = onlyService.getMap("select id,longitude lng,latitude lat,epay,share_number,company_name as name,mobile phone," +
+			
+			Map<String,Object> comMap =null;
+			if(pid<800000)
+				comMap=onlyService.getMap("select id,longitude lng,latitude lat,epay,share_number,company_name as name,mobile phone," +
 					"parking_total as total,address addr,remarks as desc ,type ,parking_type,empty " +
 					"from com_info_tb where id =?", new Object[]{pid});
+			else {
+				comMap=onlyService.getMap("select id,longitude lng,latitude lat,epay,share_number,company_name as name,phone," +
+						"parking_total as total,address addr,remarks as desc ,resume as price,type ,parking_type,empty " +
+						"from union_park_tb where id =?", new Object[]{pid});
+			}
 			
 			//查图片
 			Map<String,Object> picMap = onlyService.getMap("select picurl from com_picturs_tb where comid=? order by id desc limit ?",
@@ -2935,43 +2947,34 @@ public class CarOwnerInterface extends Action {
 			if(picMap!=null&&!picMap.isEmpty()){
 				picUrls=(String)picMap.get("picurl");//"http://121.40.130.8/zld/parkpics/"+
 			}
-			/**扬州项目*
-			else {
-				Integer parkType = (Integer)comMap.get("parking_type");
-				if(parkType==4){
-					picUrls="8674_1460623804316.png";
-				}else {
-					picUrls="8694_1460616855017.png";
-				}
-			}
-			//查空闲车位数
-			Integer total= (Integer) comMap.get("empty");
-			
-			/**扬州项目***/
 			/**停车宝项目***/
-			Map<String, Object> map = onlyService.getMap("select sum(amount) free from remain_berth_tb where comid=? and state=? ", 
-					new Object[]{pid, 0});
-			Long free = 0L;
-			if(map != null && map.get("free") != null){
-				free = Long.valueOf(map.get("free") + "");
+			if(pid<800000){
+				Long free = 0L;
+				
+				Map<String, Object> map = onlyService.getMap("select sum(amount) free from remain_berth_tb where comid=? and state=? ", 
+						new Object[]{pid, 0});
+				if(map != null && map.get("free") != null){
+					free = Long.valueOf(map.get("free") + "");
+				}
+				if(free>0)
+					comMap.put("free", free);
+				else {
+					comMap.put("free", comMap.get("share_number"));
+				}
+				logger.error("get free lots>>>comid:"+pid+",free:"+free);
+			}else {
+				comMap.put("free", comMap.get("empty"));
 			}
-			logger.error("get free lots>>>comid:"+pid+",free:"+free);
 			/**停车宝项目***/
 			//查价格
 			Integer type =(Integer)comMap.get("type");
 			String price ="";
-			if(type==0)
+			if(type==0&&pid<800000){
 				price = getPrice(pid);
-			comMap.put("free", free);
-			comMap.put("price", price);
+				comMap.put("price", price);
+			}
 			comMap.put("photo_url", "[\""+picUrls+"\"]");
 			comMap.remove("share_number");
-//			result="[\""+comMap.get("id")+"\",\""+comMap.get("company_name")+"\"" +
-//					",\""+comMap.get("longitude")+"\",\""+comMap.get("latitude")+"\"" +
-//					",\""+total+"\",\""+price+"\"" +
-//					",\""+comMap.get("parking_total")+"\",\""+comMap.get("address")+"\"" +
-//					",\""+comMap.get("mobile")+"\",\""+comMap.get("epay")+"\"" +
-//					",\""+comMap.get("remarks")+"\",[\""+picUrls+"\"]]";
 			result = StringUtils.createJson(comMap);
 		}
 		return result.replace("null", "");

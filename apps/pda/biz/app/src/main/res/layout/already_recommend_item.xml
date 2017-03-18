@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_marginLeft="3dp"
+    android:layout_marginRight="3dp"
+    android:layout_marginTop="2dp"
+    android:baselineAligned="false"
+    android:gravity="center"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/tv_already_recommend_item_time"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_weight="7"
+        android:gravity="center"
+        android:text="推荐时间"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_already_recommend_item_mobile"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_weight="7"
+        android:gravity="center"
+        android:text="推荐手机号"
+        android:textSize="16sp" />
+
+</LinearLayout>

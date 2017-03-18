@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F0F0F0"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="请选择你想发的专用券"
+                android:textColor="#E37578"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:text="专用券只能在你的车场消费"
+                android:textColor="#E37578"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/rl_select_single_ticket1"
+                    android:layout_width="140dp"
+                    android:layout_height="150dp"
+                    android:layout_marginRight="15dp">
+
+                    <TextView
+                        android:id="@+id/tv_select_ticket_single"
+                        android:layout_width="120dp"
+                        android:layout_height="80dp"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/park_ticket" />
+
+                    <TextView
+                        android:id="@+id/tv_select_single_ticket1"
+                        android:layout_width="85dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="55dp"
+                        android:gravity="center"
+                        android:text="元\n消耗积分"
+                        android:textColor="@color/white"
+                        android:textSize="13dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="10dp"
+                        android:text="单张停车券"
+                        android:textColor="#E37578"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_rl_select_single_ticket1"
+                        android:layout_width="140dp"
+                        android:layout_height="150dp"
+                        android:background="@drawable/red_ticket_off"
+                        android:visibility="visible" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_select_single_ticket2"
+                    android:layout_width="140dp"
+                    android:layout_height="150dp">
+
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="80dp"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/park_ticket" />
+
+                    <TextView
+                        android:id="@+id/tv_select_single_ticket2"
+                        android:layout_width="85dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="55dp"
+                        android:gravity="center"
+                        android:text="元\n消耗积分"
+                        android:textColor="@color/white"
+                        android:textSize="13dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="10dp"
+                        android:text="单张停车券"
+                        android:textColor="#E37578"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_rl_select_single_ticket2"
+                        android:layout_width="140dp"
+                        android:layout_height="150dp"
+                        android:background="@drawable/red_ticket_off"
+                        android:visibility="visible" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_red_packet"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/rl_select_red_packet1"
+                    android:layout_width="140dp"
+                    android:layout_height="150dp"
+                    android:layout_marginRight="15dp">
+
+                    <TextView
+                        android:layout_width="110dp"
+                        android:layout_height="105dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/red_tickets" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="10dp"
+                        android:text="拼手气红包"
+                        android:textColor="#E37578"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_select_red_packet1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="20dp"
+                        android:gravity="center"
+                        android:text="元/个\n消耗积分"
+                        android:textColor="#E37578"
+                        android:textSize="13dp" />
+
+                    <TextView
+                        android:id="@+id/tv_rl_select_red_packet1"
+                        android:layout_width="140dp"
+                        android:layout_height="150dp"
+                        android:background="@drawable/red_ticket_off"
+                        android:visibility="visible" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_select_red_packet2"
+                    android:layout_width="140dp"
+                    android:layout_height="150dp">
+
+                    <TextView
+                        android:layout_width="110dp"
+                        android:layout_height="105dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/red_tickets" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="10dp"
+                        android:text="拼手气红包"
+                        android:textColor="#E37578"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_select_red_packet2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="20dp"
+                        android:gravity="center"
+                        android:text="元/个\n消耗积分"
+                        android:textColor="#E37578"
+                        android:textSize="13dp" />
+
+                    <TextView
+                        android:id="@+id/tv_rl_select_red_packet2"
+                        android:layout_width="140dp"
+                        android:layout_height="150dp"
+                        android:background="@drawable/red_ticket_off"
+                        android:visibility="visible" />
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_rl_select_red_packet_fivehint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_horizontal"
+            android:text="5元券每次只能使用一张,每次积分消耗递增20"
+            android:textColor="#E37578"
+            android:textSize="14sp"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/bt_send_packet_to_user"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/shape_bt_red_white1"
+            android:gravity="center"
+            android:text="发送"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+</ScrollView>

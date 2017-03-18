@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_my_income_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/bt_my_income_detail_park_money"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/shape_payment_detail_blue"
+            android:gravity="center"
+            android:text="停车费"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/bt_my_income_detail_back"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/shape_payment_detail_gray"
+            android:gravity="center"
+            android:text="返现" />
+
+        <Button
+            android:id="@+id/bt_my_income_detail_bonus"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/shape_payment_detail_gray"
+            android:gravity="center"
+            android:text="奖金" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_my_income_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ListView
+            android:id="@+id/lv_my_income_detail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="40dp"
+            android:layout_marginLeft="10dp" />
+
+        <TextView
+            android:id="@+id/tv_my_income_alltext"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="100dp"
+            android:background="#d1343942"
+            android:gravity="center|left"
+            android:paddingLeft="10dp"
+            android:text=""
+            android:textColor="#ffffff"
+            android:textSize="17sp" />
+
+        <TextView
+             android:id="@+id/tv_my_income_all_money"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="#d1343942"
+            android:gravity="center|right"
+            android:paddingRight="10dp"
+            android:text=""
+            android:textColor="#ffffff"
+            android:textSize="17sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_my_income_detail_null"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:src="@drawable/gray_car" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="暂无信息" />
+    </LinearLayout>
+
+</LinearLayout>

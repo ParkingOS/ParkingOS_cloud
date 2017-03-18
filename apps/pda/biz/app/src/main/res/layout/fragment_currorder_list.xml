@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_current_order_park_status"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="#c0ffd6"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="在停/总车位 : "
+            android:textColor="@color/tv_leaveItem_state_green"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_current_order_park_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text=""
+            android:textColor="@color/tv_leaveItem_state_green"
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_current_order_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ll_current_order_park_status"
+        android:divider="#EFF0F1"
+        android:dividerHeight="5dp"></ListView>
+
+    <TextView
+        android:id="@+id/tv_current_order_null_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="100dp"
+        android:gravity="center"
+        android:text="暂无当前订单！"
+        android:textColor="#c9c9c9"
+        android:visibility="invisible" />
+</RelativeLayout>

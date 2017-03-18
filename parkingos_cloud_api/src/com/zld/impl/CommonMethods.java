@@ -27,11 +27,14 @@ import com.zld.pojo.Berth;
 import com.zld.pojo.Car;
 import com.zld.pojo.Card;
 import com.zld.pojo.CardCarNumber;
+import com.zld.pojo.Group;
 import com.zld.pojo.Induce;
 import com.zld.pojo.Order;
 import com.zld.pojo.Sensor;
 import com.zld.pojo.Site;
+import com.zld.pojo.Tenant;
 import com.zld.pojo.WorkRecord;
+import com.zld.pojo.WorkTime;
 import com.zld.service.DataBaseService;
 import com.zld.service.PgOnlyReadService;
 import com.zld.utils.HttpProxy;
@@ -53,6 +56,94 @@ public class CommonMethods {
 	
 	private static Map<String, Map<String, Object>> slowReqMap = 
 			new ConcurrentHashMap<String, Map<String, Object>>();
+	/**
+	 * 检查签入签退是否在正常上班时间内
+	 * @param role_id 角色
+	 * @param time	签入签退时间
+	 * @param type	0：签入 1：签退
+	 * @return
+	 */
+	public boolean checkWorkTime(Long uin, long time){
+		try {
+			if(uin != null && uin > 0 && time > 0){
+				Map<String, Object> userMap = pService.getMap("select role_id from user_info_tb where id=? and role_id>? ",
+						new Object[]{uin, 0});
+				if(userMap != null){
+					Long role_id = (Long)userMap.get("role_id");
+					long offsetTime = time - TimeTools.getToDayBeginTime();
+					logger.error("offsetTime:"+offsetTime);
+					List<WorkTime> workTimes = pService.getPOJOList("select * from work_time_tb " +
+							" where role_id=? and is_delete=? ", new Object[]{role_id, 0}, WorkTime.class);
+					if(workTimes != null && !workTimes.isEmpty()){
+						for(WorkTime workTime : workTimes){
+							int b_hour = workTime.getB_hour();
+							int b_minute = workTime.getB_minute();
+							int e_hour = workTime.getE_hour();
+							int e_minute = workTime.getE_minute();
+							int start = b_hour * 60 * 60 + b_minute * 60;
+							int end = e_hour * 60 * 60 + e_minute * 60;
+							if(offsetTime > start && offsetTime < end){//上班期间签入签出都算异常
+								return false;
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("检查上班状态异常", e);
+		}
+		return true;
+	}
+	
+	/**
+	 * 检查集团所属的城市商户是否设置了跨集团追缴
+	 * @param groupId
+	 * @return
+	 */
+	public boolean pursueInCity(Long groupId){
+		try {
+			if(groupId != null && groupId > 0){
+				Group group = pService.getPOJO("select cityid from org_group_tb where id=? and cityid>? ",
+						new Object[]{groupId, 0}, Group.class);
+				if(group != null){
+					Tenant tenant = pService.getPOJO("select is_group_pursue from org_city_merchants " +
+							" where state=? and id=? ", new Object[]{0, group.getCityid()}, Tenant.class);
+					if(tenant != null && tenant.getIs_group_pursue() == 1){
+						logger.error("该集团所属的城市商户设置了可以跨集团追缴,groupid:"+groupId);
+						return true;
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("错误", e);
+		}
+		return false;
+	}
+	
+	/**
+	 * 检查集团所属的城市商户是否设置了同一车牌可否在城市内重复入场
+	 * @param groupId
+	 * @return
+	 */
+	public boolean isInparkInCity(Long groupId){
+		try {
+			if(groupId != null && groupId > 0){
+				Group group = pService.getPOJO("select cityid from org_group_tb where id=? and cityid>? ",
+						new Object[]{groupId, 0}, Group.class);
+				if(group != null){
+					Tenant tenant = pService.getPOJO("select is_inpark_incity from org_city_merchants " +
+							" where state=? and id=? ", new Object[]{0, group.getCityid()}, Tenant.class);
+					if(tenant != null && tenant.getIs_inpark_incity() == 0){
+						logger.error("该集团所属的城市商户设置了可以同一车牌可否在城市内重复入场,groupid:"+groupId);
+						return false;
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("错误", e);
+		}
+		return true;
+	}
 	
 	/**
 	 * 根据车牌号判别是否是卡片用户
@@ -133,7 +224,7 @@ public class CommonMethods {
 				long reqInitTime = (Long)request.getAttribute("reqInitTime");
 				long reqDestTime = System.currentTimeMillis()/1000;
 				long lifeTime = reqDestTime - reqInitTime;
-				if(lifeTime > 5){//接口花费5秒
+				if(lifeTime > 5&&!"uporderpic".equals(action)){//接口花费5秒,过滤掉uporderpic
 					if(slowReqMap.get(url) == null){
 						Map<String, Object> map = new HashMap<String, Object>();
 						map.put("lastTime", reqDestTime);
@@ -909,7 +1000,14 @@ public class CommonMethods {
 		long comId = -1;
 		long workId = -1L;//工作记录编号
 		boolean result = false;//订单记录生成结果
+		String lock = null;
 		try {
+			//----------------------------分布式锁--------------------------------//
+			lock = getLock(orderid);
+			if(!memcacheUtils.addLock(lock)){
+				logger.error("lock:"+lock);
+				return false;
+			}
 			Long curTime = System.currentTimeMillis()/1000;
 			Order order = daService.getPOJO("select * from order_tb where id=? and state=? ",
 					new Object[]{orderid, 0}, Order.class);
@@ -917,6 +1015,14 @@ public class CommonMethods {
 				logger.error("order:" + order);
 				if(endtime == null || endtime <= 0){
 					endtime = curTime;
+				}
+				if(order.getPrepaid() >= money){
+					logger.error("预付大于等于停车金额,不能置为逃单");
+					return false;
+				}
+				if(order.getState() == 2){
+					logger.error("已经置为逃单");
+					return false;
 				}
 				//------------------------绑定的车检器订单时间----------------------------//
 				Long brethorderid = getBerthOrderId(orderid);
@@ -955,8 +1061,8 @@ public class CommonMethods {
 					berthSqlMap.put("values", new Object[]{0, null, berthId, orderid});
 					bathSql.add(berthSqlMap);
 				}
-				orderSqlMap.put("sql", "update order_tb set state=?,total=?,end_time=? where id =?");
-				orderSqlMap.put("values", new Object[]{2, money, end_time, orderid});
+				orderSqlMap.put("sql", "update order_tb set state=?,total=?,end_time=?,out_uid=? where id =?");
+				orderSqlMap.put("values", new Object[]{2, money, end_time, uid, orderid});
 				bathSql.add(orderSqlMap);
 				result = daService.bathUpdate2(bathSql);
 				logger.error("orderid:"+orderid+",uid:"+uid+",money:"+money+"(update com_park_tb orderid) bathsql result:"+result);
@@ -965,6 +1071,8 @@ public class CommonMethods {
 		} catch (Exception e) {
 			logger.error("escapeorderid:"+orderid, e);
 		} finally {
+			boolean b = memcacheUtils.delLock(lock);
+			logger.error("b:"+b);
 			if(result && workId > 0){//订单结算成功，更新出车数量
 				logger.error("workId:"+workId);
 				boolean b1 = updateInOutCar(workId, 1);
@@ -1075,7 +1183,7 @@ public class CommonMethods {
 	public Long getBerthOrderId(Long orderId){
 		Long berthOrderId = -1L;
 		try {
-			logger.error("getBerthOrderId>>>orderId:"+orderId);
+			//logger.error("getBerthOrderId>>>orderId:"+orderId);
 			if(orderId != null && orderId > 0){
 				Map<String, Object> berthOrderMap = pService.getMap("select id from berth_order_tb " +
 						" where orderid=? order by in_time desc limit ? ", new Object[]{orderId, 1});
@@ -1656,18 +1764,22 @@ public class CommonMethods {
 			Integer car_type = (Integer)orderMap.get("car_type");//0：通用，1：小车，2：大车
 			Integer pid = (Integer)orderMap.get("pid");
 			Long create_time = (Long)orderMap.get("create_time");
-			beforetotal = getPrice(car_type, pid, comid, create_time, end_time,orderId);
+			if(state == 0){//未结算订单
+				beforetotal = getPrice(car_type, pid, comid, create_time, end_time,orderId);
+			}else if(orderMap.get("total") != null){//已结算或者逃单
+				beforetotal = Double.valueOf(orderMap.get("total") + "");
+			}
 			if(shopTicketMap != null){
 				Integer type = (Integer)shopTicketMap.get("type");
-				if(type == 3){
+				if(type == 3){//减时券
 					Integer time = (Integer)shopTicketMap.get("money");
 					if(end_time > create_time + time *60 *60){
 						aftertotal = getPrice(car_type, pid, comid, create_time, end_time - time * 60 *60,orderId);
-						distime =time *60 *60;
+						distime = time * 60 * 60;
 					}else if(end_time > create_time){
 						distime = (end_time.intValue() - create_time.intValue());
 					}
-				}else if(type == 4){
+				}else if(type == 4){//免费券
 					if(end_time > create_time){
 						distime = (end_time.intValue() - create_time.intValue());
 					}
@@ -1678,6 +1790,8 @@ public class CommonMethods {
 			
 			if(beforetotal > aftertotal){
 				distotal = StringUtils.formatDouble(beforetotal - aftertotal);
+			} else {//考虑到已结算或者逃单的情况，期间有可能价格变动，导致减免后的价格反而比减免前的还大
+				aftertotal = beforetotal;
 			}
 			List<Map<String , Object>> sqlMaps = new ArrayList<Map<String,Object>>();
 			if(shopTicketMap != null){
@@ -1745,35 +1859,35 @@ public class CommonMethods {
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getOrderInfo(Long orderId, Long shopTicketId, Long end_time){
 		try {
-			Double pretotal = 0d;//已经预支付的金额
 			Map<String, Object> orderMap = daService.getMap("select * from order_tb where id=? ", 
 					new Object[]{orderId});
 			if(orderMap == null){
 				return null;
 			}
 			Integer state = (Integer)orderMap.get("state");
-			if(orderMap.get("total") != null){
-				pretotal = Double.valueOf(orderMap.get("total") + "");//预支付的金额
-			}
-			if(state == 1 && orderMap.get("end_time") != null){//如果订单已结算则使用订单结束时间
-				end_time = (Long)orderMap.get("end_time");
+			if(state == 1 || state == 2){//如果订单已结算或者逃单则使用订单结束时间
+				if(orderMap.get("end_time") != null){
+					end_time = (Long)orderMap.get("end_time");
+				}
 			}
 			Long create_time = (Long)orderMap.get("create_time");
 			Integer tickettype = 3;//减免券类型，默认减时券
 			Integer tickettime = 0;//减时券的时长
 			Integer ticketstate = 0;//减免券的状态，0：不可用 1:可用
-			Map<String, Object> shopTicketMap = daService.getMap("select * from ticket_tb where orderid=? and (type=? or type=?) ", 
-					new Object[]{orderId, 3, 4});
+			Map<String, Object> shopTicketMap = daService.getMap("select * from ticket_tb where orderid=? " +
+					" and (type=? or type=?) ", new Object[]{orderId, 3, 4});
 			if(shopTicketMap == null){//如果没有绑定减免券就自动的检查有没有可用的减免券
 				if(shopTicketId != null && shopTicketId > 0){
-					shopTicketMap = daService.getMap("select * from ticket_tb where id=? and (orderid=? or orderid=?) and state=? and (type=? or type=?) and limit_day>? ", 
+					shopTicketMap = daService.getMap("select * from ticket_tb where id=? and (orderid=? or orderid=?) " +
+							" and state=? and (type=? or type=?) and limit_day>? ", 
 							new Object[]{shopTicketId, -1, orderId, 0, 3, 4, end_time});
 				}
 			}else{
 				shopTicketId = (Long)shopTicketMap.get("id");
 			}
 			if(shopTicketMap != null){
-				int r = daService.update("update ticket_tb set orderid=? where id=? ", new Object[]{orderId, shopTicketId});
+				int r = daService.update("update ticket_tb set orderid=? where id=? ", 
+						new Object[]{orderId, shopTicketId});
 				tickettype = (Integer)shopTicketMap.get("type");
 				tickettime = (Integer)shopTicketMap.get("money");//减免券的面额(XX小时)
 				ticketstate = 1;//该减免券可用
@@ -1787,7 +1901,7 @@ public class CommonMethods {
 			map2.put("shopticketid", shopTicketId);
 			map2.put("starttime", TimeTools.getTime_yyyyMMdd_HHmm(create_time * 1000));
 			map2.put("parktime", StringUtils.getTimeString(create_time, end_time));
-			map2.put("pretotal", pretotal);
+			map2.put("pretotal", orderMap.get("prepaid"));
 			map2.put("end_time", end_time);//记录当前时间
 			return map2;
 		} catch (Exception e) {
@@ -1802,7 +1916,7 @@ public class CommonMethods {
 	 * @return
 	 */
 	public Integer getBindflag(Long uin){
-		Long count = daService.getLong("select count(1) from user_info_tb where id=? ", new Object[]{uin});
+		Long count = daService.getLong("select count(1) from user_info_tb where id=? and auth_flag=? ", new Object[]{uin,4});
 		return count.intValue();
 	}
 	
@@ -1810,8 +1924,8 @@ public class CommonMethods {
 		Long curTime = System.currentTimeMillis()/1000;
 		Integer bindflag = getBindflag(uin);
 		if(bindflag == 1){
-			Long count = daService.getLong("select count(*) from car_info_tb where uin!=? and car_number=? and state=? ",
-					new Object[] { uin, carnumber, 1 });
+			Long count = daService.getLong("select count(*) from car_info_tb where uin!=? and car_number=? ",
+					new Object[] { uin, carnumber });
 			if(count > 0){//该车牌号已被别人注册
 				return -1;
 			}
@@ -1828,10 +1942,16 @@ public class CommonMethods {
 				int r=daService.update("insert into car_info_Tb (uin,car_number,create_time) values(?,?,?)", 
 						new Object[]{uin, carnumber, curTime});
 				if(r > 0){
+					publicMethods.syncUserCarNumber(uin, carnumber, "");
 					return 1;
 				}
 			}
 		}else if(bindflag == 0){
+			Long count = daService.getLong("select count(*) from wxp_user_tb where  car_number=? ",
+					new Object[] { carnumber});
+			if(count > 0){//该车牌号已被别人注册
+				return -1;
+			}
 			int r = daService.update("update wxp_user_tb set car_number=? where uin=? ", 
 					new Object[]{carnumber, uin});
 			if(r > 0){
@@ -2701,6 +2821,59 @@ public class CommonMethods {
 		
 		return map;
 	}
+	/**
+	 * 获取城市底下的车场
+	 * @param cityid
+	 * @return
+	 */
+	public List<Object> getparks(Long cityid){
+		List<Object> parks = new ArrayList<Object>();
+		try {
+			List<Object> params = new ArrayList<Object>();
+			String sql = "select id from com_info_tb where state<>? " ;
+			params.add(1);
+			List<Object> groups = getGroups(cityid);//查询该城市所辖的运营集团
+			if(groups != null && !groups.isEmpty()){
+				String preParams  ="";
+				for(Object grouid : groups){
+					if(preParams.equals(""))
+						preParams ="?";
+					else
+						preParams += ",?";
+				}
+				sql += " and groupid in ("+preParams+") ";
+				params.addAll(groups);
+				List<Map<String, Object>> list = pService.getAllMap(sql, params);
+				if(list != null && !list.isEmpty()){
+					for(Map<String, Object> map : list){
+						parks.add(map.get("id"));
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return parks;
+	}
+	
+	/**
+	 * 获取城市底下的运营集团编号
+	 * @param cityid
+	 * @return
+	 */
+	public List<Object> getGroups(Long cityid){//查询城市所辖的运营集团
+		List<Object> groups = new ArrayList<Object>();
+		List<Map<String, Object>> list = pService.getAll("select id from org_group_tb" +
+				" where cityid=? and state=? ", 
+				new Object[]{cityid, 0});
+		if(list != null && !list.isEmpty()){
+			for(Map<String, Object> map : list){
+				groups.add(map.get("id"));
+			}
+		}
+		return groups;
+	}
+	
 	/**
 	 * 获取运营集团辖下的车场或者运营集团辖下的区域地下的车场
 	 * @param groupid

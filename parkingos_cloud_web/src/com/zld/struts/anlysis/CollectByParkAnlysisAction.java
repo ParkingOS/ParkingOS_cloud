@@ -57,19 +57,16 @@ public class CollectByParkAnlysisAction extends Action {
 		if(groupid == null) groupid = -1L;
 		if(action.equals("")){
 			commonMethods.setIndexAuthId(request);
-			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Long today = TimeTools.getToDayBeginTime();
-			request.setAttribute("btime", df2.format(today * 1000));
-			request.setAttribute("etime",  df2.format(today * 1000 + 24 * 60 * 60 * 1000 -1));
+			if(cityid > 0){
+				request.setAttribute("cityid", cityid);
+			}
 			return mapping.findForward("list");
 		}else if(action.equals("query")){
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
-			String btime = RequestUtil.processParams(request, "btime");
-			String etime = RequestUtil.processParams(request, "etime");
-			Long b = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(btime);
-			Long e = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime);
+			Long b = TimeTools.getToDayBeginTime();
+			Long e = b + 24 * 60 * 60;
 			if(groupid == -1){
 				groupid= RequestUtil.getLong(request, "groupid", -1L);
 			}
@@ -80,40 +77,38 @@ public class CollectByParkAnlysisAction extends Action {
 			String countSql = "select count(id) from com_info_tb where state<>? ";
 			List<Map<String, Object>> list = null;
 			Long count = 0L;
-			if((e - b) < 7 * 24 * 60 * 60 && e > b){
-				List<Object> parks = null;
-				if(groupid > 0){
-					parks = commonMethods.getParks(groupid);
-				}else if(cityid > 0){
-					parks = commonMethods.getparks(cityid);
-				}
-				if(parks != null && !parks.isEmpty()){
-					String preParams = "";
-					for(Object object : parks){
-						if(preParams.equals(""))
-							preParams ="?";
-						else
-							preParams += ",?";
-					}
-					sql += " and id in ("+preParams+") ";
-					countSql += " and id in ("+preParams+") ";
-					params.addAll(parks);
-					
-					if(sqlInfo != null) {
-						countSql += " and "+ sqlInfo.getSql();
-						sql += " and "+sqlInfo.getSql();
-						params.addAll(sqlInfo.getParams());
-					}
-					
-					count = pgOnlyReadService.getCount(countSql, params);
-					if(count > 0){
-						list = pgOnlyReadService.getAll(sql, params, pageNum, pageSize);
-						setList(list, b, e);
-					}
-				}
-				String json = JsonUtil.Map2Json(list, pageNum, count, fieldsstr, "id");
-				AjaxUtil.ajaxOutput(response, json);
+			List<Object> parks = null;
+			if(groupid > 0){
+				parks = commonMethods.getParks(groupid);
+			}else if(cityid > 0){
+				parks = commonMethods.getparks(cityid);
 			}
+			if(parks != null && !parks.isEmpty()){
+				String preParams = "";
+				for(Object object : parks){
+					if(preParams.equals(""))
+						preParams ="?";
+					else
+						preParams += ",?";
+				}
+				sql += " and id in ("+preParams+") ";
+				countSql += " and id in ("+preParams+") ";
+				params.addAll(parks);
+				
+				if(sqlInfo != null) {
+					countSql += " and "+ sqlInfo.getSql();
+					sql += " and "+sqlInfo.getSql();
+					params.addAll(sqlInfo.getParams());
+				}
+				
+				count = pgOnlyReadService.getCount(countSql, params);
+				if(count > 0){
+					list = pgOnlyReadService.getAll(sql, params, pageNum, pageSize);
+					setList(list, b, e);
+				}
+			}
+			String json = JsonUtil.Map2Json(list, pageNum, count, fieldsstr, "id");
+			AjaxUtil.ajaxOutput(response, json);
 		}
 		return null;
 	}

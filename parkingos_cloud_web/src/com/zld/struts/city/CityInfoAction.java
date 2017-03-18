@@ -46,7 +46,7 @@ public class CityInfoAction extends Action {
 				buffer.append("{\"name\":\""+key+"\",\"value\":\""+userMap.get(key)+"\"},");
 			}
 			buffer.append("{\"name\":\"newpass\",\"value\":\"\"},");
-			buffer.append("{\"name\":\"confirmpass\",\"value\":\"\"},");
+			buffer.append("{\"name\":\"confirmpass\",\"value\":\"\"},{\"name\":\"is_inpark_incity\",\"value\":\"\"},");
 			String result = buffer.toString();
 			result = result.substring(0,result.length()-1)+"]";
 			result =result.replace("null", "");
@@ -64,6 +64,8 @@ public class CityInfoAction extends Action {
 			String gps =  AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "gps"));
 			String address = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
 			String confirmpass = RequestUtil.processParams(request, "confirmpass");
+			Integer is_group_pursue = RequestUtil.getInteger(request, "is_group_pursue", 0);
+			Integer is_inpark_incity = RequestUtil.getInteger(request, "is_inpark_incity", 0);
 			if(!newpass.equals("")){
 				int ret = editPass(uin, newpass, confirmpass);
 				if(ret != 1){
@@ -71,8 +73,8 @@ public class CityInfoAction extends Action {
 					return null;
 				}
 			}
-			int r = daService.update("update org_city_merchants set name=?,gps=?,address=? where id=? ", 
-					new Object[]{name,gps,address, id});
+			int r = daService.update("update org_city_merchants set name=?,gps=?,address=?,is_group_pursue=?,is_inpark_incity=? where id=? ", 
+					new Object[]{name,gps,address, is_group_pursue,is_inpark_incity, id});
 			r = daService.update("update user_info_tb set mobile=?,phone=?,nickname=? where id=? ", 
 					new Object[]{mobile, phone, nickname, uin});
 			AjaxUtil.ajaxOutput(response, r + "");

@@ -53,7 +53,7 @@ public class EmployeeLogsAction extends Action {
 			return mapping.findForward("list");
 		}else if(action.equals("query")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
-			String sql = "select a.state,a.start_time,a.end_time,a.device_code,b.berthsec_name,b.comid,a.uid,a.uid as nickname from  " +
+			String sql = "select a.logon_state,a.logoff_state,a.state,a.start_time,a.end_time,a.device_code,b.berthsec_name,b.comid,a.uid,a.uid as nickname from  " +
 					"parkuser_work_record_tb  as  a left  join   " +
 					"com_berthsecs_tb as  b  on  a. berthsec_id=b.id   where 1=1  ";
 			String countSql = "select count(*) from  parkuser_work_record_tb  as  a left  join   " +

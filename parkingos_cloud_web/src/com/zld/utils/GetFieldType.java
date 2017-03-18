@@ -136,8 +136,22 @@ public class GetFieldType {
 			return getTenantAccount(field);
 		}else if(table.equals("sync_info_pool_tb")){
 			return getSyncServer(field);
+		}else if(table.equals("org_group_tb")){
+			return org_group_tb(field);
 		}
 		return 12;
+	}
+	
+	private static Integer org_group_tb(String field) {
+		if(field.equals("name")
+				|| field.equals("address")){
+			return 12;
+		}else if(field.equals("balance")
+				|| field.equals("longitude")
+				|| field.equals("latitude")){
+			return 3;
+		}else
+			return 4;
 	}
 	
 	private static Integer getSyncServer(String field) {
@@ -855,12 +869,15 @@ public class GetFieldType {
 				||field.equals("chanid")
 				||field.equals("groupid")
 				||field.equals("areaid")
-				||field.equals("cityid")){
+				||field.equals("cityid")
+				||field.equals("union_state")){
 			return 4;
 		}else if(field.equals("longitude")||field.equals("latitude")
 				||field.equals("total_money")||field.equals("money")){
 			return 3;
-		}else if(field.equals("create_time")||field.equals("update_time")){
+		}else if(field.equals("create_time")
+				||field.equals("update_time")
+				||field.equals("upload_union_time")){
 			return 93;
 		}else 
 			return 12;

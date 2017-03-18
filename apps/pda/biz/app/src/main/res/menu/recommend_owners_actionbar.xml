@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:zhenlaidian="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/recommend_owners"
+        android:menuCategory="secondary"
+        android:showAsAction="ifRoom"
+        android:title="@string/recommend_owners"/>
+
+</menu>

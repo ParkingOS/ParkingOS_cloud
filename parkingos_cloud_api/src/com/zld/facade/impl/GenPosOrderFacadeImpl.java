@@ -163,6 +163,7 @@ public class GenPosOrderFacadeImpl implements GenPosOrderFacade {
 			int cType = 2;//2:照牌进场
 			if(monthUser){//月卡会员
 				cType =5;
+				resp.setCtype(cType);
 			}
 			logger.error("cType:"+cType);
 			//--------------------------获取可绑定的车检器订单信息-------------------//

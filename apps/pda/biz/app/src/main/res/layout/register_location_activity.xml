@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F0F0"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/et_register_location_name"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp"
+        android:hint="请输姓名："
+        android:maxLength="5"
+        android:textSize="14dp" />
+
+    <EditText
+        android:id="@+id/et_register_location_parkname"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:hint="车场名称："
+        android:maxLength="11"
+        android:singleLine="true"
+        android:textSize="14dp" />
+
+    <EditText
+        android:id="@+id/et_register_location_parkaddress"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:hint="停车场地址："
+        android:maxLength="15"
+        android:singleLine="true"
+        android:textSize="14dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/et_register_location_location"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="50"
+            android:gravity="center|left"
+            android:hint="点击我的位置获取..."
+            android:maxLength="18"
+            android:maxLines="2"
+            android:textColor="#6b6b6b"
+            android:textSize="14dp" />
+
+        <Button
+            android:id="@+id/bt_register_location_mylocation"
+            android:layout_width="55dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/my_location" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/et_register_location_parktotal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="70dp"
+        android:layout_marginTop="10dp"
+        android:hint="车位数："
+        android:maxLength="6"
+        android:numeric="integer"
+        android:textSize="14dp" />
+
+    <Button
+        android:id="@+id/bt_register_location_next"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/shape_login_button"
+        android:text="下一步"
+        android:textColor="#ffffff" />
+
+</LinearLayout>

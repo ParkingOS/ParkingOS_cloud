@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white" >
+
+    <TextView
+        android:id="@+id/tv_recommend_record_gotosee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tv_recommend_record_total"
+        android:layout_alignBottom="@+id/tv_recommend_record_total"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/tv_recommend_record_total"
+        android:layout_marginRight="8dp"
+        android:gravity="bottom"
+        android:text="去查看"
+        android:visibility="invisible"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_recommend_record_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_toLeftOf="@+id/tv_recommend_record_gotosee"
+        android:drawableLeft="@drawable/ic_recommend_record_total"
+        android:gravity="center"
+        android:text="共获得奖励 0 元"
+        android:textSize="16sp" />
+
+    <ListView
+        android:id="@+id/lv_recommend_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_recommend_record_total"
+        android:layout_marginTop="48dp" >
+    </ListView>
+
+    <TextView
+        android:id="@+id/tv_recommend_record_null"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="220dp"
+        android:gravity="center"
+        android:text="你还没有成功推荐的记录,继续努力哦 !"
+        android:textColor="#6C7070"
+        android:textSize="17sp"
+        android:visibility="invisible" />
+
+</RelativeLayout>

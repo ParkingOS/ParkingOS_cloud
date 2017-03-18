@@ -271,7 +271,7 @@ public class WeixinHandle extends HttpServlet {
 			// 注意判断返回金额
 
 			if (uin != null) {// 客户存在　
-				int result = daService.update("update user_info_Tb set balance =balance+? where id=?  ",
+				int result = daService.update("update user_info_tb set balance =balance+? where id=?  ",
 								new Object[] { Double.valueOf(total), uin });
 
 				try {
@@ -408,7 +408,7 @@ public class WeixinHandle extends HttpServlet {
 								// 发支付成功消息给收费员
 								logService.insertParkUserMessage((Long) orderMap.get("comid"),_state,(Long) orderMap.get("uid"),carNumber,
 										Long.valueOf(orderId),ordermoney, "", 0,
-										(Long) orderMap.get("create_time"),endTime, 0);
+										(Long) orderMap.get("create_time"),endTime, 0, null);
 								// 发消息给车主
 							}else if(result==-7){
 								logService.insertUserMesg(0, uin, "由于网络原因，"+cname+"，停车费"+total+"元，微信支付失败", "支付失败提醒");
@@ -431,7 +431,7 @@ public class WeixinHandle extends HttpServlet {
 							_state = 2;
 							result = 1;
 							// 发支付成功消息给收费员
-							logService.insertParkUserMessage(comId,_state,uid,carNumber,Long.valueOf(orderId),money, "", 0,ntime,ntime+10, 0);
+							logService.insertParkUserMessage(comId,_state,uid,carNumber,Long.valueOf(orderId),money, "", 0,ntime,ntime+10, 0, null);
 							// 发消息给车主
 						}
 						//logService.doMessage(comId, _state, uin, carNumber,-1L,money, "支付成功",0, ntime,ntime+10, 2);
@@ -457,7 +457,7 @@ public class WeixinHandle extends HttpServlet {
 									logger.error("今日打赏已达上限uid:"+uid+",tscore:"+tscore+",uin:"+uin);
 								}
 							}
-							logService.insertParkUserMessage(comid,2,uid,carNumber,uin,money, ""+recount, 0,ntime,ntime+10,5);
+							logService.insertParkUserMessage(comid,2,uid,carNumber,uin,money, ""+recount, 0,ntime,ntime+10,5, null);
 							logService.insertMessage(-1L, 1, uin,carNumber, 0L,StringUtils.formatDouble(total),"支付成功!", 0,ntime,ntime+10,2);
 						}else if(ret==-2){
 							logService.insertMessage(-1L, 0, uin,carNumber, 0L,StringUtils.formatDouble(total),"已打赏过", 0,ntime,ntime+10,2);

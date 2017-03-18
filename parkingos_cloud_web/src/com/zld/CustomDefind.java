@@ -30,6 +30,12 @@ public class CustomDefind {
 	public static String LOCALMAXVERSION = getValue("LOCALMAXVERSION");
 	public static String TASKTYPE = getValue("TASKTYPE");
 
+	public static String UNIONIP = CustomDefind.getValue("UNIONIP");//泊链平台地址
+	public static String UNIONID = CustomDefind.getValue("UNIONID");//泊链平台账户
+	public static String SERVERID = CustomDefind.getValue("SERVERID");//泊链平台服务商号
+	public static String UNIONKEY = CustomDefind.getValue("UNIONKEY");//泊链平台身份密钥
+	public static String USERUPMONEY = CustomDefind.getValue("USERUPMONEY");//车主在泊链平台的限额
+	
 	public static String getValue(String key){
 		String fileName ="config.properties";
 		//System.out.println(">>>00>>>>config file path:"+fileName);
@@ -44,6 +50,20 @@ public class CustomDefind {
 			e.printStackTrace();
 		}
 		return "0";
+	}
+	
+	public static void setValue(String key,String value){
+		String fileName ="config.properties";
+		Properties properties = new Properties();
+		try {
+			File file = Resources.getResourceAsFile(fileName);
+			properties.load(new FileInputStream(file));
+			properties.setProperty(key, value);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void reSetConfig() {

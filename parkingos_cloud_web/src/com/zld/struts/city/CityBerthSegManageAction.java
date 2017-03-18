@@ -314,16 +314,22 @@ public class CityBerthSegManageAction extends Action {
 				AjaxUtil.ajaxOutput(response,"-1");
 				return null;
 			}
+			Long ntime = System.currentTimeMillis()/1000;
 			List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
 			//更新工作组中的指定的泊位段已签退
 			Map<String, Object> workBerthSegSqlMap = new HashMap<String, Object>();
 			workBerthSegSqlMap.put("sql", "update work_berthsec_tb set state=? where berthsec_id=? and is_delete =? ");
 			workBerthSegSqlMap.put("values", new Object[]{0, id, 0});
 			bathSql.add(workBerthSegSqlMap);
+			boolean off = commonMethods.checkWorkTime(uid, ntime);
+			int logoff_state = 0;
+			if(!off){
+				logoff_state = 1;
+			}
 			//签退操作
 			Map<String, Object> workRecordSqlMap = new HashMap<String, Object>();
-			workRecordSqlMap.put("sql", "update parkuser_work_record_tb set end_time=?,state=? where berthsec_id =? and state=?");
-			workRecordSqlMap.put("values", new Object[]{System.currentTimeMillis()/1000, 1, id,0});
+			workRecordSqlMap.put("sql", "update parkuser_work_record_tb set end_time=?,state=?,logoff_state=? where berthsec_id=? and state=?");
+			workRecordSqlMap.put("values", new Object[]{ntime, 1, logoff_state, id, 0});
 			bathSql.add(workRecordSqlMap);
 			//标为离线
 			Map<String, Object> onlineSqlMap = new HashMap<String, Object>();
@@ -340,7 +346,7 @@ public class CityBerthSegManageAction extends Action {
 				if(oldtoken!=null){
 					Map<String, Object> sessionSqlMap = new HashMap<String, Object>();
 					sessionSqlMap.put("sql", "update user_session_tb set token=? ,create_time=? where uin=? ");
-					sessionSqlMap.put("values", new Object[]{token,System.currentTimeMillis()/1000,uid});
+					sessionSqlMap.put("values", new Object[]{token, ntime, uid});
 					bathSql.add(sessionSqlMap);
 				}
 			}

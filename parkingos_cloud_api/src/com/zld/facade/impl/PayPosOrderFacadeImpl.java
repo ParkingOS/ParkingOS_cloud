@@ -7,6 +7,7 @@ import java.util.concurrent.Future;
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
+import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import com.zld.facade.PayPosOrderFacade;
 import com.zld.facade.impl.GenPosOrderFacadeImpl.ExeCallable;
 import com.zld.impl.CommonMethods;
 import com.zld.impl.MemcacheUtils;
+import com.zld.impl.PublicMethods;
 import com.zld.pojo.AutoPayPosOrderFacadeReq;
 import com.zld.pojo.AutoPayPosOrderReq;
 import com.zld.pojo.AutoPayPosOrderResp;
@@ -54,7 +56,13 @@ public class PayPosOrderFacadeImpl implements PayPosOrderFacade {
 	@Resource(name = "payCard")
 	private PayPosOrderService payCardService;
 	@Autowired
+	@Resource(name = "bolinkPay")
+	private PayPosOrderService payBolinkService;
+	@Autowired
 	private MemcacheUtils memcacheUtils;
+	@Autowired
+	private PublicMethods publicMethods;
+	
 	
 	Logger logger = Logger.getLogger(PayPosOrderFacadeImpl.class);
 	
@@ -131,8 +139,11 @@ public class PayPosOrderFacadeImpl implements PayPosOrderFacade {
 				return resp;
 			}
 			int payType = order.getPay_type();
-			double prepay = order.getPrepaid();
 			int cType = order.getC_type();
+			double prepay = order.getPrepaid();
+			if(endTime < 0){//客户端低版本没有传endtime参数
+				endTime = commonMethods.getOrderEndTime(brethOrderId, uid, curTime);
+			}
 			long userId = order.getUin();
 			String carNumber = order.getCar_number();
 			long startTime = order.getCreate_time();
@@ -145,15 +156,9 @@ public class PayPosOrderFacadeImpl implements PayPosOrderFacade {
 				}
 			}
 			logger.error(userId);
-			//------------------------根据车间亲订单获取订单结算信息----------------------//
-			if(endTime < 0){//客户端低版本没有传endtime参数
-				endTime = commonMethods.getOrderEndTime(brethOrderId, uid, curTime);
-			}
-			String duration = StringUtils.getTimeString(startTime, endTime);
-			logger.error("endTime:" + endTime+ ",brethOrderId:"+brethOrderId);
-			//-----------------------------逻辑处理-------------------------------//
-			/*如果预支付不足，则不再以另一种支付方式（和预支付不同的支付方式）自动结算，
-			比如，现金预支付不足，则不再以卡片余额或者停车宝账户余额结算*/
+			
+			AutoPayPosOrderResp autoPayResp = null;
+			
 			AutoPayPosOrderReq autoPayReq = new AutoPayPosOrderReq();
 			autoPayReq.setOrder(order);
 			autoPayReq.setMoney(money);
@@ -166,14 +171,41 @@ public class PayPosOrderFacadeImpl implements PayPosOrderFacade {
 			autoPayReq.setBerthOrderId(brethOrderId);
 			autoPayReq.setGroupId(groupId);
 			
+			/**泊链支付****/
+			String bolinkPayRes ="cash";//泊链返回支付方式 cash需要这边正常结算 ，app表示已以在泊链收费
+			
+			if(prepay <= 0.0&&cType!=5){//没有预支付且不是月卡订单，调用泊链支付
+				bolinkPayRes =publicMethods.sendPayOrderToBolink(orderId,endTime,money,order.getComid());
+				if(bolinkPayRes.equals("app")){//泊链平台已经电子支付，这里处理为电子支付
+					logger.error("泊链结算>>>orderid:"+orderId);
+					autoPayResp = payBolinkService.autoPayPosOrder(autoPayReq);
+					logger.error(autoPayReq.toString());
+					if(autoPayResp.getResult() == 1){
+						result = true;//订单结算成功
+						resp.setResult(1);//月卡结算标识
+						resp.setErrmsg(autoPayResp.getErrmsg());
+						return resp;
+					}
+				}
+			}
+			/**泊链支付***/
+			//------------------------根据车间亲订单获取订单结算信息----------------------//
+			
+			String duration = StringUtils.getTimeString(startTime, endTime);
+			logger.error("endTime:" + endTime+ ",brethOrderId:"+brethOrderId);
+			//-----------------------------逻辑处理-------------------------------//
+			/*如果预支付不足，则不再以另一种支付方式（和预支付不同的支付方式）自动结算，
+			比如，现金预支付不足，则不再以卡片余额或者停车宝账户余额结算*/
+			
+			
 			double refundMoney = 0;
 			if(prepay > money){
 				refundMoney = StringUtils.formatDouble(prepay - money);
 			}
 			logger.error("refundMoney:"+refundMoney);
-			AutoPayPosOrderResp autoPayResp = null;
 			resp.setDuration(duration);
 			if(cType == 5){//结算月卡订单
+				autoPayReq.setPayType(3);
 				logger.error("月卡自动结算>>>orderid:"+orderId);
 				autoPayResp = payMonthService.autoPayPosOrder(autoPayReq);
 				logger.error(autoPayReq.toString());
@@ -225,7 +257,7 @@ public class PayPosOrderFacadeImpl implements PayPosOrderFacade {
 			}
 			if(autoPayResp != null && autoPayResp.getResult() < 0){
 				logger.error("操作失败>>>orderid:"+orderId+",result:"
-			+autoPayResp.getResult()+",errmsg:"+autoPayResp.getErrmsg());
+						+autoPayResp.getResult()+",errmsg:"+autoPayResp.getErrmsg());
 				logger.error(autoPayResp.toString());
 				resp.setResult(-1);//应该自动结算，但是结算失败
 				resp.setErrmsg(autoPayResp.getErrmsg());

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="310dp"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:text="按次收费"
+        android:textColor="#333333"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/tv_nfc_direct_cash_total"
+        android:layout_width="310dp"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:text=""
+        android:textColor="#000000"
+        android:textSize="22dp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:id="@+id/rl_nfc_direct_cash_carnumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff" >
+
+        <TextView
+            android:id="@+id/tv_nfc_direct_cash_carnumber"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="京A12345"
+            android:textColor="@color/tv_leaveItem_state_green"
+            android:textSize="19dp" />
+
+        <TextView
+            android:id="@+id/tv_nfc_direct_cash_change_carnumber"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:layout_alignBaseline="@+id/tv_nfc_direct_cash_carnumber"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/bt_change_number"
+            android:gravity="center"
+            android:text="点击更换车牌"
+            android:textColor="@color/white"
+            android:textSize="11dp" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/bt_nfc_direct_cash_input_carnumber"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="@drawable/shape_make_vip_card_"
+        android:text="点击编辑车牌号"
+        android:textColor="@color/tv_leaveItem_state_green"
+        android:textSize="18dp"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="310dp"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="5dp"
+        android:background="#c9c9c9" />
+
+    <LinearLayout
+        android:layout_width="310dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/bt_nfc_direct_cash_ok"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:text="确定"
+            android:textColor="@color/tv_leaveItem_state_green"
+            android:textSize="18dp" />
+
+        <View
+            android:id="@+id/view_nfc_direct_cash_view"
+            android:layout_width="0.5dp"
+            android:layout_height="30dp"
+            android:background="#c9c9c9" />
+
+        <Button
+            android:id="@+id/bt_nfc_direct_cash_cancle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:text="取消"
+            android:textColor="@color/tv_leaveItem_state_green"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+</LinearLayout>

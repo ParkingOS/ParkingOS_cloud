@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="310dp"
+        android:layout_height="50dp"
+        android:background="#36A56A"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:text="结算订单:"
+            android:textColor="#ffffff"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_nfc_finish_order_duration"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight="100"
+            android:gravity="center_vertical"
+            android:text="已停时间"
+            android:textColor="#ffffff"
+            android:textSize="16dp" />
+
+        <LinearLayout
+            android:id="@+id/ll_nfc_finish_order_isuser"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible" >
+
+            <TextView
+                android:id="@+id/tv_nfc_finish_order_isuser"
+                android:layout_width="69dp"
+                android:layout_height="49dp"
+                android:background="@drawable/finish_order_vip"
+                android:gravity="center" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_nfc_finish_carnumber_warn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:paddingLeft="10dp"
+        android:text=""
+        android:textSize="16dp" />
+
+    <LinearLayout
+        android:layout_width="310dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="3dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:id="@+id/ll_nfc_finish_order_write_carnunber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_recommend_code"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/tv_nfc_finish_order_carnunber_no_carnumber"
+                android:layout_width="140dp"
+                android:layout_height="90dp"
+                android:background="@drawable/finish_order_photo"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_nfc_finish_order_carnunber"
+                android:layout_width="140dp"
+                android:layout_height="55dp"
+                android:gravity="center"
+                android:text="京A12345"
+                android:textColor="#36A56A"
+                android:textSize="26dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_nfc_finish_order_carnunber_hint"
+                android:layout_width="140dp"
+                android:layout_height="32dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:background="@drawable/bt_change_number"
+                android:gravity="center"
+                android:text="点击更换车牌"
+                android:textColor="@color/white"
+                android:textSize="16dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_nfc_finish_order_collect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center|left"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center|left"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/rmb" />
+
+                <TextView
+                    android:id="@+id/tv_nfc_finish_order_total"
+                    android:layout_width="128dp"
+                    android:layout_height="45dp"
+                    android:gravity="center|left"
+                    android:text=""
+                    android:textColor="#000000"
+                    android:textSize="33dp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <EditText
+                    android:id="@+id/et_nfc_finish_order_total"
+                    android:layout_width="128dp"
+                    android:layout_height="45dp"
+                    android:gravity="center|left"
+                    android:hint="输入金额"
+                    android:maxLength="8"
+                    android:numeric="integer|decimal"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="#000000"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <Spinner
+                    android:id="@+id/sp_nfc_finish_order_collect"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:gravity="left" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_nfc_finish_order_time"
+                android:layout_width="150dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="10dp"
+                android:gravity="center|left"
+                android:text=""
+                android:textSize="18dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_nfc_finish_order_month"
+            android:layout_width="155dp"
+            android:layout_height="90dp"
+            android:gravity="center|left"
+            android:orientation="vertical"
+            android:visibility="gone" >
+
+            <LinearLayout
+                android:layout_width="155dp"
+                android:layout_height="60dp"
+                android:gravity="center|left"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:text="月卡"
+                    android:textColor="#B6914A"
+                    android:textSize="30dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="65dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@drawable/nfc_finish_vip" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="155dp"
+                android:layout_height="30dp"
+                android:gravity="center|left"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:text="月卡到期还剩 "
+                    android:textColor="#919191"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tv_nfc_finish_order_limitday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="#2FA664"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text=" 天"
+                    android:textColor="#919191"
+                    android:textSize="16dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="310dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="#36A56A"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/bt_nfc_finish_order_ok"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#36A56A"
+            android:text="确定"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
+
+        <View
+            android:id="@+id/view_nfc_view"
+            android:layout_width="0.5dp"
+            android:layout_height="30dp"
+            android:background="#c9c9c9" />
+
+        <Button
+            android:id="@+id/bt_nfc_finish_order_cancle"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#36A56A"
+            android:text="取消"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+</LinearLayout>

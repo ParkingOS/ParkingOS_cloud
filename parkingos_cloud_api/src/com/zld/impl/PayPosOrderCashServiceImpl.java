@@ -11,17 +11,13 @@ import org.springframework.stereotype.Service;
 
 import com.zld.pojo.AutoPayPosOrderReq;
 import com.zld.pojo.AutoPayPosOrderResp;
-import com.zld.pojo.Berth;
-import com.zld.pojo.Group;
 import com.zld.pojo.ManuPayPosOrderReq;
 import com.zld.pojo.ManuPayPosOrderResp;
 import com.zld.pojo.Order;
 import com.zld.pojo.PayEscapePosOrderReq;
 import com.zld.pojo.PayEscapePosOrderResp;
-import com.zld.pojo.WorkRecord;
 import com.zld.service.DataBaseService;
 import com.zld.service.PayPosOrderService;
-import com.zld.service.PgOnlyReadService;
 import com.zld.utils.StringUtils;
 
 /**
@@ -33,11 +29,6 @@ import com.zld.utils.StringUtils;
 public class PayPosOrderCashServiceImpl implements PayPosOrderService {
 	@Autowired
 	private DataBaseService writeService;
-	@Autowired
-	private PgOnlyReadService readService;
-	@Autowired
-	private CommonMethods commonMethods;
-	
 	Logger logger = Logger.getLogger(PayPosOrderCashServiceImpl.class);
 	
 	/**

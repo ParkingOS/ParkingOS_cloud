@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+<ImageView
+    android:id="@+id/item_cb"
+
+   android:layout_centerVertical="true"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/cb_red_on"/>
+    <RelativeLayout
+        android:id="@+id/zhuijiao_item_ln"
+        android:layout_toRightOf="@+id/item_cb"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/item_money"
+            android:id="@+id/item_positionpoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#666666"
+            android:textSize="15sp"
+
+            android:text="站点：XXXXX站点"/>
+<TextView
+    android:id="@+id/item_money"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="#666666"
+    android:textSize="15sp"
+android:layout_alignParentRight="true"
+    android:layout_marginRight="40dp"
+    android:text="Y35"  />
+<TextView
+    android:id="@+id/duration"
+    android:layout_below="@+id/item_positionpoint"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="#36A56A"
+    android:textSize="15sp"
+android:layout_alignParentLeft="true"
+    android:layout_marginTop="5dp"
+    android:text="2016-4-11 9:12:34 - 2016-4-22 14:56:43"/>
+    </RelativeLayout>
+</RelativeLayout>

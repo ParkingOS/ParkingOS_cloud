@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/deletebar"
+        layout="@layout/x_deletebar_layout"></include>
+
+    <GridView
+        android:id="@+id/gv_in_vehicle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_main_leave_order"
+        android:layout_below="@+id/deletebar"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="50"
+        android:gravity="center"
+        android:horizontalSpacing="6dp"
+        android:numColumns="2"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="5dp"></GridView>
+
+    <TextView
+        android:id="@+id/tv_in_vehicle_parking_state"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:background="#f3343942"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/rl_main_leave_order"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/bt_input_carnumber_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_margin="4dp"
+            android:layout_weight="7"
+            android:background="@drawable/shape_nfc_finish_dailog"
+            android:text="取消"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/bt_input_carnumber_ok_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_margin="4dp"
+            android:layout_weight="3"
+            android:background="@drawable/shape_nfc_finish_dailog"
+            android:text="下一步"
+            android:textColor="#ffffff" />
+
+    </LinearLayout>
+</RelativeLayout>

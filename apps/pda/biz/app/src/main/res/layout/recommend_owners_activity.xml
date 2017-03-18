@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="每开通一个真实车主会员,奖励您5元"
+        android:textColor="@color/tv_leaveItem_state_green"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/iv_recommend_owners_code"
+        android:layout_width="200dp"
+        android:layout_height="187dp"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:scaleType="fitXY"
+        android:layout_marginTop="80dp"
+        android:text="开通速通卡车主会员"
+        android:textColor="#ffffff"
+        android:textSize="19sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:text="让被推荐车主扫一扫注册即可"
+        android:textSize="19sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tv_recommend_owners_vip_card"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/shape_recommend_owner"
+            android:gravity="center"
+            android:text="开通速通卡车主会员"
+            android:textColor="#ffffff"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/tv_recommend_owners_vip"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_make_vip_card_"
+            android:gravity="center"
+            android:text="有车主车牌号和手机号时点这里推荐"
+            android:textColor="@color/tv_leaveItem_state_green"
+            android:textSize="17sp" />
+    </LinearLayout>
+
+</RelativeLayout>

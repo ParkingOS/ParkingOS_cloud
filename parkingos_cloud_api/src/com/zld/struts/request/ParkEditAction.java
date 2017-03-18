@@ -54,10 +54,14 @@ public class ParkEditAction extends Action{
 			return null;
 		}
 		if(action.equals("queryprice")){//取停车场数据，登录后加载，传入时间，初始登录没有时间
-			Map<String,Object> map = getPrice(comId);
-			Integer isNight = (Integer)daService.getObject("select isnight from com_info_Tb where id=?", new Object[]{comId}, Integer.class);
-			map.put("isnight", isNight);
-			AjaxUtil.ajaxOutput(response, StringUtils.createJson(map));
+			if(comId<800000){
+				Map<String,Object> map = getPrice(comId);
+				Integer isNight = (Integer)daService.getObject("select isnight from com_info_Tb where id=?", new Object[]{comId}, Integer.class);
+				map.put("isnight", isNight);
+				AjaxUtil.ajaxOutput(response, StringUtils.createJson(map));
+			}else {
+				AjaxUtil.ajaxOutput(response,"{}");
+			}
 			//http://127.0.0.1/zld/parkedit.do?action=queryprice&comid=3
 		}else if(action.equals("addprice")){
 			Long comid = RequestUtil.getLong(request, "comid", -1L);

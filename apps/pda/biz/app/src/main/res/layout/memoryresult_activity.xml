@@ -1,0 +1,66 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffffff" >
+
+    <RelativeLayout 
+       
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#0091A1"
+    >
+      <ImageView
+        android:id="@+id/plate_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher"
+  
+       />
+     <TextView
+        android:id="@+id/plate_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="识别结果"
+      
+        />
+ </RelativeLayout> 
+    
+    
+    <TextView
+        android:id="@+id/text_color"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="车牌颜色" />
+
+    <TextView
+        android:id="@+id/plate_color"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" 
+        />
+
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="确定" />
+
+    <TextView
+        android:id="@+id/plate_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/text_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="车牌号" />
+
+    <ImageView
+        android:id="@+id/plate_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       />
+
+</RelativeLayout>

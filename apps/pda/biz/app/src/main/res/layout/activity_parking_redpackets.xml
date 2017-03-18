@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/redpacket_bg"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="25dp"
+        android:background="@android:color/white"
+        android:gravity="center" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="停车卷数量"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_redpackets_tingchejuan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_margin="5dp"
+            android:text="张"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_redpackets_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tv_redpackets_tingchejuan"
+            android:layout_marginRight="3dp"
+            android:layout_toLeftOf="@+id/tv_redpackets_tingchejuan"
+            android:text=""
+            android:textColor="@color/red"
+            android:textSize="21sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="15dp"
+        android:background="@android:color/white"
+        android:gravity="center" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:drawableRight="@drawable/dialog_ping"
+            android:gravity="center"
+            android:text="总金额  "
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_redpackets_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_margin="5dp"
+            android:text="元"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_redpackets_total_money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tv_redpackets_total"
+            android:layout_marginRight="3dp"
+            android:layout_toLeftOf="@+id/tv_redpackets_total"
+            android:text=""
+            android:textColor="@color/red"
+            android:textSize="21sp" />
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/et_redpackets_blessing"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="15dp"
+        android:background="@android:color/white"
+        android:gravity="top|left"
+        android:maxLength="60"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp"
+        android:textColor="#7F7F7F"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_redpackets_big_money"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:text=""
+        android:textSize="45sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/bt_redpackets_send_friend"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/diaog_btn"
+        android:text="发给好友"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/tv_redpackets_send_warn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="点击发送后将扣除红包积分！"
+        android:textColor="@color/red"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

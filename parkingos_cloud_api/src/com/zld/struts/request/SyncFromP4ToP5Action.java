@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,17 +57,23 @@ public class SyncFromP4ToP5Action extends Action {
 	//String condition = "tenantid%3D1016";//鹰潭
 	
 	//拷贝桂林集团数据到测试集团
-	long groupId = 43;//拷贝鹰潭线上数据到测试集团
-	long roleId = 460L;//
+	/*long groupId = 43;//拷贝鹰潭线上数据到测试集团
+*/	long groupId = 63;//宝山测试
+	long roleId = 583L;//
 
 	long tenantid = 1016;//p4鹰潭的商户编号
 	/*long groupId = 42;//鹰潭新数据集团
 	long roleId = 450L;//鹰潭新数据集团,收费员
 */	
 //	int etc = 4;//pos机照牌车场
-	long source_group_id = 42;//p5之间拷贝数据时的数据源运营集团编号，桂林市鸿图房地产经纪有限公司
+	/*long source_group_id = 42;//p5之间拷贝数据时的数据源运营集团编号，桂林市鸿图房地产经纪有限公司
+*/	long source_group_id = 25;//p5之间拷贝数据时的数据源运营集团编号，宝山正式
+	
 	
 	Logger logger = Logger.getLogger(SyncFromP4ToP5Action.class);
+	Logger logger1 = Logger.getLogger("myTest1");
+	Logger logger2 = Logger.getLogger("myTest2");
+	Logger logger3 = Logger.getLogger("myTest3");
 	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
@@ -260,6 +267,9 @@ public class SyncFromP4ToP5Action extends Action {
 		}else if(action.equals("copyBerthOrder")){
 			copyBerthOrder();
 			//http://127.0.0.1/zld/syncdata.do?action=copyBerthOrder
+		}else if(action.equals("copyOrderBecauseOfNopayment")){
+			//http://127.0.0.1/zld/syncdata.do?action=copyOrderBecauseOfNopayment
+			copyOrderBecauseOfNopayment();
 		}
 		return null;
 	}
@@ -1137,14 +1147,30 @@ public class SyncFromP4ToP5Action extends Action {
 	}
 	
 	private void syncP3OrderByName(){
-		//clearData(4);
+		clearData(4);
+		int parkpass = 0;
+		int berthpass = 0;
+		int testpass = 0;
+		int part1pass = 0;
+		int part2pass = 0;
 		boolean stop = false;
 		try {
+			String[] test = new String[]{"培训路段","测试路段12","测试","测试路段"};
+			String[] part1 = new String[]{"(新)车家街","(新)香柱巷","(新)朱紫街","(新)朝阳路","（新）太和街","车家街（新）","朝阳路（新）","香柱巷（新）","朱紫街（新）","太和街（新）"};
+			String[] part2 = new String[]{"孝感路","鹿鸣巷","(新)明强街","(新)保岫路","(新）玉泉路","（新）象山路","（新）和平路","（新）建设路","（新）新闻路3","（新）升阳路一段",
+					"（新）升阳路二段","（新）升阳路三段","（新）新闻路贰段","（新）龙泉路","（新）同仁街","（新）太保南路（游泳池）","(新）九龙路一段","（新）九龙路二段","太保北路","人民路",
+					"（新）兰城路（永昌）","同仁街以南","保岫路（新）","明强街（新）","城南盛世","兴教路","保健站拐角","上水河路2","上水河路1","农民街","兰城路","花园路"};
+			List testList = Arrays.asList(test);
+			List part1List = Arrays.asList(part1);
+			List part2List = Arrays.asList(part2);
+			//Long maxId = -1L;
 			int pageSize = 1000;
 			while (!stop) {
 				//---------------------查询已导入的数据最后的一条--------------------------//
 				Long maxId = getMaxId(4);
-				String url = "http://219.159.88.140:8091/Api/Sales/values/GetP3EscapeList?id="+maxId+"&pagesize="+pageSize+"&groupid=3";
+				logger.error("maxId:"+maxId);
+				String url = "http://219.159.88.140:8091/Api/Sales/values/GetP3EscapeList?id="+maxId+"&pagesize="+pageSize+"&groupid=3";//桂林数据
+				url = "http://222.219.118.112:7799/P3webapi/api/values/GetP3EscapeList?id="+maxId+"&pagesize="+pageSize;
 				String result = new HttpProxy().doGet(url);
 				if(result != null && !"".equals(result)){
 					result = result.replace("\\","");
@@ -1171,8 +1197,8 @@ public class SyncFromP4ToP5Action extends Action {
 						JSONObject object = array.getJSONObject(i);
 						logger.error("object:"+object.toString());
 						Long p4Id = object.getLong("id");
-						Long create_time = TimeTools.getLongMilliSecondFromStrDate(object.getString("create_time"),"MM/dd/yyyy HH:mm:ss")/1000;
-						Long end_time = TimeTools.getLongMilliSecondFromStrDate(object.getString("end_time"),"MM/dd/yyyy HH:mm:ss")/1000;
+						Long create_time = TimeTools.getLongMilliSecondFromStrDate(object.getString("create_time"),"yyyy/MM/dd HH:mm:ss")/1000;
+						Long end_time = TimeTools.getLongMilliSecondFromStrDate(object.getString("end_time"),"yyyy/MM/dd HH:mm:ss")/1000;
 						if(object.getString("create_time").indexOf("PM") > -1 
 								&& object.getString("create_time").indexOf(" 12:") == -1){
 							create_time += 12 * 60 * 60;
@@ -1206,6 +1232,22 @@ public class SyncFromP4ToP5Action extends Action {
 							continue;
 						}
 						lastId = p4Id;
+						//----------------------------过滤------------------------------//
+						if(testList.contains(parkname)){
+							logger3.error("测试车场的，直接过滤掉");
+							testpass++;
+							continue;
+						}
+						if(part1List.contains(parkname) && total > 50){
+							logger3.error("新一类地区车场的停车场，大于50的直接过滤掉");
+							part1pass++;
+							continue;
+						}
+						if(part2List.contains(parkname) && total > 30){
+							logger3.error("新二类地区域车场，大于30的直接过滤掉");
+							part2pass++;
+							continue;
+						}
 						//-----------------------------映射-----------------------------//
 						Berth berth = null;
 						Map<String, Object> parkMap = null;
@@ -1221,7 +1263,8 @@ public class SyncFromP4ToP5Action extends Action {
 									" where company_name = ? and groupid=? ", new Object[]{parkname, groupId});
 						}
 						if(berth == null && parkMap == null){
-							logger.error("停止循环，既没有泊位匹配也没有车场匹配>>>berthnumber:"+berthnumber+",parkname:"+parkname);
+							logger1.error("停止循环，既没有泊位匹配也没有车场匹配>>>berthnumber:"+berthnumber+",parkname:"+parkname);
+							parkpass++;
 							continue;
 						}
 						Long comid = -1L;
@@ -1233,11 +1276,24 @@ public class SyncFromP4ToP5Action extends Action {
 							berthSegId = berth.getBerthsec_id();
 						}else if(parkMap != null){
 							comid = (Long)parkMap.get("id");
+							berth = readService.getPOJO("select * from com_park_tb where cid=? and" +
+									" is_delete=? and comid=? limit ?",
+									new Object[]{berthnumber, 0, comid, 1}, Berth.class);
+							if(berth != null){
+								berthId = berth.getId();
+								berthSegId = berth.getBerthsec_id();
+							}
 						}
 						logger.error("comid:"+comid);
 						if(comid < 0){
-							logger.error("停止循环，没有匹配的车场");
-							return;
+							logger1.error("没有匹配的车场,直接滤掉");
+							parkpass++;
+							continue;
+						}
+						if(berthSegId < 0 || berthId < 0){
+							logger2.error("没有匹配的泊位或者泊位段,直接滤掉");
+							berthpass++;
+							continue;
 						}
 						Long inUid = -1L;
 						Long outUid = -1L;
@@ -1261,9 +1317,9 @@ public class SyncFromP4ToP5Action extends Action {
 						//逃单表
 						Map<String, Object> pursueSqlMap = new HashMap<String, Object>();
 						pursueSqlMap.put("sql", "insert into no_payment_tb (create_time,end_time," +
-								"order_id,car_number,comid,total) values(?,?,?,?,?,?)");
+								"order_id,car_number,comid,total,uid,berthseg_id,berth_id,groupid) values(?,?,?,?,?,?,?,?,?,?)");
 						pursueSqlMap.put("values", new Object[]{create_time, end_time, orderId,
-								car_number, comid, total});
+								car_number, comid, total, outUid, berthSegId, berthId, groupId});
 						bathSql.add(pursueSqlMap);
 						//--------------订单表----------------//
 						Object[] va = new Object[14];
@@ -1282,6 +1338,8 @@ public class SyncFromP4ToP5Action extends Action {
 						va[12] = groupId;
 						va[13] = 2;
 						orderValues.add(va);
+						
+						maxId = p4Id;
 					}
 					boolean b = writeService.bathUpdate2(bathSql);
 					logger.error("结果>>>b:"+b+",maxId:"+maxId);
@@ -1289,6 +1347,7 @@ public class SyncFromP4ToP5Action extends Action {
 					logger.error("批量插入结果>>>orderMap:"+order+",maxId:"+maxId);
 				}
 			}
+			logger.error("车场名字不匹配："+parkpass+",泊位不匹配："+berthpass+",测试车场过滤："+testpass+",一类过滤："+part1pass+",二类过滤："+part2pass);
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -2359,11 +2418,11 @@ public class SyncFromP4ToP5Action extends Action {
 	
 	private void syncOldNopaymentData(){
 		try {
-			long startTime = 1448899200;//2015-12-01 00:00:00
+			long startTime = 1433088000;//2015-12-01 00:00:00
 			while (true) {
 				List<Map<String, Object>> list = readService.getAll("select * from no_payment_tb where " +
 						" end_time between ? and ? and groupid<=? order by id ", new Object[]{startTime, 
-						startTime + 24 * 60 * 60, 0});
+						startTime + 24 * 60 * 60 -1, 0});
 				if(list == null || list.isEmpty()){
 					logger.error("循环结束");
 					return;
@@ -2372,8 +2431,8 @@ public class SyncFromP4ToP5Action extends Action {
 					Long noId = (Long)map.get("id");
 					Long orderId = (Long)map.get("order_id");
 					Integer state = (Integer)map.get("state");
-					Map<String, Object> orderMap = readService.getMap("select * from order_tb where id=? ",
-							new Object[]{orderId});
+					Map<String, Object> orderMap = readService.getMap("select * from order_tb where id=? and groupid>? ",
+							new Object[]{orderId, 0});
 					if(orderMap != null){
 						Long groupId = -1L;
 						if(orderMap.get("groupid") != null){
@@ -2618,6 +2677,51 @@ public class SyncFromP4ToP5Action extends Action {
 		}
 	}
 	
+	private void copyOrderBecauseOfNopayment(){
+		try {
+			long startTime = 1448899200;//2016-07-01 00:00:00
+			while (true && startTime < 1451577600) {
+				List<Map<String, Object>> list = readService.getAll("select order_id from no_payment_tb where " +
+						" end_time between ? and ? and create_time between ? and ? ",
+						new Object[]{startTime, startTime + 24 * 60 * 60 - 1, 1420041600, 1451577600});
+				if(list != null && !list.isEmpty()){
+					for(Map<String, Object> map : list){
+						Long order_id = (Long)map.get("order_id");
+						Long bakcount = readService.getLong("select count(id) from order_tb_bak where id=? ",
+								new Object[]{order_id});
+						Long count = readService.getLong("select count(id) from order_tb where id=? ",
+								new Object[]{order_id});
+						logger.error("order_id:"+order_id+",bakcount:"+bakcount+",count:"+count);
+						if(bakcount > 0 && count == 0){
+							List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
+							//导订单
+							Map<String, Object> orderSqlMap = new HashMap<String, Object>();
+							orderSqlMap.put("sql", "insert into order_tb_2015 select * from order_tb_bak " +
+									" where id=? ");
+							orderSqlMap.put("values", new Object[]{order_id});
+							bathSql.add(orderSqlMap);
+							
+							//更新订单状态
+							Map<String, Object> orderBakSqlMap = new HashMap<String, Object>();
+							orderBakSqlMap.put("sql", "delete from order_tb_bak where id=? ");
+							orderBakSqlMap.put("values", new Object[]{order_id});
+							bathSql.add(orderBakSqlMap);
+							
+							boolean b = writeService.bathUpdate2(bathSql);
+							logger.error("b:"+b);
+						}
+						
+					}
+				}
+				
+				startTime += 24 * 60 * 60;
+			}
+			logger.error("结束");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	//-----------------------------------分区表导数据------------------------------------------------//
 	private void copyBerthOrder(){
 		try {
@@ -2642,6 +2746,8 @@ public class SyncFromP4ToP5Action extends Action {
 			e.printStackTrace();
 		}
 	}
+	
+	
 	
 }
 class FileReader2 extends InputStreamReader{

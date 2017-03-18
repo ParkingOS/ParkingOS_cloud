@@ -681,7 +681,7 @@ public class ParkingAttendantAction extends Action{
 				request.setAttribute("timestamp", result.get("timestamp"));
 				request.setAttribute("signature", result.get("signature"));
 				//发消息给收费员
-				logService.insertParkUserMessage(-1L,2,uid,carNumber,-1L,total, payType, 0,btime,etime, 0);
+				logService.insertParkUserMessage(-1L,2,uid,carNumber,-1L,total, payType, 0,btime,etime, 0, null);
 			}else {
 				request.setAttribute("ispay", "您已支付过！");
 			}

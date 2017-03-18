@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#ffffff"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tv_warn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/warn" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="3dp"
+            android:gravity="center"
+            android:text="提示：车主手机支付中！"
+            android:textColor="#E4C411"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#40BAE5" >
+    </View>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:gravity="center|left"
+        android:paddingLeft="20dp"
+        android:text="请点击等等再刷卡关闭提示！"
+        android:textColor="@color/tv_leaveItem_state_green"
+        android:textSize="17dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:gravity="center|left"
+        android:paddingLeft="20dp"
+        android:text="若因网速等原因转收现金"
+        android:textColor="#000000"
+        android:textSize="17dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:gravity="top|left"
+        android:paddingLeft="20dp"
+        android:text="请告知车主停止手机支付"
+        android:textColor="#000000"
+        android:textSize="17dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/tv_leaveItem_state_green"
+        android:gravity="center|right"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/bt_stop_wait_dialog_cash"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:background="@color/tv_leaveItem_state_green"
+            android:text="收取现金 ?"
+            android:textColor="#E4C411"
+            android:textSize="18dp" />
+
+        <View
+            android:id="@+id/view_stop_wait_dialog_view"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="7dp"
+            android:layout_marginTop="7dp"
+            android:background="@color/gray" >
+        </View>
+
+        <Button
+            android:id="@+id/bt_stop_wait_dialog_cancle"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:background="@color/tv_leaveItem_state_green"
+            android:text="等等再刷"
+            android:textColor="#ffffff" />
+    </LinearLayout>
+
+</LinearLayout>

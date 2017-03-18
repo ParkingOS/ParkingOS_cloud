@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:zhenlaidian="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/check_yes"
+        android:menuCategory="secondary"
+        android:showAsAction="ifRoom"
+        android:title="@string/check_yes"/>
+    <item
+        android:id="@+id/check_no"
+        android:menuCategory="secondary"
+        android:showAsAction="ifRoom"
+        android:title="@string/check_no"/>
+
+</menu>

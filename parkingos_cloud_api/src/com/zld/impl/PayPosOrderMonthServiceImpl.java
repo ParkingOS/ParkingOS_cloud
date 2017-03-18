@@ -28,8 +28,6 @@ import com.zld.service.PgOnlyReadService;
 public class PayPosOrderMonthServiceImpl implements PayPosOrderService {
 	@Autowired
 	private DataBaseService writeService;
-	@Autowired
-	private PgOnlyReadService readService;
 	
 	Logger logger = Logger.getLogger(PayPosOrderMonthServiceImpl.class);
 	
@@ -47,6 +45,7 @@ public class PayPosOrderMonthServiceImpl implements PayPosOrderService {
 			String imei = req.getImei();
 			Long brethOrderId = req.getBerthOrderId();
 			Long endTime = req.getEndTime();
+			Integer payType = req.getPayType();
 			if(order == null 
 					|| uid <= 0 
 					|| endTime == null 
@@ -73,13 +72,13 @@ public class PayPosOrderMonthServiceImpl implements PayPosOrderService {
 			}
 			//-------------------------------具体逻辑-----------------------------//
 			logger.error("orderid:"+orderId+",cType:"+cType);
-			if(cType == 5){
+			if(cType == 5 || payType==10){//月卡或已在泊链支付的订单
 				List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
 				//更新订单状态
 				Map<String, Object> orderSqlMap = new HashMap<String, Object>();
 				orderSqlMap.put("sql", "update order_tb set state=?,total=?,end_time=?" +
 						",pay_type=?,imei=?,out_uid=? where id=?");
-				orderSqlMap.put("values", new Object[]{1, money, endTime, 3, imei, uid, orderId});
+				orderSqlMap.put("values", new Object[]{1, money, endTime, payType, imei, uid, orderId});
 				bathSql.add(orderSqlMap);
 				if(order.getBerthnumber() > 0){
 					//更新泊位状态

@@ -445,7 +445,7 @@ public class CardServiceImpl implements CardService {
 						//Ìí¼Ó³µÅÆºÅ
 						Map<String, Object> carSqlMap = new HashMap<String, Object>();
 						carSqlMap.put("sql", "insert into car_info_tb (uin,car_number,create_time) values (?,?,?)");
-						carSqlMap.put("values", new Object[]{userId, carNumber, curTime});
+						carSqlMap.put("values", new Object[]{userId, car, curTime});
 						bathSql.add(carSqlMap);
 					}
 				}

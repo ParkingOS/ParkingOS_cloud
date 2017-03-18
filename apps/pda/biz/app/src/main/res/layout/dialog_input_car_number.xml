@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#f0f0f0"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/et_input_carnumber_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_weight="500"
+            android:ems="10"
+            android:hint="请正确输入车牌号！"
+            android:maxLength="9"
+            android:singleLine="true"
+            android:textColor="@color/tv_parknumber_blue"
+            android:textSize="20dp" >
+        </EditText>
+
+        <RelativeLayout
+            android:id="@+id/rl_input_carnumber_delete_dialog"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:focusable="true" >
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/input_dialog_delete" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_makevip_vptitle_dialog"
+        android:layout_width="fill_parent"
+        android:layout_height="30.0dip"
+        android:background="#f0f0f0" >
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="2dp"
+            android:background="#3DAA6F" />
+
+        <TextView
+            android:id="@+id/text1_dialog"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="省份"
+            android:textColor="#3DAA6F"
+            android:textSize="18dip" />
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="#3DAA6F" />
+
+        <TextView
+            android:id="@+id/text2_dialog"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="字母/数字"
+            android:textColor="#666666"
+            android:textSize="18dip" />
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="#3DAA6F" />
+
+        <TextView
+            android:id="@+id/text3_dialog"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="军/警"
+            android:textColor="#666666"
+            android:textSize="18dip" />
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="2dp"
+            android:background="#3DAA6F" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/cursor_dialog"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="matrix"
+        android:src="@drawable/viewpage" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager_dialog_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="225dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="3dp"
+        android:layout_weight="50" >
+    </android.support.v4.view.ViewPager>
+
+    <Button
+        android:id="@+id/bt_input_carnumber_ok_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_margin="4dp"
+        android:layout_weight="1"
+        android:background="@drawable/shape_nfc_finish_dailog"
+        android:text="输入完成"
+        android:textColor="#ffffff" />
+
+</LinearLayout>

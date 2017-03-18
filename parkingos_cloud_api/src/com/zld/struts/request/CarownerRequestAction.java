@@ -1,6 +1,5 @@
 package com.zld.struts.request;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -80,6 +79,13 @@ public class CarownerRequestAction extends Action{
 				uin =(Long) userMap.get("id");
 				if(userMap.get("client_type")!=null)
 					client_type = (Integer)userMap.get("client_type");
+//				Integer unionState = (Integer)userMap.get("union_state");
+//				if(unionState==0){//没有上传到泊链
+//					List carList= pService.getAll("select car_number from car_info_tb where uin = ? and state=? ", new Object[]{uin,1});
+//					if(carList!=null&&!carList.isEmpty()){//有车牌需要同步到泊链平台
+//						publicMethods.syncUser2Bolink(carList,StringUtils.formatDouble(userMap.get("balance")));
+//					}
+//				}
 			}else {
 				infoMap.put("info", "mobile is invalid");
 			}
@@ -181,7 +187,7 @@ public class CarownerRequestAction extends Action{
 			Long uid = (Long)orderMap.get("uid");
 			//给收费员消息，提示正在手机支付....
 			logService.insertParkUserMessage(comId, 1, uid, carNumber, orderId,  Double.valueOf(orderMap.get("total")+""),
-					duration, 0, btime, etime,0);
+					duration, 0, btime, etime, 0, null);
 			return null;
 			//支付中 http://127.0.0.1/zld/carowner.do?action=paying&mobile=15801482643&orderid=1066
 		}else if(action.equals("accountdetail")){//帐户明细
@@ -791,7 +797,7 @@ public class CarownerRequestAction extends Action{
 		if(result==5){
 			result = 1;
 			//发支付成功消息给收费员
-			logService.insertParkUserMessage(_comId, 2,uid,carNumber, -1L,money,"", 0, ntime, ntime+10,0);
+			logService.insertParkUserMessage(_comId, 2,uid,carNumber, -1L,money,"", 0, ntime, ntime+10,0, null);
 		}
 		logger.error(">>>>>>>>>>>车主直接支付订单返回："+result);
 		if(version.equals("2")){
@@ -1023,7 +1029,7 @@ public class CarownerRequestAction extends Action{
 			}
 		return result;
 	}
-
+	
 	private int editCarNumber(HttpServletRequest request, Long uin) {
 		String carNumber=AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "carnumber"));
 		carNumber = carNumber.toUpperCase().trim();
@@ -1032,9 +1038,13 @@ public class CarownerRequestAction extends Action{
 		int result = 0;
 		if(uin!=null&&!carNumber.equals("")) {
 			try {
+				Map oldCarMap = daService.getMap("select car_number from car_info_tb where uin = ? ", new Object[]{uin});
 				result = daService.update(
 						"update car_info_tb set car_number=? where uin=?",
 						new Object[] { carNumber, uin });
+				if(result==1&&oldCarMap!=null){
+					publicMethods.syncUserCarNumber(uin, carNumber, (String)oldCarMap.get("car_number"));
+				}
 			} catch (Exception e) {
 				if(e.getMessage().indexOf("car_info_tb_car_number_key")!=-1){
 					result= 2;
@@ -1087,6 +1097,52 @@ public class CarownerRequestAction extends Action{
 			result = daService.update("update user_profile_tb set low_recharge=?," +
 					" auto_cash=?,limit_money=?,update_time=? where uin=?",
 					new Object[]{low_recharge,auto_cash,limit_money,time,uin});
+			logger.error(">>>>>>>>>>>>>>>update profile uin:"+uin+",ret:"+result);
+			/*if(result==1){//通知泊链平台，修改用户限额
+				//查询车场是否同步过到泊链平台，查出上次同步的限额
+				Map userMap = daService.getMap("select balance ,bolink_limit from user_info_tb u " +
+						"left join user_profile_tb p on p.uin=u.id where  u.id =?   and u.union_state>? ", new Object[]{uin,0});
+				logger.error("update profile,user set :"+userMap+",当前修改：limitmoney :"+limit_money);
+				if(userMap!=null){
+					Double bolinkLimit = StringUtils.formatDouble(userMap.get("bolink_limit"));
+					Double balance =StringUtils.formatDouble(userMap.get("balance"));
+					boolean isSend = false;
+					Double money = Double.valueOf(limit_money);
+					
+					if(auto_cash==0){
+						if(bolinkLimit>0){//泊链的限额大于0，但用户现在设置了不自动支付，需要通知泊链修改限额
+							isSend=true;
+							money=0.0;
+						}
+					}else {
+						if(limit_money>0){
+							if(limit_money<bolinkLimit){//用户修改限额小于了泊链的限额，需要通知泊链修改限额,但不能高于余额
+								isSend=true;
+								if(limit_money>balance){
+									money = balance;
+								}
+							}else if(bolinkLimit!=limit_money.doubleValue()){//用户修改限额大于了泊链的限额，需要通知泊链修改限额,但不能高于余额
+								if(limit_money>balance){
+									if(balance!=bolinkLimit){
+										isSend=true;
+										money = balance;
+									}
+								}else {
+									isSend=true;
+								}
+							}
+						}else {//用户不限额了
+							if(bolinkLimit!=balance){
+								isSend=true;
+								money = balance;
+							}
+						}
+					}
+					if(isSend){
+						publicMethods.syncUserLimit(uin, money);
+					}
+				}
+			}*/
 		}else {
 			result = daService.update("insert into user_profile_tb (low_recharge,auto_cash," +
 					"create_time,limit_money,update_time,uin) values (?,?,?,?,?,?)", 
@@ -1271,7 +1327,7 @@ public class CarownerRequestAction extends Action{
 						logger.error(">>>>>>>>>>>>>baohe sendresult:"+sr+",orderid:"+orderId+",state:"+result+",total:"+total);
 					}
 					//发支付成功消息给收费员
-					logService.insertParkUserMessage(comId, state, (Long)orderMap.get("uid"),carNumber, orderId, total,duration, 0, btime, etime,0);
+					logService.insertParkUserMessage(comId, state, (Long)orderMap.get("uid"),carNumber, orderId, total,duration, 0, btime, etime, 0, null);
 					
 				}else 
 					result=re;
@@ -1389,7 +1445,7 @@ public class CarownerRequestAction extends Action{
 					}
 				}
 				logger.error("rewardmessage>>uid:"+uid+",uin:"+uin+",recount:"+recount+",carnumber:"+carNumber);
-				logService.insertParkUserMessage(comid,2,uid,carNumber,uin,money, ""+recount, 0,ntime,ntime+10,5);
+				logService.insertParkUserMessage(comid,2,uid,carNumber,uin,money, ""+recount, 0,ntime,ntime+10,5, null);
 				ret = "{\"result\":\"1\",\"errmsg\":\"打赏成功\"}";
 			}else if(result==-1){
 				ret = "{\"result\":\"-2\",\"errmsg\":\"余额不足\"}";
@@ -1975,14 +2031,29 @@ public class CarownerRequestAction extends Action{
 	private Map<String, Object> orderDetail(HttpServletRequest request,Long uin){
 		Map<String, Object> infoMap = new HashMap<String, Object>();
 		Long orderId=RequestUtil.getLong(request, "orderid", -1L);
-		Map orderMap = daService.getPojo("select o.create_time,o.end_time,o.id,o.comid,c.company_name,c.address,o.total,o.state,o.uid,o.c_type from order_tb o,com_info_tb c where o.comid=c.id and  o.id=?",
-				new Object[]{orderId});
+		boolean isBolinkOrder = false;
+		//处理泊链的订单详情
+		Map orderMap = daService.getPojo("select o.create_time,o.end_time,o.id,o.comid," +
+				"c.company_name,c.address,o.total,o.state,o.uid,o.c_type " +
+				"from order_tb o,com_info_tb c where o.comid=c.id and  o.id=? and uin=? ",
+				new Object[]{orderId,uin});
+		if(orderMap==null||orderMap.isEmpty()){//本平台没有此订单，查询泊链平台订单
+			String carNumber = publicMethods.getCarNumber(uin);
+			orderMap = daService.getPojo("select start_time create_time,end_time,id," +
+					"park_name company_name,union_name address,money total,state " +
+					"from bolink_order_tb where  id=?  ",
+					new Object[]{orderId});
+			if(orderMap!=null&&!orderMap.isEmpty()){
+				isBolinkOrder = true;
+				orderMap.put("c_type", 3);
+				orderMap.put("comid", -1);
+			}
+		}
 		if(orderMap!=null){
 			Long btime = (Long)orderMap.get("create_time");
 			Long end = (Long)orderMap.get("end_time");
 			//Long comId = (Long)orderMap.get("comid");
-			BigDecimal total =(BigDecimal)orderMap.get("total");// countPrice(btime, end, comId);
-			infoMap.put("total", StringUtils.formatDouble(total));
+			infoMap.put("total", StringUtils.formatDouble(orderMap.get("total")));
 			//infoMap.put("duration", "停车"+(end-btime)/(60*60)+"时"+((end-btime)/60)%60+"分");
 			infoMap.put("btime",btime);// TimeTools.getTime_yyyyMMdd_HHmm(btime*1000).substring(10));
 			infoMap.put("etime",end);// TimeTools.getTime_yyyyMMdd_HHmm(end*1000).substring(10));
@@ -1992,33 +2063,42 @@ public class CarownerRequestAction extends Action{
 			infoMap.put("orderid", orderMap.get("id"));
 			infoMap.put("state", orderMap.get("state"));
 			infoMap.put("parkid",  orderMap.get("comid"));
-			Long uid= (Long)orderMap.get("uid");
-			if(uid!=null){
-				Map userMap = daService.getMap("select mobile,nickname from user_info_Tb where id =? ",new Object[]{uid});
-				if(userMap!=null){
-					infoMap.put("payee","{\"id\":\""+uid+"\",\"name\":\""+userMap.get("nickname")+"\",\"mobile\":\""+userMap.get("mobile")+"\"}");
+			if(!isBolinkOrder){
+				Long uid= (Long)orderMap.get("uid");
+				if(uid!=null){
+					Map userMap = daService.getMap("select mobile,nickname from user_info_Tb where id =? ",new Object[]{uid});
+					if(userMap!=null){
+						infoMap.put("payee","{\"id\":\""+uid+"\",\"name\":\""+userMap.get("nickname")+"\",\"mobile\":\""+userMap.get("mobile")+"\"}");
+					}
 				}
-			}
-			Map bMap= daService.getMap("select id from order_ticket_tb where order_id=? and type=? and etime is null", new Object[]{orderMap.get("id"),0});
-			if(bMap!=null&&bMap.get("id")!=null){
-				infoMap.put("bonusid", bMap.get("id"));
-			}
-			infoMap.put("reward","0");
-			infoMap.put("comment","0");
-			Long count = daService.getLong("select count(id) from parkuser_reward_tb where uin=? and order_id=? ", new Object[]{uin,orderId});
-			if(count>0){
-				infoMap.put("reward","1");
-			}else{
-				count = daService.getLong("select count(*) from parkuser_reward_tb where uin=? and ctime>=? and uid=? ",
-								new Object[] { uin, TimeTools.getToDayBeginTime(), uid });
-				if(count > 0){
+				Map bMap= daService.getMap("select id from order_ticket_tb where order_id=? and type=? and etime is null", new Object[]{orderMap.get("id"),0});
+				if(bMap!=null&&bMap.get("id")!=null){
+					infoMap.put("bonusid", bMap.get("id"));
+				}
+				infoMap.put("reward","0");
+				infoMap.put("comment","0");
+				Long count = daService.getLong("select count(id) from parkuser_reward_tb where uin=? and order_id=? ", new Object[]{uin,orderId});
+				if(count>0){
 					infoMap.put("reward","1");
+				}else{
+					count = daService.getLong("select count(*) from parkuser_reward_tb where uin=? and ctime>=? and uid=? ",
+							new Object[] { uin, TimeTools.getToDayBeginTime(), uid });
+					if(count > 0){
+						infoMap.put("reward","1");
+					}
 				}
-			}
-			count = daService.getLong("select count(ID) from parkuser_comment_tb where uin=? and order_id=? ", new Object[]{uin,orderId});
-			if(count>0){
+				count = daService.getLong("select count(ID) from parkuser_comment_tb where uin=? and order_id=? ", new Object[]{uin,orderId});
+				if(count>0){
+					infoMap.put("comment","1");
+				}
+			}else{
+				infoMap.put("reward","1");
 				infoMap.put("comment","1");
+				//infoMap.put("bonusid",0);
+				infoMap.put("uid","10000");
+				infoMap.put("payee","{\"id\":\"10000\",\"name\":\"第三方收费员\",\"mobile\":\"\"}");
 			}
+			logger.error(infoMap);
 			//infoMap.put("begintime", TimeTools.getTime_yyyyMMdd_HHmm(btime*1000));
 			//infoMap.put("endtime", TimeTools.getTime_yyyyMMdd_HHmm(end*1000));
 		}else {
@@ -2079,6 +2159,7 @@ public class CarownerRequestAction extends Action{
 		Map orderMap =null;
 		String sql = null;
 		Object[] values =null;
+		boolean isBolinkOrder=false;
 		if(orderId!=-1){
 			orderMap = daService.getMap("select create_time,id,comid,state,total,pid,car_type " +
 				"from order_tb  where id=?", new Object[]{orderId});
@@ -2094,60 +2175,88 @@ public class CarownerRequestAction extends Action{
 				values = new Object[]{uin,1,1,ntime-15*60,comid};
 			}
 			orderMap= daService.getMap(sql+" order by end_time desc ",values);
-			
+			if(orderMap==null){
+				orderMap = daService.getMap("select * " +
+						" from bolink_order_tb where uin =? and state=?  order by  id desc ",new Object[]{uin,0});
+				if(orderMap!=null&&!orderMap.isEmpty())//是泊链订单
+					isBolinkOrder = true;
+			}
 		}
-		boolean isover = true;
-		if(orderMap==null||orderMap.isEmpty()){
-			sql = "select o.create_time,o.id,o.comid,o.state,o.pid,o.car_type " +
-					"from order_tb o  where o.uin=? and o.state=?  ";//order by o.end_time desc
-			values = new Object[]{uin,0};
-			if(comid!=-1){
-				sql +=" and o.comid= ?";
-				values = new Object[]{uin,0,comid};
-			}
-			 orderMap = daService.getMap(sql+ " order by o.end_time desc",values);
-			 isover=false;
-		}
-		if(orderMap!=null){
-			Integer pid = (Integer)orderMap.get("pid");
-			Long btime = (Long)orderMap.get("create_time");
-			
-			Long end = ntime;
-			if(orderMap.get("end_time")!=null)
-				end = (Long)orderMap.get("end_time");
-			Long comId = (Long)orderMap.get("comid");
-			
-			if(comId!=null&&comId>0){//查车场名称及地址
-				Map cMap = daService.getMap("select company_name,address from com_info_tb where id=? ", new Object[]{comId});
-				if(cMap!=null){
-					infoMap.put("parkname", cMap.get("company_name"));
-					infoMap.put("address", cMap.get("address"));
+		if(!isBolinkOrder){
+			boolean isover = true;
+			if(orderMap==null||orderMap.isEmpty()){
+				sql = "select o.create_time,o.id,o.comid,o.state,o.pid,o.car_type " +
+						"from order_tb o  where o.uin=? and o.state=?  ";//order by o.end_time desc
+				values = new Object[]{uin,0};
+				if(comid!=-1){
+					sql +=" and o.comid= ?";
+					values = new Object[]{uin,0,comid};
 				}
+				orderMap = daService.getMap(sql+ " order by o.end_time desc",values);
+				isover=false;
 			}
-			
-			Integer car_type = (Integer)orderMap.get("car_type");//0：通用，1：小车，2：大车
-			Double total =StringUtils.formatDouble(orderMap.get("total"));
-			Integer state = (Integer)orderMap.get("state");
-			if(isover&&state!=null&&state==1)//已结算，返回订单中的结算价格
-				infoMap.put("total",total);
-			else {//未结算，计算订单价格
-				if(pid>-1){
-					infoMap.put("total",publicMethods.getCustomPrice(btime, end, pid));
-				}else {
-					infoMap.put("total",publicMethods.getPrice(btime, end, comId, car_type));	
+			if(orderMap!=null){
+				Integer pid = (Integer)orderMap.get("pid");
+				Long btime = (Long)orderMap.get("create_time");
+				
+				Long end = ntime;
+				if(orderMap.get("end_time")!=null)
+					end = (Long)orderMap.get("end_time");
+				Long comId = (Long)orderMap.get("comid");
+				
+				if(comId!=null&&comId>0){//查车场名称及地址
+					Map cMap = daService.getMap("select company_name,address from com_info_tb where id=? ", new Object[]{comId});
+					if(cMap!=null){
+						infoMap.put("parkname", cMap.get("company_name"));
+						infoMap.put("address", cMap.get("address"));
+					}
 				}
-				//infoMap.put("total", publicMethods.getPrice(btime, end, comId));
-			}
-			infoMap.put("btime", btime);
-			infoMap.put("etime",end);
-			
-			infoMap.put("orderid", orderMap.get("id"));
-			infoMap.put("state",orderMap.get("state"));
-			infoMap.put("parkid", comId);
-			//infoMap.put("begintime", TimeTools.getTimeStr_yyyy_MM_dd(btime*1000));
-		}else {
+				
+				Integer car_type = (Integer)orderMap.get("car_type");//0：通用，1：小车，2：大车
+				Double total =StringUtils.formatDouble(orderMap.get("total"));
+				Integer state = (Integer)orderMap.get("state");
+				if(isover&&state!=null&&state==1)//已结算，返回订单中的结算价格
+					infoMap.put("total",total);
+				else {//未结算，计算订单价格
+					if(pid>-1){
+						infoMap.put("total",publicMethods.getCustomPrice(btime, end, pid));
+					}else {
+						infoMap.put("total",publicMethods.getPrice(btime, end, comId, car_type));	
+					}
+					//infoMap.put("total", publicMethods.getPrice(btime, end, comId));
+				}
+				infoMap.put("btime", btime);
+				infoMap.put("etime",end);
+				
+				infoMap.put("orderid", orderMap.get("id"));
+				infoMap.put("state",orderMap.get("state"));
+				infoMap.put("parkid", comId);
+				//infoMap.put("begintime", TimeTools.getTimeStr_yyyy_MM_dd(btime*1000));
+			}else {
 //			infoMap.put("info", "-1");
 //			infoMap.put("message", "没有订单");
+			}
+		}else {
+			//调用泊链查询价格
+			Long updateTime = (Long)orderMap.get("update_time");
+			double money =0.0;
+			if(updateTime!=null&&ntime-updateTime<60){
+				money = StringUtils.formatDouble(orderMap.get("money"));
+			}
+			if(money==0){//没有15分钟内的缓存价格，重新查询
+				Map<String,Object> oMap =  publicMethods.catBolinkOrder((Long)orderMap.get("id"), 
+						(String)orderMap.get("order_id"), (String)orderMap.get("plate_number"),null,0);
+				if(oMap!=null)
+					money =StringUtils.formatDouble(oMap.get("money"));
+			}
+			infoMap.put("parkname", orderMap.get("union_name")+"-"+orderMap.get("park_name"));
+			infoMap.put("address",orderMap.get("park_name"));
+			infoMap.put("btime", orderMap.get("start_time"));
+			infoMap.put("etime",ntime);
+			infoMap.put("total",money);
+			infoMap.put("orderid", orderMap.get("id"));
+			infoMap.put("state",orderMap.get("state"));
+			infoMap.put("parkid",  orderMap.get("id"));
 		}
 		System.err.println(">>>>>>>>>>>>>>>current order:>"+infoMap);
 		return infoMap;
@@ -2370,12 +2479,12 @@ public class CarownerRequestAction extends Action{
 				"where t.comid=c.id and  t.state=? and t.uin=? and t.pay_type>? order by t.end_time desc",// and create_time>?",
 				params, pageNum, pageSize);
 		params.clear();
+		//String car_number = publicMethods.getCarNumber(uin);
 		params.add(uin);
-		params.add(8);
-		//泊车订单
-		List<Map<String, Object>> carStopList = daService.getAll("select t.id,t.amount as total,t.btime as create_time,c.name as company_name from" +
-				" carstop_order_tb t left join car_stops_tb c on t.cid=c.id where t.uin=? and t.state=?" +
-				" order by t.etime desc",params,pageNum,pageSize);
+		params.add(1);
+		//泊链停车订单
+		List<Map<String, Object>> carStopList = daService.getAll("select id,money as total,start_time as create_time,park_name as company_name from" +
+				" bolink_order_tb where uin=? and state =?  ",params,pageNum,pageSize);
 		if(list!=null){
 			if(carStopList!=null)
 				list.addAll(carStopList);

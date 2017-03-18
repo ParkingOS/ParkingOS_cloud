@@ -19,7 +19,6 @@ public class DataBaseService {
 	@Autowired
 	private DataBaseDao databasedao;
 	
-
 	public List getAll(String sql,Object[] values ){
 		return databasedao.getAll(sql, values);
 	}
@@ -89,9 +88,10 @@ public class DataBaseService {
 		return getMap(sql, valObjects);
 	}
 	public int update(String sql,Object[] values){
-		return databasedao.update(sql, values);
+		int ret = databasedao.update(sql, values);
+		return ret;
 	}
-	
+
 	/**
 	 * 插入数据
 	 * @param sql
@@ -123,7 +123,7 @@ public class DataBaseService {
 		}
 		//System.err.println(sql+",params:"+StringUtils.objArry2String(_values));
 		//return 0;
-		return databasedao.update(sql, _values);
+		return update(sql, _values);
 	}
 	
 	public Long getkey(String seqname){
@@ -133,6 +133,7 @@ public class DataBaseService {
 	
 	public boolean bathUpdate(List params){
 		boolean r = true;
+		//过滤用户余额变化
 		for(int i=0;i<params.size();i++){
 			Map map = (Map)params.get(i);
 			String sql = map.get("sql")+"";
@@ -148,6 +149,7 @@ public class DataBaseService {
 	
 	public boolean bathUpdate2(List params){
 		boolean r = true;
+		//过滤用户余额变化
 		for(int i=0;i<params.size();i++){
 			Map map = (Map)params.get(i);
 			String sql = map.get("sql")+"";
@@ -234,5 +236,6 @@ public class DataBaseService {
 		}
 		return databasedao.getPOJO(sql, objects, type);
 	}
+	
 	
 }

@@ -13,3 +13,17 @@
   
   
 update com_info_tb set monthlypay=1 where id in(select distinct comid from product_package_tb)
+
+
+=====同步车主到泊链平台======================
+select u.id,u.balance,c.car_number,p.auto_cash,limit_money from user_info_tb u
+ left join car_info_tb c on c.uin = u.id 
+left join user_profile_tb p on p.uin = u.id
+  where auth_flag=4 and u.id in(select uin from car_info_tb ) 
+  and u.id in(select uin from user_profile_tb)
+  
+（）车主使用验证码登录后，判断是否同步到泊链过，没有同步，则同步，这样新注册的用户也可以同步过去了
+（）同步到泊链的车主，不需要验证
+（）每条订单都上都到泊链，进场和出场
+（）总后台解绑车主车牌，需要判断是否是已同步到泊链的车主，如果是，需要同步信息
+
