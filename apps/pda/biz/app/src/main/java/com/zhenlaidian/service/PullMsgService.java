@@ -69,14 +69,8 @@ public class PullMsgService extends Service {
     private final Timer timer = new Timer();
     private TimerTask task;
     private Notification mNotification;
-    private NotificationManager mManager;
     private int count = 0;// 用于计数；临时解决软件初装时重启应用的bug；
 
-    //    public LocationClient mLocationClient = null;
-//    public BDLocationListener myListener = new MyLocationListener();
-//    private MyLocationData data;// 地图上“我的位置”数据
-//    private Double Latitude = null; // 纬度
-//    private Double longitude = null;// 经度
     private static long updateLocationTime = 0;// 更新位置信息时间；
     private static MsgToMainListener mMsgToMainListener;
 
@@ -144,7 +138,7 @@ public class PullMsgService extends Service {
         LocationClientOption option = new LocationClientOption();
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);// 设置定位模式
         option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
-        option.setScanSpan(1000);// 设置发起定位请求的间隔时间为2000ms,过于频繁，改为5分钟
+        option.setScanSpan(1000*60*10);// 设置发起定位请求的间隔时间为2000ms,过于频繁，改为10分钟
         option.setIsNeedAddress(true);// 返回的定位结果包含地址信息
         option.setOpenGps(true);
         mLocationClient.setLocOption(option);
@@ -168,7 +162,6 @@ public class PullMsgService extends Service {
 
 
     public void updateLoaction() {
-//        Looper.prepare();
         if (updateLocationTime == 0 || System.currentTimeMillis() - updateLocationTime > 1000 * 60 * 10) {
             updateLocationTime = System.currentTimeMillis();
             if (hasGPSDevice(getApplicationContext()) && !isOPen(getApplicationContext())) {
@@ -177,83 +170,10 @@ public class PullMsgService extends Service {
                 msg.what = 5;// 提醒打开gps
                 sendMsgToMainListener(msg);
             }
-//            if (mLocationClient != null) {
-//                mLocationClient.start();
-//            }
-            initMap();
+            if (mLocationClient != null) {
+                mLocationClient.start();
+            }
         }
-
-//        MyLog.d(">>>>>", "开始定位>>latitude" + latitude + ">>longitude" + longitude);
-//        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
-//            Location location = locationManager
-//                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//            if (location != null) {
-//                latitude = location.getLatitude();
-//                longitude = location.getLongitude();
-//                MyLog.d(">>>>>", "GPS>>latitude" + latitude + ">>longitude" + longitude);
-//                Toast.makeText(getApplicationContext(), "GPS>>latitude" + latitude + ">>longitude" + longitude, Toast.LENGTH_SHORT).show();
-//            } else {
-//                Toast.makeText(getApplicationContext(), "GPS>>null", Toast.LENGTH_SHORT).show();
-//                LocationListener locationListener = new LocationListener() {
-//
-//                    // Provider的状态在可用、暂时不可用和无服务三个状态直接切换时触发此函数
-//                    @Override
-//                    public void onStatusChanged(String provider, int status,
-//                                                Bundle extras) {
-//
-//                    }
-//
-//                    // Provider被enable时触发此函数，比如GPS被打开
-//                    @Override
-//                    public void onProviderEnabled(String provider) {
-//
-//                    }
-//
-//                    // Provider被disable时触发此函数，比如GPS被关闭
-//                    @Override
-//                    public void onProviderDisabled(String provider) {
-//
-//                    }
-//
-//                    // 当坐标改变时触发此函数，如果Provider传进相同的坐标，它就不会被触发
-//                    @Override
-//                    public void onLocationChanged(Location location) {
-//                        if (location != null) {
-//                            MyLog.d(">>>>>",
-//                                    "Location changed : Lat: "
-//                                            + location.getLatitude() + " Lng: "
-//                                            + location.getLongitude());
-//                            latitude = location.getLatitude(); // 经度
-//                            longitude = location.getLongitude(); // 纬度
-//                        }
-//                    }
-//                };
-//
-//                locationManager.requestLocationUpdates(
-//                        LocationManager.NETWORK_PROVIDER, 1000, 0,
-//                        locationListener);
-//                Location location1 = locationManager
-//                        .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//
-//
-//                if (location1 != null) {
-//                    MyLog.d(">>>>>", "NETWORK>>latitude" + latitude + ">>longitude" + longitude);
-//                    latitude = location1.getLatitude(); // 经度
-//                    longitude = location1.getLongitude(); // 纬度
-//                    Toast.makeText(getApplicationContext(), "NETWORK>>latitude" + latitude + ">>longitude" + longitude, Toast.LENGTH_LONG).show();
-//                } else {
-//                    MyLog.d(">>>>>", "NETWORK>>null");
-//                    Toast.makeText(getApplicationContext(), "NETWORK>>null", Toast.LENGTH_LONG).show();
-//
-//                }
-//
-//            }
-//        }
-//        Looper.loop();
     }
 
 
@@ -286,9 +206,7 @@ public class PullMsgService extends Service {
 
     // 弹出Notification
     private void showNotification(String info) {
-        mManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, LeaveActivity.class), Intent.FLAG_ACTIVITY_NEW_TASK);
-
         Notification.Builder builder = new Notification.Builder(this)
                 .setAutoCancel(true)
                 .setContentTitle(getResources().getString(R.string.app_name))
@@ -712,15 +630,15 @@ public class PullMsgService extends Service {
 
             MyLog.d(TAG, "MyLocationListener定位回调--longitude = " + longitude + "--  Latitude = " + Latitude);
             if (Latitude != 0 && longitude != 0 && CheckUtils.LocationChecked(longitude + "")) {
-                if (mLocationClient != null && mLocationClient.isStarted()) {
-                    mLocationClient.stop();
-                }
+//                if (mLocationClient != null && mLocationClient.isStarted()) {
+//                    mLocationClient.stop();
+//                }
                 uploadLocationInfo(Latitude+"",longitude+"");
             } else {
                 if (Latitude != 0 && longitude != 0 && longitude != 4.9E-324 && longitude != 0) {
-                    if (mLocationClient != null && mLocationClient.isStarted()) {
-                        mLocationClient.stop();
-                    }
+//                    if (mLocationClient != null && mLocationClient.isStarted()) {
+//                        mLocationClient.stop();
+//                    }
                     uploadLocationInfo(Latitude+"",longitude+"");
                 }
             }
