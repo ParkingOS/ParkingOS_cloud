@@ -44,14 +44,12 @@ import com.wintone.plateid.PlateRecognitionParameter;
 import com.wintone.plateid.RecogService;
 import com.zhenlaidian.R;
 import com.zhenlaidian.photo.PosCheckNumberActivity;
-import com.zhenlaidian.util.CommontUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -165,13 +163,6 @@ public class MemoryCameraActivity extends Activity implements SurfaceHolder.Call
 
 //		View mDecorView = getWindow().getDecorView();
 //		hiddenVirtualButtons(mDecorView);
-		if(CommontUtils.Is910()){
-			try {
-				CommontUtils.ZddYear();
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		}
 
 		int uiRot = getWindowManager().getDefaultDisplay().getRotation();// 获取屏幕旋转的角度
 		System.out.println("旋转角度——————"+uiRot);
@@ -1115,13 +1106,6 @@ public class MemoryCameraActivity extends Activity implements SurfaceHolder.Call
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		if(CommontUtils.Is910()){
-			try {
-				CommontUtils.AddYear();
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		}
 
 		if (bitmap != null)
 		{
