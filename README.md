@@ -1,6 +1,10 @@
 # ParkingOS_cloud
 <h1>停车云平台v1.01</h1></br>
 <h1>2017-03-18</h1></br>
+<h1>ParkingOS_Cloud V1.01版更新</h1></br>
+1、新增ParkingOS与泊链平台的对接模块，配置厂商账号即可开通与泊链的连接</br>
+2、感谢 babyrjw 提交了手持机收费员轨迹跟踪模块</br>
+3、优化了部分业务逻辑与数据库代码，提高了对大数据量的支持</br>
 <h1>停车云平台</h1></br>
 提供了三部分源码：后台管理系统（parkingos_cloud_web）、接口程序（parkingos_cloud_api）、消息服务（parkingos_cloud_message），后续会提供车主app源码.</br>
 postgres包是数据安装文件和说明

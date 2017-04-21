@@ -71,100 +71,7 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
-    <!--&lt;!&ndash;西安的权限&ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
-    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
-    <!--&lt;!&ndash; 在SDCard中创建与删除文件权限 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />-->
-    <!--&lt;!&ndash; 往SDCard写入数据权限 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
-    <!--&lt;!&ndash; 关闭该包下的所有应用程序 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.RESTART_PACKAGES" />-->
-    <!--&lt;!&ndash; 访问internet权限 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.INTERNET" />-->
-    <!--&lt;!&ndash; 访问震动权限 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.VIBRATE" />-->
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
-    <!--<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />-->
-    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
-    <!--<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />-->
 
-    <!--&lt;!&ndash;-->
-    <!--guangda-->
-    <!--<uses-permission android:name="cybertech.pstore.permission.COMPONENT" />-->
-    <!--<uses-permission android:name="cybertech.permission.READ_PSTORE_USERINFO" />-->
-    <!--<uses-permission android:name="cybertech.permission.READ_PSTORE_LINKINFO" />-->
-
-
-    <!--&ndash;&gt;-->
-
-    <!--<uses-feature android:name="android.hardware.camera" />-->
-    <!--<uses-feature android:name="android.hardware.camera.autofocus" />-->
-
-    <!--<uses-permission android:name="android.permission.CAMERA" />-->
-    <!--<uses-permission android:name="android.permission.FLASHLIGHT" />-->
-    <!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
-    <!--<uses-permission android:name="android.permission.RECORD_AUDIO" />-->
-    <!--<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />-->
-    <!--&lt;!&ndash; 禁用Home键 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
-    <!--<uses-permission android:name="android.permission.DISABLE_KEYGUARD" />-->
-    <!--<uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />-->
-    <!--<uses-permission android:name="android.permission.DISABLE_STATUS_BAR" />-->
-
-    <!--&lt;!&ndash; 权限 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.INTERNET" />-->
-    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
-    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
-    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
-    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
-    <!--<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />-->
-    <!--<uses-permission android:name="android.permission.CAMERA" />-->
-
-    <!--<uses-feature android:name="android.hardware.camera" />-->
-    <!--<uses-feature android:name="android.hardware.camera.autofocus" />-->
-
-    <!--<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" >-->
-    <!--</uses-permission>-->
-    <!--&lt;!&ndash;-->
-    <!--屏蔽HOME键需要的权限-->
-    <!--<uses-permission android:name = "android.permission.DISABLE_KEYGUARD"/>-->
-
-
-    <!--&ndash;&gt;-->
-    <!--&lt;!&ndash; 关机权限 &ndash;&gt;-->
-
-
-    <!--&lt;!&ndash; 读取机器各种ID的权限 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
-    <!--&lt;!&ndash; 在SDCard中创建与删除文件权限 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />-->
-    <!--&lt;!&ndash; 往SDCard写入数据权限 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
-    <!--&lt;!&ndash; 关闭该包下的所有应用程序 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.RESTART_PACKAGES" />-->
-    <!--&lt;!&ndash; 访问internet权限 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.INTERNET" />-->
-    <!--<uses-permission android:name="cybertech.pstore.permission.COMPONENT" />-->
-    <!--<uses-permission android:name="cybertech.permission.READ_PSTORE_USERINFO" />-->
-    <!--<uses-permission android:name="cybertech.permission.READ_PSTORE_LINKINFO" />-->
-
-    <!--<uses-feature android:name="android.hardware.camera" />-->
-    <!--<uses-feature android:name="android.hardware.camera.autofocus" />-->
-
-    <!--<uses-permission android:name="android.permission.CAMERA" />-->
-    <!--<uses-permission android:name="android.permission.FLASHLIGHT" />-->
-    <!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
-    <!--<uses-permission android:name="android.permission.RECORD_AUDIO" />-->
-    <!--<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />-->
-    <!--<uses-permission android:name="android.permission.VIBRATE" />-->
-    <!--<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />-->
-    <!--<uses-permission android:name="android.permission.BLUETOOTH" />-->
-    <!--&lt;!&ndash; 禁用Home键添加android:launchMode="singleInstance"启动模式 &ndash;&gt;-->
-    <!--&lt;!&ndash; 开机自启权限 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
-    <!--&lt;!&ndash;西安的权限&ndash;&gt;-->
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -621,16 +528,17 @@
             </intent-filter>
         </receiver>
 
-        <!--<service-->
-        <!--android:name="com.baidu.location.f"-->
-        <!--android:enabled="true"-->
-        <!--android:process=":remote" />-->
-        <!-- <meta-data -->
-        <!-- android:name="com.baidu.lbsapi.API_KEY" -->
-        <!-- android:value="@string/baidukey" /> -->
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" />
+
         <!--<meta-data-->
-        <!--android:name="com.baidu.lbsapi.API_KEY"-->
-        <!--android:value="@string/baidukey0" />-->
+            <!--android:name="com.baidu.lbsapi.API_KEY"-->
+            <!--android:value="@string/baidukey" />-->
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="@string/baidukey0" />
 
         <activity
             android:name="com.umeng.fb.ConversationActivity"

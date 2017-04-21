@@ -243,11 +243,6 @@ public class PosCheckNumberActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 //点击重新扫牌;
-//                try {
-//                    CommontUtils.ZddYear();
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                }
                 Intent intent = new Intent(PosCheckNumberActivity.this, MemoryCameraActivity.class);
 //                Intent intent = new Intent(PosCheckNumberActivity.this, PosCaptureActivity.class);
                 intent.putExtra("camera", true);

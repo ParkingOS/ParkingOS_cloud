@@ -32,7 +32,6 @@ import com.zhenlaidian.R;
 import com.zhenlaidian.adapter.DrawerAdapter;
 import com.zhenlaidian.bean.DrawerItemInfo;
 import com.zhenlaidian.bean.MyAccountInfo;
-import com.zhenlaidian.bean.SysApplication;
 import com.zhenlaidian.engine.DrawerOnItemClick;
 import com.zhenlaidian.ui.person_account.MyWalletActivity;
 import com.zhenlaidian.ui.score.RewardScoreActivity;
@@ -73,7 +72,7 @@ public class MySelfActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_home_activity);
-        SysApplication.getInstance().addActivity(this);
+//        SysApplication.getInstance().addActivity(this);
         initView();
         initActionBar();
         lv_left_drawer.setAdapter(new DrawerAdapter(DrawerItemInfo.getInstance(), MySelfActivity.this));

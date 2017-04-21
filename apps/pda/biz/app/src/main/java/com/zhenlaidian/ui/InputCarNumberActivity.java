@@ -323,11 +323,6 @@ public class InputCarNumberActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 //切为扫描车牌
-//                try {
-//                    CommontUtils.ZddYear();
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                }
                 RecogService.recogModel = false;
                 Intent intent = new Intent(context, MemoryCameraActivity.class);
 //                Intent intent = new Intent(context, PosCaptureActivity.class);

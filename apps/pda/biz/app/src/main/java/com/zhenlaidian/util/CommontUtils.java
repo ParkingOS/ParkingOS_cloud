@@ -55,7 +55,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1283,37 +1282,5 @@ public class CommontUtils {
             }
         }
         return sb.toString();
-    }
-
-    /**
-     * 当前时间减一年
-     * @throws ParseException
-     */
-    public static void ZddYear() throws ParseException {
-        String currendate = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date(System.currentTimeMillis()));
-        String nowyear = currendate.substring(6,10);
-        int newyear = Integer.parseInt(nowyear);
-        String addyear = currendate.replace(nowyear,--newyear+"");
-        long addyearmil = (new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(addyear)).getTime();
-        new DeviceManager().setCurrentTime(addyearmil);
-//        SharedPreferences preferences = getSharedPreferences();
-//        int yearspan = preferences.getInt("yearspan",0);
-//        preferences.edit().putInt("yearspan",--yearspan).commit();
-    }
-
-    /**
-     * 当前时间加一年
-     * @throws ParseException
-     */
-    public static void AddYear() throws ParseException {
-        String currendate = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date(System.currentTimeMillis()));
-        String nowyear = currendate.substring(6,10);
-        int newyear = Integer.parseInt(nowyear);
-        String addyear = currendate.replace(nowyear,++newyear+"");
-        long addyearmil = (new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(addyear)).getTime();
-        new DeviceManager().setCurrentTime(addyearmil);
-//        SharedPreferences preferences = getSharedPreferences();
-//        int yearspan = preferences.getInt("yearspan",0);
-//        preferences.edit().putInt("yearspan",++yearspan).commit();
     }
 }
