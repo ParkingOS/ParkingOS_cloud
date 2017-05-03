@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\ShareSDK-QQ-2.6.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="e6c6b568ccacd915fbf96b9b73697fecb778d36e">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\ShareSDK-QQ-2.6.0_b36c81671f6df30d569d0b50b07c4fe32274cdf7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\src\main\lib\platform_sdk_v2.3.706.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="f45a2301bb535e6d8288fa1313560b5ac2da5b39">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\platform_sdk_v2.3.706_988f89c30677b7de5e68739aa52f7318744ab211.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\CountPrice.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="b479396728ff34e432a674f0c7a15fd9753fe3c5">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\CountPrice_a13a77f1c54abb11546f2f1078abb92e6dee5858.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\Sunflower.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="4bb0ed8cdcb9eedea6f8bf840da998dc0f4076b2">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\Sunflower_e6699e1ceb0aa2565ed3de8d3b9d5e43da201631.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\caobin\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.3.1\ecb6e1f8e4b0e84c4b886c2f14a1500caf309757\gson-2.3.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="ecb6e1f8e4b0e84c4b886c2f14a1500caf309757">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\gson-2.3.1_93d75405c87cba75bbaf0947caa3d7132aef312e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-23.0.1_040d3b71a5efd5b0dc0c4e0ab67ea960fa8cc661.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\MobTools.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="b2cba35ceab382729de67845f613556d38a32133">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\MobTools_c3934913cff050532021847fd2b5cca8e928b8ee.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\exploded-aar\biz\android-support-v7-appcompat\unspecified\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="a90524b4b573a90b2ccfde672cf94fa5b3cb3f56">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\biz-android-support-v7-appcompat-unspecified_9036baae7b02d6b8987c8ca40b1dd595cc18c30c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\umeng-fb-v4.3.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="cdaa710c971bbcc51de6568c003448c0ebe5b7ad">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\umeng-fb-v4.3.2_3c05f56ddcad2b6403f108284dda170b523d4813.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\ShareSDK-Wechat-Core-2.6.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="026345fd0ea8105f21cd9688849f1301232eecf9">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\ShareSDK-Wechat-Core-2.6.0_8473a8c93c0fd91aab562e5b32e754a480681b56.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\Msc.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="355ee52884a2192e9102c3374e425e9b2cc1cad7">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\Msc_e7d5b5aab6fbff8ca5d8e1e8e9026ed7b701b413.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\PrinterLib.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="e455601a9d0ba804278f5fed545832b1aacb45c0">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\PrinterLib_507817b23d66568540bbec16277d365e614618c4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\src\main\lib\plate_id_sdk.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="952fec34b7da126dc71086900e8c8bcf7db20022">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\plate_id_sdk_dc23408ed65ac618d50d5d8039c526666eaa866c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\ShareSDK-Wechat-2.6.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="af48a61a1270951dc870e1579a48a415ff10c1cc">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\ShareSDK-Wechat-2.6.0_179840d946cb4438747614f25571df00cf4c6ae2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\umeng-analytics-v5.2.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="dfe1fbfc1f76afed3ef2a847f471ef2d0adb34a2">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\umeng-analytics-v5.2.3_af4907c50840e2066f0ecb6a38b3f509ea4e42fc.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\exploded-aar\biz\android-support-v7-appcompat\unspecified\jars\libs\android-support-v7-appcompat.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="7fc0658c1ebf268a9ee0f1df40bc4937e34300f0">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\android-support-v7-appcompat_bd57da21812d053d26a6a0dc6f5d6da7127d73f3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\ShareSDK-Core-2.6.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="ce77708798f39a79b83785dd24dd551b4680e469">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\ShareSDK-Core-2.6.0_c84b9cb3c12d32fb9127f709a8496436d34bb277.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Users\caobin\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.1\support-annotations-23.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\support-annotations-23.0.1_48ce5787e026a218d1ff2f45a833e0061ebc4c61.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\src\main\lib\pki.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="8f7b57b98164084886e148d1d5175c74e5201868">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\pki_c222bd34e076b7bdcca0fc1b1d558202985102ec.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\SerialPort.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="d35646626f10d99dd92e54f070b77cd13bfbfa53">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\SerialPort_a07edc2da76afb3edbbf0f9902b545a36fa18cc2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\libs\internal_impl-23.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\internal_impl-23.0.1_93c4c24b4bb0c811e70d8b0fcad5d94faf83dfb3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\BaiduLBS_Android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="353245b63dc3edda95167f1ff6907a82638359cc">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\BaiduLBS_Android_35aa1f7d5b98ecf39e75bf491a70ca06f3ea3caf.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\universal-image-loader-1.9.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="9e025bc5b84968e7d6ac765e660a70b3e5a87432">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\universal-image-loader-1.9.2_0d835997a7ef5db7485bc6b8a2a463a8965c302d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\ShareSDK-Wechat-Moments-2.6.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="58cc538afcaea68397481e5447836e62797551cc">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\ShareSDK-Wechat-Moments-2.6.0_48e9ca2f85ea086334226e16c7867b83eb19e79e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\src\main\lib\ksoap2-android-assembly-2.4-jar-with-dependencies.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="9f03972a774a6305d5049c0e0c64806af0016c94">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\ksoap2-android-assembly-2.4-jar-with-dependencies_217e2f746144d1f556ca0143ba12430456c54e5a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\src\main\lib\bcprov-ext-jdk15-146.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="d7696fae5f2dd468e8e9b8b76605106b8a038615">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\bcprov-ext-jdk15-146_f4791991581cd5c5e46c38093aa07c6f5bee5914.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\android-query-full.0.26.8.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="5ab405d9f4eaf5ddd615967cd35650657b758d40">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\android-query-full.0.26.8_d34cf82f26f0a78299edb9df1ee269fb8cb0c0b2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\libs\qrforandroid.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="cf2c3bf4e7a4f2856d61676e378909ec761c402f">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\qrforandroid_ddbb94ae7de3c0cc961fda087837b8f0e27e3590.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\src\main\lib\rskapi.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="dabd99d6ca872ef7bd07f4a8ab1c5fea03789d17">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\rskapi_01c4cc7771cde94f464408f38376f68af2017498.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\src\main\lib\android_auth.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="01a85bf6e949ed9f9b0fb013fd64bc725a152ca5">
+        <dex dex="E:\xulu\GitHub\ParkingOS_cloud\apps\pda\biz\app\build\intermediates\pre-dexed\debug\android_auth_bc8c51d0743cf8674d12c5dbed14ec6f1bc93322.jar" />
+    </item>
+
+</items>
