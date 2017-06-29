@@ -351,7 +351,7 @@ public class MidPrepayAction extends Action {
 	 * @return uin
 	 */
 	private Long validToken(String token) {
-		Map tokenMap = daService.getMap("select * from user_session_tb where token=?", new Object[]{token});
+		Map tokenMap = pgOnlyReadService.getMap("select * from user_session_tb where token=?", new Object[]{token});
  		Long uin = null;
 		if(tokenMap!=null&&tokenMap.get("uin")!=null){
 			uin = (Long) tokenMap.get("uin");

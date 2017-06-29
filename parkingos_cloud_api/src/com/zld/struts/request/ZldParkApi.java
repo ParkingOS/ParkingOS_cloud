@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import sun.invoke.empty.Empty;
+//import sun.invoke.empty.Empty;
 
 import com.zld.AjaxUtil;
 import com.zld.impl.MemcacheUtils;

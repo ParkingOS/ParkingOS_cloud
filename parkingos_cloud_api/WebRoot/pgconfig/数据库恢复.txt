@@ -21,8 +21,11 @@
 6、创建数据库
 #/usr/local/pgsql/bin/createdb zldetc
 
-7、从备份中恢复数据
+7、从备份中恢复数据ps	
 #/usr/local/pgsql/bin/psql  zldetc -h localhost < /data/zldetc_2014-09-25-23.dump 
+postgres 9.6 恢复9.2之前的版本数据：
+cat /data/parkingos.dump | /usr/pgsql-9.6/bin/psql zldetc
+
 
 8、创建数据库基础本分：
 进入postgresql 用户：

@@ -7,17 +7,15 @@
 <meta content="yes" name="apple-mobile-web-app-capable">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta http-equiv="x-ua-compatible" content="IE=edge">
-<title>月卡</title>
-    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.3.2.min.css?v=1" />
+<title>月卡续费</title>
 	<link rel="stylesheet" type="text/css" href="css/list.css?v=7" />
 	<script src="js/jquery.js"></script>
-	<script src="js/wxpublic/jquery.mobile-1.3.2.min.js"></script>
 	<script src="js/wxpublic/iscroll.js"></script>
 	<script src="js/wxpublic/parkprodlist.js?v=3"></script>
 	<style type="text/css">
 #scroller .li1 {
 	padding: 0 10px;
-	height: 90px;
+	height: 100px;
 	line-height: 0px;
 	background-color: white;
 	font-size: 14px;
@@ -87,7 +85,7 @@
 .li2 {
 	border-bottom: 1px solid #ccc;
 	padding: 0 10px;
-	height: 25px;
+	height: 30px;
 	line-height: 0px;
 	background-color: white;
 	font-size: 14px;
@@ -98,7 +96,7 @@
 .li2:after {
 	display: block;
 	content: "";
-	height: 10px;
+	height: 0px;
 	margin-top: 17px;
 	background-color: #EBEBEB;
 	background-size: 9px 18px;
@@ -258,7 +256,13 @@
 .ticketlimit {
 	margin-left: 22px;
 	margin-top: 20px;
-	font-size: 11px;
+	font-size: 12px;
+}
+
+.ticketlimit2 {
+	margin-left: 22px;
+	margin-top: 15px;
+	font-size: 13px;
 }
 
 .limittime {
@@ -287,7 +291,7 @@
 }
 
 .useinfoused {
-	margin-top: 0px;
+	margin-top: 3px;
 	color: #25B5A8;
 	font-size: 12px;
 	margin-left: -15px;
@@ -341,19 +345,19 @@
 }
 
 .middle {
-	margin-top: 55%;
+	margin-top: 45%;
 	color: gray;
 	position: relative;
 	z-index: 10000;
 	text-align: center;
-	text-shadow: 0 0px 0 #fff;
-	font-size: 14px;
+	font-size: 17px;
 }
 
 .hide{
 	display:none;
 }
 </style>
+<link rel="stylesheet" href="css/weui.min.css">
 </head>
 <body>
 	<div id="wrapper" style="margin-top:-45px;">
@@ -362,7 +366,9 @@
 				<span class="pullDownIcon"></span>
 				<span class="pullDownLabel">下拉刷新...</span>
 			</div>
-
+			<div class="middle hide">
+			<div style="margin-bottom:13px"><i class="weui-icon-info weui-icon_msg"></i></div>
+			暂无月卡</div>
 			<ul id="thelist">
 			<!-- 	<li class="li1"><div class="moneyouter"><span class="money">3.12<span class="fuhao">元</span></span></div><a class="a1" href="#"><div class="ticketname">全天包月</div><div class="ticketinfo">可用时间：0:00 - 24:00</div><div class="ticketlimit"><span class="sel_fee normal">测试车场</span></div></a><div class="rewand">续费</div></li>
 				<li class="li2"><div class="line"></div><a class="a2" href="#"><div class="useinfoused">使用中</div><div class="limittime">有效期 2015-09-13至2016-03-03</div></a></li>
@@ -376,7 +382,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="bottom"><div class="buyticket" onclick="tobuy();">购买月卡</div>
+	<!-- <div class="bottom"><div class="buyticket" onclick="tobuy();">购买月卡</div> -->
 	</div>
 	<div id="footer"></div>
 	<input id="mobile" type="text" style="display:none;" value="${mobile}"/>

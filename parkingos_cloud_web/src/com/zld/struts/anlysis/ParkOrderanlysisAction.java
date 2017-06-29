@@ -2,6 +2,7 @@ package com.zld.struts.anlysis;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,20 +70,25 @@ public class ParkOrderanlysisAction extends Action {
 			comid = getComid(comid, cityid, groupid);
 		}
 		if(action.equals("")){
-//			String monday = StringUtils.getMondayOfThisWeek();
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			request.setAttribute("btime", df2.format(System.currentTimeMillis()));
 			request.setAttribute("etime",  df2.format(System.currentTimeMillis()));
 			request.setAttribute("comid", comid);
 			return mapping.findForward("list");
 		}else if(action.equals("query")){
+			/*原来统计分析中查询的收费员是uid，改为查询出场收费员out_uid的信息 by lqb 2017-05-27*/
+			/*
+			 * 
+			 */
+			
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			String nowtime= df2.format(System.currentTimeMillis());
 			String type = RequestUtil.processParams(request, "type");
-			String sql = "select count(*) scount,sum(total) total,uid from order_tb  ";
+			String sql = "select count(*) scount,sum(amount_receivable) amount_receivable, " +
+					"sum(total) total , sum(cash_pay) cash_pay, sum(electronic_pay+electronic_prepay) electronic_pay, " +
+					"sum(reduce_amount) reduce_pay, out_uid from order_tb  ";
+			String free_sql = "select count(*) scount,sum(amount_receivable-electronic_prepay-cash_prepay-reduce_amount) free_pay,out_uid from order_tb";
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
-			List list = null;//daService.getPage(sql, null, 1, 20);
-			List freeorder = null;
 			String btime = RequestUtil.processParams(request, "btime");
 			String etime = RequestUtil.processParams(request, "etime");
 			if(btime.equals(""))
@@ -121,7 +127,8 @@ public class ParkOrderanlysisAction extends Action {
 				sqlInfo =new SqlInfo(" end_time between ? and ? ",
 						new Object[]{b,e});
 			}
-			sql +=" where "+sqlInfo.getSql()+" and comid=?  and state= ? and uid> ? and ishd=? ";
+			sql +=" where "+sqlInfo.getSql()+" and comid=?  and state= ? and out_uid> ? and ishd=? ";
+			free_sql +=" where "+sqlInfo.getSql()+" and comid=?  and state= ? and out_uid> ? and ishd=? ";
 			List<Object> subParams =new ArrayList<Object>();
 			params= sqlInfo.getParams();
 			for(Object object :params){
@@ -131,76 +138,72 @@ public class ParkOrderanlysisAction extends Action {
 			params.add(1);
 			params.add(0);
 			params.add(0);
-			
-			list = pgOnlyReadService.getAllMap(sql +" group by uid order by scount desc ",params);
-			freeorder = pgOnlyReadService.getAllMap(sql +" and pay_type=8 group by uid order by scount desc ",params);//查询免费的
-			int count = list!=null?list.size():0;
-			int freeordercount = freeorder!=null?freeorder.size():0;
-			//setName(list);
-			String tc = "0_0_0_0";
-			String tc2 = "0_0_0_0";
-			if(list!=null)
-				 tc=setName(list,dstr);
-			if(freeorder!=null)
-				 tc2=setName(freeorder,dstr);
-			Double tmoney=0d;
-			Double ticketmoney=0d;
-			Double centermoney=0d;
-			Double tcbmoney=0d;
-			Integer monthordercount=0;
-			//处理收费方式
-			for(int i=0;i<list.size();i++){
-				Map map = (Map)list.get(i);
-				
-				
-				Long uid = (Long)map.get("uid");
-				
-				//统计停车券支付和中央预支付
-				String ticketAndCenter = commonMethods.getTicketAndCenterPay(uid,b,e,isHd,comid);
-				Double ticket = Double.parseDouble(ticketAndCenter.split("_")[0]);
-				ticketmoney+=ticket;
-				map.put("ticketpay",StringUtils.formatDouble(ticket));
-				Double center = Double.parseDouble(ticketAndCenter.split("_")[1]);
-				centermoney=+center;
-				map.put("centerprepay",StringUtils.formatDouble(center));
-				//统计现金支付
-				Double cash = Double.parseDouble(ticketAndCenter.split("_")[2]);
-				tmoney +=cash;
-				map.put("pmoney", StringUtils.formatDouble(cash));
-				Double free = 0.0;
-				for(int j=0;j<freeordercount;j++){
-					Map order = (Map)freeorder.get(j);
-					if(((Long)order.get("uid")).longValue()==uid.longValue()){
-						Double value = Double.valueOf(order.get("total")+"");
-						free+=value;
+			//总订单集合
+			List<Map<String, Object>> totalList = pgOnlyReadService.getAllMap(sql +" group by out_uid order by scount desc ",params);
+			//月卡订单集合
+			List<Map<String, Object>> monthList = pgOnlyReadService.getAllMap(sql +" and pay_type=3 group by out_uid order by scount desc ",params);
+			//免费订单集合
+			List<Map<String, Object>> freeList = pgOnlyReadService.getAllMap(free_sql +" and pay_type=8 group by out_uid order by scount desc ",params);
+			int totalCount = 0;//总订单数
+			int monthCount = 0;
+			double totalMoney = 0.0;//订单金额
+			double cashMoney = 0.0;//现金支付金额
+			double elecMoney = 0.0;//电子支付金额
+			double freeMoney = 0.0;//免费金额
+			double reduce_amount = 0.0;//减免支付
+			List<Map<String, Object>> backList = new ArrayList<Map<String, Object>>();
+			if(totalList != null && totalList.size() > 0){
+				for(Map<String, Object> totalOrder : totalList){
+					totalCount += Integer.parseInt(totalOrder.get("scount")+"");
+					totalMoney += Double.parseDouble(totalOrder.get("amount_receivable")+"");
+					//设定默认值
+					String sql_worker = "select nickname from user_info_tb where id = ?";
+					Object []val_worker = new Object[]{Long.parseLong(totalOrder.get("out_uid")+"")};
+					Map worker = daService.getMap(sql_worker ,val_worker);
+					if(worker!=null && worker.containsKey("nickname")){
+						//出场收费员Id
+						totalOrder.put("id",totalOrder.get("out_uid"));
+						//收费员名称
+						totalOrder.put("name",worker.get("nickname"));
 					}
-					
+					//时间段
+					totalOrder.put("sdate",dstr);
+					//月卡订单数
+					totalOrder.put("monthcount",0);
+					//遍历月卡集合
+					if(monthList != null && monthList.size() > 0){
+						for(Map<String, Object> monthOrder : monthList){
+							if(totalOrder.get("out_uid").equals(monthOrder.get("out_uid"))){
+								monthCount += Integer.parseInt(monthOrder.get("scount")+"");
+								totalOrder.put("monthcount", monthOrder.get("scount"));
+							}
+						}
+					}
+					cashMoney += Double.parseDouble((totalOrder.get("cash_pay")== null ? "0" : totalOrder.get("cash_pay")+""));
+					//电子支付
+					totalOrder.put("electronic_pay", StringUtils.formatDouble(Double.parseDouble((totalOrder.get("electronic_pay")== null ? "0" : totalOrder.get("electronic_pay")+""))));
+					elecMoney += Double.parseDouble((totalOrder.get("electronic_pay")== null ? "0" : totalOrder.get("electronic_pay")+""));
+					//免费支付
+					totalOrder.put("free_pay",0.0);
+					//遍历免费集合
+					if(freeList != null && freeList.size() > 0){
+						for(Map<String, Object> freeOrder : freeList){
+							if(totalOrder.get("out_uid").equals(freeOrder.get("out_uid"))){
+								freeMoney += Double.parseDouble((freeOrder.get("free_pay")== null ? "0" : freeOrder.get("free_pay")+""));
+								totalOrder.put("free_pay", StringUtils.formatDouble(Double.parseDouble((freeOrder.get("free_pay")== null ? "0" : freeOrder.get("free_pay")+""))));
+							}
+						}
+					}
+					reduce_amount += Double.parseDouble((totalOrder.get("reduce_pay")== null ? "0" : totalOrder.get("reduce_pay")+""));
+					backList.add(totalOrder);
 				}
-				//添加月卡订单数统计
-				int monthcount =0;
-				String msql = "select count(*) scount from order_tb  where  " +
-						"end_time between ? and ? and comid=? and state= ? and uid =? and c_type=? and ishd=? ";
-				Object v[] = new Object[]{b,e,comid,1,uid,5, 0};
-				
-				Map monthorder = daService.getMap(msql,v);
-				if(monthorder!=null&&monthorder.get("scount")!=null){
-					monthcount = Integer.valueOf(monthorder.get("scount")+"");
-					monthordercount+=monthcount;
-				}
-				map.put("monthcount", monthcount);
-				map.put("free", StringUtils.formatDouble(free));//统计免费金额
-//				map.put("pmobile", StringUtils.formatDouble(total-money-free-center-ticket));//停车宝支付金额
-				Double tcb = Double.valueOf(ticketAndCenter.split("_")[3]);
-				map.put("pmobile", tcb);//停车宝支付金额
-				tcbmoney+=tcb;
-				
-				Double total = cash + tcb + free + center + ticket;//总金额
-				map.put("total", total);
 			}
-			Double all = Double.valueOf(tc.split("_")[0]);//总的金额
-			Double free = Double.valueOf(tc2.split("_")[0]);//免费总金额
-			String money = "总订单数："+tc.split("_")[1]+",月卡订单数:"+monthordercount+",总结算金额:"+StringUtils.formatDouble(tmoney+tcbmoney+free)+"元,现金支付:"+StringUtils.formatDouble(tmoney)+"元,停车宝支付 :"+StringUtils.formatDouble(tcbmoney)+"元,免费金额:"+StringUtils.formatDouble(free)+"元";
-			String json = JsonUtil.anlysisMap2Json(list,1,count, fieldsstr,"uid",money);
+			
+			
+			String money = "总订单数："+totalCount+",月卡订单数:"+monthCount+",订单金额:"+StringUtils.formatDouble(totalMoney)+"元," +
+							"现金支付:"+StringUtils.formatDouble(cashMoney)+"元,电子支付 :"+StringUtils.formatDouble(elecMoney)+"元," +
+							"免费金额:"+StringUtils.formatDouble(freeMoney)+"元,减免支付:"+StringUtils.formatDouble(reduce_amount)+"元";
+			String json = JsonUtil.anlysisMap2Json(backList,1,backList.size(), fieldsstr,"id",money);
 			System.out.println(json);
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
@@ -248,18 +251,16 @@ public class ParkOrderanlysisAction extends Action {
 			params.add(etime);
 			params.add(etime);
 			params.add(uid);
-			
 			sql +=" order by a.end_time desc";
 			list = daService.getAllMap(sql,params);
 			
-			double totalmoney = 0.0;
-			double freemoney = 0.0;
-			double money = 0.0;
+			double amountmoney = 0.0;//总金额
+			double cash_money = 0.0;//现金支付金额
+			double elec_money = 0.0;//电子支付金额
+			double reduce_money = 0.0;//减免支付金额
+			double free_money = 0.0;//减免支付金额
 			int count =0;
 			int monthcount =0;
-			Double ticketmoney=0d;
-			Double centermoney=0d;
-			Double tcb = 0d;
 			for (int i = 0; i < list.size(); i++) {//循环组织每个班的统计
 				List<Object> p = new ArrayList(); 
 				Map work = (Map)list.get(i);
@@ -274,85 +275,71 @@ public class ParkOrderanlysisAction extends Action {
 				p.add(1);
 				p.add(uid);
 				p.add(0);
+				p.add(comid);
 				List list2 = new ArrayList();//总的订单
 				List list3 = new ArrayList();//免费
 				List list4 = new ArrayList();//现金
 
 					//总的订单数和总的金额
-				String sql2 = "select count(*) ordertotal,sum(total) total from order_tb where end_time between ? and ? " +
-						" and state= ? and uid = ? and ishd=? ";
+				String sql2 = "select count(*) ordertotal,sum(amount_receivable) amount_receivable, " +
+						"sum(total) total , sum(cash_pay) cash_pay, sum(electronic_pay+electronic_prepay) electronic_pay, " +
+						"sum(reduce_amount) reduce_pay from order_tb where end_time between ? and ? " +
+						" and state= ? and out_uid = ? and ishd=? and comid=?";
 				list2 = daService.getAllMap(sql2 ,p);
+				//月卡订单数
 				String sql5 = "select count(*) ordertotal from order_tb where end_time between ? and ? " +
-						" and state= ? and uid = ? and c_type =? and ishd=? ";
-				Object []v5 = new Object[]{start_time,end_time,1,uid,5, 0};
+						" and state= ? and out_uid = ? and pay_type =? and ishd=? and comid=?";
+				Object []v5 = new Object[]{start_time,end_time,1,uid,3,0,comid};
 				Map list5 = daService.getMap(sql5 ,v5);
 				work.put("monthcount", list5.get("ordertotal"));
 				monthcount+=Integer.parseInt(list5.get("ordertotal")+"");
 				count+=Integer.parseInt((((Map)list2.get(0)).get("ordertotal"))+"");
 				if(list2!=null&&list2.size()==1){
-					double total =0;
 					int ordertotal = 0;
-					double free = 0 ;
+					double totalMOney = 0 ;
 					try{
-						total = Double.parseDouble((((Map)list2.get(0)).get("total"))+"");
+						//amount_receivable = Double.parseDouble((((Map)list2.get(0)).get("amount_receivable"))+"");
 						ordertotal = Integer.parseInt((((Map)list2.get(0)).get("ordertotal"))+"");
+						totalMOney = Double.parseDouble((((Map)list2.get(0)).get("amount_receivable"))+"");
 						
 					}catch (Exception e) {
-						total=0.0;
+						totalMOney=0.0;
 					}
-					work.put("total",StringUtils.formatDouble(total));
+					//work.put("amount_receivable",StringUtils.formatDouble(amount_receivable));
 					work.put("ordertotal",ordertotal);
-					totalmoney+=total;
-					//免费的金额和订单数
-					String sql3 = "select count(*) ordertotal,sum(total) total from order_tb where end_time between ? and ? " +
-							" and state= ? and uid = ? and pay_type = 8 and ishd=? ";
-					list3 = daService.getAllMap(sql3,p);
-					if(list3!=null&&list3.size()==1){
-						try{
-							free = Double.parseDouble((((Map)list3.get(0)).get("total"))+"");
-						}catch (Exception e) {
-							free=0.0;
-						}
-						work.put("free",StringUtils.formatDouble(free));
-						freemoney+=free;
-					}
-					
-					List<Object> subparams = new ArrayList();
-					long b = Long.valueOf(work.get("start_time")+"");
-					subparams.add(b);
-					long e = work.get("end_time")!=null?Long.valueOf(work.get("end_time")+""):Long.MAX_VALUE;
-					subparams.add(e);
-					SqlInfo sqlInfo = new SqlInfo(" end_time between ? and ? ",
-							new Object[]{btime,etime});
-					//停车券支付和中央预支付的金额
-					String ticketAndCenter = commonMethods.getTicketAndCenterPay(uid,b,e,isHd,comid);
-					Double ticket = Double.parseDouble(ticketAndCenter.split("_")[0]);
-					ticketmoney+=ticket;
-					work.put("ticketpay",StringUtils.formatDouble(ticket));
-					
-					work.put("total",StringUtils.formatDouble(total + ticket));
-					
-					Double center = Double.parseDouble(ticketAndCenter.split("_")[1]);
-					centermoney=+center;
-					work.put("centerprepay",StringUtils.formatDouble(center));
-					Double cash = Double.parseDouble(ticketAndCenter.split("_")[2]);
-					work.put("money",StringUtils.formatDouble(cash));
-					money+=cash;//现金
-//					double pmoney = new BigDecimal(total+"").subtract(new BigDecimal(m+"")).subtract(new BigDecimal(free+"")).subtract(new BigDecimal(ticket+"")).subtract(new BigDecimal(center+"")).doubleValue();
-					tcb = Double.valueOf(ticketAndCenter.split("_")[3]);
-					work.put("pmoney", tcb);
+					work.put("total",StringUtils.formatDouble(totalMOney));
+					amountmoney+=totalMOney;
+					//现金支付
+					work.put("cash_pay",StringUtils.formatDouble(Double.parseDouble((((Map)list2.get(0)).get("cash_pay")== null ? "0" : ((Map)list2.get(0)).get("cash_pay")+""))));
+					cash_money += Double.parseDouble((((Map)list2.get(0)).get("cash_pay")== null ? "0" : ((Map)list2.get(0)).get("cash_pay")+""));
+					//电子支付
+					elec_money += Double.parseDouble((((Map)list2.get(0)).get("electronic_pay")== null ? "0" : ((Map)list2.get(0)).get("electronic_pay")+""));
+					work.put("electronic_pay", StringUtils.formatDouble(Double.parseDouble((((Map)list2.get(0)).get("electronic_pay")== null ? "0" : ((Map)list2.get(0)).get("electronic_pay")+""))));
+					//减免劵支付
+					reduce_money += Double.parseDouble((((Map)list2.get(0)).get("reduce_pay")== null ? "0" : ((Map)list2.get(0)).get("reduce_pay")+""));
+					work.put("reduce_pay", StringUtils.formatDouble(Double.parseDouble((((Map)list2.get(0)).get("reduce_pay")== null ? "0" : ((Map)list2.get(0)).get("reduce_pay")+""))));
 				}
+				//免费订单集合
+				String sql6 = "select sum(amount_receivable-electronic_prepay-cash_prepay-reduce_amount) free_pay from order_tb where end_time between ? and ? " +
+						" and state= ? and out_uid = ? and pay_type =? and ishd=? and comid=?";
+				Object []v6 = new Object[]{start_time,end_time,1,uid,8, 0, comid};
+				Map list6 = daService.getMap(sql6 ,v6);
+				//免费支付
+				free_money += Double.parseDouble((list6.get("free_pay")== null ? "0" : list6.get("free_pay")+""));
+				work.put("free_pay", StringUtils.formatDouble(Double.parseDouble(list6.get("free_pay")== null ? "0" : (list6.get("free_pay")+""))));
 			}
-			Double pmoney = 0d;
-			
-			String title = "总订单数："+count+"，月卡订单数："+monthcount+"，总结算金额："+StringUtils.formatDouble(totalmoney)+"元，其中现金支付："+StringUtils.formatDouble(money)+"元，停车宝支付 ："+StringUtils.formatDouble(tcb)+"元，中央预支付："+StringUtils.formatDouble(centermoney)+"元，减免券支付："+StringUtils.formatDouble(ticketmoney)+"元，免费金额："+StringUtils.formatDouble(freemoney)+"元";
+			String title = "总订单数："+count+"，月卡订单数："+monthcount+"，总结算金额："+StringUtils.formatDouble(amountmoney)+"元，其中现金支付："+StringUtils.formatDouble(cash_money)+"元，电子支付 ："+StringUtils.formatDouble(elec_money)+"元，" +
+							"免费金额："+StringUtils.formatDouble(free_money)+"元,减免支付："+StringUtils.formatDouble(reduce_money)+"元";
 			String ret = JsonUtil.anlysisMap2Json(list,1,list.size(), fieldsstr,"id",title);
 			logger.error(ret);
 			AjaxUtil.ajaxOutput(response, ret);
 			return null;			
-			
 		}else if(action.equals("orderdetail")){
-			String sql = "select * from order_tb  ";
+			String sql = "select *,(amount_receivable-electronic_prepay-cash_prepay-reduce_amount) free_pay from order_tb  ";
+			//统计总订单数，金额，电子和现金支付
+			String sql2 = "select count(*) ordertotal,sum(amount_receivable) amount_receivable, " +
+					"sum(total) total , sum(cash_pay) cash_pay, sum(electronic_pay) electronic_pay, " +
+					"sum(electronic_prepay) electronic_prepay,sum(reduce_amount) reduce_pay from order_tb";
 			Long uid = RequestUtil.getLong(request, "uid", -2L);
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
@@ -392,58 +379,70 @@ public class ParkOrderanlysisAction extends Action {
 						new Object[]{b,e});
 			}
 			
-			sql +=" where "+sqlInfo.getSql()+" and uid=?  and state= ? and comid=? and ishd=?  ";
+			sql +=" where "+sqlInfo.getSql()+" and out_uid=?  and state= ? and comid=? and ishd=?  ";
+			sql2 +=" where "+sqlInfo.getSql()+" and out_uid=?  and state= ? and comid=? and ishd=?  ";
 			params= sqlInfo.getParams();
 			params.add(uid);
 			params.add(1);
 			params.add(comid);
 			params.add(0);
 			
+			
+			double amountmoney = 0.0;//总金额
+			double cash_money = 0.0;//现金支付金额
+			double elec_money = 0.0;//电子支付金额
+			int count =0;
+			
 			if(uid!=-2){
-				String pay_type = RequestUtil.processParams(request, "pay_type");
-				if(pay_type!=null&&"8".equals(pay_type)){
-					list = daService.getAllMap(sql+" and pay_type=8 order by end_time desc",params);
-					request.setAttribute("countfree", list.size());
-				}else if(pay_type!=null&&"1".equals(pay_type)){//查询现金
-					List cashlist = daService.getAll("select orderid, amount from parkuser_cash_tb where is_delete=? and uin=? and type=? and create_time between ? and ? order by create_time desc",
-					new Object[]{0, uid,0,params.get(0),params.get(1)});
-					for (int j = 0; j < cashlist.size(); j++) {
-						long orderId = Long.parseLong(((Map)cashlist.get(j)).get("orderid")+"");
-						String msql = "select * from order_tb where id =? and ishd=? ";
-						Object []mv =  new Object[]{orderId, 0};
-						Map map = daService.getMap(msql,mv);
-						if(map!=null){
-							map.put("amount", StringUtils.formatDouble(((Map)cashlist.get(j)).get("amount")));
-							list.add(map);
-						}
+				List<Map<String, Object>> orders = daService.getAllMap(sql+"order by end_time desc",params);
+				for(Map<String, Object> order : orders){
+					Map<String, Object> work = new HashMap<String, Object>();
+					//编号 
+					work.put("id", order.get("id"));
+					//停车日期 
+					work.put("create_time", order.get("create_time"));
+					//结算日期 
+					work.put("end_time", order.get("end_time"));
+					//订单金额  	
+					work.put("total", order.get("amount_receivable"));
+					//现金支付  order.get("amount_receivable")
+					work.put("cashMoney", order.get("cash_pay"));
+					//电子支付  
+					work.put("elecMoney", Double.parseDouble((order.get("electronic_pay")== null ? "0" : order.get("electronic_pay")+""))
+								+ Double.parseDouble((order.get("electronic_prepay")== null ? "0" : order.get("electronic_prepay")+"")));
+					//月卡          
+					//work.put("monthCard", order.get(""));
+					//免费支付  
+					work.put("freeMoney",0.0);
+					if(order.get("pay_type")!=null && Integer.parseInt(order.get("pay_type")+"")==8){
+						work.put("freeMoney", StringUtils.formatDouble(Double.parseDouble(order.get("free_pay")== null ? "0" : (order.get("free_pay")+""))));
 					}
-				}else{
-					list = daService.getAllMap(sql+" order by end_time desc ",params);
+					//减免支付
+					work.put("reduceMoney", order.get("reduce_amount"));
+					//停车时长  
+					work.put("duration", order.get("duration"));
+					//支付方式  
+					work.put("pay_type", order.get("pay_type"));
+					//NFC卡号  
+					work.put("nfc_uuid", order.get(""));
+					//车牌号  
+					work.put("car_number", order.get("car_number"));
+					//查看车辆图片  
+					work.put("order_id_local", order.get("order_id_local"));
+					list.add(work);
 				}
-				for (int i = 0; i < list.size(); i++) {
-					Map orderMap = list.get(i);
-					Double total = Double.valueOf(orderMap.get("total")+"");
-					long orderId = Long.parseLong(orderMap.get("id")+"");
-					Map tmap = daService.getPojo("select umoney from ticket_tb where orderid = ?", new Object[]{orderId});
-					if(tmap!=null&&tmap.get("umoney")!=null){
-						Double umoney = Double.valueOf(tmap.get("umoney")+"");
-						total += umoney;
-						orderMap.put("umoney",Double.valueOf(tmap.get("umoney")+""));
-					}
-					orderMap.put("atotal", total);
-					Map cmap = daService.getPojo("select amount from parkuser_cash_tb where is_delete=? and orderid = ? and type = ?",
-							new Object[]{0, orderId, 1});
-					if(cmap!=null&&cmap.get("amount")!=null){
-						orderMap.put("center",Double.valueOf(cmap.get("amount")+""));
-					}
-					Map pmap = daService.getPojo("select amount from parkuser_cash_tb where is_delete=? and orderid = ? and type = ?",
-							new Object[]{0, orderId, 0});
-					if(pmap!=null&&pmap.get("amount")!=null){
-						orderMap.put("amount",Double.valueOf(pmap.get("amount")+""));
-					}
+				List<Map<String, Object>> orderList = daService.getAllMap(sql2,params);
+				if(orderList!=null && orderList.size()>0){
+					Map<String, Object> map = orderList.get(0);
+					amountmoney = Double.parseDouble((map.get("amount_receivable"))+"");
+					cash_money = Double.parseDouble((map.get("cash_pay"))+"");
+					elec_money = Double.parseDouble((map.get("electronic_pay"))+"");
+					count+=Integer.parseInt((map.get("ordertotal"))+"");
 				}
-				int count = list!=null?list.size():0;
-				String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"id");
+				String title = StringUtils.formatDouble(amountmoney)+"元，其中现金支付："+StringUtils.formatDouble(cash_money)+"元，" +
+							   "电子支付 ："+StringUtils.formatDouble(elec_money)+"元，共"+count+"条";
+				String json = JsonUtil.anlysisMap2Json(list,1,list.size(), fieldsstr,"id",title);
+				//String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"id");
 				AjaxUtil.ajaxOutput(response, json);
 				return null;
 			}else {
@@ -461,7 +460,7 @@ public class ParkOrderanlysisAction extends Action {
 		if(list!=null&&list.size()>0){
 			for(int i=0;i<list.size();i++){
 				Map map = (Map)list.get(i);
-				uins.add(map.get("uid"));
+				uins.add(map.get("out_uid"));
 				Double t = Double.valueOf(map.get("total")+"");
 				Long c = (Long)map.get("scount");
 				map.put("sdate", dstr);
@@ -486,7 +485,7 @@ public class ParkOrderanlysisAction extends Action {
 					Map map1 = (Map)list.get(i);
 					for(Map<String,Object> map: resultList){
 						Long uin = (Long)map.get("id");
-						if(map1.get("uid").equals(uin)){
+						if(map1.get("out_uid").equals(uin)){
 							map1.put("name", map.get("nickname"));
 							break;
 						}
@@ -529,6 +528,7 @@ public class ParkOrderanlysisAction extends Action {
 		request.setAttribute("btime", RequestUtil.processParams(request, "btime"));
 		request.setAttribute("etime", RequestUtil.processParams(request, "etime"));
 		request.setAttribute("otype", RequestUtil.processParams(request, "otype"));
+		System.out.println(RequestUtil.processParams(request, "otype"));
 		Integer paytype = RequestUtil.getInteger(request, "pay_type", 0);
 		request.setAttribute("pay_type",paytype);
 		if(paytype==8){

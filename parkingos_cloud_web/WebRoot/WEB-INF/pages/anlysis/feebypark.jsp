@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
-<title>车场收入分析</title>
+<title>车场今日收入分析</title>
 <link href="css/tq.css" rel="stylesheet" type="text/css">
 <link href="css/iconbuttons.css" rel="stylesheet" type="text/css">
 
@@ -19,7 +19,7 @@
 <script src="js/tq.validata.js?0817" type="text/javascript">//验证</script>
 <script src="js/My97DatePicker/WdatePicker.js" type="text/javascript">//日期</script>
 </head>
-<body>
+<body onload='addgroups()'>
 <iframe src="" id ="exportiframe" frameborder="0" style="width:0px;height:0px;"></iframe>
 
 <div id="parkduranlayobj" style="width:100%;height:100%;margin:0px;"></div>
@@ -32,10 +32,13 @@ var ownsubauth=authlist.split(",");
 for(var i=0;i<ownsubauth.length;i++){
 	subauth[ownsubauth[i]]=true;
 }
-var btime="${btime}";
-var etime="${etime}";
-//查看,添加,编辑,删除
-/*权限*/
+var cityid = '${cityid}';
+var groups = [];
+var ishiddlegroup = true;
+if(cityid!=''){
+	groups = eval(T.A.sendData("getdata.do?action=getgroups&cityid=${cityid}"));
+	ishiddlegroup = false;
+}
 var _mediaField =[
 	{kindname:"",kinditemts: [
           {fieldcnname:"编号",fieldname:"id",inputtype:"text",twidth:"80",issort:false }
@@ -64,22 +67,23 @@ var _mediaField =[
    		{fieldcnname:"应收停车费",fieldname:"allTotalFee",inputtype:"text",twidth:"80",issort:false,shide:true}
    	]}
   ];
+  var _exportField = [
+		{fieldcnname:"车场名称",fieldname:"company_name",inputtype:"text",twidth:"150",issort:false }
+		];
 var back = "";
 if("${from}" == "index"){
 	back = "<a href='cityindex.do?authid=${index_authid}' class='sel_fee' style='float:right;margin-right:20px;'>返回</a>";
 }
 var _parkduranlayT = new TQTable({
-	tabletitle:"车场收入分析"+back,
+	tabletitle:"车场今日收入分析"+back,
 	ischeck:false,
 	tablename:"parkduranlay_tables",
 	dataUrl:"feebypark.do",
 	iscookcol:false,
 	headrows:true,
-	//tableFields:[{kindname:"测试",kinditemts:[{fieldcnname:"车场",fieldname:"comid1",inputtype:"text", twidth:"150" }]}],
-	//dbuttons:false,
 	buttons:getAuthButtons(),
 	//searchitem:true,
-	param:"action=query&btime="+btime+"&etime="+etime,
+	param:"action=query",
 	tableObj:T("#parkduranlayobj"),
 	fit:[true,true,true],
 	tableitems:_mediaField,
@@ -108,15 +112,20 @@ function getAuthButtons(){
 						],
 						SubAction:
 						function(callback,formName){
-							btime = T("#coutom_btime").value;
-							etime = T("#coutom_etime").value;
+							var groupid = '';
+							if(!ishiddlegroup){
+								groupid = T("#groups").value;
+							}
 							_parkduranlayT.C({
 								cpage:1,
 								tabletitle:"高级搜索结果",
-								extparam:"&action=query&btime="+btime+"&etime="+etime+"&"+Serializ(formName)
+								extparam:"&action=query&groupid="+groupid+"&"+Serializ(formName)
 							})
-							T("#coutom_btime").value=btime;
-							T("#coutom_etime").value=etime;
+							if(!ishiddlegroup){
+								addgroups();
+								T("#groups").value = groupid;
+							}
+							
 						}
 					});	
 				}
@@ -133,22 +142,39 @@ function getAuthIsoperateButtons(){
 }
 
 function coutomsearch(){
-	var html = "&nbsp;&nbsp;&nbsp;&nbsp;时间：&nbsp;&nbsp;<input id='coutom_btime' class='Wdate' align='absmiddle' readonly value='"+btime+"' style='width:150px' onClick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',startDate:'%y-%M-%d 00:00:00',alwaysUseStartDate:false});\"/>"
-	+" - <input id='coutom_etime' class='Wdate' align='absmiddle' readonly value='"+etime+"' style='width:150px' onClick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',startDate:'%y-%M-%d 23:59:59',alwaysUseStartDate:false});\"/>"
-	+ "&nbsp;&nbsp;<input type='button' onclick='searchdata();' value=' 查 询 '/>&nbsp;&nbsp;";
+	var html = "";
+	if(!ishiddlegroup){
+		html += "&nbsp;&nbsp;&nbsp;&nbsp;所属集团：&nbsp;&nbsp;<select style='width:130px' id='groups'></select>";
+		html += "&nbsp;&nbsp;<input type='button' onclick='searchdata();' value=' 查 询 '/>";
+	}
 	return html;
 }
 
+function addgroups(){
+	if(ishiddlegroup)
+		return ;
+	var childs = groups;
+	var groupselect = document.getElementById("groups");
+	for(var i=0;i<childs.length;i++){
+		var child = childs[i];
+		var id = child.value_no;
+		var name = child.value_name;
+		groupselect.options.add(new Option(name, id));
+	}
+}
+
 function searchdata(){
-	btime = T("#coutom_btime").value;
-	etime = T("#coutom_etime").value;
+	var groupid = '';
+	if(!ishiddlegroup)
+		groupid = T("#groups").value;
 	_parkduranlayT.C({
 		cpage:1,
-		tabletitle:"搜索结果"+back,
-		extparam:"&action=query&btime="+btime+"&etime="+etime
-	})
-	T("#coutom_btime").value=btime;
-	T("#coutom_etime").value=etime;
+		tabletitle:"搜索结果",
+		extparam:"&action=query&groupid="+groupid
+	});
+	addgroups();
+	if(!ishiddlegroup)
+		T("#groups").value = groupid;
 }
 
 function setcname(value,pid,colname){

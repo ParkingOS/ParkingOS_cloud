@@ -22,6 +22,7 @@ import com.zld.service.PgOnlyReadService;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
+import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 
 public class CityParkManageAction extends Action {
@@ -203,9 +204,11 @@ public class CityParkManageAction extends Action {
 			return -1;
 		}
 		Long comId = daService.getLong("SELECT nextval('seq_com_info_tb'::REGCLASS) AS newid",null);
-		String comsql = "insert into com_info_tb(id,company_name,address,phone,create_time,mcompany,parking_total,update_time,groupid,state,areaid,etc,cityid,parking_type,city,mobile,longitude,latitude)" +
-				" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-		int r =  daService.update(comsql, new Object[]{comId, company, address, phone, time, mcompany, parking_total, time, groupid, state, areaid, etc, cityid, parking_type, city, mobile,longitude,latitude});
+		//添加自动生成车场16位秘钥的逻辑
+		String ukey = StringUtils.createRandomCharData(16);
+		String comsql = "insert into com_info_tb(id,company_name,address,phone,create_time,mcompany,parking_total,update_time,groupid,state,areaid,etc,cityid,parking_type,city,mobile,longitude,latitude,ukey)" +
+				" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		int r =  daService.update(comsql, new Object[]{comId, company, address, phone, time, mcompany, parking_total, time, groupid, state, areaid, etc, cityid, parking_type, city, mobile,longitude,latitude,ukey});
 		if(r == 1){
 			if(etc == 2){
 				Map<String, Object> map = new HashMap<String, Object>();

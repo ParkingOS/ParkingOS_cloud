@@ -62,9 +62,9 @@ public class ToAlipayQrTradePay {
 		AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
 		request.setBizContent(sb.toString());
 		//回调地址：测试
-		//request.setNotifyUrl("http://yxiudongyeahnet.vicp.cc:50803/zld/rechage");
+		request.setNotifyUrl("http://yxiudongyeahnet.vicp.cc/zld/rechage");
 		//回调地址：正式
-		request.setNotifyUrl("http://s.tingchebao.com/zld/rechage");
+		//request.setNotifyUrl("http://s.tingchebao.com/zld/rechage");
 //		request.putOtherTextParam("ws_service_url", "http://unitradeprod.t15032aqcn.alipay.net:8080");
 		String qr = "";
 		try {

@@ -83,6 +83,8 @@ public class ZhifubaoHandle extends HttpServlet{
 		 *  seller_id=2088411488582814, notify_id=38fed5f14dd9ebaf883df1f422ff53ejju, seller_email=caiwu@zhenlaidian.com}
 		 *  
 		 *  主要区别是购买人：buyer_email -- buyer_logon_id，金额 ：total_fee --- total_amount
+		 *  
+		 *   扫码预付 uin_8_bolinkorderid
 		 */
 		Map<String, String> parMap = new HashMap<String, String>();
 		String body = req.getParameter("body");//传递信息的参数
@@ -131,6 +133,7 @@ public class ZhifubaoHandle extends HttpServlet{
 		Integer bind_flag = 1;//0:未绑定账户，1：已绑定账户
 		Integer ticketNumber =0;//购买数量
 		Integer ticketPrice =0;//停车券面额
+		String tradeId = "";//req.getParameter("");
 		logger.error("body:"+body);
 		Long uin =null;
 		if(body.indexOf("_")!=-1){
@@ -183,6 +186,10 @@ public class ZhifubaoHandle extends HttpServlet{
 					orderId = req.getParameter("out_trade_no");
 					uin = Long.valueOf(mobile);
 					uid = Long.valueOf(info[2]);
+				}else if(type.equals("8")){
+					tradeId = req.getParameter("out_trade_no");
+					uin = Long.valueOf(mobile);
+					orderId =info[2];
 				}
 			}
 		}
@@ -204,7 +211,7 @@ public class ZhifubaoHandle extends HttpServlet{
 		
 		boolean isalipay = false;
 		logger.error("zhifubao callback:"+parMap);
-		if(type.equals("7"))
+		if(type.equals("7")||type.equals("8"))
 			isalipay=AlipayUtil.getQrSignVeryfy(parMap,sign);
 		else {
 			isalipay=AlipayUtil.getSignVeryfy(parMap,sign);
@@ -296,7 +303,7 @@ public class ZhifubaoHandle extends HttpServlet{
 				}
 				if(uin!=null&&uin>0){//客户存在　
 					int result =0;
-					if(!isbind){//充值到临时账户
+					if(type.equals("8")||!isbind){//支付宝预付或不是注册用户;充值到临时账户
 						result=result=daService.update("update wxp_user_tb set balance =balance+? where uin=?  ", 
 								new Object[]{Double.valueOf(total),uin});
 					}else {
@@ -375,6 +382,7 @@ public class ZhifubaoHandle extends HttpServlet{
 								logService.insertUserMesg(1, uin, "恭喜您获得充值大礼包", "红包提醒");
 							}*/
 							// 给用户（车主）发消息
+							publicMethods.syncUserToBolink(uin);
 							logService.insertMessage(-1L, 1, uin, "", bid,Double.valueOf(total), total + "元充值成功", 0, 0L,0L, 2);
 							//publicMethods.sendMessageToThird(uin, Integer.valueOf(total), null, null, null, 1);
 						}else if(type.equals("1")){//充值并购买包月产品
@@ -549,6 +557,9 @@ public class ZhifubaoHandle extends HttpServlet{
 								//更新车主账户到订单
 								daService.update("update order_tb set uin=? where id = ? ", new Object[]{uin,Long.valueOf(orderId)});
 							}
+						}else if(type.equals("8")){
+							logger.error("prepay bolink order ,update prepay :"+daService.update("update bolink_order_tb set prepay=?,prepay_time=? where id =? ", new Object[]{money,ntime,Long.valueOf(orderId)}));
+							publicMethods.prepayToBolink(uin,money,Long.valueOf(orderId));
 						}
 					}else {
 						logService.insertMessage(-1L, 0, uin,"", 0L,Double.valueOf(total),"服务器写入失败", 0,0L,0L,2);
@@ -557,7 +568,6 @@ public class ZhifubaoHandle extends HttpServlet{
 					logService.insertMessage(-1L, 0, uin,"", 0L,Double.valueOf(total),"充值错误，客户不存在，手机："+mobile, 0,0L,0L,2);
 					logger.error("充值错误，客户不存在，手机："+mobile);
 				}
-					
 			}else {
 				logger.error("状态WAIT_PAY，不操作返回... trade_status:"+state);
 			}

@@ -14,10 +14,11 @@
 			window.location.href = "http://s.tingchebao.com/zld/error.html";
 		}
 	</script>
-    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.3.2.min.css?v=1" />
 	<link rel="stylesheet" type="text/css" href="css/list.css?v=5" />
+	<link rel="stylesheet" href="css/weui.min.css">
+	<link href="https://cdn.bootcss.com/jquery-weui/1.0.0-rc.1/css/jquery-weui.min.css" rel="stylesheet">
 	<script src="js/jquery.js"></script>
-	<script src="js/wxpublic/jquery.mobile-1.3.2.min.js"></script>
+	<script src="js/wxpublic/jquery-weui.min.js"></script>
 	<script src="js/wxpublic/iscroll.js"></script>
 	<script src="js/wxpublic/list.js?v=3"></script>
 <style type="text/css">
@@ -46,6 +47,19 @@ a{
     font-size:20px;
     text-align:center;
 }
+.middle1 {
+	margin-top: 45%;
+	color: gray;
+	position: relative;
+	z-index: 10000;
+	text-align: center;
+	text-shadow: 0 0px 0 #fff;
+	font-size: 17px;
+}
+
+.hide1{
+	display:none;
+}
 </style>
 </head>
 <body>
@@ -55,7 +69,9 @@ a{
 				<span class="pullDownIcon"></span>
 				<span class="pullDownLabel">下拉刷新...</span>
 			</div>
-
+			<div class="middle1 hide1">
+			<div style="margin-bottom:13px"><i class="weui-icon-info weui-icon_msg"></i></div>
+			暂无账户记录</div>
 			<ul id="thelist">
 			</ul>
 			<div id="pullUp" class="idle">
@@ -66,6 +82,7 @@ a{
 	</div>
 	<div id="footer"></div>
 	<input id="mobile" type="text" style="display:none;" value="${mobile}"/>
+	<input id="openid" type="text" style="display:none;" value="${openid}"/>
 	<input id="orderid" type="text" style="display:none;" value="${orderid}"/>
 </body>
 </html>

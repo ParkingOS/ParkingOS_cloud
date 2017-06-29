@@ -40,6 +40,8 @@ var etime="${etime}";
 var parks =eval(T.A.sendData("getdata.do?action=getparksbygroup&id=${groupid}"));
 var users=eval(T.A.sendData("getdata.do?action=getcollectbygroupid&groupid=${groupid}"));
 var states = [{"value_no":-1,"value_name":"全部"},{"value_no":0,"value_name":"签入"},{"value_no":1,"value_name":"签退"}];
+var logon_state = [{"value_no":-1,"value_name":"全部"},{"value_no":0,"value_name":"正常"},{"value_no":1,"value_name":"迟到"}];
+var logoff_state = [{"value_no":-1,"value_name":"全部"},{"value_no":0,"value_name":"正常"},{"value_no":1,"value_name":"早退"}];
 var _mediaField = [
 		{fieldcnname:"编号",fieldname:"id",inputtype:"number",twidth:"100" ,issort:false,fhide:true},
 		{fieldcnname:"收费员",fieldname:"nickname",inputtype:"select",noList:users, twidth:"100" ,issort:false},
@@ -48,7 +50,21 @@ var _mediaField = [
 		{fieldcnname:"泊位段名称",fieldname:"berthsec_name",inputtype:"text", twidth:"100",issort:false,shide:true},
 		{fieldcnname:"状态",fieldname:"state",inputtype:"select",noList:states, twidth:"50" ,issort:false},
 		{fieldcnname:"签入日期",fieldname:"start_time",inputtype:"date", twidth:"200",issort:false},
+		{fieldcnname:"签入状态",fieldname:"logon_state",inputtype:"select",noList:logon_state, twidth:"80" ,issort:false,
+			process:function(value,trId,colId){
+				if(value==1)
+					return "<font color='red'>迟到</font>";
+				else 
+					return "正常";
+			}},
 		{fieldcnname:"签出日期",fieldname:"end_time",inputtype:"date", twidth:"200",issort:false},
+		{fieldcnname:"签出状态",fieldname:"logoff_state",inputtype:"select",noList:logoff_state, twidth:"80" ,issort:false,
+			process:function(value,trId,colId){
+				if(value==1)
+					return "<font color='red'>早退</font>";
+				else 
+					return "正常";
+			}},
 		{fieldcnname:"设备编号",fieldname:"device_code",inputtype:"text", twidth:"100",issort:false}
 		];
 var _exportField = [

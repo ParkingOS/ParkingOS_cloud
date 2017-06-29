@@ -36,46 +36,30 @@ var uid=${uid};
 var count=${count};
 var amount;
 var sum;
-//0:帐户支付,1:现金支付,2:手机支付,3:月卡,4中央预支付现金,5中央预支付银联卡,5中央预支付商家卡
-var payType=[{'value_no':0,value_name:'帐户支付'},{'value_no':1,value_name:'现金'},{'value_no':2,value_name:'手机支付'},{'value_no':3,value_name:'月卡'},{'value_no':4,value_name:'中央预支付现金'},{'value_no':5,value_name:'中央预支付银联卡'},{'value_no':6,value_name:'中央预支付商家卡'},{'value_no':8,value_name:'免费'},{'value_no':9,value_name:'刷卡'}];
+//0:帐户支付,1:现金支付,2:电子支付,3:月卡,4中央预支付现金,5中央预支付银联卡,5中央预支付商家卡
+//var payType=[{'value_no':0,value_name:'帐户支付'},{'value_no':1,value_name:'现金'},{'value_no':2,value_name:'电子支付'},{'value_no':3,value_name:'月卡'},{'value_no':4,value_name:'中央预支付现金'},{'value_no':5,value_name:'中央预支付银联卡'},{'value_no':6,value_name:'中央预支付商家卡'},{'value_no':8,value_name:'免费'},{'value_no':9,value_name:'刷卡'}];
+//1:现金支付,2:电子支付,3:月卡,8其他支付
+var payType=[{'value_no':1,value_name:'现金'},{'value_no':2,value_name:'电子支付'},{'value_no':3,value_name:'月卡'},{'value_no':8,value_name:'免费'}];
 var tip = "订单详情";
 var _mediaField = [
 		{fieldcnname:"编号",fieldname:"id",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",hide:true},
 		{fieldcnname:"停车日期",fieldname:"create_time",inputtype:"text", twidth:"200" ,issort:false},
 		{fieldcnname:"结算日期",fieldname:"end_time",inputtype:"text", twidth:"200" ,issort:false},
-		{fieldcnname:"结算金额",fieldname:"atotal",inputtype:"text", twidth:"100",issort:false,
+		{fieldcnname:"订单金额",fieldname:"total",inputtype:"text", twidth:"100",issort:false,
 		process:function(value,cid,id){
 			sum = value
 			return value;
 		}},
-		{fieldcnname:"现金支付",fieldname:"amount",inputtype:"text", twidth:"100" ,issort:false,
-			process:function(value,cid,id){
-				if(value>0){
-					amount = value;
-					return value;
-				}else{
-					amount = 0.00;
-					return 0.00;
-				}
-				
-				
-			}},
-		{fieldcnname:"中央预支付",fieldname:"center",inputtype:"text", twidth:"100" ,issort:false},
-			/*process:function(value,cid,id){
-				if(amount>0){
-					return sum-amount;
-				}else{
-					return 0.00;
-				}
-				
-			}},*/
-		{fieldcnname:"减免券支付",fieldname:"umoney",inputtype:"text", twidth:"100" ,issort:false},
+		{fieldcnname:"现金支付",fieldname:"cashMoney",inputtype:"text", twidth:"100" ,issort:false},
+		{fieldcnname:"电子支付",fieldname:"elecMoney",inputtype:"text", twidth:"100" ,issort:false},
+		{fieldcnname:"免费支付",fieldname:"freeMoney",inputtype:"text", twidth:"100" ,issort:false},
+		{fieldcnname:"减免券支付",fieldname:"reduceMoney",inputtype:"text", twidth:"100" ,issort:false},
 		{fieldcnname:"停车时长",fieldname:"duration",inputtype:"text", twidth:"200" ,issort:false},
 		{fieldcnname:"支付方式",fieldname:"pay_type",inputtype:"select", noList:payType,twidth:"100",issort:false},
 		
-		{fieldcnname:"NFC卡号",fieldname:"nfc_uuid",inputtype:"text", twidth:"200",issort:false},
+		//{fieldcnname:"NFC卡号",fieldname:"nfc_uuid",inputtype:"text", twidth:"200",issort:false},
 		{fieldcnname:"车牌号",fieldname:"car_number",fieldvalue:'',inputtype:"text", twidth:"150" ,height:"",issort:false},
-		{fieldcnname:"查看车辆图片",fieldname:"id",inputtype:"text", twidth:"100",issort:false,
+		{fieldcnname:"查看车辆图片",fieldname:"order_id_local",inputtype:"text", twidth:"100",issort:false,
 			process:function(value,cid,id){
 				return "<a href=# onclick=\"viewdetail('hn','"+value+"','"+cid+"')\" style='color:blue'>查看车辆图片</a>";
 			}}
@@ -106,15 +90,16 @@ function coutomsearch(){
 	 tip="上周订单";
 	else if(otype=='tomonth')
 	 tip="本月订单";
-	if(pay_type==7){
+	var html=   tip;
+	/*if(pay_type==7){
 		var html=   tip+" ，合计免费：<font color='red'>"+total+"</font> 元 ";//"&nbsp;&nbsp;合计免费：900.00元";
 	}else{
-		var html=   tip+" ，合计：<font color='red'>"+total+"</font> 元，其中现金支付 ：<font color='red'>"+pmoney+"</font>元，手机支付 ：<font color='red'>"+pmobile+"</font>元，共<font color='red'> "+count+" </font>条 ";//"&nbsp;&nbsp;总计：900.00元";
-	}
+		var html=   tip+" ，合计：<font color='red'>"+total+"</font> 元，其中现金支付 ：<font color='red'>"+pmoney+"</font>元，电子支付 ：<font color='red'>"+pmobile+"</font>元，共<font color='red'> "+count+" </font>条 ";//"&nbsp;&nbsp;总计：900.00元";
+	}*/
 	return html;
 }
-
-function viewdetail(type,value,id){
+//查看统计分析中的订单图片，修改为订单展示图片的方式
+/*function viewdetail(type,value,id){
 	var car_number =_nfcdetailT.GD(id,"car_number");
 	var tip = "车辆图片";
 	Twin({
@@ -125,8 +110,22 @@ function viewdetail(type,value,id){
 		sysfunI:id,
 		Content:"<iframe name='carpics_detail_'"+id+" id='carpics_detail_'"+id+" src='order.do?action=carpics&orderid="+id+"' width='100%' height='"+(T.gwh()-100)+"' frameborder='0' style='overflow:auto;' ></iframe>"
 	})
+}*/
+function viewdetail(type,value,id){
+	var car_number =_nfcdetailT.GD(id,"car_number");
+	var orderIdLocal =_nfcdetailT.GD(id,"order_id_local");
+	var tip = "车辆图片";
+	Twin({
+		Id:"carpics_detail_"+id,
+		Title:tip+"  --> 车牌："+car_number,
+		Width:T.gww()-100,
+		Height:T.gwh()-50,
+		sysfunI:id,
+		/*修改图片注释原来调用逻辑*/
+		/* Content:"<iframe name='carpics_detail_'"+id+" id='carpics_detail_'"+id+" src='order.do?action=carpics&orderid="+id+"&comid="+comid+"&r="+Math.random()+"' width='100%' height='"+(T.gwh()-100)+"' frameborder='0' style='overflow:auto;' ></iframe>" */
+		Content:"<iframe name='carpics_detail_'"+id+" id='carpics_detail_'"+id+" src='order.do?action=carpicsnew&orderid="+orderIdLocal+"&comid="+comid+"&r="+Math.random()+"' width='100%' height='"+(T.gwh()-100)+"' frameborder='0' style='overflow:auto;' ></iframe>"
+	})
 }
-
 _nfcdetailT.C();
 </script>
 

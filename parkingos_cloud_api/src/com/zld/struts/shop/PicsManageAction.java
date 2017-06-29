@@ -31,12 +31,15 @@ import com.mongodb.DBObject;
 import com.zld.AjaxUtil;
 import com.zld.impl.MongoClientFactory;
 import com.zld.service.DataBaseService;
+import com.zld.service.PgOnlyReadService;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.StringUtils;
 
 public class PicsManageAction extends Action {
 	@Autowired
 	private DataBaseService daService;
+	@Autowired
+	private PgOnlyReadService pgOnlyReadService;
 	
 	private Logger logger = Logger.getLogger(PicsManageAction.class);
 
@@ -77,7 +80,7 @@ public class PicsManageAction extends Action {
 	 * @return uin
 	 */
 	private Long validToken(String token) {
-		Map tokenMap = daService.getMap("select * from user_session_tb where token=?", new Object[]{token});
+		Map tokenMap = pgOnlyReadService.getMap("select * from user_session_tb where token=?", new Object[]{token});
  		Long uin = null;
 		if(tokenMap!=null&&tokenMap.get("uin")!=null){
 			uin = (Long) tokenMap.get("uin");

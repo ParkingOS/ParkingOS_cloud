@@ -1,6 +1,7 @@
 package com.zld.utils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,6 +13,9 @@ public class ZldMap {
 	
 	//车主缓存
 	public static Map<Long, Map<String, Object>> userMaps = null;
+	//ip攻击缓存
+	public static Map<String,List<Long>> ipMap = new HashMap<String, List<Long>>();
+
 	//时间，每天更新一次
 	public static Long time = TimeTools.getToDayBeginTime();
 	
@@ -23,6 +27,13 @@ public class ZldMap {
 		return map;
 	}
 	
+	public static Map<String, List<Long>> getIpMap() {
+		return ipMap;
+	}
+
+	public static void putIpMap(String ip,List<Long> times) {
+		ipMap.put(ip,times);
+	}
 	public static Map<String, Object> getAppendMap(Map<String,Object> map,String[] names,Object[] values){
 		if(map==null)
 			map = new HashMap<String, Object>();

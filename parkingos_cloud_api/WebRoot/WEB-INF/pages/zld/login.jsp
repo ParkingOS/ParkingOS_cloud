@@ -307,7 +307,8 @@ if (top.location != sour) {
 };
 //alert(sour);
 if(sour.indexOf('zld')!=-1)
-	location = "http://121.40.130.8/tcbcloud";
+// 	location = "http://121.40.130.8/tcbcloud";
+	location = "http://localhost:8080/tcbcloud";
 function writeCookie(key, value, duration, domain, path) {
     value = encodeURIComponent(value);
     if (domain) {

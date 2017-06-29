@@ -114,6 +114,12 @@
     <servlet-name>wxphandle</servlet-name>
     <servlet-class>com.zld.struts.request.WeixinPublicHandle</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>TcpTaskServlet</servlet-name>
+    <servlet-class>com.zld.schedule.TcpTaskServlet</servlet-class>
+    <load-on-startup>10</load-on-startup>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>callmessage</servlet-name>
     <url-pattern>/callmessage</url-pattern>
@@ -146,6 +152,6 @@
     <session-timeout>30</session-timeout>
   </session-config>
   <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>/WEB-INF/pages/zld/login.jsp</welcome-file>
   </welcome-file-list>
 </web-app>

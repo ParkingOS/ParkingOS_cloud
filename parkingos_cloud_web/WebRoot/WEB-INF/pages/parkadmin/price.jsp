@@ -77,7 +77,8 @@ var _mediaField = [
 		{fieldcnname:"超免费时长计费方式",fieldname:"fpay_type",fieldvalue:'',defaultValue:'收费||0',inputtype:"select", noList:[{"value_no":-1,"value_name":"全部"},{"value_no":0,"value_name":"收费"},{"value_no":1,"value_name":"免费"}] , twidth:"80" ,height:"",issort:false},
 		{fieldcnname:"是否补全日间时长",fieldname:"is_fulldaytime",fieldvalue:'',defaultValue:'补全||0',inputtype:"select", noList:[{"value_no":-1,"value_name":"全部"},{"value_no":0,"value_name":"补全"},{"value_no":1,"value_name":"不补全"}] , twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"创建时间",fieldname:"create_time",fieldvalue:'',inputtype:"date", twidth:"140" ,height:"",edit:false},
-		{fieldcnname:"区分大小车",fieldname:"car_type",fieldvalue:'',defaultValue:'通用||0',inputtype:"select", noList:getCarType() , twidth:"100" ,height:"",issort:false}
+		{fieldcnname:"区分大小车",fieldname:"car_type",fieldvalue:'',defaultValue:'通用||0',inputtype:"select", noList:getCarType() , twidth:"100" ,height:"",issort:false},
+		{fieldcnname:"价格描述 ",fieldname:"describe",fieldvalue:'',inputtype:"text", twidth:"140" ,height:"",edit:false}
 	];
 var _assistField = [
 		//{fieldcnname:"编号",fieldname:"id",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false,edit:false},

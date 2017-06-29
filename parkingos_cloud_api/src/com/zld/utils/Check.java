@@ -1,5 +1,6 @@
 package com.zld.utils;
 
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -190,4 +191,22 @@ public class Check {
 			return false;
 		}
     }
+    
+    /**
+     * ÅÐ¶ÏÊÇ·ñÎª¿Õ
+     * @param value
+     * @return
+     */
+    public static boolean isEmpty(String value) {
+		int strLen;
+		if (value == null || (strLen = value.length()) == 0|| "null".equals(value)) {
+			return true;
+		}
+		for (int i = 0; i < strLen; i++) {
+			if ((Character.isWhitespace(value.charAt(i)) == false)) {
+				return false;
+			}
+		}
+		return true;
+	} 
 }

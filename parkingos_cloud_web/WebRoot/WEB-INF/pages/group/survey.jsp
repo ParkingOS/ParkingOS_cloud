@@ -65,7 +65,7 @@ function setobjCss(obj,css){
 }
 setobjCss(getobj('parktable'),{'margin':'10px auto','width':(parseInt(w)-4)+'px','height':'45%','border':'1px solid #abcdef','borderRadius':'5px'});
 setobjCss(getobj('devtable'),{'margin':'10px auto','width':(parseInt(w)-4)+'px','height':'45%','border':'1px solid #abcdef','borderRadius':'5px'});
-var tdw=parseInt(w*0.125)-1;
+var tdw=parseInt(w*0.111)-1;
 
 var _mediaField = [
 		{fieldcnname:"编号",fieldname:"id",fieldvalue:'',inputtype:"text",twidth:tdw ,height:"30",edit:false,issort:false},
@@ -79,6 +79,7 @@ var _mediaField = [
 				}},
 		{fieldcnname:"电子收费",fieldname:"etotal",fieldvalue:'',inputtype:"text",twidth:tdw ,height:"30",issort:false},
 		{fieldcnname:"现金收费",fieldname:"ctotal",fieldvalue:'',inputtype:"text",twidth:tdw ,height:"30",issort:false},
+		{fieldcnname:"月卡订单数",fieldname:"mtotal",fieldvalue:'',inputtype:"text",twidth:tdw ,height:"30",issort:false},
 		{fieldcnname:"总车位",fieldname:"parking_total",fieldvalue:'',inputtype:"text",twidth:tdw ,height:"30",issort:false},
 		{fieldcnname:"空余车位",fieldname:"rlots",fieldvalue:'',inputtype:"text",twidth:tdw ,height:"30",issort:false,
 			process:function(value,cid,id){

@@ -8,12 +8,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta http-equiv="x-ua-compatible" content="IE=edge">
 <title>${title}</title>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.3.2.min.css?v=1" />
-<link rel="stylesheet" type="text/css" href="css/list.css?v=12" />
-<link rel="stylesheet" type="text/css" href="css/mobiscroll.2.13.2.css?v=12" />
-<script src="js/jquery.js?v=1"></script>
-<script src="js/wxpublic/mobiscroll.2.13.2.js"></script>
-<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
 <style type="text/css">
 #scroller .li1 {
     padding:0 10px;
@@ -33,16 +27,6 @@
     background-color:white;
     font-size:16px;
     margin-top:20px;
-}
-
-a{
-	text-decoration:none;
-	color:#6D6D6D;
-	font-size:16px;
-	
-	position: relative;
-	top:-35px;
-	left:30px;
 }
 
 .img1{
@@ -83,7 +67,7 @@ a{
 .company_name {
 	margin-left: 10px;
 	text-decoration: none;
-	color: #6D6D6D;
+	color: #04be02;
 	font-size: 16px;
 }
 
@@ -117,10 +101,17 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {
 	text-align:right;
 	margin-top: 12px;
 	direction:rtl;
-	color:#38B074;
+	color:#04be02;
 	font-weight:bold;
+	background:white;
 }
 </style>
+<link rel="stylesheet" type="text/css" href="css/list.css?v=12" />
+<link rel="stylesheet" href="css/weui-0.4.3.css">
+<link rel="stylesheet" href="css/jquery-weui-0.8.3.css">
+<script src="js/jquery.js"></script>
+<script src="js/wxpublic/jquery-weui-0.8.3.js"></script>
+<script src="js/wxpublic/fastclick.js"></script>
 </head>
 <body style="background-color:#EEEEEE;">
 <div class="container">  
@@ -130,21 +121,23 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {
 <form method="post" role="form" action="wxpaccount.do?action=topayprod&showwxpaytitle=1" id="payform">
 	<div id="scroller">
 		<ul id="thelist">
-			<li class="li2">
+			<li id="li2" class="li2">
 				<div style="margin-top:15px;color:#6D6D6D;font-weight:bold;margin-left: 10px;">车场名称：${cname}</div>
-				<div style="margin-top:15px;color:#6D6D6D;font-weight:bold;margin-left: 10px;">包月产品：${pname}</div>
-				<div style="margin-top:15px;color:#6D6D6D;font-weight:bold;margin-left: 10px;">有效期至：${exptime}</div>
+				<div id="pname" style="margin-top:15px;color:#6D6D6D;font-weight:bold;margin-left: 10px;display:none">包月产品：${pname}</div>
+				<div id="exptime" style="margin-top:15px;color:#6D6D6D;font-weight:bold;margin-left: 10px;display:none">套餐有效期至：${exptime}</div>
 			</li>
 			<li class="li1">
 				<div class="company_name">
 					<span>起始日期</span>
-					<input id="starttime" name="starttime" class="jine" value="${btime}" />
+					<input id="starttime" name="starttime"  readonly= "true"  class="jine hide" value="${btime}" />
+					<span style="float:right;">${btime}</span>
 				</div>
 			</li>
 			<li class="li1">
 				<div class="company_name"><span>包月时长</span>
 					<span style="float:right;color:#C3C3C3;">个月</span>
-					<select id="months" name="months" class="jine">
+					<div style="float:right;margin-top:3px;">
+					<select id="months" name="months" class="weui_select" style="font-weight:bold;color:#04be02;">
 						<option selected="selected">1</option>
 						<option>2</option>
 						<option>3</option>
@@ -158,17 +151,21 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {
 						<option>11</option>
 						<option>12</option>
 					</select>
+					</div>
 				</div>
 			</li>
 			<input type="text" name="openid" class="hide" value="${openid}">
 			<input type="text" name="prodid" class="hide" value="${prodid}">
+			<input type="text" name="cardid" class="hide" value="${cardid}">
 			<div>
 				<div style="text-align:center;margin-top:20px;">
-					<span style="font-size:25px;font-weight:bold;color:#38B074;">￥</span>
-					<span id="moneyafter" style="font-size:60px;font-weight:bold;color:#38B074;">0.0</span>
+					<span style="font-size:25px;font-weight:bold;color:#04be02;">￥</span>
+					<input id="thirdprice" style="display:none" name="thirdprice" value=""><span id="moneyafter" style="font-size:60px;font-weight:bold;color:#04be02;">${money}</span>
+					<input id="trade_no" style="display:none" name="trade_no" value="">
+					<input id="comid" style="display:none" name="comid" value="">
 				</div>
 			</div>
-			<input type="button" id="paysubmit" class="wx_pay" onclick='check();' value="购买包月" />
+			<input type="button" id="paysubmit" class="weui_btn weui_btn_primary" style="width:95%;display:block" onclick='check();' value="续费月卡" />
 			<div class="wxpay-logo"></div>
 			<div style="text-align:center;" id="error" class="error"></div>
 		</ul>
@@ -177,50 +174,86 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {
 </div>
 
 <div id="footer"></div>
+<script>
+  $(function() {
+    FastClick.attach(document.body);
+  });
+</script>
 <script type="text/javascript">
+	/* var pname = ${pname}
+	var exptime = ${exptime}
+	if(pname==-1||exptime==-1){                                                                                                                                                                                     
+		//console.log('12')
+	} */
+	
+	document.getElementById("exptime").style.display='none'
+	document.getElementById("pname").style.display='none'
+	document.getElementById("li2").style.height=55+'px'
 	function getprice(flag) {
+		$.showLoading("正在查询月卡续费价格...");
 		var starttime = document.getElementById("starttime").value;
 		var months = document.getElementById("months").value;
 		jQuery.ajax({
 					type : "post",
 					url : "wxpaccount.do",
 					data : {
-						'action' : 'getprodprice',
+						'action' : 'getlocalprice',
 						'prodid' : '${prodid}',
+						'cardid' : '${cardid}',
 						'starttime' : starttime,
 						'months' : months,
 						'openid' : '${openid}',
+						'comid' : '${comid}',
 						'r' : Math.random()
 					},
 					async : false,
 					success : function(result) {
-						if(result == "-1"){
-							document.getElementById("error").innerHTML = "出错了";
-						}else if(result == "-2"){
-							document.getElementById("error").innerHTML = "起始日期要晚于今天";
-						}else if(result == "-3"){
-							document.getElementById("error").innerHTML = "超出产品有效期，请重新选择";
-						}else {
-							if(flag == "1"){
-								$("#payform")[0].submit();
+						setTimeout('$.hideLoading()',200);
+							var jsonData = eval("(" + result + ")");
+							document.getElementById("moneyafter").innerHTML = jsonData.total;
+							document.getElementById("thirdprice").value = jsonData.total;
+							console.log(jsonData.total)
+							if(jsonData.total<=0){
+								document.getElementById("paysubmit").style.display = "none"
 							}else{
-								document.getElementById("error").innerHTML = "";
-								var jsonData = eval("(" + result + ")");
-								document.getElementById("moneyafter").innerHTML = jsonData.total;
+								document.getElementById("paysubmit").style.display = "block"
 							}
-						}
+							document.getElementById("trade_no").value = jsonData.trade_no;
+							document.getElementById("comid").value = jsonData.comid;
 					}
 				});
 	}
 	getprice();
 	
-	$("#starttime").bind("change", function() {
+	/* $("#starttime").bind("change", function() {
 		getprice();
-	});
+	}); */
 	$("#months").bind("change", function() {
 		getprice();
 	});
-
+	
+	function checkParkStatus(){
+		jQuery.ajax({
+			type : "post",
+			url : "wxpaccount.do",
+			data : {
+				'action' : 'checkparkstatus',
+				'comid' : '${comid}',
+				'money' : '${money}',
+			},
+			async : false,
+			success : function(result) {
+				var ret = eval('('+result+')')
+				if(ret.state == 1){
+					$.showLoading("跳转中...");
+					setTimeout('$("#payform")[0].submit();',100)
+				}else{
+					$.alert(ret.errmsg);
+				}
+			}
+		})
+	}
+	
 	function check() {
 		/* var starttime = document.getElementById("starttime").value;
 		var t1 = new Date((starttime+" 00:00:00").replace(/-/g,"/")).getTime();
@@ -229,11 +262,23 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {
         	document.getElementById("error").innerHTML = "起始日期要晚于今天";
         	return;
         } */
-       getprice("1");
+        
+        checkParkStatus()
+       //$("#payform")[0].submit();
+       //getprice("1");
 	}
 </script>
 <script type="text/javascript">
-$(function () {  
+//每次添加一个class
+	function addClass(currNode, newClass){
+        var oldClass;
+        oldClass = currNode.getAttribute("class") || currNode.getAttribute("className");
+        if(oldClass !== null) {
+		   newClass = oldClass+" "+newClass; 
+		}
+		currNode.className = newClass; //IE 和FF都支持
+  		}
+/* $(function () {  
     $("#starttime").mobiscroll().date({  
         theme: "android-ics light",  
         lang: "zh",  
@@ -252,7 +297,7 @@ $(function () {
             return time;  
         }  
     });  
-}) 
+})  */
 </script>
 </body>
 </html>

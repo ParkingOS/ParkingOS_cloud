@@ -132,7 +132,7 @@ public class GenPosOrderFacadeImpl implements GenPosOrderFacade {
 				return resp;
 			}
 			workId = workRecord.getId();
-			logger.error("workId:"+workId);
+			//logger.error("workId:"+workId);
 			//----------------------------泊位信息校验--------------------//
 			if(berth == null){
 				resp.setResult(0);
@@ -140,13 +140,13 @@ public class GenPosOrderFacadeImpl implements GenPosOrderFacade {
 				return resp;
 			}
 			//-------------------------校验进场----------------------//
-			logger.error("count:"+count);
+			//logger.error("count:"+count);
 			if(count > 0){
 				resp.setResult(0);
 				resp.setErrmsg("该车牌已有入场订单");
 				return resp;
 			}
-			logger.error("bcount:"+bcount);
+			//logger.error("bcount:"+bcount);
 			if(bcount > 0){
 				resp.setResult(0);
 				resp.setErrmsg("该泊位已有入场订单");
@@ -158,17 +158,17 @@ public class GenPosOrderFacadeImpl implements GenPosOrderFacade {
 				userId = car.getUin();
 			}
 			//----------------------------获取车辆类型--------------------------//
-			logger.error("carType:"+carType+",userId:"+userId);
+			//logger.error("carType:"+carType+",userId:"+userId);
 			//---------------------------确定进场方式---------------------------//
 			int cType = 2;//2:照牌进场
 			if(monthUser){//月卡会员
 				cType =5;
 				resp.setCtype(cType);
 			}
-			logger.error("cType:"+cType);
+			//logger.error("cType:"+cType);
 			//--------------------------获取可绑定的车检器订单信息-------------------//
 			Long startTime = commonMethods.getOrderStartTime(berthOrderId, uid, curTime);
-			logger.error("berthOrderId:"+berthOrderId+",orderid:"+orderId+",startTime:"+startTime);
+			//logger.error("berthOrderId:"+berthOrderId+",orderid:"+orderId+",startTime:"+startTime);
 			//---------------------------具体逻辑---------------------------//
 			resp.setOrderid(orderId);
 			resp.setBtime(TimeTools.getTime_yyyyMMdd_HHmmss(startTime * 1000));
@@ -195,9 +195,9 @@ public class GenPosOrderFacadeImpl implements GenPosOrderFacade {
 			
 			GenPosOrderResp genPosOrderResp = null;
 			if(payType == 0){
-				logger.error("现金预支付");
+				//logger.error("现金预支付");
 				genPosOrderResp = genOrderCashService.genPosOrder(genPosOrderReq);
-				logger.error(genPosOrderResp.toString());
+				//logger.error(genPosOrderResp.toString());
 				if(genPosOrderResp.getResult() == 1){
 					result = true;//订单生成成功
 					resp.setResult(1);

@@ -46,8 +46,6 @@ public class ParkEscapeAction extends Action{
 	private DataBaseService daService;
 	@Autowired
 	private PgOnlyReadService pService;
-	@Autowired
-	private MongoDbUtils mongoDbUtils;
 	private Logger logger = Logger.getLogger(ParkEscapeAction.class);
 	@Autowired  CommonMethods commonMethods;
 
@@ -63,8 +61,8 @@ public class ParkEscapeAction extends Action{
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long loginuin = (Long)request.getSession().getAttribute("loginuin");
 		logger.error(action);
-		Integer isAdmin =(Integer)request.getSession().getAttribute("isadmin");
-		if(loginuin == null){
+		//Integer isAdmin =(Integer)request.getSession().getAttribute("isadmin");
+		if(loginuin == null||loginuin==-1){
 			response.sendRedirect("login.do");
 			return null;
 		}
@@ -480,11 +478,13 @@ public class ParkEscapeAction extends Action{
 		Long curTime = System.currentTimeMillis()/1000;
 		String cids []= ids.split(",");
 		int ret=0;
+		logger.error("Recover  后台0元结算，编号："+ids+",操作人："+loginuin+",groupid:"+groupId);
 		for(String id : cids){
-			long ID = Long.parseLong(id);
-			ret=daService.update("update no_payment_tb set pursue_uid=?,pursue_time=?,state=?," +
+			if(Check.isLong(id))
+				ret=daService.update("update no_payment_tb set pursue_uid=?,pursue_time=?,state=?," +
 					"pursue_groupid=?,act_total=? where id=? ", 
-					new Object[]{loginuin, curTime, 1, groupId, 0d, ID});
+					new Object[]{loginuin, curTime, 1, groupId, 0d, Long.valueOf(id)});
+			logger.error("Recover 后台0元结算，编号："+id+",操作结果:"+ret);
 		}
 		return ret; 
 

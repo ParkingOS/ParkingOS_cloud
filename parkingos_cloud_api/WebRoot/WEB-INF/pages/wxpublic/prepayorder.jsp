@@ -83,6 +83,7 @@
 				<ul class="info-list hide">
 					<li class="list wxdiscount hide"><span class="list-title">微信打折券</span><span class="ticket">${ticketdescp}</span><span class="list-content">抵扣${tcbtlimit}元</span></li>
 					<li class="list tcbdiscount hide"><span class="list-title">停车券</span><span class="ticket">${ticketdescp}</span><span class="list-content">抵扣${tcbtlimit}元</span></li>
+					<li class="list prepayed hide"><span class="list-title">已预付</span><span class="list-content">${prepay}元</span></li>
 					<li class="list balancepay hide"><span class="list-title">余额支付</span><span class="list-content">${balancepay}元</span></li>
 					<li class="list onlinepay hide"><span class="list-title">在线支付</span><span class="list-content">${wx_pay}元</span></li>
 				</ul>
@@ -105,7 +106,7 @@
 		<div class="wxpay-logo"></div>
 	</section>
 	<section class="noorder hide">
-		<div>当前订单已结算</div>
+		<div>当前订单已结算或支付金额已不足，请重新扫码</div>
 	</section>
 	<section class="noorder hide unepay">
 		<div>该车场不支持电子支付</div>
@@ -147,6 +148,8 @@
 		$(".info-list").removeClass("hide");
 		$(".onlinepay").removeClass("hide");
 	}
+	if('${isbolink}'=='1')
+		$(".prepayed").removeClass("hide");
 	
 	function checkorder(){
 		if(paytype == "0"){
@@ -155,7 +158,8 @@
 			pay();
 		}
 	}
-	
+	var carnumber="${car_number}";
+	var car_number=encodeURI(carnumber);	
 	function check(){
 		jQuery.ajax({
 			type : "post",
@@ -163,6 +167,12 @@
 			data : {
 				'orderid' : '${orderid}',
 				'action' : 'checkorder',
+				'car_number' : car_number,
+				'park_id' : '${park_id}',
+				'isbolink' : '${isbolink}',
+				'total_fee' : '${otherpay}',
+				'delaytime' : '${delaytime}',
+				'uin':'${uin}',
 				'r' :Math.random()
 			},
 			async : false,
@@ -229,11 +239,13 @@
 				'action' : 'prepayorder',
 				'total' : '${money}',
 				'ticketid' : '${ticketid}',
+				'isbolink' : '${isbolink}',
+				'car_number' : car_number,
 				'r' :Math.random()
 			},
 			async : false,
 			success : function(result) {
-				if(result == "1"){
+				if(result == "1"||result=="5"){
 					$("#payform")[0].submit();
 				}else{
 					document.getElementById("error").innerHTML = "支付失败";

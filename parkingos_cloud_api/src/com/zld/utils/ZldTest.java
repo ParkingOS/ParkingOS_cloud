@@ -315,7 +315,16 @@ public class ZldTest {
 	
 	//·¢ËÍ¶ÌÐÅ
 	public static void main(String[] args) {
-		System.err.println(AjaxUtil.decodeUTF8("http%3a%2f%2fyxiudongyeahnet.vicp.cc:50803%2fzld%2fwxpfast.do%3faction%3dsweepcom%26from%3dbolink%26codeid%3d33"));
+		String parkId = "aaaa_213132a_ee";
+		String pid = parkId;
+		String localId  = null;
+		if(parkId.indexOf("_")!=-1){
+			pid = parkId.split("_")[0];
+			localId = parkId.substring(pid.length()+1);
+		}
+		System.err.println(localId);
+	//	System.out.println(AjaxUtil.encodeUTF8("https://s.bolink.club:8443/zld/wxpfast.do?faction=sweepcom&from=&codeid=254219"));
+		//System.err.println(AjaxUtil.decodeUTF8("http%3a%2f%2fyxiudongyeahnet.vicp.cc:50803%2fzld%2fwxpfast.do%3faction%3dsweepcom%26from%3dbolink%26codeid%3d33"));
 //		  String inXml = "<?xml version=\"1.0\" encoding=\"GBK\"?>" +
 //	        		"<ROOT><STNO1>1</STNO1><STNO2>2000</STNO2><CURRPAGE>0</CURRPAGE><PAGENO>0</PAGENO></ROOT>" ;
 //	        String msg = 

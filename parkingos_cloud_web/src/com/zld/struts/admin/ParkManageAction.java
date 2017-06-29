@@ -1022,13 +1022,15 @@ public class ParkManageAction extends Action {
 		
 		List<Map> sqlsList = new ArrayList<Map>();
 		Map comMap = new HashMap();
+		//添加自动生成车场16位秘钥的逻辑
+		String ukey = StringUtils.createRandomCharData(16);
 		//String share_number =RequestUtil.processParams(request, "share_number");
 		String comsql = "insert into com_info_tb(id,company_name,address,mobile,phone,create_time," +
-				"mcompany,parking_type,parking_total,longitude,latitude,type,update_time,city,uid,biz_id,nfc,etc,book,navi,monthlypay,isnight,epay,car_type,minprice_unit)" +
-				" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				"mcompany,parking_type,parking_total,longitude,latitude,type,update_time,city,uid,biz_id,nfc,etc,book,navi,monthlypay,isnight,epay,car_type,minprice_unit,ukey)" +
+				" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		Object[] comvalues = new Object[]{comId,company,address,mobile,phone,time,
 				mcompany,parking_type,parking_total,Double.valueOf(longitude),Double.valueOf(latitude),type,time,city,uid,biz_id,
-				nfc,etc,book,navi,monthlypay,isnight,epay,car_type,minprice_unit};
+				nfc,etc,book,navi,monthlypay,isnight,epay,car_type,minprice_unit,ukey};
 		comMap.put("sql", comsql);
 		comMap.put("values", comvalues);
 		

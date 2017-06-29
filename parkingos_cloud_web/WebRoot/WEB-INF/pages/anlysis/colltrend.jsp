@@ -10,14 +10,56 @@
 <script type="text/javascript" src="js/anlysis/highcharts.js"></script>
 <script type="text/javascript" src="js/anlysis/colltrend.js?v=2"></script>
 <script src="js/My97DatePicker/WdatePicker.js" type="text/javascript">//日期</script>
+<style type="text/css">
+.title1{
+	width: 100%;
+    margin: 0 auto;
+    font-weight: bold;
+    line-height: 25px;
+    height: 40px;
+    background: #EFEFEF;
+    padding-top: 15px;
+    border-bottom: 1px solid #ddd;
+    font-size:16px !important;
+}
+.sel_fee{
+	text-align: center;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: 0px;
+    background-color: #FFFFFF;
+    outline: medium;
+    border: 1px solid #5CCDBE;
+    color: #5CCDBE;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+.title1 a:hover{
+	background:#5CCDBE;
+	color:#FFFFFF;
+}
 
+.column{
+	background:#5CCDBE;
+	color:#FFFFFF;
+}
+a:link {
+    color: #5CCDBE;
+    text-decoration: none;
+}
+a:visited {
+    color: #5CCDBE;
+    text-decoration: none;
+}
+</style>
 </head>
 <body >
 <div id="data_container">
 <!--顶部开始-->
 <div class="top">
-<ul class="title"><li class="parentmenu">停车收费趋势曲线</li>
-</ul>
+<ul class="title1">
+		<a class="sel_fee column" style="margin-left:10px;">图形</a><a href="colltrend.do?action=list" class="sel_fee" style="margin-left:-1px;">列表</a>
+	</ul>
 <ul class="search">
 <span id="seconddateinput" class="search_text">
 日期：<input  class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',startDate:'%y-%M-%d 00:00:00',alwaysUseStartDate:false})" type="text" name="endDateSelect" id="btime" value="${btime}" align="absmiddle" readonly   />

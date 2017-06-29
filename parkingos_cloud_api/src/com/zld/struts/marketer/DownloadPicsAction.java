@@ -31,12 +31,15 @@ import com.mongodb.DBObject;
 import com.zld.AjaxUtil;
 import com.zld.impl.MongoClientFactory;
 import com.zld.service.DataBaseService;
+import com.zld.service.PgOnlyReadService;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.StringUtils;
 
 public class DownloadPicsAction extends Action {
 	@Autowired
 	private DataBaseService daService;
+	@Autowired
+	private PgOnlyReadService pService;
 	
 	private Logger logger = Logger.getLogger(DownloadPicsAction.class);
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
@@ -103,7 +106,7 @@ public class DownloadPicsAction extends Action {
 	 * @return uin
 	 */
 	private Long validToken(String token) {
-		Map tokenMap = daService.getMap("select * from user_session_tb where token=?", new Object[]{token});
+		Map tokenMap = pService.getMap("select * from user_session_tb where token=?", new Object[]{token});
  		Long uin = null;
 		if(tokenMap!=null&&tokenMap.get("uin")!=null){
 			uin = (Long) tokenMap.get("uin");

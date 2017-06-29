@@ -410,7 +410,7 @@ function getDomainName() {
 								frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
 						</div>
 					</div>
-					<div class="floatLeft" style="width: 370px; position: relative;">
+					<div class="floatLeft" style="width: 370px; position: relative;margin-top:50px">
 						<div style="height: 20px;"></div>
 						<div class="signInHeader">智慧停车云</div>
 						<div style="height:30px;"></div>
@@ -473,7 +473,7 @@ function getDomainName() {
 						</div>-->
 					</div>
 				</div>
-				<div  style="padding-top:55px;margin-top:130px;">
+				<div  style="padding-top:55px;margin-top:130px;display:none">
 					<div class="signInHeader">收费员端、岗亭端下载</div>
 					<div class="download">
 						<a href="https://itunes.apple.com/us/app/ting-che-bao-shou-fei-yuan/id904888671?mt=8">
@@ -493,7 +493,7 @@ function getDomainName() {
 										<tbody>
 											<tr>
 												<td style="text-align: left;"><span class="copyright">&copy;
-														2014 - 2016 All Rights Reserved</span></td>
+														2014 - 2017 All Rights Reserved</span></td>
 												<td style="text-align: left;"><span></span></td>
 											</tr>
 										</tbody>

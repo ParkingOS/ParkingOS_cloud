@@ -240,7 +240,7 @@ public class RegisterParkAction extends Action {
 		}else if(action.equals("find")){
 			BasicDBObject conditions = new BasicDBObject();
 			conditions.put("orderid", 786590L);
-			List<String> urls = mongoDbUtils.getPicUrls("car_pics", conditions);
+			List<String> urls = mongoDbUtils.getPicUrls("car_inout_pics", conditions);
 			logger.error(urls);
 			//http://127.0.0.1/zld/regparker.do?action=find&mobile=15801482643
 		}else if(action.equals("toregpage")){

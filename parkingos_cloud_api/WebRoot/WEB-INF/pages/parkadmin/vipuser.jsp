@@ -44,55 +44,18 @@ for(var i=1;i<36;i++){
 	month_select.push({"value_no":i,"value_name":i});
 }
 var _mediaField = [
-		{fieldcnname:"编号",fieldname:"id",fieldvalue:'',inputtype:"number", twidth:"60" ,height:"",issort:false,edit:false},
-		{fieldcnname:"包月产品名称",fieldname:"p_name",fieldvalue:'',inputtype:"select",noList:pnames, twidth:"100" ,height:"",issort:false},
-		{fieldcnname:"车主手机",fieldname:"mobile",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
-		{fieldcnname:"车主账户",fieldname:"uin",fieldvalue:'',inputtype:"number", twidth:"80" ,height:"",issort:false},
+		{fieldcnname:"编号",fieldname:"id",fieldvalue:'',inputtype:"number", twidth:"60" ,height:"",issort:false,edit:false,hide:true},
+		{fieldcnname:"编号",fieldname:"card_id",fieldvalue:'',inputtype:"text", twidth:"60" ,height:"",issort:false,edit:false},
 		{fieldcnname:"名字",fieldname:"name",fieldvalue:'',inputtype:"text", twidth:"80" ,height:"",issort:false},
 		{fieldcnname:"地址",fieldname:"address",fieldvalue:'',inputtype:"text", twidth:"180" ,height:"",issort:false},
-		{fieldcnname:"车牌号码",fieldname:"car_number",fieldvalue:'',inputtype:"text", twidth:"230" ,height:"",issort:false,edit:false,
-			process:function(value,trId,colId){//值、行ID(记录ID)、列ID(字段名称)
-					return setname(trId,'car_number');
-				}},
+		{fieldcnname:"车牌号码",fieldname:"car_number",fieldvalue:'',inputtype:"text", twidth:"230" ,height:"",issort:false,edit:false},
 		{fieldcnname:"购买时间",fieldname:"create_time",fieldvalue:'',inputtype:"date", twidth:"140" ,height:""},
 		{fieldcnname:"开始时间",fieldname:"b_time",fieldvalue:'',inputtype:"date",twidth:"140" ,height:"",issort:false},
 		{fieldcnname:"结束时间",fieldname:"e_time",fieldvalue:'',inputtype:"date", twidth:"140" ,height:"",edit:false},
 		{fieldcnname:"金额",fieldname:"total",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",edit:false},
-		{fieldcnname:"月数",fieldname:"months",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",edit:false,fhide:true,shide:true},
-		{fieldcnname:"备注",fieldname:"remark",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false}
 	];
-var _addField = [
-		{fieldcnname:"包月产品",fieldname:"p_name",fieldvalue:'',inputtype:"select", noList:pnames,twidth:"180" ,height:"",issort:false},
-		{fieldcnname:"车主手机",fieldname:"mobile",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false},
-		{fieldcnname:"名字(选填)",fieldname:"name",fieldvalue:'',inputtype:"text", twidth:"80" ,height:"",issort:false},
-		{fieldcnname:"地址(选填)",fieldname:"address",fieldvalue:'',inputtype:"text", twidth:"180" ,height:"",issort:false},
-		//{fieldcnname:"车牌号码",fieldname:"car_number",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false},
-		{fieldcnname:"起始时间",fieldname:"b_time",fieldvalue:'',inputtype:"sdate",twidth:"150" ,height:"",issort:false},
-		{fieldcnname:"购买月数",fieldname:"months",fieldvalue:'',inputtype:"select",noList:month_select, twidth:"150" ,height:"",issort:false},
-		//{fieldcnname:"金额",fieldname:"total",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
-		//{fieldcnname:"车牌已存在时",fieldname:"flag",fieldvalue:'',inputtype:"select",noList:[{"value_no":0,"value_name":"提示车牌不一样"},{"value_no":1,"value_name":"保存现车牌"}], twidth:"180" ,height:"",issort:false}
-		{fieldcnname:"备注",fieldname:"remark",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false}
-	];
-var _editField = [
-         		{fieldcnname:"包月产品",fieldname:"p_name",fieldvalue:'',inputtype:"select", noList:pnames,twidth:"180" ,height:"",issort:false},
-         		{fieldcnname:"车主手机",fieldname:"mobile",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false,edit:false},
-         		{fieldcnname:"名字(选填)",fieldname:"name",fieldvalue:'',inputtype:"text", twidth:"80" ,height:"",issort:false},
-				{fieldcnname:"地址(选填)",fieldname:"address",fieldvalue:'',inputtype:"text", twidth:"180" ,height:"",issort:false},
-         		//{fieldcnname:"车牌号码",fieldname:"car_number",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false},
-         		{fieldcnname:"起始时间",fieldname:"b_time",fieldvalue:'',inputtype:"sdate",twidth:"150" ,height:"",issort:false},
-         		{fieldcnname:"购买月数",fieldname:"months",fieldvalue:'',inputtype:"select",noList:month_select, twidth:"150" ,height:"",issort:false},
-         		//{fieldcnname:"金额",fieldname:"total",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
-         		//{fieldcnname:"车牌已存在时",fieldname:"flag",fieldvalue:'',inputtype:"select",noList:[{"value_no":0,"value_name":"提示车牌不一样"},{"value_no":1,"value_name":"保存现车牌"}], twidth:"180" ,height:"",issort:false}
-         		{fieldcnname:"备注",fieldname:"remark",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false}
-         	];
-var rules =[{name:"p_name",type:"",url:"",requir:true,warn:"请选择产品",okmsg:""},
-			{name:"mobile",type:"ajax",url:"vipuser.do?action=checkmobile&mobile=",requir:true,warn:"请填写用户真实手机号码，这样车主用手机号下载登录停车宝后，每新增一个用户奖励车场5元",okmsg:""},
-			{name:"car_number",type:"",url:"",requir:true,warn:"请输入车牌",okmsg:""},
-			{name:"b_time",type:"",url:"",requir:true,warn:"请选择时间",okmsg:""}
-			//{name:"total",type:"",url:"",requir:true,warn:"请输入金额",okmsg:""}
-			];
 var _vipuserT = new TQTable({
-	tabletitle:"VIP会员管理",
+	tabletitle:"VIP会员管理eee",
 	ischeck:false,
 	tablename:"vipuser_tables",
 	dataUrl:"vipuser.do",
@@ -125,8 +88,7 @@ function getAuthButtons(){
 					suburl:"vipuser.do?action=create&comid="+comid,
 					method:"POST",
 					formAttr:[{
-						formitems:[{kindname:"",kinditemts:_addField}],
-						rules:rules
+						formitems:[{kindname:"",kinditemts:_mediaField}]
 					}],
 					buttons : [//工具
 						{name: "cancel", dname: "取消", tit:"取消添加",icon:"cancel.gif", onpress:function(){TwinC("vipuser_add");} }

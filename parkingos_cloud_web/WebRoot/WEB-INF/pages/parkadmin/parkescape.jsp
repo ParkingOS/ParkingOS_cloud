@@ -20,6 +20,7 @@
 <script src="js/My97DatePicker/WdatePicker.js" type="text/javascript">//日期</script>
 </head>
 <body onload='addgroups()'>
+<iframe src="" id ="exportiframe" frameborder="0" style="width:0px;height:0px;"></iframe>
 <div id="parkescapeobj" style="width:100%;height:100%;margin:0px;"></div>
 <script language="javascript">
 var role=${role};
@@ -170,7 +171,27 @@ function getAuthButtons(){
 				}
 			)}
 		})
-	}})
+	}});
+	bts.push({dname:"导出未缴明细",icon:"toxls.gif",onpress:function(Obj){
+		Twin({Id:"order_export_w",Title:"导出未缴明细<font style='color:red;'>（如果没有设置，默认最大单次导出6万条!）</font>",Width:480,sysfun:function(tObj){
+				 TSform ({
+					formname: "order_export_f",
+					formObj:tObj,
+					formWinId:"order_export_w",
+					formFunId:tObj,
+					dbuttonname:["确认导出"],
+					formAttr:[{
+						formitems:[{kindname:"",kinditemts:_mediaField}],
+					}],
+					SubAction:
+					function(callback,formName){
+						T("#exportiframe").src="parkescape.do?action=exportExcel&fieldsstr=id__groupid__comid__berthseg_id__cid__create_time__end_time__pursue_time__car_number__uin__order_id__total__prepay__overdue__act_total__state__nickname__id"+Serializ(formName)
+						TwinC("order_export_w");
+						T.loadTip(1,"正在导出，请稍候...",2,"");
+					}
+				});	
+			}
+		})}});
 	return bts;
 }
 function coutomsearch(){

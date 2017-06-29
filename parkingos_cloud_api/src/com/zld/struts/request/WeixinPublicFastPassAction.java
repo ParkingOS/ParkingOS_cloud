@@ -1,5 +1,7 @@
 package com.zld.struts.request;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,18 +21,20 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.aspectj.internal.lang.annotation.ajcDeclareAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import pay.Constants;
+import pay.PayConfigDefind;
 
 import com.zld.AjaxUtil;
+import com.zld.CustomDefind;
 import com.zld.impl.CommonMethods;
 import com.zld.impl.MemcacheUtils;
 import com.zld.impl.PublicMethods;
 import com.zld.service.DataBaseService;
 import com.zld.service.LogService;
 import com.zld.service.PgOnlyReadService;
+import com.zld.utils.Check;
 import com.zld.utils.HttpProxy;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.StringUtils;
@@ -68,7 +73,294 @@ public class WeixinPublicFastPassAction extends Action {
 			throws Exception {
 		Long curtime = System.currentTimeMillis()/1000;
 		String action = RequestUtil.processParams(request, "action");
-		if(action.equals("prepay")){//扫NFC卡查询当前订单，进入预支付
+		if(action.equals("thirdpay")){//停车宝第三方下单接口
+			logger.error("third pay 进入第三方下单接口");
+			String sign = RequestUtil.processParams(request, "sign");
+			String openid = RequestUtil.processParams(request, "openid");
+			String backurl = RequestUtil.processParams(request, "backurl");
+			logger.error("third pay>>>backurl:"+backurl);
+			String fee = RequestUtil.getString(request, "fee");
+			String attch = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "attch"));
+			logger.error("third pay>>>sign:"+sign+" fee:"+fee+" attch:"+attch);
+			//*****************验签******************//
+			Map<String, Object> paramsMap = new HashMap<String, Object>();
+			paramsMap.put("fee", fee);
+			paramsMap.put("attch", attch);
+			paramsMap.put("unionid", 200001L);
+			String linkString = StringUtils.createLinkString(paramsMap, 0)+"key="+"DEEFE9094535JUJF";
+			String _sign = StringUtils.MD5(linkString);
+			if(!_sign.equals(sign)){
+				return mapping.findForward("error");
+			}
+			if(openid.equals("")){
+				String code = RequestUtil.processParams(request, "code");
+				String access_token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+Constants.WXPUBLIC_APPID+"&secret="+Constants.WXPUBLIC_SECRET+"&code="+code+"&grant_type=authorization_code";
+				String result = CommonUtil.httpsRequest(access_token_url, "GET", null);
+				JSONObject map = JSONObject.fromObject(result);
+				logger.error("third pay map:"+map);
+				if(map == null || map.get("errcode") != null){
+					logger.error("third pay:>>>>>>>>>>>>获取openid失败....,重新获取>>>>>>>>>>>");
+					String redirect_url = "http%3a%2f%2f"+Constants.WXPUBLIC_REDIRECTURL+"%2fzld%2fwxpfast.do%3faction%3dthirdpay%26fee%3d"+fee+"%26attch%3d"+AjaxUtil.encodeUTF8(attch)+"%26sign%3d"+sign+"%26backurl%3d"+backurl;
+					String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
+							+ Constants.WXPUBLIC_APPID
+							+ "&redirect_uri="
+							+ redirect_url
+							+ "&response_type=code&scope=snsapi_base&state=123#wechat_redirect";
+					logger.error("third pay:重新调用微信，取OPENID，url:"+url);
+					response.sendRedirect(url);
+					return null;
+				}
+				openid = (String)map.get("openid");
+				logger.error("third pay: 获取OPENID:"+openid);
+			}
+			
+			//*****************根据openid找,找不到则创建临时用户*********************//
+			Map userMap = daService.getMap("select id from user_info_tb where wxp_openid = ?", new Object[]{openid}); 
+			Long uin = -1L;
+			if(userMap==null){
+				logger.error("非绑定用户");
+				Map wxmap = daService.getMap("select id,uin from wxp_user_tb where openid = ?", new Object[]{openid});
+				if(wxmap==null){
+					logger.error("非虚拟用户,注册微信虚拟用户");
+					uin = daService.getLong("SELECT nextval('seq_user_info_tb'::REGCLASS) AS newid",null);
+					int update = daService.update("insert into wxp_user_tb(openid,uin,create_time) values(?,?,?)", new Object[]{openid,uin,System.currentTimeMillis()/1000});
+					if(update>0){
+						logger.error("注册虚拟账户成功!");
+					}else{
+						logger.error("注册虚拟账户失败!");
+					}
+				}else{
+					logger.error("虚拟用户");
+					uin = (Long) wxmap.get("uin");
+				}
+			}else{
+				logger.error("已绑定用户");
+				uin = (Long) userMap.get("id");
+			}
+			//publicMethods.syncUserToBolink(uin, 0);
+			//*******************************************************************//
+			Map<String, Object> map = JSONObject.fromObject(attch);
+			if(map!=null){
+				map.put("uin", uin);
+				logger.error("third pay attach中加入uin:"+uin);
+				attch = StringUtils.createJson(map);
+			}
+			try {
+				//设置支付参数
+				SortedMap<Object, Object> signParams = new TreeMap<Object, Object>();
+				//获取JSAPI网页支付参数
+				logger.error("third pay 准备下单>>>attch:"+attch+" fee:"+fee+" addr:"+request.getRemoteAddr()+" openid:"+openid);
+				signParams = PayCommonUtil.getPayParams(request.getRemoteAddr(), StringUtils.formatDouble(fee), "月卡续费", attch, openid);
+				logger.error("third pay:下单结果:"+signParams);
+				request.setAttribute("appid", signParams.get("appId"));
+				request.setAttribute("nonceStr", signParams.get("nonceStr"));
+				request.setAttribute("package", signParams.get("package"));
+				request.setAttribute("packagevalue", signParams.get("package"));
+				request.setAttribute("timestamp", signParams.get("timeStamp"));
+				request.setAttribute("paySign", signParams.get("paySign"));
+				request.setAttribute("signType", signParams.get("signType"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			request.setAttribute("backurl", backurl);
+			request.setAttribute("money", fee);
+			request.setAttribute("title", "支付月卡费用");
+			return mapping.findForward("thridpay");
+			
+		}else if(action.indexOf("thirdsuccess")!=-1){//parkingos支付成功回调页面
+			//第三方支付成功页面
+			logger.error("thirdsuccess 进入成功回调页面");
+			String type = action.substring(12, 13);
+			logger.error("thirdsuccess type:"+type);
+			//Integer type = RequestUtil.getInteger(request, "type", -1);
+			/*if(type==-1){
+				logger.error("thirdsuccess recieve type error");
+				return mapping.findForward("error");
+			}*/
+			String content = "第三方支付成功";
+			String url = "";
+			if("1".equals(type)){
+				logger.error("thirdsuccess 第三方月卡续费");
+				content = "月卡续费成功!系统处理可能会有延迟</br>请稍后在月卡页面查看续费情况";
+			}else if("2".equals(type)){
+				logger.error("thirdsuccess 第三方在场订单预支付成功");
+				content = "在场订单预支付成功!";
+			}
+			request.setAttribute("content", content);
+			//request.setAttribute("url", url);
+			return mapping.findForward("thirdsuccess");
+		}else if(action.equals("handlethirdprepay")){//二维码带有车牌的预付
+			String comId = RequestUtil.getString(request, "park_id");
+			String carnumber = RequestUtil.getString(request, "plate_number");
+			if(!Check.isEmpty(carnumber))
+				carnumber = carnumber.toUpperCase(); 
+			String orderId = RequestUtil.getString(request, "order_id");
+			String userAgent = request.getHeader("user-agent");
+			logger.error("user-agent:"+userAgent);
+			if(userAgent.indexOf("AlipayClient")!=-1){//支付宝扫码
+				request.setAttribute("client_type", "ali");
+				return mapping.findForward(aliPrepay(request,response,orderId,comId,carnumber));
+			}
+			String openid = RequestUtil.processParams(request, "openid");//"oRoekt9RN8LxHDLq43QJqRhoc0t8";//
+			logger.error("handlethirdprepay:openid:"+openid+",car_number:"+carnumber+",parkid:"+comId+",orderid:"+orderId);
+			if(openid.equals("")){
+				String code = RequestUtil.processParams(request, "code");
+				String access_token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+Constants.WXPUBLIC_APPID+"&secret="+Constants.WXPUBLIC_SECRET+"&code="+code+"&grant_type=authorization_code";
+				String result = CommonUtil.httpsRequest(access_token_url, "GET", null);
+				JSONObject map = JSONObject.fromObject(result);
+				if(map == null || map.get("errcode") != null){
+					String redirect_url = "http%3a%2f%2f"+Constants.WXPUBLIC_REDIRECTURL+"%2fzld%2fwxpfast.do%3faction%3dhandlethirdprepay" +
+							"%26park_id%3d"+comId+"%26order_id%3d"+orderId+"%26plate_number%3d"+AjaxUtil.encodeUTF8(AjaxUtil.encodeUTF8(carnumber));
+					logger.error(">>>>>>>>>>>>获取openid失败....,重新获取>>>>>>>>>>>redirect_url="+redirect_url);
+					String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
+							+ Constants.WXPUBLIC_APPID
+							+ "&redirect_uri="
+							+ redirect_url
+							+ "&response_type=code&scope=snsapi_base&state=123#wechat_redirect";
+					response.sendRedirect(url);
+					return null;
+				}
+				openid = (String)map.get("openid");
+			}
+			carnumber = AjaxUtil.decodeUTF8(carnumber);
+			logger.error("handlethirdprepay  :openid:"+openid+",car_number:"+carnumber);
+			Map<String, Object> orderMap = null;
+			if(!Check.isEmpty(orderId)){
+				orderMap =publicMethods.catBolinkOrder(null,orderId,null, comId,15,-1L);
+				logger.error("handlethirdprepay,orderMap :"+orderMap);
+				if(orderMap!=null){
+					carnumber = (String)orderMap.get("plate_number");
+				}
+			}
+			Map<String, Object> userinfoMap = commonMethods.getUserinfoByOpenid(openid);
+			if(userinfoMap == null || (Long)userinfoMap.get("uin") < 0){
+				return mapping.findForward("error");
+			}
+			Long uin = (Long)userinfoMap.get("uin");
+			Integer bindflag = (Integer)userinfoMap.get("bindflag");
+			String preCarNumber = "";
+			if(bindflag == 0){//临时账户
+				Map<String, Object> carMap = daService.getMap("select car_number from wxp_user_tb where uin= ? limit ? ", 
+						new Object[]{uin, 1});
+				if(carMap != null && carMap.get("car_number") != null){
+					preCarNumber = (String)carMap.get("car_number");
+				}
+			}else if(bindflag == 1){
+				Map<String, Object> carMap = daService.getMap("select car_number from car_info_tb where uin=? and state=? order by create_time desc limit ?",
+						new Object[] { uin, 1, 1 });
+				if(carMap != null && carMap.get("car_number") != null){
+					preCarNumber = (String)carMap.get("car_number");
+				}
+			}
+			if(Check.isEmpty(carnumber)){
+				carnumber = preCarNumber;
+			}else {
+				if(preCarNumber!=null&&!carnumber.equals(preCarNumber)){//原车牌与订单中车牌不一致，强制替换
+					logger.error("订单中车牌");
+					logger.error("更换车牌....");
+					Integer result = commonMethods.addCarnumber(uin, carnumber);
+					logger.error("add car:result:"+result);
+				}
+			}
+			if(Check.isEmpty(carnumber)){
+				request.setAttribute("openid", openid);
+				request.setAttribute("orderid", orderId);
+				request.setAttribute("comid", comId);
+				request.setAttribute("uin", uin);
+				request.setAttribute("action", "wxpfast.do?action=handlethirdprepay");
+				return mapping.findForward("addweixincar");
+			}
+			//无订单：{"state":0,"errmsg":"车主没有在场订单","order_id":"","start_time":"","end_time":"","money":""}
+			if(orderMap==null)
+				orderMap = publicMethods.catBolinkOrder(null,orderId,carnumber, comId,15,uin);
+			handleOrderToPage(request,orderMap,comId,carnumber,openid);
+			request.setAttribute("uin", uin);
+			return mapping.findForward("thirdprepay");
+		}else if(action.equals("thirdweixinorder")){//第三方微信下单
+			Long oid = RequestUtil.getLong(request, "oid", -1L);
+			Long uin = RequestUtil.getLong(request, "uin", -1L);
+			Double money = RequestUtil.getDouble(request, "money",0.0);
+			Map<String, Object> resultMap = new HashMap<String, Object>();
+			/**==== 预付测试 */
+			/*String test = RequestUtil.getString(request, "test");
+			if(test.equals("1")){
+				publicMethods.prepayToBolink(uin, money, oid);
+				resultMap.put("state", 0);
+				resultMap.put("errmsg", "测试成功");
+				AjaxUtil.ajaxOutput(response, "["+StringUtils.createJson(resultMap)+"]");
+				return null;
+			}*/
+			/**=== 预付测试 */
+			String carnumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number"));
+			String parkId = RequestUtil.getString(request, "parkid");
+			String orderId= RequestUtil.getString(request, "orderid");
+			String openid = RequestUtil.getString(request, "openid");
+			
+			logger.error("carnumber,parkId,orderId,openid,uin,money:"+carnumber+","+parkId+","+orderId+","+openid+","+uin+","+money);
+			Map<String, Object> orderMap = publicMethods.catBolinkOrder(oid,orderId,carnumber, parkId,0,uin);
+			logger.error(orderMap);
+			resultMap.put("state", 0);
+			Integer state = (Integer)orderMap.get("state");
+			if(state==null){
+				resultMap.put("errmsg", "支付失败，请重新扫码");
+				AjaxUtil.ajaxOutput(response, "["+StringUtils.createJson(resultMap)+"]");
+				return null;
+			}
+			if(state==0){
+				resultMap.put("errmsg", "订单不存在");
+				AjaxUtil.ajaxOutput(response, "["+StringUtils.createJson(resultMap)+"]");
+				return null;
+			}else if(state==2){
+				resultMap.put("state", 3);
+				resultMap.put("errmsg", "订单已支付过");
+				resultMap.put("prepay",orderMap.get("prepay") );
+				AjaxUtil.ajaxOutput(response, "["+StringUtils.createJson(resultMap)+"]");
+				return null;
+			}
+			Double nowMoney = StringUtils.formatDouble(orderMap.get("money"));
+			if(nowMoney.doubleValue()!=money){
+				logger.error("thirdweixinorder,金额有变化");
+				resultMap.put("state", 2);
+				resultMap.put("money", nowMoney);
+				Integer duration = (Integer)orderMap.get("duration");
+				if(duration!=null)
+					resultMap.put("duration", StringUtils.getTimeString(duration));
+				AjaxUtil.ajaxOutput(response, "["+StringUtils.createJson(resultMap)+"]");
+				return null;
+			}
+			try {
+				Map<String, Object> attachMap = new HashMap<String, Object>();
+				attachMap.put("uid", -1);//收费员ID
+				attachMap.put("money", money);//
+				attachMap.put("type", 9);//泊链充值预付
+				attachMap.put("orderid", oid);
+				//附加数据
+				String attach = StringUtils.createJson(attachMap);
+				logger.error("thirdweixinorder,"+attach);
+				//设置支付参数
+				SortedMap<Object, Object> signParams = PayCommonUtil.getPayParams(request.getRemoteAddr(), money, "停车费支付", attach, openid);//new TreeMap<Object, Object>();//
+				//attachMap.clear();
+				resultMap.put("state", 1);
+				resultMap.put("appid", signParams.get("appId"));
+				resultMap.put("nonceStr", signParams.get("nonceStr"));
+				resultMap.put("package", signParams.get("package"));
+				resultMap.put("packagevalue", signParams.get("package"));
+				resultMap.put("timestamp", signParams.get("timeStamp"));
+				resultMap.put("paySign", signParams.get("paySign"));
+				resultMap.put("signType", signParams.get("signType"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			AjaxUtil.ajaxOutput(response, "["+StringUtils.createJson(resultMap)+"]");
+			return null;
+		}else if(action.equals("thirdeditcar")){
+			request.setAttribute("openid", RequestUtil.getString(request, "openid"));
+			request.setAttribute("orderid", RequestUtil.getString(request, "orderid"));
+			request.setAttribute("comid", RequestUtil.getString(request, "comid"));
+			request.setAttribute("uin", RequestUtil.getString(request, "uin"));
+			request.setAttribute("action", "wxpfast.do?action=handlethirdprepay");
+			return mapping.findForward("addweixincar");
+		}else if(action.equals("prepay")){//扫NFC卡查询当前订单，进入预支付
 			Long orderid = RequestUtil.getLong(request, "orderid", -1L);
 			String code = RequestUtil.processParams(request, "code");
 			String access_token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+Constants.WXPUBLIC_APPID+"&secret="+Constants.WXPUBLIC_SECRET+"&code="+code+"&grant_type=authorization_code";
@@ -129,17 +421,30 @@ public class WeixinPublicFastPassAction extends Action {
 				}
 			}
 			request.setAttribute("openid", openid);
+			request.setAttribute("uin", uin);
 			request.setAttribute("orderid", orderid);
 			return mapping.findForward("prepay");
 		}else if(action.equals("beginprepay")){
 			Long orderid = RequestUtil.getLong(request, "orderid", -1L);
+			Integer isbolink=RequestUtil.getInteger(request, "isbolink", 0);//是否是泊链订单
+			if(orderid==-1&&isbolink==1){
+				String orderId = RequestUtil.getString(request, "orderid");
+				logger.error("beginprepay,bolink_orderId:"+orderId);
+				Map<String,Object> bolinkOrderMap = daService.getMap("select id from bolink_order_tb where order_id=? ", new Object[]{orderId});
+				logger.error("beginprepay,bolinkOrderMap:"+bolinkOrderMap);
+				if(bolinkOrderMap!=null&&!bolinkOrderMap.isEmpty()){
+					orderid = (Long)bolinkOrderMap.get("id");
+				}
+				logger.error("beginprepay,boline order id :"+orderid);
+			}
 			String openid = RequestUtil.processParams(request, "openid");
 			Integer delaytime = RequestUtil.getInteger(request, "delaytime", 0);
 			Long ticketId = RequestUtil.getLong(request, "ticketid", -1L);
-			Integer isbolink=RequestUtil.getInteger(request, "isbolink", 0);//是否是泊链订单
 			Integer paytype = RequestUtil.getInteger(request, "paytype", 0);//0直付 1支付订单 2预付泊链订单
 			String carnumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number"));
 			String parkId = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "park_id"));
+			logger.error("beginprepay,orderid:"+orderid+",openid:"+openid+",delaytime:"+delaytime+",isbolink:"+isbolink+
+					",paytype:"+paytype+",car_number:"+carnumber+",parkid:"+parkId);
 			if(orderid == -1 || openid.equals("")){
 				return mapping.findForward("error");
 			}
@@ -158,11 +463,12 @@ public class WeixinPublicFastPassAction extends Action {
 			Integer noticetype = 0;
 			Map<String, Object> orderMap = null;
 			if(isbolink==1){
-				orderMap = publicMethods.catBolinkOrder(null,null,carnumber, parkId,delaytime);
+				orderMap = publicMethods.catBolinkOrder(null,null,carnumber, parkId,delaytime,uin);
 				if(orderMap!=null){
 					orderMap.put("aftertotal", orderMap.get("money"));
 					orderMap.put("uid", -1L);
 					orderMap.put("out_uid", -1L);
+					orderid = (Long)orderMap.get("id");
 				}
 			}else {
 				orderMap=commonMethods.getOrderInfo(orderid, -1L, curtime + delaytime * 60);
@@ -220,9 +526,23 @@ public class WeixinPublicFastPassAction extends Action {
 				}
 				Double wx_pay = StringUtils.formatDouble(aftertotal - tcbTLimit - balance_pay);
 				logger.error("orderid:"+orderid+"wx_pay:"+wx_pay+",balance_pay:"+balance_pay);
-				
-				
+				if(isbolink==1){//泊链预付时，先不管余额
+					wx_pay = aftertotal;
+				}
 				if(wx_pay > 0){
+					//第三方微信支付
+					/*if(PayConfigDefind.getValue("IS_TO_THIRD_WXPAY").equals("1")){
+						logger.error(">>>>>>>>>>>>>>>>到停车宝支付去了.......");
+						String redirect_url = "http%3a%2f%2f"+PayConfigDefind.getValue("THIRD_SERVICE_URL")+"%2fzld%2fwxpfast.do%3faction%3dsweepcom%26codeid%3d254219";
+						String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
+								+ PayConfigDefind.getValue("THIRD_WXAPP_ID")
+								+ "&redirect_uri="
+								+ redirect_url
+								+ "&response_type=code&scope=snsapi_base&state=123#wechat_redirect";
+						response.sendRedirect(url);
+						return null;
+					}*/
+					//下单接口
 					try {
 						Map<String, Object> attachMap = new HashMap<String, Object>();
 						attachMap.put("uid", uid);//收费员ID
@@ -236,8 +556,29 @@ public class WeixinPublicFastPassAction extends Action {
 						}
 						attachMap.put("ticketId", ticketId);//停车券
 						attachMap.put("orderid", orderid);
+						//String backurl = "http://s.bolink.club/zld/wxpfast.do?action=thirdsuccess&type=1";
+						//String backurl = "http://"+PayConfigDefind.getValue("WXPUBLIC_S_DOMAIN")+"/zld/wxpfast.do?action=thirdsuccess&type=1";
+						//attachMap.put("backurl", backurl);
 						//附加数据
 						String attach = StringUtils.createJson(attachMap);
+						logger.error(">>>attch:"+attach);
+						logger.error("wx_pay:"+wx_pay);
+						Map<String, String> paramsMap = new HashMap<String, String>();
+						paramsMap.put("attch", attach);
+						String unionid = CustomDefind.UNIONID;
+						paramsMap.put("unionid", unionid);
+						paramsMap.put("fee", wx_pay+"");
+						String params = StringUtils.createLinkString(paramsMap);
+						//签名
+						//String sign =  StringUtils.MD5(params+"key="+CustomDefind.UNIONKEY).toUpperCase();
+						
+						/*if(PayConfigDefind.getValue("IS_TO_THIRD_WXPAY").equals("1")){
+							//第三方支付,跳转至泊链
+							response.sendRedirect("https://s.bolink.club/unionapi/prepay/?fee="+wx_pay+"&unionid="+unionid+"&sign="+sign+"&attch="+attach);
+							//response.sendRedirect("https://jarvisqh.vicp.io/cms-web/resource/jsp/kftpay.jsp");
+							return null;
+						}else{
+						}*/
 						//设置支付参数
 						SortedMap<Object, Object> signParams = new TreeMap<Object, Object>();
 						//获取JSAPI网页支付参数
@@ -249,6 +590,7 @@ public class WeixinPublicFastPassAction extends Action {
 						request.setAttribute("timestamp", signParams.get("timeStamp"));
 						request.setAttribute("paySign", signParams.get("paySign"));
 						request.setAttribute("signType", signParams.get("signType"));
+						
 					} catch (Exception e) {
 						// TODO: handle exception
 						e.printStackTrace();
@@ -291,6 +633,7 @@ public class WeixinPublicFastPassAction extends Action {
 				
 				request.setAttribute("notice_type", noticetype);
 				request.setAttribute("uid", uid);
+				request.setAttribute("uin", uin);
 				request.setAttribute("mobile", mobile);
 				request.setAttribute("ticketid", ticketId);
 				request.setAttribute("money", aftertotal);//还需支付的金额
@@ -311,13 +654,257 @@ public class WeixinPublicFastPassAction extends Action {
 			request.setAttribute("orderid", orderid);
 			request.setAttribute("paytype", paytype);
 			request.setAttribute("showorder", showorder);
+			
 			//泊链参数
+			request.setAttribute("prepay", StringUtils.formatDouble(orderMap.get("prepay")));
 			request.setAttribute("isbolink", isbolink);
 			request.setAttribute("car_number", carnumber);
 			request.setAttribute("park_id", parkId);
 			request.setAttribute("is_delay", orderMap.get("is_delay"));
 			
 			return mapping.findForward("toprepaypage");
+		}else if(action.equals("touchbolinkorder")){
+			logger.error("touchbolinkorder>>>进入第三方支付平台查询bolink订单价格接口");
+			String orderId = RequestUtil.getString(request, "order_id");
+			String parkId = RequestUtil.getString(request, "park_id");
+			String carnumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "plate_number"));
+			String sign = RequestUtil.getString(request, "sign");
+			//***************验签******************//
+			Map<String, Object> paramsMap = new HashMap<String, Object>();
+			paramsMap.put("order_id", orderId);
+			paramsMap.put("park_id", parkId);
+			paramsMap.put("plate_number",AjaxUtil.encodeUTF8(carnumber));
+			paramsMap.put("union_id",200001L);
+			String linkString = StringUtils.createLinkString(paramsMap, 0);
+			String preCode = linkString+"key="+"DEEFE9094535JUJF";
+			logger.error("touchbolinkorder>>>签名串:"+preCode);
+			//第三方(停车宝)的ukey
+			String code =StringUtils.MD5(preCode).toUpperCase();
+			logger.error("touchbolinkorder>>>sign:"+sign+"~~~"+"code:"+code);
+			if(!code.equals(sign)){
+				//签名错误
+				paramsMap.clear();
+				paramsMap.put("state", 0);
+				paramsMap.put("errmsg", "签名错误!");
+				AjaxUtil.ajaxOutput(response, JSONObject.fromObject(paramsMap).toString());
+				return null;
+			}
+			logger.error("touchbolinkorder>>>签名正确!");
+			//***********************************//
+			String encoding = getEncoding(carnumber);
+			logger.error("touchbolinkorder>>>车牌编码格式:"+encoding);
+			String carnum = AjaxUtil.decodeUTF8(carnumber);
+			logger.error("touchbolinkorder>>>UTF-8>>>车牌号:"+carnum);
+			//String carnum2 = new String(carnumber.getBytes("GBK"), "utf-8");
+			//logger.error("touchbolinkorder>>>GBK=>UTF-8>>>"+carnum2);
+			logger.error("touchbolinkorder>>>orderid:"+orderId+" parkid:"+parkId);
+		
+			//根据orderid,车场编号,车牌号查订单
+			Map<String, Object> bolinkOrder = publicMethods.catBolinkOrder(null, null, carnum, parkId, 15, -1L);
+			logger.error("touchbolinkorder>>>泊链查询订单结果:"+bolinkOrder);
+			paramsMap.clear();
+			if(bolinkOrder!=null){
+				Integer state = (Integer)bolinkOrder.get("state");
+				Double wx_pay = 0.0;
+				if(state==2){
+					Object obj = bolinkOrder.get("prepay");
+					if(obj!=null&&StringUtils.formatDouble(obj)>0){
+						//已预付
+						paramsMap.put("prepay", StringUtils.formatDouble(obj));
+					}
+				}
+				wx_pay =StringUtils.formatDouble(bolinkOrder.get("money"));
+				//Long oid = (Long) bolinkOrder.get("id");
+				paramsMap.put("state", state);
+				paramsMap.put("money", wx_pay);
+				//paramsMap.put("prepay", bolinkOrder.get("prepay")+"");
+				paramsMap.put("union_id", 200001L);
+				//签名
+				String linkJson = StringUtils.createLinkString(paramsMap, 0)+"key="+"DEEFE9094535JUJF";
+				logger.error("touchbolinkorder>>>签名串:"+linkJson);
+				String retSign =StringUtils.MD5(linkJson).toUpperCase();
+				paramsMap.put("sign", retSign);
+				//paramsMap.put("oid", oid);
+			}else{
+				paramsMap.put("state", 0);
+				paramsMap.put("errmsg", "泊链订单不存在");
+				logger.error("touchbolinkorder>>>去泊链查询价格异常");
+			}
+			String string = JSONObject.fromObject(paramsMap).toString();
+			logger.error("touchbolinkorder>>>返回结果"+string);
+			AjaxUtil.ajaxOutput(response, string);
+			return null;
+			
+		}else if(action.equals("topaypresentorder")){
+			logger.error("topaypresentorder>>>进入在场订单支付action");
+			String orderId = RequestUtil.getString(request, "order_id");
+			String parkId = RequestUtil.getString(request, "park_id");
+			String carnumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number"));
+			logger.error("topaypresentorder>>>"+orderId+" "+carnumber+" "+parkId);
+			logger.error("topaypresentorder>>>"+AjaxUtil.encodeUTF8(carnumber));
+			String backurl = "http://"+PayConfigDefind.getValue("WXPUBLIC_S_DOMAIN")+"/zld/wxpfast.do?action=thirdsuccess2"; 
+			//签名预留
+			Map<String, Object> paramsMap = new HashMap<String, Object>();
+			paramsMap.put("order_id", orderId);
+			paramsMap.put("park_id", parkId);
+			paramsMap.put("plate_number",AjaxUtil.encodeUTF8(carnumber));
+			paramsMap.put("union_id", CustomDefind.UNIONID);
+			String linkString = StringUtils.createLinkString(paramsMap, 0);
+			logger.error("topaypresentorder>>> 签前串:"+linkString+"key="+CustomDefind.UNIONKEY);
+			String sign =StringUtils.MD5(linkString+"key="+CustomDefind.UNIONKEY).toUpperCase();
+			String url = "https://s.bolink.club/unionapi/toorderprepay?park_id="+parkId+"&union_id="+CustomDefind.UNIONID+"&order_id="+orderId+"&car_number="+AjaxUtil.encodeUTF8(carnumber)+"&sign="+sign+"&backurl="+backurl;
+			//String url = "http://120.76.53.128/unionapi/toorderprepaytest?park_id="+parkId+"&union_id="+CustomDefind.UNIONID+"&order_id="+orderId+"&car_number="+AjaxUtil.encodeUTF8(carnumber)+"&sign="+sign;//+"&backurl="+backurl;
+			logger.error("topaypresentorder>>>"+url);
+			response.sendRedirect(url);
+			return null;
+			
+		}else if(action.equals("tothirdorderdetail")){//停车宝,第三方在场订单预支付下单接口
+			//查看该笔订单是否已经预支付过,如果已经预支付过,返回提示页面
+			String openid = RequestUtil.getString(request, "openid");
+			String orderId = RequestUtil.getString(request, "order_id");
+			String parkId = RequestUtil.getString(request, "park_id");
+			String carnumber = RequestUtil.getString(request, "car_number");
+			String _sign = RequestUtil.getString(request, "sign");
+			logger.error("curorderpay>>>"+carnumber);
+			logger.error("curorderpay>>>"+StringUtils.decodeUTF8(carnumber));
+			logger.error("curorderpay>>>"+getEncoding(carnumber));
+			logger.error("curorderpay>>>"+URLDecoder.decode(carnumber, getEncoding(carnumber)));
+			//String carnum = new String(carnumber.getBytes("utf-8"), "gb2312");//StringUtils.decodeUTF8(carnumber);//
+			String backurl = RequestUtil.getString(request, "backurl");
+			logger.error("curorderpay>>>>>>>>>成功回调地址"+backurl);
+			logger.error("curorderpay>>>>>>>>>车牌号:"+carnumber);
+			//logger.error("curorderpay>>>>>>UTF-8>>>>车牌号:"+AjaxUtil.decodeUTF8(carnumber));
+			logger.error("curorderpay>>>>>>>>>orderid:"+orderId+" parkid:"+parkId);
+			if(openid.equals("")){
+				String code = RequestUtil.processParams(request, "code");
+				String access_token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+Constants.WXPUBLIC_APPID+"&secret="+Constants.WXPUBLIC_SECRET+"&code="+code+"&grant_type=authorization_code";
+				String result = CommonUtil.httpsRequest(access_token_url, "GET", null);
+				JSONObject map = JSONObject.fromObject(result);
+				if(map == null || map.get("errcode") != null){
+					logger.error("curorderpay>>>>>>>>>>>>获取openid失败....,重新获取>>>>>>>>>>>");
+					String redirect_url = "http%3a%2f%2f"+Constants.WXPUBLIC_REDIRECTURL+"%2fzld%2fwxpfast.do%3faction%3dtothirdorderdetail%26order_id%3d"+orderId+"%26park_id%3d"+parkId+"%26sign%3d"+_sign+"%26car_number%3d"+StringUtils.encodeUTF8(URLEncoder.encode(carnumber, getEncoding(carnumber)))+"%26backurl%3d"+backurl;
+					String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
+							+ Constants.WXPUBLIC_APPID
+							+ "&redirect_uri="
+							+ redirect_url
+							+ "&response_type=code&scope=snsapi_base&state=123#wechat_redirect";
+					logger.error("third pay:重新调用微信，取OPENID，url:"+url);
+					response.sendRedirect(url);
+					return null;
+				}
+				openid = (String)map.get("openid");
+				logger.error("curorderpay OPENID:"+openid);
+			}
+			
+			//验签
+			Map<String, Object> param = new HashMap<String, Object>();
+			param.put("order_id", orderId);
+			param.put("park_id", parkId);
+			param.put("plate_number",StringUtils.encodeUTF8(carnumber));
+			param.put("union_id", 200001L);
+			String linkString = StringUtils.createLinkString(param,0);
+			logger.error("toorderprepay>>> 签前串:"+linkString+"key="+"DEEFE9094535JUJF");
+			String code =StringUtils.MD5(linkString+"key="+"DEEFE9094535JUJF").toUpperCase();
+			logger.error("toorderprepay>>>sign:"+_sign+" code:"+code);
+			if(!_sign.equals(code)){
+				logger.error("toorderprepay>>>签名失败");
+				return mapping.findForward("error");
+			}
+			//根据openid找,找不到则创建临时用户*
+			Map userMap = daService.getMap("select id from user_info_tb where wxp_openid = ?", new Object[]{openid}); 
+			Long uin = -1L;
+			if(userMap==null){
+				logger.error("非绑定用户");
+				Map wxmap = daService.getMap("select id,uin from wxp_user_tb where openid = ?", new Object[]{openid});
+				if(wxmap==null){
+					logger.error("非虚拟用户,注册微信虚拟用户");
+					uin = daService.getLong("SELECT nextval('seq_user_info_tb'::REGCLASS) AS newid",null);
+					int update = daService.update("insert into wxp_user_tb(openid,uin,create_time,car_number) values(?,?,?,?)", new Object[]{openid,uin,System.currentTimeMillis()/1000,carnumber});
+					if(update>0){
+						logger.error("注册虚拟账户成功!");
+					}else{
+						logger.error("注册虚拟账户失败!");
+					}
+				}else{
+					logger.error("虚拟用户");
+					int update = daService.update("update wxp_user_tb set car_number = ? where openid = ?", new Object[]{carnumber,openid});
+					logger.error("curorderpay 更新虚拟用户车牌号:"+update);
+					uin = (Long) wxmap.get("uin");
+				}
+			}else{
+				logger.error("已绑定用户");
+				//得把这个车牌加给这个正式用户
+				uin = (Long) userMap.get("id");
+			}
+			//****************************************************************
+			
+			//根据orderid,车场编号,车牌号查订单
+			Map<String, Object> bolinkOrder = publicMethods.catBolinkOrder(null, null, carnumber, parkId, 15, uin);
+			logger.error("curorder pay 泊链查询订单结果:"+bolinkOrder);
+			Double wx_pay = Double.valueOf(bolinkOrder.get("money")+"");
+			if(bolinkOrder.get("start_time")==null){
+				logger.error("curorderpay 订单未查到!");
+				return mapping.findForward("error");
+			}
+			
+			//获取boink订单编号
+			Long oid = -1L;
+			Map<String,Object> bolinkOrderMap = daService.getMap("select id from bolink_order_tb where order_id=? ", new Object[]{orderId});
+			logger.error("curorderpay,bolinkOrderMap:"+bolinkOrderMap);
+			if(bolinkOrderMap!=null&&!bolinkOrderMap.isEmpty()){
+				oid = (Long)bolinkOrderMap.get("id");
+			}
+			logger.error("curorderpay,boline order id :"+oid);
+			logger.error("curorderpay 在场订单预付金额:"+wx_pay);
+			if(wx_pay > 0){
+				try {
+					Map<String, Object> attachMap = new HashMap<String, Object>();
+					attachMap.put("uid", -1L);//收费员ID
+					attachMap.put("money", wx_pay);//
+					attachMap.put("type", 9);//泊链充值预付
+					//attachMap.put("ticketId", ticketId);//停车券
+					attachMap.put("orderid", oid);
+					attachMap.put("uin", uin);
+					//附加数据
+					String attach = StringUtils.createJson(attachMap);
+					logger.error(">>>attch:"+attach);
+					Map<String, String> paramsMap = new HashMap<String, String>();
+					paramsMap.put("attch", attach);
+					String unionid = CustomDefind.UNIONID;
+					paramsMap.put("unionid", unionid);
+					paramsMap.put("fee", wx_pay+"");
+					String params = StringUtils.createLinkString(paramsMap);
+					//签名
+					String sign =  StringUtils.MD5(params+"key="+CustomDefind.UNIONID).toUpperCase();
+					//设置支付参数
+					SortedMap<Object, Object> signParams = new TreeMap<Object, Object>();
+					//获取JSAPI网页支付参数
+					logger.error("curorderpay 下单参数:>>>wx_pay:"+wx_pay+" attch:"+attach+" openid:"+openid+" addr:"+request.getRemoteAddr());
+					signParams = PayCommonUtil.getPayParams(request.getRemoteAddr(), wx_pay, "停车费支付", attach, openid);
+					logger.error("curorderpay 下单结果:>>>"+signParams);
+					request.setAttribute("appid", signParams.get("appId"));
+					request.setAttribute("nonceStr", signParams.get("nonceStr"));
+					request.setAttribute("package", signParams.get("package"));
+					request.setAttribute("packagevalue", signParams.get("package"));
+					request.setAttribute("timestamp", signParams.get("timeStamp"));
+					request.setAttribute("paySign", signParams.get("paySign"));
+					request.setAttribute("signType", signParams.get("signType"));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+			}
+			Long startTime = Long.valueOf(bolinkOrder.get("start_time")+"");
+			request.setAttribute("starttime",TimeTools.getTime_MMdd_HHmm(startTime*1000));
+			request.setAttribute("parktime",StringUtils.getTimeString(startTime, System.currentTimeMillis()/1000));
+			request.setAttribute("money", bolinkOrder.get("money"));
+			request.setAttribute("park_id", parkId);
+			request.setAttribute("orderid", orderId);
+			request.setAttribute("backurl", backurl);
+			request.setAttribute("title", "预付停车费");
+			//跳转到支付页面
+			return mapping.findForward("thridpay");
+			
 		}else if(action.equals("getprice")){//获取预支付金额
 			Long orderid = RequestUtil.getLong(request, "orderid", -1L);
 			Integer isBolink=RequestUtil.getInteger(request, "isbolink", 0);
@@ -325,9 +912,10 @@ public class WeixinPublicFastPassAction extends Action {
 			logger.error("getprice>>>orderid："+orderid+",delaytime:"+delaytime);
 			Map<String, Object> infoMap = new HashMap<String, Object>();
 			if(isBolink==1){//泊链订单，需要调用泊链服务器查询
+				Long uin = RequestUtil.getLong(request, "uin", -1L);
 				String carnumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number"));
 				String parkId = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "park_id"));
-				Map<String, Object>orderMap = publicMethods.catBolinkOrder(null,null,carnumber, parkId,delaytime);
+				Map<String, Object>orderMap = publicMethods.catBolinkOrder(null,null,carnumber, parkId,delaytime,uin);
 				infoMap.put("aftertotal", orderMap.get("money"));
 				Long startTime=Long.valueOf(orderMap.get("start_time")+"");
 				infoMap.put("parktime",StringUtils.getTimeString(startTime, System.currentTimeMillis()/1000+delaytime*60));
@@ -366,6 +954,8 @@ public class WeixinPublicFastPassAction extends Action {
 				AjaxUtil.ajaxOutput(response, re + "");
 			}else {//泊链预支付，只同步用户余额到泊链
 				publicMethods.syncUserToBolink(uin);
+				int r = daService.update("update bolink_order_tb set prepay =prepay+? where id =? ", new Object[]{total,orderid});
+				logger.error("weixin prpay 微信扫码预付了一笔第三方车场停车费,金额："+total+"id:"+orderid+",ret="+r);
 				AjaxUtil.ajaxOutput(response, "5");
 			}
 			return null;
@@ -705,6 +1295,7 @@ public class WeixinPublicFastPassAction extends Action {
 		}else if(action.equals("checkorder")){
 			Long orderid = RequestUtil.getLong(request, "orderid", -1L);
 			Integer isbolink = RequestUtil.getInteger(request, "isbolink", 0);
+			Long uin = RequestUtil.getLong(request, "uin", -1L);
 			logger.error("检查该订单是否已经结算，orderid:"+orderid);
 			if(isbolink==0){
 				if(orderid == -1){
@@ -733,7 +1324,7 @@ public class WeixinPublicFastPassAction extends Action {
 				String parkId = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "park_id"));
 				Integer delaytime = RequestUtil.getInteger(request, "delaytime", 0);
 				Double totalFee = RequestUtil.getDouble(request, "total_fee", 0.0);
-				Map<String, Object> orderMap = publicMethods.catBolinkOrder(null,null,carnumber, parkId,delaytime);
+				Map<String, Object> orderMap = publicMethods.catBolinkOrder(null,null,carnumber, parkId,delaytime,uin);
 				if(orderMap!=null){
 					Double money = StringUtils.formatDouble(orderMap.get("money"));
 					logger.error("泊链支付：prepay total="+totalFee+",now fee="+money);
@@ -748,12 +1339,6 @@ public class WeixinPublicFastPassAction extends Action {
 			Long codeid = RequestUtil.getLong(request, "codeid", -1L);
 			String openid = RequestUtil.processParams(request, "openid");
 			String carnumber = RequestUtil.processParams(request, "carnumber");
-			//http://yxiudongyeahnet.vicp.cc:50803/zld/wxpfast.do?action=sweepcom&codeid=1&from=bolink&openid=oRoekt9RN8LxHDLq43QJqRhoc0t8
-//			openid = "oRoektybTsv33_vSKKUwLAsJAquc";
-//			openid = "oRoekt8iW7wwwv2CVq3Bj6rB38EM";
-//			openid = "oRoekt7uy9abm5hrUBCWYHHDF5sY";
-			//openid ="oRoekt9RN8LxHDLq43QJqRhoc0t8";
-			
 			if(openid.equals("")){
 				String code = RequestUtil.processParams(request, "code");
 				String access_token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+Constants.WXPUBLIC_APPID+"&secret="+Constants.WXPUBLIC_SECRET+"&code="+code+"&grant_type=authorization_code";
@@ -774,7 +1359,7 @@ public class WeixinPublicFastPassAction extends Action {
 			}
 			
 			logger.error("扫车场二维码或者减免券，openid："+openid+",codeid:"+codeid);
-			if(openid.equals("") || codeid == -1){
+			if(openid.equals("")||codeid==-1){
 				return mapping.findForward("error");
 			}
 			request.setAttribute("codeid", codeid);
@@ -782,22 +1367,29 @@ public class WeixinPublicFastPassAction extends Action {
 			//**************************根据二维码获取车场信息*******************************//
 			boolean isBolinkPark = false;
 			String parkId = "";
-			Map<String, Object> codeMap = daService.getMap("select * from qr_code_tb where id=? and comid is not null ",
-					new Object[] { codeid });
-			if(codeMap == null){
-				codeMap= daService.getMap("select * from qr_thirdpark_code where id=? ", new Object[] { codeid });
-				if(codeMap!=null){
-					isBolinkPark=true;//泊链平台
-					codeMap.put("type", 4);
-					codeMap.put("comid", -1L);
-					parkId = (String)codeMap.get("park_id");
+			Long comid = -1L;
+			Map<String, Object> codeMap = null;
+			if(codeid!=-1){
+				codeMap = daService.getMap("select * from qr_code_tb where id=? and comid is not null ",
+						new Object[] { codeid });
+				if(codeMap == null){
+					codeMap= daService.getMap("select * from qr_thirdpark_code where id=? ", new Object[] { codeid });
+					if(codeMap!=null){
+						isBolinkPark=true;//泊链平台
+						codeMap.put("type", 4);
+						codeMap.put("comid", -1L);
+						parkId = (String)codeMap.get("park_id");
+					}
 				}
+				if(codeMap==null){
+					return mapping.findForward("error");
+				}
+				comid = (Long)codeMap.get("comid");
 			}
-			if(codeMap==null){
-				return mapping.findForward("error");
+			if(comid==-1){
+				comid = RequestUtil.getLong(request, "comid", -1L);
+				logger.error("comid:"+comid);
 			}
-			Long comid = (Long)codeMap.get("comid");
-				
 			//**************************根据openid获取用户信息*******************************//
 			Map<String, Object> userinfoMap = commonMethods.getUserinfoByOpenid(openid);
 			if(userinfoMap == null || (Long)userinfoMap.get("uin") < 0){
@@ -806,6 +1398,7 @@ public class WeixinPublicFastPassAction extends Action {
 			Long uin = (Long)userinfoMap.get("uin");
 			Integer bindflag = (Integer)userinfoMap.get("bindflag");
 			//**************************如果车牌号为空，查找绑定的车牌号*******************************//
+			logger.error("sweepcom,carNumber:"+carnumber);
 			if(carnumber.equals("")){//车牌号为空
 				if(bindflag == 0){//临时账户
 					Map<String, Object> carMap = daService.getMap("select car_number from wxp_user_tb where uin= ? limit ? ", 
@@ -814,13 +1407,14 @@ public class WeixinPublicFastPassAction extends Action {
 						carnumber = (String)carMap.get("car_number");
 					}
 				}else if(bindflag == 1){
-					Map<String, Object> carMap = daService.getMap("select car_number from car_info_tb where uin=? and state=? order by id desc limit ?",
+					Map<String, Object> carMap = daService.getMap("select car_number from car_info_tb where uin=? and state=? order by create_time desc limit ?",
 							new Object[] { uin, 1, 1 });
 					if(carMap != null && carMap.get("car_number") != null){
 						carnumber = (String)carMap.get("car_number");
 					}
 				}
 			}
+			logger.error("sweepcom,carNumber:"+carnumber);
 			if(carnumber.equals("")){
 				request.setAttribute("redircturl", "wxpfast.do?action=sweepcom");
 				return mapping.findForward("addcarnum");
@@ -829,13 +1423,20 @@ public class WeixinPublicFastPassAction extends Action {
 			String orderId = "-1";
 			Long shopTicketId = -1L;
 			Integer ownerflag = 0;
-			if((Integer)codeMap.get("type") == 5 && codeMap.get("ticketid") != null){//扫描减免券二维码
-				shopTicketId = (Long)codeMap.get("ticketid");
+			if(codeMap!=null){
+				if((Integer)codeMap.get("type") == 5 && codeMap.get("ticketid") != null){//扫描减免券二维码
+					shopTicketId = (Long)codeMap.get("ticketid");
+				}
 			}
 			Integer is_delay = 1;
 			Map<String, Object> orderMap =null;
 			if(isBolinkPark){//泊链平台上的车场，需要调用接口查询
-				orderMap = publicMethods.catBolinkOrder(null,null,carnumber, parkId,15);
+//				Map<String, Object> preOrderMap = pService.getMap("select id from bolink_order_tb " +
+//						"wherer plate_number=? and uin =?  and state =? order by id desc  ",
+//						new Object[]{carnumber,uin,0});
+//				logger.error("扫码查订单，本地订单："+preOrderMap);
+//				if()
+				orderMap = publicMethods.catBolinkOrder(null,null,carnumber, parkId,15,uin);
 				if(orderMap!=null)
 					is_delay = (Integer)orderMap.get("is_delay");
 			}else {
@@ -898,24 +1499,33 @@ public class WeixinPublicFastPassAction extends Action {
 					}
 				}
 			}else if(orderMap.size()>1){
-				Long startTime=Long.valueOf(orderMap.get("start_time")+"");
-				request.setAttribute("starttime",TimeTools.getTime_MMdd_HHmm(startTime*1000));
-				request.setAttribute("parktime",StringUtils.getTimeString(startTime, System.currentTimeMillis()/1000));
-				request.setAttribute("beforetotal",0);
-				request.setAttribute("aftertotal", orderMap.get("money"));
-				request.setAttribute("distotal", 0);
-				request.setAttribute("prestate", 0);
-				request.setAttribute("pretotal", 0);
-				request.setAttribute("descp", "");
-				orderId= orderMap.get("order_id")+"";
-				request.setAttribute("isbolink", 1);
-				request.setAttribute("park_id", parkId);
+				Integer state = (Integer)orderMap.get("state");//0没有在场订单 1有在场订单 2已预付过
+				if(state==null)
+					state = 0;
+				if(state>0){
+					Integer duration = (Integer)orderMap.get("duration");
+					duration = duration==null?1:duration;
+					Double prepay = StringUtils.formatDouble(orderMap.get("prepay"));
+					Long startTime=Long.valueOf(orderMap.get("start_time")+"");
+					request.setAttribute("starttime",TimeTools.getTime_MMdd_HHmm(startTime*1000));
+					request.setAttribute("parktime",StringUtils.getTimeString(duration));
+					request.setAttribute("beforetotal",prepay);
+					request.setAttribute("aftertotal", orderMap.get("money"));
+					request.setAttribute("distotal", 0);
+					request.setAttribute("prestate", prepay>0?1:0);
+					request.setAttribute("pretotal", prepay);
+					request.setAttribute("descp", "");
+					orderId= orderMap.get("order_id")+"";
+					request.setAttribute("isbolink", 1);
+					request.setAttribute("park_id", parkId);
+				}
 			}
 			request.setAttribute("swpcomflag", 1);
 			request.setAttribute("carnumber", carnumber);
 			request.setAttribute("shopticketid", shopTicketId);
 			request.setAttribute("is_delay", is_delay);
 			request.setAttribute("orderid", orderId);
+			//request.setAttribute("from", from);
 			return mapping.findForward("prepay");
 		}else if(action.equals("toaddcnum")){
 			Long codeid = RequestUtil.getLong(request, "codeid", -1L);
@@ -930,6 +1540,7 @@ public class WeixinPublicFastPassAction extends Action {
 		}else if(action.equals("addcnum")){
 			String openid = RequestUtil.processParams(request, "openid");
 			String carnumber = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "carnumber"));
+			logger.error("add car:openid:"+openid+",car_number:"+carnumber);
 			if(openid.equals("") || carnumber.equals("")){
 				return mapping.findForward("error");
 			}
@@ -937,8 +1548,10 @@ public class WeixinPublicFastPassAction extends Action {
 			if(userinfoMap == null || (Long)userinfoMap.get("uin") < 0){
 				return mapping.findForward("error");
 			}
+			logger.error("add car:userinfoMap:"+userinfoMap);
 			Long uin = (Long)userinfoMap.get("uin");
 			Integer result = commonMethods.addCarnumber(uin, carnumber);
+			logger.error("add car:result:"+result);
 			AjaxUtil.ajaxOutput(response, result + "");
 			return null;
 		}else if(action.equals("toreward")){
@@ -1650,6 +2263,111 @@ public class WeixinPublicFastPassAction extends Action {
 		return null;
 	}
 	
+
+	private void handleOrderToPage(HttpServletRequest request,Map<String, Object> orderMap,
+			String comId,String carnumber,String openid) {
+		Integer duration = (Integer)orderMap.get("duration");
+		duration = duration==null?1:duration;
+		Double prepay = StringUtils.formatDouble(orderMap.get("prepay"));
+		Integer state = (Integer)orderMap.get("state");
+		state=state==null?0:state;
+		if(state!=0){
+			Object stime = orderMap.get("start_time");
+			if(Check.isLong(stime+"")){
+				request.setAttribute("starttime",TimeTools.getTime_MMdd_HHmm(Long.valueOf(stime+"")*1000));//入场时间
+			}
+			if(duration>0)
+				request.setAttribute("parktime",StringUtils.getTimeString(duration));//停车时长
+			else {
+				request.setAttribute("parktime","0");//停车时长
+			}
+		}
+		request.setAttribute("prepay",prepay);//已预付金额
+		request.setAttribute("money", orderMap.get("money"));//支付金额
+		request.setAttribute("orderid", orderMap.get("order_id"));//第三方订单编号
+		request.setAttribute("comid", comId);//车场编号
+		request.setAttribute("carnumber", carnumber);//车牌
+		request.setAttribute("openid", openid);//微信openid
+		request.setAttribute("parkname", orderMap.get("park_name"));//车场名称
+		request.setAttribute("oid", orderMap.get("id"));//泊链订单编号
+		request.setAttribute("title", "当前订单");
+		request.setAttribute("free_out_time", orderMap.get("free_out_time"));
+		if(state==0){
+			request.setAttribute("title", "您当前无入场订单");
+		}else if(state==2){
+			request.setAttribute("title", "已预付订单");
+		}
+		request.setAttribute("state",state);
+	}
+
+
+	/**
+	 * 支付宝扫码
+	 * @param request
+	 * @param orderId
+	 * @param comId
+	 * @param carnumber
+	 * @return
+	 */
+	private String aliPrepay(HttpServletRequest request, HttpServletResponse response,
+			String orderId, String comId, String carnumber) {
+		Map<String, Object>orderMap =null;
+		if(!Check.isEmpty(orderId)){
+			orderMap=publicMethods.catBolinkOrder(null,orderId,null, comId,15,-1L);
+			logger.error("handlethirdprepay,orderMap :"+orderMap);
+			if(orderMap!=null){
+				carnumber = (String)orderMap.get("plate_number");
+			}
+		}
+		if(Check.isEmpty(carnumber)){
+			Cookie[] cookies = request.getCookies();//这样便可以获取一个cookie数组
+			if(cookies!=null){
+				for(Cookie cookie : cookies){
+					if(cookie!=null&&cookie.getName().equals("lience"))
+						carnumber = AjaxUtil.decodeUTF8(cookie.getValue());
+				}
+			}
+		}else {
+			Cookie  cookie = new Cookie("lience",AjaxUtil.encodeUTF8(carnumber));
+			cookie.setMaxAge(8640000);//暂定100天
+			//设置路径，这个路径即该工程下都可以访问该cookie 如果不设置路径，那么只有设置该cookie路径及其子路径可以访问
+			cookie.setPath("/");
+			response.addCookie(cookie);
+			logger.error("已保存到cookie,lience="+carnumber);
+		}
+		if(Check.isEmpty(carnumber)){
+			request.setAttribute("openid", "");
+			request.setAttribute("orderid", orderId);
+			request.setAttribute("comid", comId);
+			request.setAttribute("action", "wxpfast.do?action=handlethirdprepay");
+			return "toaliaddcnum";
+		}
+		if(orderMap==null)
+			orderMap = publicMethods.catBolinkOrder(null, orderId, carnumber, comId, 0, -1L);
+		handleOrderToPage(request, orderMap, comId, carnumber, "");
+		request.setAttribute("uin", getUinByCar(carnumber));
+		return "thirdprepay";
+	}
+
+	/**
+	 * 根据车牌查询车主账户
+	 * @param carNumber
+	 * @return
+	 */
+	private Long getUinByCar(String carNumber) {
+		Map<String, Object> carInfo = daService.getMap("select uin from wxp_user_tb where car_number=? ", new Object[]{carNumber});
+		Long uin = -1L;
+		if(carInfo!=null&&!carInfo.isEmpty()){
+			uin = (Long) carInfo.get("uin");
+		}
+		if(uin==null||uin<0){
+			uin = daService.getkey("seq_wxp_user_tb");
+			int r = daService.update("insert into wxp_user_tb (create_time,uin,car_number,openid) values" +
+					"(?,?,?,?) ", new Object[]{System.currentTimeMillis()/1000,uin,carNumber,"aliprepayuser"});
+			logger.error("aliprepay add user,carnumber:"+carNumber+" ,r="+r);
+		}
+		return uin;
+	}
 	/** 
      * 把中文转成Unicode码 
      * @param str 
@@ -1782,4 +2500,40 @@ public class WeixinPublicFastPassAction extends Action {
 		logger.error("最终选券结果：orderid:"+orderid+",uin:"+uin+",openid:"+openid+",ticketid:"+ticketId+",ticket_money:"+ticket_money);
 		return rMap;
 	}
+	
+	public String getEncoding(String str) {        
+	       String encode = "GB2312";        
+	      try {        
+	          if (str.equals(new String(str.getBytes(encode), encode))) {        
+	               String s = encode;        
+	              return s;        
+	           }        
+	       } catch (Exception exception) {        
+	       }        
+	       encode = "ISO-8859-1";        
+	      try {        
+	          if (str.equals(new String(str.getBytes(encode), encode))) {        
+	               String s1 = encode;        
+	              return s1;        
+	           }        
+	       } catch (Exception exception1) {        
+	       }        
+	       encode = "UTF-8";        
+	      try {        
+	          if (str.equals(new String(str.getBytes(encode), encode))) {        
+	               String s2 = encode;        
+	              return s2;        
+	           }        
+	       } catch (Exception exception2) {        
+	       }        
+	       encode = "GBK";        
+	      try {        
+	          if (str.equals(new String(str.getBytes(encode), encode))) {        
+	               String s3 = encode;        
+	              return s3;        
+	           }        
+	       } catch (Exception exception3) {        
+	       }        
+	      return "";        
+	   }  
 }

@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.zld.dao.PgOnlyReadDao;
+import com.zld.utils.StringUtils;
 
 @Repository
 public class PgOnlyReadImpl extends JdbcTemplate implements PgOnlyReadDao {
@@ -24,6 +25,8 @@ public class PgOnlyReadImpl extends JdbcTemplate implements PgOnlyReadDao {
 		super.setDataSource(dataSource);
 	}
 	public List getAll(String sql,Object[] values ) {
+		//System.err.println(sql);
+		//System.err.println(StringUtils.objArry2String(values));
 		List list = queryForList(sql,values);
 		return list;
 	}

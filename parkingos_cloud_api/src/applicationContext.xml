@@ -60,6 +60,9 @@
 	<bean name="/picshandle" class="com.zld.struts.request.PicsHandleAction"></bean>
 	
 	<bean name="/syncInter" class="com.zld.struts.request.SyncInterface"></bean>
+	<!-- 修改标准云接入接口 -->
+	<bean name="/syncInterNew" class="com.zld.struts.request.SyncInterfaceNew"></bean>
+	
 	
 	<!-- 车主2.0接口 -->
 	<bean name="/carinter" class="com.zld.struts.request.CarOwnerInterface"></bean>
@@ -103,5 +106,10 @@
 	
 	<!-- p4数据导p5  -->
 	<bean name="/syncdata" class="com.zld.struts.request.SyncFromP4ToP5Action"></bean>
+	
+	<!-- 停车云发数据到停车场SDK  -->
+	<bean name="/sendmsgtopark" class="com.zld.struts.request.SendMessageByTCPAction"></bean>
+	<bean name="/aliprepay" class="com.zld.struts.request.AliQrPrepayAction"></bean>
+	<bean name="/sendmesg" class="com.zld.sdk.doupload.impl.SendMessageToParkBySDKAction"></bean>
 	<context:component-scan base-package="com.zld" />
 	</beans>

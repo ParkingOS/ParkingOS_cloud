@@ -217,7 +217,7 @@ public class PayCommonUtil {
 		packageParams.put("out_trade_no", out_trade_no); // 商户订单号
 		packageParams.put("total_fee", String.valueOf(Integer.parseInt(new java.text.DecimalFormat("0").format(fee*100)))); // 商品总金额,以分为单位
 		packageParams.put("spbill_create_ip",addressip);
-		packageParams.put("notify_url",Constants.WXPUBLIC_NOTIFY_URL); // 通知地址
+		packageParams.put("notify_url",Constants.WXPUBLIC_NOTIFY_URL); // 泊链通知地址
 		packageParams.put("trade_type", "JSAPI");
 		packageParams.put("openid", openid);
 		

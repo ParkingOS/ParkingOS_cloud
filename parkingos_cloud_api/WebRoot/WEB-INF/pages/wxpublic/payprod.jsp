@@ -11,9 +11,12 @@
 <script type="text/javascript">
 	javascript: window.history.forward(1);
 </script>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.3.2.min.css?v=1" />
+<link rel="stylesheet" href="css/weui-0.4.3.css">
+<link rel="stylesheet" href="css/jquery-weui-0.8.3.css">
 <link rel="stylesheet" type="text/css" href="css/list.css?v=12" />
 <script src="js/jquery.js"></script>
+<script src="js/wxpublic/jquery-weui-0.8.3.js"></script>
+<script src="js/wxpublic/fastclick.js"></script>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
 <style type="text/css">
 #scroller .li1 {
@@ -181,7 +184,7 @@ border-radius:3px;
 	<div id="scroller">
 		<ul id="thelist">
 			<li class="li2">
-				<div style="text-align:center;margin-top:45px;color:#38B074;font-size:50px;font-weight:bold;"><span style="font-size:25px;">￥</span>${total}</div>
+				<div style="text-align:center;margin-top:45px;color:#04be02;font-size:50px;font-weight:bold;"><span style="font-size:25px;">&nbsp;￥</span>${total}</div>
 			</li>
 			<div style="margin-top:0px;background-color:white;padding-top: 15px;" class="info-list">
 			<li class="li1 tcbbalance hide"><a href="#"><div><span>余额支付</span><span class="right">${balance_pay}元</span></div></a></li>
@@ -194,7 +197,8 @@ border-radius:3px;
 				<input type="text" name="starttime" value="${starttime}">
 				<input type="text" name="endtime" value="${endtime}">
 			</ul>
-			<input type="button" id="wx_pay" onclick='wxepay();' class="wx_pay" value="支付">
+			<div style="height:10px"></div>
+			<input type="button" id="wx_pay" onclick='wxepay();' class="weui_btn weui_btn_primary" style="width:95%" value="支付">
 			<div class="wxpay-logo"></div>
 			<div style="text-align:center;" id="error" class="error"></div>
 		</ul>

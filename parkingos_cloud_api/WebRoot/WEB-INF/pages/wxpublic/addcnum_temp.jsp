@@ -9,8 +9,11 @@
 <meta content="telephone=no" name="format-detection">
 <meta content="email=no" name="format-detection">
 <title>输入车牌</title>
-<script src="js/jquery.js" type="text/javascript"></script>
+<link rel="stylesheet" href="css/weui-0.4.3.css">
+<link rel="stylesheet" href="css/jquery-weui-0.8.3.css">
 <link rel="stylesheet" href="css/prepay.css?v=3">
+<script src="js/jquery.js"></script>
+<script src="js/wxpublic/jquery-weui-0.8.3.js"></script>
 <style type="text/css">
 .error {
 	color: red;
@@ -63,11 +66,11 @@ select{
 					<dl class="form-line">
 						<dt class="label">车牌号码</dt>
 						<dd class="element lpn-element">
-							<input class="text" type="text" name="carnumber" id="carnumber" placeholder="请输入车牌号" maxlength="7">
+							<input class="text" type="text"   name="carnumber" id="carnumber" placeholder="请输入车牌号" maxlength="8">
 						</dd>
 					</dl>
 
-					<dl class="form-line">
+					<dl class="form-line hide">
 						<dt class="label">常用车牌号</dt>
 						<dd class="element lpn-element">
 							<div id="switch-bg" class="switch-bg switch-on"><!-- 添加class="switch-on"，显示“开”状态 -->
@@ -77,17 +80,19 @@ select{
 						</dd>
 					</dl>
 				</div>
-
-				<div class="form-tips">将保存此车牌号，下次无需输入</div>
-				<input type="button" id="wx_pay" onclick='check();' class="wx_pay" value="确认">
+				<div style="height:15px"></div>
+				<input type="button" id="wx_pay" onclick='check();' style="width:95%" class="weui_btn weui_btn_primary" value="确认">
+				<div class="form-tips hide">&nbsp;<div id="text">将保存此车牌号，下次无需输入</div></div>
 				<input type="text" name="openid" value="${openid}" class="hide">
 				<input type="text" name="codeid" value="${codeid}" class="hide">
+				<input type="text" name="comid" value="${comid}" class="hide">
+				<input type="text" name="orderid" value="${orderid}" class="hide">
 				<input type="text" name="uid" value="${uid}" class="hide">
 			</fieldset>
 		</form>
 		<!-- 输入车牌号]] -->
 		<div style="text-align:center;" id="error" class="error"></div>
-		<div class="wxpay-logo"></div>
+		<div style="position:absolute;bottom:150px;text-align:center;width:78%"><div class="wxpay-logo"></div></div>
 	</section>
 <script type="text/javascript">
 	$(".switch-btn").bind("click",function(){
@@ -96,12 +101,12 @@ select{
 		if(hasClass(onoff,"switch-on")){
 			removeClass(onoff,"switch-on");
 			addClass(onoff,"switch-off");
-			$(".form-tips").addClass("hide");
+			$("#text").addClass("hide");
 			addtype.value = 1;
 		}else if(hasClass(onoff,"switch-off")){
 			removeClass(onoff,"switch-off");
 			addClass(onoff,"switch-on");
-			$(".form-tips").removeClass("hide");
+			$("#text").removeClass("hide");
 			addtype.value = 0;
 		}
 	});
@@ -115,7 +120,7 @@ select{
 					"晋", "冀", "豫", "川", "渝", "辽", "吉", "黑", "皖", "鄂", "湘", "赣",
 					"闽", "陕", "甘", "宁", "蒙", "津", "贵", "云", "桂", "琼", "青", "新",
 					"藏", "港", "澳", "使", "军", "空", "海", "北", "沈", "兰","济", "南", "广", "成", "WJ", "警", "消", "边","水", "电", "林", "通" );  
-		var m = /^[A-Z]{1}[A-Z_0-9]{5}$/;
+		var m = /^[A-Z]{1}[A-Z_0-9]{5,6}$/;
 		carnumber_char = carnumber.substr(1);
 		if(array.toString().indexOf(city) > -1){
 			if(city == "使"){
@@ -143,7 +148,7 @@ select{
 			url:"wxpfast.do",
 			data:{
 				'action':'addcnum',
-				'carnumber':carnumber,
+				'carnumber':carnumber.toUpperCase(),
 				'openid':'${openid}',
 				 'r' : Math.random()
 			},

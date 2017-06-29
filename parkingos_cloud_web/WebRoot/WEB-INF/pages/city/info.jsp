@@ -47,7 +47,7 @@ T.bind(window,"resize",function(){
     rightO.style.height = T.gwh() - 50 + "px"
 })
 
-
+var pursue=[{"value_no":0,"value_name":"不可以"},{"value_no":1,"value_name":"可以"}];
 var fields = [
 		{fieldcnname:"城市编号",fieldname:"id",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false,edit:false},
 		{fieldcnname:"名称",fieldname:"name",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false},
@@ -57,8 +57,9 @@ var fields = [
 		{fieldcnname:"手机",fieldname:"mobile",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false},
 		{fieldcnname:"新密码",fieldname:"newpass",fieldvalue:'',inputtype:"password", twidth:"200" ,height:"",issort:false},
 		{fieldcnname:"确认密码",fieldname:"confirmpass",fieldvalue:'',inputtype:"password", twidth:"200" ,height:"",issort:false},
-		{fieldcnname:"电话",fieldname:"phone",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false}
-		
+		{fieldcnname:"电话",fieldname:"phone",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false},
+		{fieldcnname:"是否跨运营集团追缴逃单",fieldname:"is_group_pursue",fieldvalue:'',inputtype:"select",noList:pursue ,twidth:"100" ,height:"",issort:true},
+		{fieldcnname:"同一车牌可否在城市内重复入场",fieldname:"is_inpark_incity",fieldvalue:'',inputtype:"select",noList:pursue ,twidth:"100" ,height:"",issort:true}
 	];
 var info= eval('${info}');
 var cityid = "";
@@ -90,7 +91,8 @@ function getFields(){
 	var fs = getEditFields();
 	var mfs = [
 		{kindname:"商户信息",kinditemts:fs.slice(0,4)},
-		{kindname:"我的账户信息",kinditemts:fs.slice(4,9)}
+		{kindname:"我的账户信息",kinditemts:fs.slice(4,9)},
+		{kindname:"其他信息",kinditemts:fs.slice(9,11)}
 		];
 	return mfs;
 }

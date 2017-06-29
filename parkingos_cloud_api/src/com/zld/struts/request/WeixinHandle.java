@@ -340,6 +340,7 @@ public class WeixinHandle extends HttpServlet {
 							logger.error("车主"+uin+"停车宝充值了100元，返红包25/100。。："+ret);
 							logService.insertUserMesg(1, uin, "恭喜您获得充值大礼包", "红包提醒");
 						}*/
+						publicMethods.syncUserToBolink(uin);
 						// 给用户（车主）发消息
 						logService.insertMessage(-1L, 1, uin, "", bid,Double.valueOf(total), total + "元充值成功", 0, 0L,0L, 2);
 						//publicMethods.sendMessageToThird(uin, Integer.valueOf(total_fee), null, null, null, 1);

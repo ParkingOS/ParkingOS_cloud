@@ -61,7 +61,9 @@ var _parentField = [
 		{fieldcnname:"纬度",fieldname:"latitude",fieldvalue:'',inputtype:"text", twidth:"80" ,height:"",edit:false,hide:true,fhide:true},
 		{fieldcnname:"停车场电话",fieldname:"mobile",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"创建时间",fieldname:"create_time",fieldvalue:'',inputtype:"date", twidth:"130" ,height:"",hide:true,issort:false,},
-		{fieldcnname:"更新时间",fieldname:"update_time",fieldvalue:'',inputtype:"date", twidth:"130" ,height:"",hide:true,issort:false,}
+		{fieldcnname:"更新时间",fieldname:"update_time",fieldvalue:'',inputtype:"date", twidth:"130" ,height:"",hide:true,issort:false,},
+		//添加车场秘钥展示列表
+		{fieldcnname:"车场秘钥",fieldname:"ukey",fieldvalue:'',inputtype:"text", twidth:"150" ,height:"",edit:false}
 		];
 //*****************************************集团登录显示的内容*********************************************//
 var areas = eval(T.A.sendData("getdata.do?action=getareas&id=${groupid}"));
@@ -86,7 +88,9 @@ var _childField = [
 		{fieldcnname:"纬度",fieldname:"latitude",fieldvalue:'',inputtype:"text", twidth:"80" ,height:"",edit:false,hide:true,fhide:true},
 		{fieldcnname:"停车场电话",fieldname:"mobile",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"创建时间",fieldname:"create_time",fieldvalue:'',inputtype:"date", twidth:"130" ,height:"",hide:true},
-		{fieldcnname:"更新时间",fieldname:"update_time",fieldvalue:'',inputtype:"date", twidth:"130" ,height:"",hide:true}
+		{fieldcnname:"更新时间",fieldname:"update_time",fieldvalue:'',inputtype:"date", twidth:"130" ,height:"",hide:true},
+		//添加车场秘钥展示列表
+		{fieldcnname:"车场秘钥",fieldname:"ukey",fieldvalue:'',inputtype:"text", twidth:"150" ,height:"",edit:false}
 		];
 var _mediaField = _childField;
 if(cityid != "-1"){

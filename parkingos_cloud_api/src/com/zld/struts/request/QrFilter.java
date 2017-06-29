@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -34,7 +35,7 @@ import com.zld.utils.StringUtils;
 @Path("c")
 public class QrFilter {
 	
-	
+	Logger logger  = Logger.getLogger(QrFilter.class);
 	/**NFC二维码
 	 * http://127.0.0.1/zld/qr/c/d41A501D0501460255b
 	 *收费员二维码
@@ -196,15 +197,28 @@ public class QrFilter {
 					response.sendRedirect(_eUrl);
 					break;*/
 				case 5://减免券二维码
-					String rUrl = "http%3a%2f%2f"+Constants.WXPUBLIC_REDIRECTURL+"%2fzld%2fwxpfast.do%3faction%3dsweepcom%26from%3d"+from+"%26codeid%3d"+codeMap.get("id");
-					String _rUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+Constants.WXPUBLIC_APPID+"&redirect_uri="+rUrl+
-							"&response_type=code&scope=snsapi_base&state=123#wechat_redirect";
-					System.out.println(rUrl);
-					response.sendRedirect(_rUrl);
+					String userAgent = request.getHeader("user-agent");
+					logger.error("user-agent:"+userAgent);
+					String thirdOrderId = map.get("orderid");
+					String carNumber = map.get("licence");
+					if(userAgent.indexOf("AlipayClient")!=-1){//支付宝扫码
+						response.sendRedirect("http://" + Constants.WXPUBLIC_REDIRECTURL + "/zld/aliprepay.do?action=sweepcom&parkid="+
+								codeMap.get("park_id")+"&unionid="+codeMap.get("union_id")+"&orderid="+thirdOrderId+"&licence="+carNumber);
+					}else {
+						String rUrl = "http%3a%2f%2f"+Constants.WXPUBLIC_REDIRECTURL+"%2fzld%2fwxpfast.do%3faction%3dsweepcom%26from%3d"+from
+								+"%26codeid%3d"+codeMap.get("id");
+						if((thirdOrderId!=null&&!"".equals(thirdOrderId))||from.equals("bolink"))//带有订单编号的预付信息或泊链的支付二维码
+							rUrl = "http%3a%2f%2f"+Constants.WXPUBLIC_REDIRECTURL+"%2fzld%2fwxpfast.do%3faction%3dhandlethirdprepay%26comid%3d"+codeMap.get("park_id")+"%26orderid%3d"+thirdOrderId+"%26carnumber%3d"+carNumber;
+						
+						String _rUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+Constants.WXPUBLIC_APPID+"&redirect_uri="+rUrl+
+								"&response_type=code&scope=snsapi_base&state=123#wechat_redirect";
+						logger.error(rUrl);
+						response.sendRedirect(_rUrl);
+					}
 					break;
 				case 6://停车券二维码
 					if(!isclient){
-						_rUrl = "http%3A%2F%2F"+Constants.WXPUBLIC_REDIRECTURL+"%2Fzld%2Fwxpfast.do%3Faction%3Dsweepticket%26codeid%3D"+codeMap.get("id");
+						String _rUrl = "http%3A%2F%2F"+Constants.WXPUBLIC_REDIRECTURL+"%2Fzld%2Fwxpfast.do%3Faction%3Dsweepticket%26codeid%3D"+codeMap.get("id");
 						if(stype != null){
 							_rUrl += "%26type%3D"+stype;
 						}
@@ -213,7 +227,7 @@ public class QrFilter {
 						System.out.println(_tUrl);
 						response.sendRedirect(_tUrl);
 					}else{
-						_rUrl = "http://"+Constants.WXPUBLIC_REDIRECTURL+"/zld/carowner.do?action=sweepticket&codeid="+codeMap.get("id")+"&mobile="+mobile;
+						String  _rUrl = "http://"+Constants.WXPUBLIC_REDIRECTURL+"/zld/carowner.do?action=sweepticket&codeid="+codeMap.get("id")+"&mobile="+mobile;
 						
 						System.out.println(_rUrl);
 						response.sendRedirect(_rUrl);

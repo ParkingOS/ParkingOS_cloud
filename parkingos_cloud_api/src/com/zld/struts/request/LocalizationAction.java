@@ -21,12 +21,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.zld.AjaxUtil;
 import com.zld.impl.PublicMethods;
 import com.zld.service.DataBaseService;
+import com.zld.service.PgOnlyReadService;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.StringUtils;
 //Localization
 public class LocalizationAction extends Action{
 	@Autowired
 	private DataBaseService daService;
+	@Autowired
+	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private PublicMethods publicMethods;
 	private Logger logger = Logger.getLogger(LocalizationAction.class);
@@ -42,7 +45,7 @@ public class LocalizationAction extends Action{
 		if(token.equals("")){
 			infoMap.put("info", "no token");
 		}else {
-			Map comMap = daService.getPojo("select * from user_session_tb where token=?", new Object[]{token});
+			Map comMap = pgOnlyReadService.getPojo("select * from user_session_tb where token=?", new Object[]{token});
 			if(comMap!=null&&comMap.get("comid")!=null){
 				comid=Long.parseLong(comMap.get("comid")+"");
 				uin =(Long) comMap.get("uin");

@@ -16,13 +16,14 @@ document.addEventListener('touchmove', function(e) {
 
 document.addEventListener('DOMContentLoaded', function() {
 	$(document).ready(function() {
-		var mobile=$("#mobile")[0].value;
+//		var mobile=$("#mobile")[0].value;
+		var openid=$("#openid")[0].value;
 		var orderid=$("#orderid")[0].value;
-		loaded(mobile,orderid);
+		loaded(openid,orderid);
 	});
 }, false);
 
-function loaded(mobile,orderid) {
+function loaded(openid,orderid) {
 	pullDownEl = document.getElementById('pullDown');
 	pullDownOffset = pullDownEl.offsetHeight;
 	pullUpEl = document.getElementById('pullUp');
@@ -39,7 +40,7 @@ function loaded(mobile,orderid) {
 	$.post("carowner.do", {
 			"page": page,
 			"pagesize": PAGESIZE,
-			"mobile" : mobile,
+			"openid" : openid,
 			"orderid" : orderid,
 			"action" : "accountdetail"
 		},
@@ -131,7 +132,9 @@ function loaded(mobile,orderid) {
 				// pullDownEl.className = 'idle';
 				// pullDownEl.querySelector('.pullDownLabel').innerHTML = 'Pull down to refresh...';
 				// this.minScrollY = -pullDownOffset;
-
+				if(response.length == 0){
+					$(".middle1").removeClass("hide1");
+				}
 				if (hasMoreData) {
 					myScroll.maxScrollY = myScroll.maxScrollY + pullUpOffset;
 				} else {
@@ -144,13 +147,13 @@ function loaded(mobile,orderid) {
 }
 
 function refresh() {
-	var mobile=$("#mobile")[0].value;
+	var openid=$("#openid")[0].value;
 	var orderid=$("#orderid")[0].value;
 	page = 1;
 	$.post("carowner.do", {
 			"page": page,
 			"pagesize": PAGESIZE,
-			"mobile" : mobile,
+			"openid" : openid,
 			"orderid" : orderid,
 			"action" : "accountdetail"
 		},
@@ -183,7 +186,9 @@ function refresh() {
 				});
 				// $("#thelist").listview("refresh");
 				myScroll.refresh(); // Remember to refresh when contents are loaded (ie: on ajax completion)
-
+				if(response.length == 0){
+					$(".middle1").removeClass("hide1");
+				}
 				if (hasMoreData) {
 					myScroll.maxScrollY = myScroll.maxScrollY + pullUpOffset;
 				} else {
@@ -196,13 +201,13 @@ function refresh() {
 }
 
 function nextPage() {
-	var mobile=$("#mobile")[0].value;
+	var openid=$("#openid")[0].value;
 	var orderid=$("#orderid")[0].value;
 	page++;
 	$.post("carowner.do", {
 			"page": page,
 			"pagesize": PAGESIZE,
-			"mobile" : mobile,
+			"openid" : openid,
 			"orderid" : orderid,
 			"action" : "accountdetail"
 		},
@@ -231,6 +236,9 @@ function nextPage() {
 				});
 				// $("#thelist").listview("refresh");
 				myScroll.refresh(); // Remember to refresh when contents are loaded (ie: on ajax completion)
+				if(response.length == 0){
+					$(".middle1").removeClass("hide1");
+				}
 				if (hasMoreData) {
 					myScroll.maxScrollY = myScroll.maxScrollY + pullUpOffset;
 				} else {

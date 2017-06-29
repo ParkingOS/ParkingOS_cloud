@@ -60,7 +60,7 @@ var _mediaField = [
 		{fieldcnname:"类型",fieldname:"type",fieldvalue:'',inputtype:"select",noList:[{"value_no":-1,"value_name":"全部"},{"value_no":0,"value_name":"全天包月"},{"value_no":1,"value_name":"夜间包月"},{"value_no":2,"value_name":"日间包月"}] ,twidth:"100" ,height:"",issort:false},
 	{fieldcnname:"有效范围",fieldname:"scope",fieldvalue:'',inputtype:"select",noList:[{"value_no":0,"value_name":"本车场有效"},{"value_no":1,"value_name":"本车场和子车场有效"}] ,twidth:"100" ,height:"",issort:false},
 //	{fieldcnname:"不包括日期",fieldname:"exclude_date",fieldvalue:'',inputtype:"text" ,twidth:"100" ,height:"",issort:false,edit:false}
-	{fieldcnname:"描述",fieldname:"resume",fieldvalue:'',inputtype:"multi", twidth:"200" ,height:"",issort:false}
+	{fieldcnname:"描述",fieldname:"describe",fieldvalue:'',inputtype:"multi", twidth:"200" ,height:"",issort:false}
 	//{fieldcnname:"优惠百分比(1-100)",fieldname:"favourable_precent",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",issort:false},
 		//{fieldcnname:"超出优惠百分比(1-100)",fieldname:"out_favourable_precent",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",issort:false},
 		//{fieldcnname:"免费时长(分钟)",fieldname:"free_minutes",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",issort:false}

@@ -189,4 +189,29 @@ public class Check {
 			return false;
 		}
     }
+    /**
+	 * ÅÐ¶Ï×Ö·û´®ÊÇ·ñÎª¿Õ
+	 * <ul>
+	 * <li>isEmpty(null) = true</li>
+	 * <li>isEmpty("") = true</li>
+	 * <li>isEmpty("   ") = true</li>
+	 * <li>isEmpty("abc") = false</li>
+	 * </ul>
+	 * 
+	 * @param value
+	 *            Ä¿±ê×Ö·û´®
+	 * @return true/false
+	 */
+	public static boolean isEmpty(String value) {
+		int strLen;
+		if (value == null || (strLen = value.length()) == 0|| "null".equals(value)) {
+			return true;
+		}
+		for (int i = 0; i < strLen; i++) {
+			if ((Character.isWhitespace(value.charAt(i)) == false)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

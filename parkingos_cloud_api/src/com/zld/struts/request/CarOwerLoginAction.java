@@ -83,11 +83,12 @@ public class CarOwerLoginAction extends Action{
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		String mobile =RequestUtil.processParams(request, "mobile");
-		logger.error("action:"+action+",mobile:"+mobile);
-		if(mobile==null||"".equals(mobile)){
+		String openid =RequestUtil.processParams(request, "openid");
+		//logger.error("action:"+action+",mobile:"+mobile);
+		/*if(mobile==null||"".equals(mobile)){
 			AjaxUtil.ajaxOutput(response, "-5");
 			return null;
-		}
+		}*/
 		if(action.equals("dologin")){//车主登录，帐号不存在时，注册上，返回验证码,主动获取验证码（短信获取验证码）
 			String sql = "select * from user_info_tb where mobile=? and auth_flag=? ";
 			Map user = daService.getPojo(sql, new Object[]{mobile,4});
@@ -180,10 +181,17 @@ public class CarOwerLoginAction extends Action{
 				AjaxUtil.ajaxOutput(response, StringUtils.createJson(infoMap));
 			}
 		}else if(action.equals("login")){//车主登录，帐号不存在时，注册上，返回验证码
+			String ip = StringUtils.getIpAddr(request);
+			//logger.error("car user login ip:"+ip);
+			boolean isTruck = publicMethods.isTruck(ip);
+			if(isTruck){
+				AjaxUtil.ajaxOutput(response, "-1");
+				logger.error("login action,mobile:"+mobile+",ip="+ip+",正在攻击");
+				return null;
+			}
+				
 			String sql = "select * from user_info_tb where mobile=? and auth_flag=? ";
 			Map user = daService.getPojo(sql, new Object[]{mobile,4});
-			String ip = StringUtils.getIpAddr(request);
-			logger.error("car user login ip:"+ip);
 //			if(!memcacheUtils.addLock("login_action_"+ip, 1)){//1秒重复请求不处理
 //				AjaxUtil.ajaxOutput(response, "-1");
 //				logger.error("login action,mobile="+mobile+",小于秒请求，不处理");
@@ -364,7 +372,7 @@ public class CarOwerLoginAction extends Action{
 			carNumber = carNumber.replace("I", "1").replace("O", "0");
 			Long curTime = System.currentTimeMillis()/1000;
 			//Long recomCode = RequestUtil.getLong(request, "recom_code", 0L);
-			Map userMap = daService.getMap("select id,strid,recom_code,logon_time,cityid from user_info_Tb where mobile=? and auth_flag=?", new Object[]{mobile,4});
+			Map userMap = daService.getMap("select id,strid,recom_code,logon_time,cityid from user_info_Tb where wxp_openid=? and auth_flag=?", new Object[]{openid,4});
 			//Object oid = daService.getObject("select id from user_info_Tb where mobile=? and auth_flag=? ", new Object[]{mobile,4}, Long.class);
 			Long uin= null;
 			Long cityId = null;
@@ -376,20 +384,65 @@ public class CarOwerLoginAction extends Action{
 				AjaxUtil.ajaxOutput(response, "-5");
 			}else {
 				int result = 0;
-				//写入车牌号
-				try {
-					result=daService.update("insert into car_info_Tb (uin,car_number,create_time)" +
-						"values(?,?,?)", new Object[]{uin,carNumber,curTime});
-				} catch (Exception e) {
-					e.printStackTrace();
-					if(e.getMessage().indexOf("car_info_tb_car_number_key")!=-1){
-						AjaxUtil.ajaxOutput(response, "-9");
-						return null;
+				
+				result = methods.addCarnum(uin, carNumber);
+				/*//根据车牌号查用户
+				Map carmap = daService.getMap("select uin from car_info_tb where car_number = ?", new Object[]{carNumber});
+				if(carmap!=null){
+					Long cuin = (Long) carmap.get("uin");
+					Map cusermap = daService.getMap("select wxp_openid from user_info_tb where id = ?", new Object[]{cuin});
+					if(cusermap!=null){
+						String wxpopenid = (String) cusermap.get("wxp_openid");
+						if(wxpopenid==null){
+							//删除之前用户
+							result = daService.update("delete from user_info_tb where id = ?", new Object[]{cuin});
+							logger.error("删除老用户:"+result);
+							//更新车牌和月卡的用户
+							result = daService.update("update car_info_tb set uin = ? where car_number = ?", new Object[]{uin,carNumber});
+							logger.error("更新该车牌用户:"+result);
+							Map map = daService.getMap("select id from carower_product where uin = ?", new Object[]{cuin});
+							result = daService.update("update carower_product set uin = ? where id = ?", new Object[]{uin,map.get("id")});
+							logger.error("更新车牌用户月卡:"+result);
+						}else{
+							//真实用户,查看月卡
+							Map prod = daService.getMap("select e_time from carower_product where uin = ?", new Object[]{cuin});
+							if(prod!=null){
+								Long endTime = (Long) prod.get("e_time");
+								Long cTime = TimeTools.getToDayBeginTime();
+								logger.error(cTime);
+								logger.error("月卡结束日期:"+TimeTools.getTimeStr_yyyy_MM_dd(endTime*1000)+" 当前日期:"+TimeTools.getTimeStr_yyyy_MM_dd(cTime*1000));
+								if(cTime<endTime){
+									//月卡未过期,不能绑定
+									//不能绑定该车牌
+									AjaxUtil.ajaxOutput(response, "-9");
+									return null;
+								}
+							}
+							//可以绑定
+							result = daService.update("update car_info_tb set uin = ? where car_number = ?", new Object[]{uin,carNumber});
+							logger.error("过期月卡被绑定:"+result);
+							if(result>0){
+								result=1;
+							}
+						}
 					}
-				}
+				}else{
+					//新建车牌
+					try {
+						result=daService.update("insert into car_info_Tb (uin,car_number,create_time)" +
+							"values(?,?,?)", new Object[]{uin,carNumber,curTime});
+					} catch (Exception e) {
+						e.printStackTrace();
+						if(e.getMessage().indexOf("car_info_tb_car_number_key")!=-1){
+							AjaxUtil.ajaxOutput(response, "-9");
+							return null;
+						}
+					}
+				}*/
+				
 				if(result==1){//车牌写入成功，处理推荐
-					methods.checkBonus(mobile,uin);
-					Long recomCode = (Long)userMap.get("recom_code");
+					//methods.checkBonus(mobile,uin);
+					//Long recomCode = (Long)userMap.get("recom_code");
 					//最近登录时间，如果为空，为新登录用户，查一下停车券过期情况，如果全部过期，加一张三元停车券
 					/*Long logon_time = (Long) userMap.get("logon_time");
 					if(logon_time==null){//未登录过
@@ -402,20 +455,16 @@ public class CarOwerLoginAction extends Action{
 							logger.error(">>>>>>first login,ticket is invalid,add a 10 yuan ticket :"+ret);
 						}
 					}*/
-					//推送给国脉
-					if(cityId==321000){
-						publicMethods.sendMessageToThird(uin, null, mobile, carNumber, userMap.get("strid")+"", 0);
-					}
-					logger.error(recomCode);
-					if(recomCode!=null&&recomCode>0){
+					//logger.error(recomCode);
+					//if(recomCode!=null&&recomCode>0){
 						//推荐人 
 						//logger.error(recomCode);
 						//List<Long> blackUserList = memcacheUtils.doListLongCache("zld_black_users", null, null);
 						//处理推荐
 //						if(blackUserList==null||!blackUserList.contains(uin))//不在黑名单中可以处理推荐返现
 //							handleRecommendCode(uin, recomCode,mobile);
-					}
-					AjaxUtil.ajaxOutput(response, "3");
+					//}
+					AjaxUtil.ajaxOutput(response, result+"");
 				}else 
 					AjaxUtil.ajaxOutput(response, "-8");
 			}
@@ -429,7 +478,7 @@ public class CarOwerLoginAction extends Action{
 			Map user = daService.getPojo(sql, new Object[]{mobile,4});
 			String hxName  = (String)user.get("hx_name");
 			String hxPass  = (String)user.get("hx_pass");
-			boolean ishas = getHxNamePass(user,hxPass);
+			boolean ishas = false;//getHxNamePass(user,hxPass);
 			if(ishas){
 				hxName  = (String)user.get("hx_name");
 				hxPass  = (String)user.get("hx_pass");

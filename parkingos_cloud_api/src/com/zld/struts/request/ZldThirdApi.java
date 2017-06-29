@@ -20,6 +20,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.zld.AjaxUtil;
 import com.zld.CustomDefind;
+import com.zld.impl.PublicMethods;
 import com.zld.service.DataBaseService;
 import com.zld.utils.Check;
 import com.zld.utils.StringUtils;
@@ -69,8 +70,13 @@ public class ZldThirdApi {
 				if(userMap!=null)
 					uin = (Long)userMap.get("uin");
 			}
+			logger.error("api 上传订单，删除同一车场同一车牌订单："+
+					daService.update("delete from bolink_order_tb where union_id=? " +
+							"and park_id=? and plate_number=? and state=? ", 
+							new Object[]{Long.valueOf(paramMap.get("union_id")),
+							paramMap.get("park_id"),plateNumber,0}));
 			String sql ="insert into bolink_order_tb (union_id,start_time,state," +
-					"in_time,update_time,union_name,park_name,plate_number,order_id,uin) values(?,?,?,?,?,?,?,?,?,?)";
+					"in_time,update_time,union_name,park_name,plate_number,order_id,uin,park_id) values(?,?,?,?,?,?,?,?,?,?,?)";
 			Object[] parmas = new Object[]{
 					Long.valueOf(paramMap.get("union_id")),
 					Long.valueOf(paramMap.get("start_time")),
@@ -79,10 +85,13 @@ public class ZldThirdApi {
 					AjaxUtil.decodeUTF8(paramMap.get("union_name")),
 					AjaxUtil.decodeUTF8(paramMap.get("park_name")),
 					plateNumber,
-					paramMap.get("order_id"),uin};
+					paramMap.get("order_id"),uin,paramMap.get("park_id")};
 			int ret = daService.update(sql, parmas);
 			if(ret!=1){
 				result ="{\"state\":\"0\",\"errmsg\":\"数据写入失败\"}"; 
+			}else if(uin>0){
+				PublicMethods publicMethods = (PublicMethods) ctx.getBean("publicMethods");
+				publicMethods.syncUserToBolink(uin);
 			}
 		}
 		logger.error(operate+result);
@@ -106,6 +115,9 @@ public class ZldThirdApi {
 		logger.error(operate+signStr);
 		String _sign = StringUtils.MD5(signStr,"utf-8").toUpperCase();
 		logger.error(operate+sign+":"+_sign);
+		//end_time=1498008206&money=0.01&operate_time=1498008221&order_id=753a8002-24aa-4ec7-a9d5-35f0ae975b8d&pay_type=0
+		//&pay_union_id=200001&plate_number=%E4%BA%ACT99999&rand=0.9189926304140231&time_temp=1498008221&union_id=200103
+		//key=DEEFE9094535JUJF
 		if(!sign.equals(_sign)){
 			result ="{\"state\":\"0\",\"errmsg\":\"数据校验失败\"}"; 
 		}else {
@@ -120,6 +132,7 @@ public class ZldThirdApi {
 			Map orderMap = daService.getMap("select * from bolink_order_tb where union_id=? and order_id=? ",
 					new Object[]{Long.valueOf(paramMap.get("union_id")),paramMap.get("order_id")});
 			Long orderId = -1L;
+			int isPrePay = 0;
 			if(orderMap==null||orderMap.isEmpty()){
 				AjaxUtil.ajaxOutput(response, "{\"state\":\"0\",\"errmsg\":\"订单不存在\"}");
 				return ;
@@ -127,18 +140,23 @@ public class ZldThirdApi {
 				orderId = (Long)orderMap.get("id");
 				Integer state = (Integer)orderMap.get("state");
 				if(state!=null&&state==1){
-					AjaxUtil.ajaxOutput(response, "{\"state\":\"0\",\"errmsg\":\"订单已结算\"}");
-					return ;	
+//					AjaxUtil.ajaxOutput(response, "{\"state\":\"0\",\"errmsg\":\"订单已结算\"}");
+//					return ;	
+					isPrePay=1;
 				}
 			}
 			if(orderId==null||orderId<0){
 				AjaxUtil.ajaxOutput(response, "{\"state\":\"0\",\"errmsg\":\"订单不存在\"}");
 				return ;
 			}
+			//0现金支付，1电子支付，2第三方电子支付，这种情况，不在本平台中扣用户余额
 			Integer payType=Integer.valueOf(paramMap.get("pay_type"));
+			Integer pay_type = payType==0?0:1;
 			String sql ="update  bolink_order_tb set money=?,out_time=?,end_time=?,state=?,pay_type=?,pay_union_id=? where id=? ";
+			if(isPrePay==1)
+				sql ="update  bolink_order_tb set money=money+?,out_time=?,end_time=?,state=?,pay_type=?,pay_union_id=? where id=? ";
 			Object[] parmas = new Object[]{money,Long.valueOf(paramMap.get("operate_time")),
-					Long.valueOf(paramMap.get("end_time")),1,payType,Long.valueOf(paramMap.get("pay_union_id")),orderId};
+					Long.valueOf(paramMap.get("end_time")),1,pay_type,Long.valueOf(paramMap.get("pay_union_id")),orderId};
 			int ret = daService.update(sql, parmas);
 			if(ret!=1){
 				result ="{\"state\":\"0\",\"errmsg\":\"数据更新失败\"}"; 
@@ -185,7 +203,7 @@ public class ZldThirdApi {
 							}
 							
 							userAccountsqlMap.put("sql", "insert into user_account_tb(uin,amount,type,create_time,remark,pay_type,orderid) values(?,?,?,?,?,?,?)");
-							userAccountsqlMap.put("values", new Object[]{uin,money,1,ntime,"停车费-"+orderMap.get("union_name")+"-"+orderMap.get("park_name"),0,Long.valueOf(paramMap.get("order_id"))});
+							userAccountsqlMap.put("values", new Object[]{uin,money,1,ntime,"停车费-"+orderMap.get("union_name")+"-"+orderMap.get("park_name"),0,orderMap.get("id")});
 							bathSql.add(userAccountsqlMap);
 							
 							bolinkSqlMap.put("sql", "insert into bolink_ccount_tb(money,ctime,orderid,giveto,uin,type) values(?,?,?,?,?,?)");
@@ -196,6 +214,9 @@ public class ZldThirdApi {
 							logger.error(operate+"更新用户余额："+b);
 							if(!b){
 								result ="{\"state\":\"0\",\"errmsg\":\"账户操作异常\"}"; 
+							}else if(uin>0){
+								PublicMethods publicMethods = (PublicMethods) ctx.getBean("publicMethods");
+								publicMethods.syncUserToBolink(uin);
 							}
 						}
 					}

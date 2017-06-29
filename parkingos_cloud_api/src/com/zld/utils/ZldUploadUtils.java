@@ -43,7 +43,7 @@ public class ZldUploadUtils {
 								map.put("latitude", vs[1]);
 							}
 						}else {
-							map.put(key.toLowerCase(), p[1]);
+							map.put(key.toLowerCase(), pString.substring(key.length()+1));
 						}
 					}
 				}
@@ -90,8 +90,8 @@ public class ZldUploadUtils {
 	}
 
 	public static void main(String[] args) {
-		String pString = "parking_total=20&company_id=1009&parkingNo=35rf788&timeStamp=1457693090&city_merchants_id=321000&parkingName=asd&state=0&sign=30FE309B987AE1662524206DBB452447&address=%E6%B5%8B%E8%AF%95%E6%B5%8B%E8%AF%95&token=29f5bf9e4134492d5cd8d937e4870c9e&parkingType=1&operate=0&create_time=1457693090&gps=119.91753%2C93.1778040&chanid=1008";
-		validateSign(pString);
+		String pString = "operate_time=1498549360&order_id=fzwX6D0M94ouzROVeO+BfA==&park_id=611612190942&park_name=%E5%AE%9C%E5%BF%85%E6%80%9D%E9%85%92%E5%BA%97%E5%81%9C%E8%BD%A6%E5%9C%BA&plate_number=%E9%99%95AN993G&rand=0.9913235603131104&start_time=1498549236000&time_temp=1498549360&union_id=200106&union_name=%E8%BF%88%E6%B3%8A";
+		System.out.println(stringToMap(pString));
 	}
 	
 	/**

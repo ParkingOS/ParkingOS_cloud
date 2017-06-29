@@ -67,7 +67,7 @@ public class GroupSurveyManageAction extends Action {
 			Long count = pgOnlyReadService.getCount(countSql,params);
 			if(count>0){
 				list = pgOnlyReadService.getAll(sql +" order by id ",params, pageNum, pageSize);
-				setList(list, isHd);
+				setListNew(list, isHd);
 				setLots(list);
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
@@ -122,6 +122,30 @@ public class GroupSurveyManageAction extends Action {
 		}
 	}
 	
+	private void setListNew(List<Map<String, Object>> list, Integer ishd){
+		Long b = TimeTools.getToDayBeginTime();
+		Long e = System.currentTimeMillis()/1000;
+		if(list != null && !list.isEmpty()){
+			double cash = 0.0;
+			Integer month = 0;
+			double wallet = 0.0;
+			double total = 0.0;
+			for(Map map : list){
+				Long id = (Long)map.get("id");
+				String result = commonMethods.getParkTotalStatistic(id, b, e);
+				cash = Double.valueOf(result.split("_")[0]);
+				month = Integer.valueOf(result.split("_")[1]);
+				wallet = Double.valueOf(result.split("_")[2]);
+				total = Double.valueOf(result.split("_")[3]);
+				map.put("etotal", StringUtils.formatDouble(wallet)+"");
+				map.put("ctotal", StringUtils.formatDouble(cash)+"");
+				map.put("mtotal", month);
+				map.put("atotal", StringUtils.formatDouble(total)+"");
+			}
+		}
+		
+	}
+	
 	@SuppressWarnings({ "rawtypes", "unused" })
 	private void setLots(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
@@ -132,13 +156,13 @@ public class GroupSurveyManageAction extends Action {
 				long time16 = TimeTools.getBeginTime(System.currentTimeMillis()-16*24*60*60*1000);
 				Long month_used_count = 0L;
 				Long time_used_count = 0L;
-				String sql = "select count(ID) ucount,c_type from order_tb where comid=? and create_time>? and state=? group by c_type ";
+				String sql = "select count(ID) ucount,pay_type from order_tb where comid=? and create_time>? and state=? group by pay_type ";
 				List<Map<String, Object>> allList = pgOnlyReadService.getAll(sql, new Object[]{comid,time2,0});
 				if(allList != null && !allList.isEmpty()){
 					for(Map<String, Object> map2 : allList){
-						Integer c_type = (Integer)map2.get("c_type");
+						Integer pay_type = (Integer)map2.get("pay_type");
 						Long ucount = (Long)map2.get("ucount");
-						if(c_type == 5){//月卡车位占用数
+						if(pay_type == 3){//月卡车位占用数
 							month_used_count = ucount;
 						}else{//时租车位占用数
 							time_used_count += ucount;
@@ -148,13 +172,13 @@ public class GroupSurveyManageAction extends Action {
 				
 				Long invmonth_used_count = 0L;
 				Long invtime_used_count = 0L;
-				String sql1 = "select count(ID) ucount,c_type from order_tb where comid=? and create_time>? and create_time<? and state=? group by c_type ";
+				String sql1 = "select count(ID) ucount,pay_type from order_tb where comid=? and create_time>? and create_time<? and state=? group by pay_type ";
 				List<Map<String, Object>> invList = pgOnlyReadService.getAll(sql1, new Object[]{comid,time16,time2,0});
 				if(invList != null && !invList.isEmpty()){
 					for(Map<String, Object> map2 : invList){
-						Integer c_type = (Integer)map2.get("c_type");
+						Integer pay_type = (Integer)map2.get("pay_type");
 						Long ucount = (Long)map2.get("ucount");
-						if(c_type == 5){//月卡车位占用数
+						if(pay_type == 3){//月卡车位占用数
 							invmonth_used_count = ucount;
 						}else{//时租车位占用数
 							invtime_used_count += ucount;

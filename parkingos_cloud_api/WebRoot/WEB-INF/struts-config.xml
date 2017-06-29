@@ -67,10 +67,10 @@
 			<forward name="error" path="/WEB-INF/pages/wxpublic/error.jsp" redirect="false" />
 		</action>
 				<action path="/wxpaccount" type="org.springframework.web.struts.DelegatingActionProxy" >
-			<forward name="account" path="/WEB-INF/pages/wxpublic/account.jsp" redirect="false" />
+			<forward name="account" path="/WEB-INF/pages/wxpublic/newaccount.jsp" redirect="false" />
 			<forward name="ticket" path="/WEB-INF/pages/wxpublic/ticket.jsp" redirect="false" />
 			<forward name="adduser" path="/WEB-INF/pages/wxpublic/adduser.jsp" redirect="false" />
-			<forward name="addcarnumber" path="/WEB-INF/pages/wxpublic/addcarnumber.jsp" redirect="false" />
+			<forward name="addcarnumber" path="/WEB-INF/pages/wxpublic/addcarnum.jsp" redirect="false" />
 			<forward name="accountdetail" path="/WEB-INF/pages/wxpublic/accountdetail.jsp" redirect="false" />
 			<forward name="regbonus" path="/WEB-INF/pages/wxpublic/regbonus.jsp" redirect="false" />
 			<forward name="addcnum_regbonus" path="/WEB-INF/pages/wxpublic/addcnum_regbonus.jsp" redirect="false" />
@@ -78,10 +78,11 @@
 			<forward name="nobonus" path="/WEB-INF/pages/wxpublic/nobonus.jsp" redirect="false" />
 			<forward name="balance" path="/WEB-INF/pages/wxpublic/balance.jsp" redirect="false" />
 			<forward name="tocarnumber" path="/WEB-INF/pages/wxpublic/carnumber.jsp" redirect="false" />
-			<forward name="toupload" path="/WEB-INF/pages/wxpublic/uploadcnumpic.jsp" redirect="false" />
+			<forward name="toupload" path="/WEB-INF/pages/wxpublic/uploadcnum.jsp" redirect="false" />
 			<forward name="tobuyticket" path="/WEB-INF/pages/wxpublic/buyticketimport.jsp" redirect="false" />
 			<forward name="buyticket" path="/WEB-INF/pages/wxpublic/buyticket.jsp" redirect="false" />
 			<forward name="orderlist" path="/WEB-INF/pages/wxpublic/orderlist.jsp" redirect="false" />
+			<forward name="presentorderlist" path="/WEB-INF/pages/wxpublic/presentorderlist.jsp" redirect="false" />
 			<forward name="horderdetail" path="/WEB-INF/pages/wxpublic/horderdetail.jsp" redirect="false" />
 			<forward name="parkprod" path="/WEB-INF/pages/wxpublic/parkprod.jsp" redirect="false" />
 			<forward name="prodlist" path="/WEB-INF/pages/wxpublic/prodlist.jsp" redirect="false" />
@@ -89,15 +90,18 @@
 			<forward name="payprod" path="/WEB-INF/pages/wxpublic/payprod.jsp" redirect="false" />
 			<forward name="error" path="/WEB-INF/pages/wxpublic/error.jsp" redirect="false" />
 		</action>
-		
-				<action path="/wxpfast" type="org.springframework.web.struts.DelegatingActionProxy" >
+		<action path="/wxpfast" type="org.springframework.web.struts.DelegatingActionProxy" >
+			<forward name="thridpay" path="/WEB-INF/pages/wxpublic/thirdpay.jsp" redirect="false" />
 			<forward name="prepay" path="/WEB-INF/pages/wxpublic/prepay.jsp" redirect="false" />
+			<forward name="addweixincar" path="/WEB-INF/pages/wxpublic/addweixincar.jsp" redirect="false" />
+			<forward name="thirdprepay" path="/WEB-INF/pages/wxpublic/thirdprepay.jsp" redirect="false" />
 			<forward name="toprepaypage" path="/WEB-INF/pages/wxpublic/prepayorder.jsp" redirect="false" />
 			<forward name="epayimport" path="/WEB-INF/pages/wxpublic/epayimport.jsp" redirect="false" />
 			<forward name="toepay" path="/WEB-INF/pages/wxpublic/epay.jsp" redirect="false" />
 			<forward name="payorder" path="/WEB-INF/pages/wxpublic/payorder.jsp" redirect="false" />
 			<forward name="error" path="/WEB-INF/pages/wxpublic/error.jsp" redirect="false" />
 			<forward name="presuccess" path="/WEB-INF/pages/wxpublic/presuccess.jsp" redirect="false" />
+			<forward name="thirdsuccess" path="/WEB-INF/pages/wxpublic/thirdsuccess.jsp" redirect="false" />
 			<forward name="addcarnum" path="/WEB-INF/pages/wxpublic/addcnum_temp.jsp" redirect="false" />
 			<forward name="toreward" path="/WEB-INF/pages/wxpublic/rewardimport.jsp" redirect="false" />
 			<forward name="reward" path="/WEB-INF/pages/wxpublic/reward.jsp" redirect="false" />
@@ -105,6 +109,7 @@
 			<forward name="chooseticket" path="/WEB-INF/pages/wxpublic/chooseticket.jsp" redirect="false" />
 			<forward name="createorder" path="/WEB-INF/pages/wxpublic/createorder.jsp" redirect="false" />
 			<forward name="neworder" path="/WEB-INF/pages/wxpublic/neworder.jsp" redirect="false" />
+			<forward name="toaliaddcnum" path="/WEB-INF/pages/aliprepay/carnumber.jsp" redirect="false" />
 		</action>
 		
 
@@ -130,6 +135,11 @@
 		</action>
 				<action path="/syncInter"
 			type="org.springframework.web.struts.DelegatingActionProxy" scope="request">
+		</action>
+		
+		
+		<!-- 修改云平台标准接入接口 -->
+		<action path="/syncInterNew" type="org.springframework.web.struts.DelegatingActionProxy" scope="request">
 		</action>
 				<!-- 车主2.0接口 -->
 		<action path="/carinter" type="org.springframework.web.struts.DelegatingActionProxy" >
@@ -253,6 +263,14 @@
 		<action path="/card" type="org.springframework.web.struts.DelegatingActionProxy" ></action>
 		<!-- p4数据导p5  -->
 		<action path="/syncdata" type="org.springframework.web.struts.DelegatingActionProxy" ></action>
+		<!-- 停车云发数据到停车场SDK-->
+		<action path="/sendmsgtopark"
+			type="org.springframework.web.struts.DelegatingActionProxy" >
+		</action>
+		<action path="/aliprepay" type="org.springframework.web.struts.DelegatingActionProxy" >
+			<forward name="toaddcnum" path="/WEB-INF/pages/aliprepay/carnumber.jsp" redirect="false" />
+			<forward name="prepay" path="/WEB-INF/pages/aliprepay/prepay.jsp" redirect="false" />
+		</action>
 	</action-mappings>
 </struts-config>
 

@@ -347,7 +347,7 @@ public class WeixinNewHandle extends HttpServlet {
 						}*/
 						// 给用户（车主）发消息
 						logService.insertMessage(-1L, 1, uin, "", bid,Double.valueOf(total), total + "元充值成功", 0, 0L,0L, 2);
-						publicMethods.sendMessageToThird(uin, Integer.valueOf(total_fee), null, null, null, 1);
+						//publicMethods.sendMessageToThird(uin, Integer.valueOf(total_fee), null, null, null, 1);
 					} else if (type.equals("1")) {// 充值并购买包月产品
 						logger.error("充值并购买包月产品...");
 						Map productMap = daService.getMap("select * from product_package_tb where id=? and state=? and remain_number>? ",

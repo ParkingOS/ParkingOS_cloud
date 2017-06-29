@@ -2,6 +2,7 @@ package com.zld.struts.request;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -13,6 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.mongodb.*;
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -41,6 +45,7 @@ public class CarPicsUploadAction extends Action {
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
 		Long orderid = RequestUtil.getLong(request, "orderid", -1L);
+		String orderidlocal = RequestUtil.getString(request, "orderid");
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		//type区分是入口还是出口，入口为0，出口为1
 		Long type = RequestUtil.getLong(request, "type", -1L);
@@ -64,10 +69,110 @@ public class CarPicsUploadAction extends Action {
 		}else if(action.equals("downloadpic")){
 			downloadCarPics(orderid, type,request,response);
 			//http://118.192.88.90:8080/zld/carpicsup.do?action=downloadpic&comid=0&orderid=238747&type=0
+		}else if(action.equals("getpicture")){
+			String typeStr = RequestUtil.getString(request, "typeNew");
+//			getpicture(orderidlocal, comid,typeStr,request,response);
+			//http://118.192.88.90:8080/zld/carpicsup.do?action=downloadpic&comid=0&orderid=238747&type=0
+			getpictureNew(orderidlocal, comid,typeStr,request,response);
 		}
 		return null;
 	}
 	
+	private void getpictureNew(String orderidlocal, Long comid, String typeStr,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		logger.error("getpictureNew from mongodb....");
+		logger.error("getpictureNew from mongodb file:orderid="+orderidlocal+"type="+typeStr);
+		if(orderidlocal!=null && typeStr !=null){
+			long currentnum = RequestUtil.getLong(request, "currentnum",-1L);
+			DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");//
+			//根据订单编号查询出mongodb中存入的对应个表名
+//			Map map = daService.getMap("select * from order_tb where order_id_local=? and comid=?", new Object[]{orderidlocal,comid});
+			Map map = daService.getMap("select * from carpic_tb where order_id=? and comid=?", new Object[]{orderidlocal,String.valueOf(comid)});
+			String collectionName = "";
+			if(map !=null && !map.isEmpty()){
+				collectionName = (String) map.get("carpic_table_name");
+			}
+			if(collectionName==null||"".equals(collectionName)||"null".equals(collectionName)){
+				logger.error(">>>>>>>>>>>>>查询图片错误........");
+				response.sendRedirect("http://sysimages.tq.cn/images/webchat_101001/common/kefu.png");
+				return;
+			}
+			logger.error("table:"+collectionName);
+			DBCollection collection = db.getCollection(collectionName);
+			if(collection != null){
+				BasicDBObject document = new BasicDBObject();
+				document.put("parkid", String.valueOf(comid));
+				document.put("orderid", orderidlocal);
+				document.put("gate", typeStr);
+				if(currentnum>=0){
+					document.put("currentnum", currentnum);
+				}
+				DBObject obj  = collection.findOne(document);
+				if(obj == null){
+					AjaxUtil.ajaxOutput(response, "");
+					logger.error("取图片错误.....");
+					return;
+				}
+				byte[] content = (byte[])obj.get("content");
+				logger.error("取图片成功.....大小:"+content.length);
+				db.requestDone();
+				response.setDateHeader("Expires", System.currentTimeMillis()+12*60*60*1000);
+				response.setContentLength(content.length);
+				response.setContentType("image/jpeg");
+			    OutputStream o = response.getOutputStream();
+			    o.write(content);
+			    o.flush();
+			    o.close();
+			    System.out.println("mongdb over.....");
+			}else{
+				response.sendRedirect("http://sysimages.tq.cn/images/webchat_101001/common/kefu.png");
+			}
+		}else {
+			response.sendRedirect("http://sysimages.tq.cn/images/webchat_101001/common/kefu.png");
+		}
+	}
+
+	/**
+	 * 读取图片的新接口
+	 * @param orderid
+	 * @param comid
+	 * @param request
+	 * @param response
+	 * @throws IOException 
+	 */
+	private void getpicture(String orderid, Long comid,String typeStr,
+			HttpServletRequest request, HttpServletResponse response) throws IOException {
+		logger.error("getpicture from db....");
+		logger.error("getpicture from db file:orderidLocal="+orderid+"comid="+comid);
+		if(orderid!=null && comid !=null){
+			//查询数据库中存放的的图片
+			Map map = daService.getMap("select * from carpic_tb where order_id=? and comid=? and park_order_type=? ", new Object[]{orderid,String.valueOf(comid),typeStr});
+			String content="";
+			if(map !=null && !map.isEmpty()){
+				content = (String) map.get("content");
+				try {
+					byte[] picture = Base64.decode(content);
+					response.setDateHeader("Expires", System.currentTimeMillis()+12*60*60*1000);
+					response.setContentLength(picture.length);
+					response.setContentType("image/jpeg");
+				    OutputStream o = response.getOutputStream();
+				    o.write(picture);
+				    o.flush();
+				    o.close();
+				} catch (Base64DecodingException e) {
+					e.printStackTrace();
+					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>base64调用异常");
+					response.sendRedirect("http://sysimages.tq.cn/images/webchat_101001/common/kefu.png");
+				}
+			}else{
+				logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>没有查到对应的图片！"+orderid);
+				response.sendRedirect("http://sysimages.tq.cn/images/webchat_101001/common/kefu.png");
+			}
+		}else {
+			response.sendRedirect("http://sysimages.tq.cn/images/webchat_101001/common/kefu.png");
+		}
+	}
+
 	private String uploadCarPics2Mongodb (HttpServletRequest request,Long comid,Long orderid,String lefttop,String rightbottom,String width,String height,Long type) throws Exception{
 		logger.error("begin upload picture....");
 		Map<String, String> extMap = new HashMap<String, String>();
@@ -137,9 +242,8 @@ public class CarPicsUploadAction extends Action {
 	 	    DB mydb = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
 		    mydb.requestStart();
 			  
-		   // DBCollection collection = mydb.getCollection("car_pics");
-		    DBCollection collection = mydb.getCollection("car_hd_pics");
-		    logger.error("mongodb>>>>>>>>>>>存入 car_hd_pics表");  
+		    DBCollection collection = mydb.getCollection("car_inout_pics");
+		    logger.error("mongodb>>>>>>>>>>>存入 car_inout_pics表");  
 			BasicDBObject document = new BasicDBObject();
 			document.put("comid",  comid);
 			document.put("orderid", orderid);
@@ -190,7 +294,7 @@ public class CarPicsUploadAction extends Action {
 		if(orderid!=null && type !=null){
 			long currentnum = RequestUtil.getLong(request, "currentnum",-1L);
 			DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");//
-			DBCollection collection = db.getCollection("car_hd_pics");
+			DBCollection collection = db.getCollection("car_inout_pics");
 			BasicDBObject document = new BasicDBObject();
 			document.put("orderid", orderid);
 			document.put("gate", type);
@@ -199,9 +303,9 @@ public class CarPicsUploadAction extends Action {
 			}
 			DBObject obj  = collection.findOne(document);
 			if(obj==null){
-				collection = db.getCollection("car_pics");
+				collection = db.getCollection("car_hd_pics");
 				obj  = collection.findOne(document);
-				logger.error("mongodb>>>>>>>>>>>car_hd_pics表中没有，从car_pics表中查询"+obj);
+				logger.error("mongodb>>>>>>>>>>>car_inout_pics表中没有，从car_hd_pics表中查询"+obj);
 			}
 			if(obj == null){
 				AjaxUtil.ajaxOutput(response, "");

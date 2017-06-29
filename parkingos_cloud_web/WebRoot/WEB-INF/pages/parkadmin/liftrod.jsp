@@ -45,15 +45,22 @@ var groupid = "${groupid}";
 var liftreason=eval('${liftreason}');
 var _mediaField = [
 		{fieldcnname:"编号",fieldname:"id",fieldvalue:'',inputtype:"number", twidth:"60" ,height:"",issort:false,edit:false},
+		{fieldcnname:"抬杆编号",fieldname:"liftrod_id",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"时间",fieldname:"ctime",fieldvalue:'',defaultValue:'',inputtype:"date", twidth:"140" ,height:"",issort:false},
 		{fieldcnname:"收费员",fieldname:"uin",fieldvalue:'',inputtype:"select",noList:users, twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"通道",fieldname:"pass_id",fieldvalue:'',inputtype:"select",noList:allpass, twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"抬杆原因",fieldname:"reason",fieldvalue:'',defaultValue:'',inputtype:"select",noList:liftreason, twidth:"100" ,height:"",issort:false},
-		{fieldcnname:"图片",fieldname:"img",fieldvalue:'',inputtype:"text", twidth:"145" ,issort:false,
-			process:function(value,cid,id){
+		{fieldcnname:"备注",fieldname:"resume",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
+		
+		/*{fieldcnname:"图片",fieldname:"img",fieldvalue:'',inputtype:"text", twidth:"145" ,issort:false,
+			process:function(value,cid,liftrod_id){
 				return setPic(value,cid);
 			}
-		}
+		}*/
+		{fieldcnname:"查看抬杆图片",fieldname:"url",inputtype:"text", twidth:"100",issort:false
+			,process:function(value,cid,id){
+				return "<a href=# onclick=\"viewdetail('hn','"+value+"','"+cid+"')\" style='color:blue'>查看抬杆图片</a>";
+			}},
 	];
 var _liftrodT = new TQTable({
 	tabletitle:"抬杆记录",
@@ -71,7 +78,7 @@ var _liftrodT = new TQTable({
 	fit:[true,true,true],
 	tableitems:_mediaField,
 	tHeight:100,
-	rpage:5,
+	rpage:20,
 	isoperate:getAuthIsoperateButtons()
 });
 function coutomsearch(){
@@ -153,6 +160,21 @@ function getAuthIsoperateButtons(){
 	var bts = [];
 	return false;
 }
+/*展示抬杆图片的方法*/
+function viewdetail(type,value,id){
+	var liftrodId =_liftrodT.GD(id,"liftrod_id");
+	var tip = "抬杆记录图片";
+	Twin({
+		Id:"carpics_detail_"+id,
+		Title:tip,
+		Width:T.gww()-100,
+		Height:T.gwh()-50,
+		sysfunI:id,
+		/*修改图片注释原来调用逻辑*/
+		/* Content:"<iframe name='carpics_detail_'"+id+" id='carpics_detail_'"+id+" src='order.do?action=carpics&orderid="+id+"&comid="+comid+"&r="+Math.random()+"' width='100%' height='"+(T.gwh()-100)+"' frameborder='0' style='overflow:auto;' ></iframe>" */
+		Content:"<iframe name='carpics_detail_'"+id+" id='carpics_detail_'"+id+" src='liftrod.do?action=getliftrodpic&liftrodid="+liftrodId+"&comid="+comid+"&r="+Math.random()+"' width='100%' height='"+(T.gwh()-100)+"' frameborder='0' style='overflow:auto;' ></iframe>"
+	})
+}
 _liftrodT.C();
 
 function addcoms(){
@@ -187,8 +209,9 @@ function viewpic(name){
 function setPic(img,id){
 	//getobj("liftrod_tables_img_"+id+"_td").style.height='100px';
 	//getobj("liftrod_tables_img_"+id+"_td").style.verticalAlign='top';
+	alert(img);
 	if(img&&img!=''){
-		var url = "liftrod.do?action=liftpic&filename="+img
+		var url = "liftrod.do?action=liftpicnew&filename="+img
 		return "<a href='#' onclick='viewpic(\""+img+"\")'><img src='"+url+"' style='width:140px;height:100px;border:0px;vertical-align:top'></a>"
 	}else
 		return "";

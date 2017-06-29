@@ -7,7 +7,7 @@
 <meta content="yes" name="apple-mobile-web-app-capable">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta http-equiv="x-ua-compatible" content="IE=edge">
-<title>停车宝</title>
+<title>停车云</title>
 <script type="text/javascript">
 	var ua = navigator.userAgent.toLowerCase();
 	if (ua.match(/MicroMessenger/i) != "micromessenger"){
@@ -96,7 +96,11 @@
 	font-size: 20px;
 }
 </style>
-<script src="js/jquery.js" type="text/javascript">//表格</script>
+<link rel="stylesheet" href="css/weui-0.4.3.css">
+<link rel="stylesheet" href="css/jquery-weui0.8.3.css">
+<script src="js/jquery.js"></script>
+<script src="js/wxpublic/jquery-weui0.8.3.js"></script>
+<script src="js/wxpublic/fastclick.js"></script>
 <script type="text/javascript">
 function check(){
 	var mobile = document.getElementById("mobile").value;
@@ -229,15 +233,15 @@ $(function () {
 <body style="background-color:#F0F0F0;">
 <div style="width:99%;">
 	<div style="text-align:center;margin-top:20px;"><b class='toptitle'>请输入你的手机号</b></div>
-	<div style="margin-top: 20px;">
+	<div style="margin-top: 10px;">
 		<form action="${action}" method="post" id="carownerform">
 			<input type="text" name="openid" class="info" value="${openid}">
 			<input type="tel" placeholder="请输入手机号" id="mobile" name="mobile" maxlength="11" class="carowner" onkeypress="IsNum(event)">
-			<input type="tel" placeholder="请输入验证码" id="code" class="code"><input type="button" id="getcode" value="获取" class="getcode">
+			<input type="tel" placeholder="请输入验证码" id="code" class="code"><input type="button" id="getcode" value="获取" class="weui_btn weui_btn_primary" style="right: 2.5%;margin-top: 5px;width:25%;float:right;height: 41px;">
 			<input type='hidden' name='topage' value='${topage}'/>
-			<div style="margin-top:5px;font-size:12px;"><span style="color:red;">长时间获取不到验证码?<br>----->  在公众号内点击<span style="color:black;">【联系客服】</span>解决</span></div>
+			<div style="margin-left:2.5%;margin-top:5px;font-size:12px;margin-bottom:8px"><span style="color:red;">长时间获取不到验证码?<br>----->  在公众号内点击<span style="color:black;">【联系客服】</span>解决</span></div>
 			<div style="text-align:center;">
-				<input type="button" id="colsubmit" value="下一步" class="colsubmit">
+				<input type="button" id="colsubmit" value="下一步" class="weui_btn weui_btn_primary" style="width:95%">
 			</div>
 		</form>
 	</div>

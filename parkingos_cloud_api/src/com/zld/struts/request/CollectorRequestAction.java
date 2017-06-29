@@ -155,7 +155,7 @@ public class CollectorRequestAction extends Action{
 				}
 			}
 		}
-		logger.error("token="+token+",comid="+comId+",action="+action+",uin="+uin);
+		//logger.error("token="+token+",comid="+comId+",action="+action+",uin="+uin);
 		/*token为空或token无效时，返回错误		 */
 		if(token.equals("") || comId == null || uin == null){
 			if(out.equals("json"))
@@ -1209,7 +1209,7 @@ public class CollectorRequestAction extends Action{
 					orderId = daService.getkey("seq_order_tb");
 				}
 				String result = "{\"result\":\""+ret+"\",\"errmsg\":\""+errmsg+"\",\"orderid\":\""+orderId+"\",\"ismonthuser\":\""+ismonth+"\",\"orders\":"+orders+"}"; 
-				logger.error("queryEscOrder result :"+result);
+			//	logger.error("queryEscOrder result :"+result);
 				return result;
 			}
 		} catch (Exception e) {
@@ -1242,7 +1242,7 @@ public class CollectorRequestAction extends Action{
 						BasicDBObject conditions = new BasicDBObject();
 						conditions.put("orderid", orderId);
 						conditions.put("type", 2);
-						List<String> urls = mongoDbUtils.getPicUrls("car_pics", conditions);
+						List<String> urls = mongoDbUtils.getPicUrls("car_inout_pics", conditions);
 						if(urls != null && !urls.isEmpty()){
 							String urlStr = "";
 							for(String url : urls){
@@ -1271,8 +1271,8 @@ public class CollectorRequestAction extends Action{
 		paramsMap.put("orderid", id);
 		paramsMap.put("type", type);
 		paramsMap.put("ctime", TimeTools.gettime1());
-		String picurl  =publicMethods.uploadPic(request, paramsMap, "car_hd_pics");
-		logger.error(">>>>上传车辆泊车点照片....图片名称："+picurl+",mongodb table:car_hd_pics");
+		String picurl  =publicMethods.uploadPic(request, paramsMap, "car_inout_pics");
+		logger.error(">>>>上传车辆泊车点照片....图片名称："+picurl+",mongodb table:car_inout_pics");
 		int ret =0;
 		if(!"-1".equals(picurl)){
 			ret=1;
@@ -1622,7 +1622,7 @@ public class CollectorRequestAction extends Action{
 						logger.error("berthsecs_id:"+berthSegId+",parkId:"+parkId+",old comid:"+oldParkId);
 						updateSession(parkId, oldParkId, token);
 						//查泊位上的订单，车牌
-						List<Map<String, Object>> berths = daService.getAll("select id,cid as ber_name,order_id,state,dici_id from com_park_tb " +
+						List<Map<String, Object>> berths = pService.getAll("select id,cid as ber_name,order_id,state,dici_id from com_park_tb " +
 								" where is_delete=? and berthsec_id=? order by cid ", new Object[]{0, berthSegId});
 						//------------------------多线程并行查询------------------------//
 						ExecutorService pool = ExecutorsUtil.getExecutorService();
@@ -1794,7 +1794,7 @@ public class CollectorRequestAction extends Action{
 				}
 				if(!params.isEmpty()){
 					params.add(0);
-					List<Map<String, Object>> orders = daService.getAllMap("select id,car_number,prepaid,c_type,nfc_uuid from order_tb " +
+					List<Map<String, Object>> orders = pService.getAllMap("select id,car_number,prepaid,c_type,nfc_uuid from order_tb " +
 							" where id in ("+preParam+") and state=? ", params);
 					if(orders != null && !orders.isEmpty()){
 						boolean showCardUser = false;
@@ -3597,8 +3597,14 @@ public class CollectorRequestAction extends Action{
 				ctype=1;//支出
 			}else 
 				money = StringUtils.formatDouble(total-prepay);
-			cashsqlMap.put("sql", "insert into parkuser_cash_tb(uin,amount,type,orderid,create_time,target,ctype) values(?,?,?,?,?,?,?)");
-			cashsqlMap.put("values",  new Object[]{uin,money,0,orderId,end_time,target,ctype});
+			Long c = pService.getLong("select count (*) from parkuser_cash_tb where orderid=? ", new Object[]{orderId}) ;
+			if(c>0&&prepay==0){//已存在 ，更新记录
+				cashsqlMap.put("sql", "update  parkuser_cash_tb set uin=?,amount=?,type=?,create_time=?,target=?,ctype=? where orderid =? ");
+				cashsqlMap.put("values",  new Object[]{uin,money,0,end_time,target,ctype,orderId});
+			}else {
+				cashsqlMap.put("sql", "insert into parkuser_cash_tb(uin,amount,type,orderid,create_time,target,ctype) values(?,?,?,?,?,?,?)");
+				cashsqlMap.put("values",  new Object[]{uin,money,0,orderId,end_time,target,ctype});
+			}
 			bathSql.add(cashsqlMap);
 		}else {//是结算逃单 ，不修改结算时间
 			orderSqlMap.put("sql", "update order_tb set state=?,total=?,pay_type=?,imei=?,out_uid=? where id=?");
@@ -3607,8 +3613,14 @@ public class CollectorRequestAction extends Action{
 			Double money = bakMoney;
 			if(bakMoney<0)
 				money = StringUtils.formatDouble(total-prepay);
-			cashsqlMap.put("sql", "insert into parkuser_cash_tb(uin,amount,type,orderid,create_time,target) values(?,?,?,?,?,?)");
-			cashsqlMap.put("values",  new Object[]{uin,money,0,orderId,end_time,4});
+			Long c = pService.getLong("select count (*) from parkuser_cash_tb where orderid=? ", new Object[]{orderId}) ;
+			if(c>0&&prepay==0){
+				cashsqlMap.put("sql", "update parkuser_cash_tb set uin=?,amount=?,type=?,create_time=?,target=? where orderid=? ");
+				cashsqlMap.put("values",  new Object[]{uin,money,0,end_time,4,orderId});
+			}else {
+				cashsqlMap.put("sql", "insert into parkuser_cash_tb(uin,amount,type,orderid,create_time,target) values(?,?,?,?,?,?)");
+				cashsqlMap.put("values",  new Object[]{uin,money,0,orderId,end_time,4});
+			}
 			bathSql.add(cashsqlMap);
 		}
 		bathSql.add(orderSqlMap);
@@ -3825,10 +3837,22 @@ public class CollectorRequestAction extends Action{
 	}
 	//pos机生成订单
 	private String posIncome(HttpServletRequest request, Long comId, Long groupId, Long uid) {
+		//取出已缓存的posi信息
+		String carNumber=AjaxUtil.decodeUTF8(RequestUtil.getString(request, "carnumber"));
+		/*List<String> posiList =memcacheUtils.doListStringCache("posorder_carnum_comid", null, null);
+		if(posiList != null && posiList.contains(carNumber+comId)){
+			return "{\"result\":\"0\",\"errmsg\":\"正在生成订单，请耐心等候\"}";
+		}
+		//缓存carNumber和comId
+		if(posiList == null){
+			posiList = new ArrayList<String>();
+		}
+		posiList.add(carNumber+comId);
+		memcacheUtils.doListStringCache("posorder_carnum_comid", posiList, "update");*/
 		try {
 			Long curTime = System.currentTimeMillis()/1000;
 			String imei  =  RequestUtil.getString(request, "imei");
-			String carNumber=AjaxUtil.decodeUTF8(RequestUtil.getString(request, "carnumber"));
+			//String carNumber=AjaxUtil.decodeUTF8(RequestUtil.getString(request, "carnumber"));
 			Long bid = RequestUtil.getLong(request, "bid", -1L);//泊位编号
 			Long orderId = RequestUtil.getLong(request, "orderid", -1L);//预取的订单号(后来添加的参数)
 			//--------------------------------预支付的参数---------------------------------------------//
@@ -3871,10 +3895,16 @@ public class CollectorRequestAction extends Action{
 					Long orderid = object.getLong("orderid");//订单号
 					publicMethods.sendOrderToBolink(orderid, carNumber, comId);
 				}
+				//从缓存删除已处理的carNumber和comId
+				/*posiList.remove(carNumber+comId);
+				memcacheUtils.doListStringCache("posorder_carnum_comid", posiList, "update");*/
 				return object.toString();
 			}
 		} catch (Exception e) {
 			logger.error(e);
+			//从缓存删除已处理的carNumber和comId
+//			posiList.remove(carNumber+comId);
+//			memcacheUtils.doListStringCache("posorder_carnum_comid", posiList, "update");
 		}
 		return "{\"result\":\"0\",\"errmsg\":\"进场错误，请重新操作\"}";
 	}
@@ -3994,7 +4024,7 @@ public class CollectorRequestAction extends Action{
 		logger.error("orderDetail>>>orderId:"+orderId);
 		//http://127.0.0.1:8080/zld/collectorrequest.do?action=orderdetail&token=6f56758f82c1ccf17d4519918339dc2c&orderid=826699&out=json
 		if(orderId!=-1){
-			Map orderMap = daService.getPojo("select o.*,c.cid from order_tb o left join com_park_tb c on c.order_id=o.id" +
+			Map orderMap = pService.getPojo("select o.*,c.cid from order_tb o left join com_park_tb c on c.order_id=o.id" +
 					" where o.id=?", new Object[]{orderId});
 			if(orderMap!=null&&!orderMap.isEmpty()){
 				Long start= (Long)orderMap.get("create_time");
@@ -4718,23 +4748,27 @@ public class CollectorRequestAction extends Action{
 		if(priceList==null||priceList.size()==0){
 			//发短信给管理员，通过设置好价格
 		}else {
-			priceMap1=priceList.get(0);
-			boolean pm1 = false;//找到map1,必须是结束时间大于开始时间
-			Integer payType = (Integer)priceMap1.get("pay_type");
-			if(payType==0&&priceList.size()>1){
-				for(Map map : priceList){
-					if(pm1)
-						break;
-					payType = (Integer)map.get("pay_type");
-					Integer btime = (Integer)map.get("b_time");
-					Integer etime = (Integer)map.get("e_time");
-					if(payType==0&&etime>btime){
-						if(!pm1){
-							priceMap1 = map;
-							pm1=true;
+			try{
+				priceMap1=priceList.get(0);
+				boolean pm1 = false;//找到map1,必须是结束时间大于开始时间
+				Integer payType = (Integer)priceMap1.get("pay_type");
+				if(payType==0&&priceList.size()>1){
+					for(Map map : priceList){
+						if(pm1)
+							break;
+						payType = (Integer)map.get("pay_type");
+						Integer btime = (Integer)map.get("b_time");
+						Integer etime = (Integer)map.get("e_time");
+						if(payType==0&&etime>btime){
+							if(!pm1){
+								priceMap1 = map;
+								pm1=true;
+							}
 						}
 					}
 				}
+			}catch(Exception e){
+				logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>查询车场的价格信息异常"+comId);
 			}
 		}
 		return priceMap1;	
@@ -5055,7 +5089,6 @@ public class CollectorRequestAction extends Action{
 			this.type = type;
 		}
 		
-		@Override
 		public Object call() throws Exception {
 			Object result = null;
 			try {

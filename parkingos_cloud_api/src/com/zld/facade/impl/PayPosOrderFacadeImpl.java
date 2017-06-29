@@ -233,7 +233,7 @@ public class PayPosOrderFacadeImpl implements PayPosOrderFacade {
 					|| payType == 0 && prepay == 0){//结算刷卡订单
 				logger.error("刷卡预支付或者未预支付>>>orderid:"+orderId);
 				autoPayResp = payCardService.autoPayPosOrder(autoPayReq);
-				logger.error(autoPayReq.toString());
+			    //logger.error(autoPayReq.toString());
 				if(autoPayResp.getResult() == 1){
 					result = true;//订单结算成功
 					resp.setResult(4);//刷卡结算标识
@@ -348,7 +348,7 @@ public class PayPosOrderFacadeImpl implements PayPosOrderFacade {
 				resp.setErrmsg("订单记录不存在");
 				return resp;
 			}
-			logger.error(order.toString());
+			//logger.error(order.toString());
 			double prepay = order.getPrepaid();
 			long userId = order.getUin();
 			String carNumber = order.getCar_number();
@@ -405,7 +405,7 @@ public class PayPosOrderFacadeImpl implements PayPosOrderFacade {
 			manuPayReq.setNfc_uuid(nfc_uuid);
 			manuPayReq.setBindcard(bindcard);
 			manuPayReq.setGroupId(groupId);
-			logger.error(manuPayReq.toString());
+			//logger.error(manuPayReq.toString());
 			ManuPayPosOrderResp manuPayResp = null;
 			if(payType == 0){
 				logger.error("现金结算>>>orderid:"+orderId);

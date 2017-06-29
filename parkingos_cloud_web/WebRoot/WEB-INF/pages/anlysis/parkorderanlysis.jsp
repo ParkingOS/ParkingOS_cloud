@@ -36,34 +36,27 @@ var etime="${etime}";
 var viewtype="custom";
 var tip = "区间查询";
 var _mediaField = [
+		//{fieldcnname:"编号",fieldname:"id",inputtype:"text", twidth:"30",issort:false},
 		{fieldcnname:"收费员",fieldname:"name",inputtype:"text", twidth:"120",issort:false,
 			process:function(value,cid,id){
-				return "<a href=# onclick=\"viewworkdetail('h','"+value+"','"+cid+"')\" style='color:blue'>"+value+"(上班详情)"+"</a>";
+				return "<a href=# onclick=\"viewworkdetail('h','"+value+"','"+cid+"')\" style='color:blue'>"+value+"(工作详情)"+"</a>";
 			}},
-		{fieldcnname:"帐号",fieldname:"uid",inputtype:"text", twidth:"80",issort:false},
+		{fieldcnname:"帐号",fieldname:"out_uid",inputtype:"text", twidth:"80",issort:false},
 		{fieldcnname:"日期",fieldname:"sdate",inputtype:"text", twidth:"200" ,issort:false},
 		{fieldcnname:"总订单数",fieldname:"scount",inputtype:"text", twidth:"80",issort:false,
 			process:function(value,cid,id){
 				return "<a href=# onclick=\"viewdetail('h','"+value+"','"+cid+"',0)\" style='color:blue'>"+value+"</a>";
 			}},
+		//{fieldcnname:"应收金额",fieldname:"amount_receivable",inputtype:"text", twidth:"90",issort:false},
 		{fieldcnname:"月卡订单数",fieldname:"monthcount",inputtype:"text", twidth:"80",issort:false},
-		{fieldcnname:"现金支付",fieldname:"pmoney",inputtype:"text", twidth:"80",issort:false},
-		{fieldcnname:"停车宝支付",fieldname:"pmobile",inputtype:"text", twidth:"80",issort:false},
-		{fieldcnname:"免费金额",fieldname:"free",inputtype:"text", twidth:"100",issort:false},
-		/*,
-			process:function(value,cid,id){
-				if(value==0.0){
-					return value;
-				}else{
-					return "<a href=# onclick=\"viewdetail('h','"+value+"','"+cid+"',8)\" style='color:blue'>"+value+"</a>";
-				}
-			}*/
-		{fieldcnname:"中央预支付",fieldname:"centerprepay",inputtype:"text", twidth:"100",issort:false},
-		{fieldcnname:"减免券支付",fieldname:"ticketpay",inputtype:"text", twidth:"100",issort:false},
-		{fieldcnname:"合计",fieldname:"total",inputtype:"text", twidth:"100",issort:false}
+		{fieldcnname:"现金支付",fieldname:"cash_pay",inputtype:"text", twidth:"80",issort:false},
+		{fieldcnname:"电子支付",fieldname:"electronic_pay",inputtype:"text", twidth:"80",issort:false},
+		{fieldcnname:"免费金额",fieldname:"free_pay",inputtype:"text", twidth:"100",issort:false},
+		{fieldcnname:"减免券支付",fieldname:"reduce_pay",inputtype:"text", twidth:"100",issort:false},
+		{fieldcnname:"合计",fieldname:"amount_receivable",inputtype:"text", twidth:"100",issort:false}
 	];
 var _orderanlyT = new TQTable({
-	tabletitle:"订单统计",
+	tabletitle:"订单统计&nbsp;&nbsp;<span id='total_money'></span>",
 	ischeck:false,
 	tablename:"parkorderanlysis_tables",
 	dataUrl:"orderanly.do",
@@ -85,7 +78,7 @@ function coutomsearch(){
 	if(groupid != "" || cityid != ""){
 		html += "&nbsp;&nbsp;&nbsp;&nbsp;当前车场:&nbsp;&nbsp;<select id='companys' onchange='searchcoms();' ></select>";
 	}
-	html += "&nbsp;&nbsp;<span id='total_money'></span>";
+	html += "";
 	return html;
 }
 function searchcoms(){
@@ -149,18 +142,18 @@ function searchdata(){
 }
 
 function viewdetail(type,value,id,pay_type){
-	//alert(type+","+value);
-	var total =_orderanlyT.GD(id,"total");
+	//alert(type+","+id);
+	var total =_orderanlyT.GD(id,"amount_receivable");
 	var count = _orderanlyT.GD(id,"scount");
-	var park =_orderanlyT.GD(id,"name");
-	var uid = _orderanlyT.GD(id,"uid");
-	var pmoney=_orderanlyT.GD(id,"pmoney");
-	var pmobile=_orderanlyT.GD(id,"pmobile");
-	var free=_orderanlyT.GD(id,"free");
+	var name =_orderanlyT.GD(id,"name");
+	var uid = _orderanlyT.GD(id,"out_uid");
+	var pmoney=_orderanlyT.GD(id,"cash_pay");
+	var pmobile=_orderanlyT.GD(id,"electronic_pay");
+	var free=_orderanlyT.GD(id,"free_pay");
 	//alert(uid);
 	Twin({
 		Id:"parkorder_detail_"+id,
-		Title:tip+"  --> 收费员："+park,
+		Title:tip+"  --> 收费员："+name,
 		Width:T.gww()-100,
 		Height:T.gwh()-50,
 		sysfunI:id,
@@ -168,18 +161,18 @@ function viewdetail(type,value,id,pay_type){
 	})
 }
 function viewworkdetail(type,value,id,pay_type){
-	//alert(type+","+value);
-	var total =_orderanlyT.GD(id,"total");
+	//alert(type+","+id);
+	var total =_orderanlyT.GD(id,"amount_receivable");
 	var count = _orderanlyT.GD(id,"scount");
-	var park =_orderanlyT.GD(id,"name");
-	var uid = _orderanlyT.GD(id,"uid");
-	var pmoney=_orderanlyT.GD(id,"pmoney");
-	var pmobile=_orderanlyT.GD(id,"pmobile");
-	var free=_orderanlyT.GD(id,"free");
+	var name =_orderanlyT.GD(id,"name");
+	var uid = _orderanlyT.GD(id,"out_uid");
+	var pmoney=_orderanlyT.GD(id,"cash_pay");
+	var pmobile=_orderanlyT.GD(id,"electronic_pay");
+	var free=_orderanlyT.GD(id,"free_pay");
 	//alert(uid);
 	Twin({
 		Id:"parkorder_detail_"+id,
-		Title:tip+"  --> 收费员："+park,
+		Title:tip+"  --> 收费员："+name,
 		Width:T.gww()-50,
 		Height:T.gwh()-25,
 		sysfunI:id,

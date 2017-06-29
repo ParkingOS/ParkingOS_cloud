@@ -152,7 +152,7 @@ span.rtooled{color:#C21825}
 .t-grid-froze-header{margin:0px; padding:0px; position:relative; float:left; overflow:hidden; background-color:#f7f7f7;}
 .t-grid-froze-headercell{line-height:20px;width:100%;float:left;overflow:hidden;}
 .t_grid_frozecell{background:#fff;}
-.t-grid-cell-chx{text-align:center; margin:0px; padding:0px;line-height:26px;height:26px;}
+.t-grid-cell-chx{text-align:center; margin:0px; padding:0px;line-height:25px;height:25px;}
 .t-grid-body{float:left; overflow:auto; position:relative; background:#fff;}
 .t-grid-body-l{float:left;position:relative;margin:0px;padding:0px;overflow:hidden;width:20px;}
 .t-grid-body-r{float:left;position:relative;margin:0px;padding:0px;overflow:hidden;}

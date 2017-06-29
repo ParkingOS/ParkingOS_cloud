@@ -199,13 +199,13 @@ public class ParkSurveyAction extends Action{
 					"yname:'占用车位数',data:[{name:'总占用车位数',data:"+park+"},{name:'月卡车占用车位数',data:"+month_used+"},{name:'时租车占用车位数',data:"+time_used+"}]}";
 			
 			Map<String, Object> comMap = 
-					pgOnlyReadService.getMap("select parking_total from com_info_tb where id =?", new Object[]{comid});
+					pgOnlyReadService.getMap("select empty from com_info_tb where id =?", new Object[]{comid});
 			
 			request.setAttribute("comid", comid);
 			request.setAttribute("moneyData", moneyData);
 			request.setAttribute("parkData", parkData);
 			request.setAttribute("today", totday.equals("")?"今日无收费":totday);
-			request.setAttribute("parktotal", "车位数:"+comMap.get("parking_total"));
+			request.setAttribute("parktotal", "车位数:"+comMap.get("empty"));
 			System.out.println(moneyData);
 			System.out.println(parkData);
 			return mapping.findForward("survey");
@@ -238,8 +238,9 @@ public class ParkSurveyAction extends Action{
 						map.put("nickname", "");
 						if(userMap!=null){
 							map.put("nickname",userMap.get("nickname"));
+							nameMap.put(uid, userMap.get("nickname")+"");
 						}
-						nameMap.put(uid, userMap.get("nickname")+"");
+						//nameMap.put(uid, userMap.get("nickname")+"");
 					}else {
 						map.put("nickname",nameMap.get(uid));
 					}

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.zld.service.DataBaseService;
+import com.zld.service.PgOnlyReadService;
 
 @Repository
 public class ZldUploadOperate {
@@ -106,7 +107,7 @@ public class ZldUploadOperate {
 	//—È÷§token
 	private boolean validateToken(String token,ServletContext context){
 		ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(context);
-		DataBaseService daService = (DataBaseService) ctx.getBean("dataBaseService");
+		PgOnlyReadService daService = (PgOnlyReadService) ctx.getBean("pgOnlyReadService");
 		Map comMap = daService.getPojo("select * from user_session_tb where token=?", new Object[]{token});
 		if(comMap!=null){
 			return true;

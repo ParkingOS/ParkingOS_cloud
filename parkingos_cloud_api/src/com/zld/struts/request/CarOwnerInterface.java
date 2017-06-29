@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -78,6 +79,20 @@ public class CarOwnerInterface extends Action {
 		String action = RequestUtil.getString(request, "action");
 		//System.err.println(request.getParameterMap());
 		logger.error("action:"+action);
+		if(action.equals("bolinkprepay")){
+			publicMethods.prepayToBolink(546045L,0.1,11218L);
+			return null;
+		}
+		if(action.equals("qrtest")){
+			logger.error("支付宝支付....");
+			Enumeration enumeration = request.getHeaderNames();
+			while (enumeration.hasMoreElements()) {
+				Object object = (Object) enumeration.nextElement();
+				System.err.println(object.toString()+"="+request.getHeader(object.toString()));
+			}
+			response.sendRedirect("https://");
+			return null;
+		}
 		if(action.equals("parkinfo")){
 			String ret = getParkInfo(request);
 			logger.error(ret);
@@ -155,6 +170,11 @@ public class CarOwnerInterface extends Action {
 			//http://192.168.199.240/zld/carinter.do?action=getcarnumbs&mobile=13641309140
 			String cns = getCarNumbers(request);
 			AjaxUtil.ajaxOutput(response, cns);
+		}else if(action.equals("deletecarnum")){
+			logger.error(">>>>>>>进入解绑车牌车牌");
+			String ret = delCarnumber(request);
+			AjaxUtil.ajaxOutput(response, ret);
+			return null;
 		}else if(action.equals("upuserpic")){//上传车主行驶证
 			String result = uploadCarPics2Mongodb(request);
 			logger.error(result);
@@ -2160,9 +2180,10 @@ public class CarOwnerInterface extends Action {
 	 * @return
 	 */
 	private String getCarNumbers(HttpServletRequest request) {
-		String mobile  = RequestUtil.getString(request, "mobile");
-		Long uin = getUinByMobile(mobile);
-		List<Map<String, Object>> carList = onlyService.getAll("select car_number,is_auth " +
+		String openid  = RequestUtil.getString(request, "openid");
+		//Long uin = getUinByMobile(mobile);
+		Long uin = getUinByOpenid(openid);
+		List<Map<String, Object>> carList = onlyService.getAll("select id,car_number,is_auth " +
 				"from car_info_tb where uin=? and state =? ", new Object[]{uin,1});
 		Integer state=0;
 		if(carList!=null&&!carList.isEmpty()){
@@ -2184,12 +2205,14 @@ public class CarOwnerInterface extends Action {
 			}
 			for(Map<String, Object> car : carList){
 				Integer isAuth = (Integer)car.get("is_auth");
+				//根据carnumber查询月卡,是有效期内月卡用户,添加hasprod 1,否则0
 				if(isAuth.equals(state))
 					car.put("is_default", "1");
 				else {
 					car.put("is_default", "0");
 				}
 			}
+			logger.error(carList);
 			return StringUtils.createJson(carList);
 		}
 		return "[]";
@@ -2261,7 +2284,7 @@ public class CarOwnerInterface extends Action {
 			int rs = service.update("update car_info_tb set car_number=? where uin=? and car_number=? ", new Object[]{carid,uin,oldcarid});
 			logger.error("carowner:"+mobile+",update car_number,old:"+oldcarid+",new:"+carid+",ret:"+rs);
 			if(rs==1){
-				publicMethods.syncUserCarNumber(uin, oldcarid, carid);
+				publicMethods.syncUserAddPlateNumber(uin, oldcarid, carid);
 			}
 		}else {
 			if(!isHasCarId){
@@ -2274,12 +2297,7 @@ public class CarOwnerInterface extends Action {
 							new Object[]{uin,carid,1,System.currentTimeMillis()/1000});
 					if(ret==1){
 						isHasCarId = true;
-						Long cityId=(Long)userMap.get("cityid");
-						String uuid = (String)userMap.get("uuid");
-						if(uuid==null&&cityId!=null&&cityId==321000){
-							publicMethods.sendMessageToThird(uin, null, mobile, carid, userMap.get("strid")+"", 0);
-						}
-						publicMethods.syncUserCarNumber(uin, carid, "");
+						publicMethods.syncUserAddPlateNumber(uin, carid, "");
 					}
 					logger.error("carowner:"+mobile+",add car_number:"+carid+",ret:"+ret+",curr carnumber count:"+(cnum+1));
 				}else {
@@ -3052,6 +3070,19 @@ public class CarOwnerInterface extends Action {
 		}
 		return -1L;
 	}
+	
+	private Long getUinByOpenid(String openid){
+		if(!"".equals(openid)){
+			Map userMap = onlyService.getPojo("select id from user_info_Tb where wxp_openid=? and auth_flag=? ", new Object[]{openid,4});
+			if(userMap!=null&&!userMap.isEmpty()){
+				return (Long) userMap.get("id");
+			}
+		}
+		
+		
+		return -1l;
+	}
+	
 	private String getParkNameByComid(Long comid){
 		Map<String, Object> comMap = onlyService.getMap("select company_name from com_info_tb where id =? ",new Object[]{comid});
 		if(comMap!=null)
@@ -3097,7 +3128,7 @@ public class CarOwnerInterface extends Action {
 		paramsMap.put("opState", "");
 		paramsMap.put("pageNo", "1");
 		paramsMap.put("pageSize", "100");
-		String linkedParam=StringUtils.createLinkedJson(paramsMap);
+		String linkedParam=StringUtils.createLinkedJson(paramsMap,1);
 		//System.out.println(linkedParam);
 		String sign =null;
 		try {
@@ -3294,5 +3325,61 @@ public class CarOwnerInterface extends Action {
 		logger.error("car order history:"+result);
 		return result;
 	}
-
+	
+	/**
+	 * 解绑车牌
+	 * @param request
+	 * @return
+	 */
+	private String delCarnumber(HttpServletRequest request){
+		Long carid = RequestUtil.getLong(request, "carid", -1l);
+		String mobile = RequestUtil.getString(request, "mobile");
+		Long uin = getUinByMobile(mobile);
+		logger.error("carid:"+carid+" uin:"+uin);
+		String update = "-1";
+		if(carid==-1){
+			return update;
+		}
+		//根据uin查月卡,如果有未过期的月卡,则不可解绑
+		Map carmap = service.getMap("select car_number from car_info_tb where id = ?", new Object[]{carid});
+		//Map<String, Object> ret = commonMethods.isProdBeOverdue((String)carmap.get("car_number"),uin);
+		/*List<Map> productlist = service.getAll("select e_time from carower_product where uin = ?", new Object[]{uin});
+		for (Map prod : productlist) {
+			Long endTime = (Long) prod.get("e_time");
+			if(endTime==null){
+				logger.error("缺失月卡过期时间");
+				return "-3";
+			}
+			Long cTime = TimeTools.getToDayBeginTime();
+			logger.error(cTime);
+			logger.error("月卡结束日期:"+TimeTools.getTimeStr_yyyy_MM_dd(endTime*1000)+" 当前日期:"+TimeTools.getTimeStr_yyyy_MM_dd(cTime*1000));
+			if(cTime<endTime){
+				logger.error("月卡未过期,不可绑定");
+				return "-2";
+			}
+		}*/
+		//解绑车牌
+		//Integer overdued = (Integer)ret.get("overdued");
+		/*if(overdued!=2){
+			//全过期
+			logger.error("可以解绑");
+			update = service.update("delete from car_info_tb where id = ?", new Object[]{carid})+"";
+			return update;
+		}else{
+			logger.error("不可解绑");
+			return "-2";
+		}*/
+		
+		//该车牌在场订单被锁定,不可解绑
+		Long curorder = service.getLong("select count(id) from order_tb where car_number = ? and state = ? and islocked = ? ", 
+				new Object[]{carmap.get("car_number"),0,1});
+		if(curorder.intValue()<1){
+			//可以解绑
+			logger.error("可以解绑");
+			update = service.update("delete from car_info_tb where id = ?", new Object[]{carid})+"";
+			return update;
+		}else{
+			return "-2";
+		}
+	}
 }

@@ -54,9 +54,14 @@ var _mediaField = [
 						return "<a href=# onclick=\"viewdetail('h','"+value+"','"+cid+"')\" style='color:blue'>"+value+"</a>";
 					}
 				}},
+		//{fieldcnname:"应收金额",fieldname:"amount_receivable",inputtype:"text", twidth:"90",issort:false},
 		{fieldcnname:"月卡订单数",fieldname:"monthcount",inputtype:"text", twidth:"70" ,issort:false},
-		{fieldcnname:"应收金额",fieldname:"total",inputtype:"text", twidth:"90",issort:false},
-		{fieldcnname:"现金支付",fieldname:"money",inputtype:"text", twidth:"90",issort:false,
+		{fieldcnname:"现金支付",fieldname:"cash_pay",inputtype:"text", twidth:"90",issort:false},
+		{fieldcnname:"电子支付",fieldname:"electronic_pay",inputtype:"text", twidth:"90",issort:false},
+		{fieldcnname:"免费支付",fieldname:"free_pay",inputtype:"text", twidth:"90",issort:false},
+		{fieldcnname:"减免券支付",fieldname:"reduce_pay",inputtype:"text", twidth:"90",issort:false},
+		{fieldcnname:"合计",fieldname:"total",inputtype:"text", twidth:"100",issort:false}
+		/*{fieldcnname:"现金支付",fieldname:"money",inputtype:"text", twidth:"90",issort:false,
 			process:function(value,cid,id){
 					if(value==0){
 						return value;
@@ -74,7 +79,7 @@ var _mediaField = [
 				}else{
 					return "<a href=# onclick=\"viewdetail('h','"+value+"','"+cid+"',8)\" style='color:blue'>"+value+"</a>";
 				}
-			}}
+			}}*/
 	];
 
 //var otype="worksite_id-start_time-end_time-ordertotal-total-money-pmoney-free";
@@ -102,8 +107,8 @@ function viewdetail(type,value,id,pay_type,start_time,end_time){
 	var start_time =_parkuserworkdetailT.GD(id,"start_time");
 	var end_time =_parkuserworkdetailT.GD(id,"end_time");
 	var total =_parkuserworkdetailT.GD(id,"total");
-	var money =_parkuserworkdetailT.GD(id,"money");
-	var pmoney =_parkuserworkdetailT.GD(id,"pmoney");
+	var money =_parkuserworkdetailT.GD(id,"cash_pay");
+	var pmoney =_parkuserworkdetailT.GD(id,"electronic_pay");
 	var free =_parkuserworkdetailT.GD(id,"free");
 	//alert(start_time);
 	var tip = "订单详情";

@@ -87,13 +87,12 @@ public class OrderManageAction extends Action{
 			return mapping.findForward("list");
 		}else if(action.equals("query")){
 			List arrayList = query(request,comid,isHd,otype);
-			List list = (List<Map<String, Object>>) arrayList.get(0);
+			List<Map<String, Object>> list = (List<Map<String, Object>>) arrayList.get(0);
 			Integer pageNum = (Integer) arrayList.get(1);
 			long count = Long.valueOf(arrayList.get(2)+"");
 			String fieldsstr = arrayList.get(3)+"";
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
-			
 			return null;
 			
 		}else if(action.equals("exportExcel")){
@@ -284,7 +283,7 @@ public class OrderManageAction extends Action{
 		}else if(action.equals("carpics")){
 			Long orderid = RequestUtil.getLong(request, "orderid", -1L);
 			DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
-			DBCollection collection = db.getCollection("car_hd_pics");
+			DBCollection collection = db.getCollection("car_inout_pics");
 			BasicDBObject document = new BasicDBObject();
 			document.put("orderid", orderid);
 			document.put("gate", 0);
@@ -298,11 +297,11 @@ public class OrderManageAction extends Action{
 //			objsout.close();
 			Long outsize =collection.count(document);
 			if(insize==0&&outsize==0){//查不到时查另外一张表
-				collection = db.getCollection("car_pics");
+				collection = db.getCollection("car_hd_pics");
 				outsize =collection.count(document);
 				document.put("gate", 0);
 				insize  = collection.count(document);
-				logger.error("mongodb>>>>>>>>>>>car_hd_pics表中没有，从car_pics表中查询"+insize+","+outsize);
+				logger.error("mongodb>>>>>>>>>>>car_inout_pics表中没有，从car_hd_pics表中查询"+insize+","+outsize);
 			}
 			String inhtml = "<img src='carpicsup.do?action=downloadpic&comid=0&type=0&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";
 			String outhtml = "<img src='carpicsup.do?action=downloadpic&comid=0&type=1&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";
@@ -328,7 +327,7 @@ public class OrderManageAction extends Action{
 		}else if(action.equals("escarpics")){
 			Long orderid = RequestUtil.getLong(request, "orderid", -1L);
 			DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
-			DBCollection collection = db.getCollection("car_hd_pics");
+			DBCollection collection = db.getCollection("car_inout_pics");
 			BasicDBObject document = new BasicDBObject();
 			document.put("orderid", orderid);
 			document.put("gate", 0);
@@ -345,11 +344,11 @@ public class OrderManageAction extends Action{
 			
 			Long escsize  = collection.count(document);
 			if(insize==0&&escsize==0){//查不到时查另外一张表
-				collection = db.getCollection("car_pics");
+				collection = db.getCollection("car_hd_pics");
 				escsize =collection.count(document);
 				document.put("gate", 0);
 				insize  = collection.count(document);
-				logger.error("mongodb>>>>>>>>>>>car_hd_pics表中没有，从car_pics表中查询"+insize+","+escsize);
+				logger.error("mongodb>>>>>>>>>>>car_inout_pics表中没有，从car_hd_pics表中查询"+insize+","+escsize);
 			}
 			
 			String inhtml = "<img src='carpicsup.do?action=downloadpic&comid=0&type=0&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";
@@ -395,6 +394,51 @@ public class OrderManageAction extends Action{
 			}
 			result+="]";
 			AjaxUtil.ajaxOutput(response, result);
+		}else if(action.equals("carpicsnew")){
+			//修改查看图片接口,重新从mongodb中获取图片，并实现图片的正常展示
+			/*String orderid = RequestUtil.getString(request, "orderid");
+			logger.error(">>>>>>>>>>>>>>>>>>>>>>订单信息显示查询图片接口：carpicsnew");
+			String inhtml = "<img src='carpicsup.do?action=getpicture&comid="+comid+"&typeNew=in&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";
+			String outhtml = "<img src='carpicsup.do?action=getpicture&comid="+comid+"&typeNew=out&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";
+			request.setAttribute("inhtml", inhtml);
+			request.setAttribute("outhtml", outhtml);
+			return mapping.findForward("carpics");*/
+			String orderid = RequestUtil.getString(request, "orderid");
+			DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
+			//根据订单编号查询出mongodb中存入的对应个表名
+			Map map = daService.getMap("select * from order_tb where order_id_local=? and comid=?", new Object[]{orderid,comid});
+			String collectionName = "";
+			if(map !=null && !map.isEmpty()){
+				collectionName = (String) map.get("carpic_table_name");
+			}
+			DBCollection collection = db.getCollection("collectionName");
+			BasicDBObject document = new BasicDBObject();
+			document.put("parkid", String.valueOf(comid));
+			document.put("orderid", orderid);
+			document.put("gate", "in");
+			Long insize  = collection.count(document);
+			document.put("gate", "out");
+			Long outsize =collection.count(document);
+			String inhtml = "<img src='carpicsup.do?action=getpicture&comid="+comid+"&typeNew=in&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";
+			String outhtml = "<img src='carpicsup.do?action=getpicture&comid="+comid+"&typeNew=out&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";
+			if(insize>1){
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i <insize ; i++) {
+					sb.append("<img src='carpicsup.do?action=getpicture&comid="+comid+"&typeNew=in&currentnum="+i+"&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>").append("<br/><br/>");
+				}
+				inhtml = sb.toString();
+			}
+			if(outsize>1){
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i <outsize ; i++) {
+					sb.append("<img src='carpicsup.do?action=getpicture&comid="+comid+"&typeNew=out&currentnum="+i+"&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>").append("<br/><br/>");
+				}
+				outhtml = sb.toString();
+			}
+		
+			request.setAttribute("inhtml", inhtml);
+			request.setAttribute("outhtml", outhtml);
+			return mapping.findForward("carpics");
 		}
 		
 		return null;
@@ -407,14 +451,8 @@ public class OrderManageAction extends Action{
 		int blank = 0;
 		String allSql = "select count(*)total from order_tb where comid = ? and state=?";
 		Object [] allparm =  new Object[]{comid,0};
-		String monthSql = "select count(*)total from order_tb where comid = ? and state=? and c_type=? ";
-		Object [] monthparm =  new Object[]{comid,0,5};
-		if(isHd==1){//限制
-			allSql +=" and ishd<>? ";
-			allparm = new Object[]{comid,0,1};
-			monthSql +=" and ishd<>? ";
-			monthparm =new Object[]{comid,0,5,1};
-		}
+		String monthSql = "select count(*)total from order_tb where comid = ? and state=?  ";
+		Object [] monthparm =  new Object[]{comid,0};
 		Map allmap = pgOnlyReadService.getMap(allSql,allparm);
 		Map monthmap = pgOnlyReadService.getMap(monthSql,monthparm);
 		Map cominfo = pgOnlyReadService.getMap("select share_number,parking_total from com_info_tb where id = ? ", new Object[]{comid});

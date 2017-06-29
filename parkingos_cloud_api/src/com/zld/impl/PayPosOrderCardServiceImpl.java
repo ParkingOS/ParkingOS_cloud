@@ -54,7 +54,7 @@ public class PayPosOrderCardServiceImpl implements PayPosOrderService {
 	public AutoPayPosOrderResp autoPayPosOrder(AutoPayPosOrderReq req) {
 		AutoPayPosOrderResp resp = new AutoPayPosOrderResp();
 		try {
-			logger.error("req:"+req.toString());
+			//logger.error("req:"+req.toString());
 			//----------------------------²ÎÊý--------------------------------//
 			Long curTime = req.getCurTime();
 			Order order = req.getOrder();

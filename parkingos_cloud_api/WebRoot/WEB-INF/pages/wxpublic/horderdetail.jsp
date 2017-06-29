@@ -56,6 +56,17 @@ img {
 	width: 60px;
 	height: 70px;
 }
+.wx_pay{
+	border-radius:3px;
+	width:98%;
+	margin-left:1%;
+	height:40px;
+	margin-top:32px;
+	font-size:15px;
+	background-color:#38B074;
+	color:white;
+	border: 1px solid #F0F0F0;
+}
 </style>
 <style type="text/css">
 #scroller .li1 {
@@ -377,18 +388,21 @@ body {
 			<li class="li1" style="margin-top:20px;"><div><span>停车费</span><span class="right1">${total}元</span></div></li>
 			<div id="info-list">
 			</div>
+			<input type="button" class="wx_pay hide" onclick='payescape();' value="支付逃单" />
 			<div class="wxpay-logo"></div>
 		</ul>
 	</div>
 </div>
-<div class="bottom hide"></div>
+<div style="display:none"><div class="bottom hide"></div></div>
 </body>
 <script type="text/javascript">
 	$("#info-list").append('<li class="li3"><div><span>订单编号</span><span class="right1">${orderid}</span></div></li>');
 	if("${state}" == "0"){
 		$("#info-list").append('<li class="li3"><div><span>订单状态</span><span class="right1 red">未结算</span></div></li>');
-	}else{
+	}else if("${state}" == "1"){
 		$("#info-list").append('<li class="li3"><div><span>订单状态</span><span class="right1 green">已结算</span></div></li>');
+	}else if("${state}" == "2"){
+		$("#info-list").append('<li class="li3"><div><span>订单状态</span><span class="right1 red">逃单</span></div></li>');
 	}
 	if("${intype}" == "非计时"){
 		$("#info-list").append('<li class="li3"><div><span>结算时间</span><span class="right1">${btime}</span></div></li>');
@@ -424,8 +438,20 @@ body {
 		}
 	}
 	
+	/* if("${state}" == "2"){
+		var prepay = '${prepay}';
+		prepay = parseFloat(prepay);
+		if(prepay == 0){
+			$(".wx_pay").removeClass("hide");
+		}
+	} */
+	
 	function toreward(){
 		window.open("${url}");
+	}
+	
+	function payescape(){
+		window.open("${escapeUrl}");
 	}
 </script>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>

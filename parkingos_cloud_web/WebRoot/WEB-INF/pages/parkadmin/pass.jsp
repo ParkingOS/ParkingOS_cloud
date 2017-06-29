@@ -43,6 +43,7 @@ function getBrake(id){
 var worksites = getWorksites();
 var _mediaField = [
 		{fieldcnname:"通道ID",fieldname:"id",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false,edit:false,fhide:true},
+		{fieldcnname:"编号",fieldname:"channel_id",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"名称",fieldname:"passname",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false},
 		{fieldcnname:"通道类型",fieldname:"passtype",fieldvalue:'',inputtype:"select",noList:[{"value_no":0,"value_name":"入"},{"value_no":1,"value_name":"出"},{"value_no":2,"value_name":"出入"}], twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"所属工作站",fieldname:"worksite_id",fieldvalue:'',inputtype:"select",noList:worksites, twidth:"100" ,height:"",issort:false},
@@ -188,6 +189,20 @@ function getAuthIsoperateButtons(){
 				});	
 			}
 		})
+	}});
+	if(subauth[5])
+	bts.push({name:"抬杆",fun:function(id){
+		alert(id);
+		var channelId =_passT.GD(id,"channel_id");
+		var channelName = _passT.GD(id, "passname");
+		//var ret = T.A.sendData("parkpassedit.do","POST","action=liftrod&passname="+channelName+"&channel_id="+channelId+"&channel_operate="+0,
+		//null,2,"","","正在。。。");
+		var ret = T.A.sendData("parkpassedit.do?action=liftrod&passname="+channelName+"&channel_id="+channelId+"&channel_operate="+0);
+		if(ret == "1"){
+			T.loadTip(1,"发送成功！",2,"");
+		}else if(ret == "0"){
+			T.loadTip(1,"发送失败，与停车场连接断开!",2,"");
+		}
 	}});
 	if(bts.length <= 0){return false;}
 	return bts;

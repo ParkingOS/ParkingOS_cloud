@@ -81,8 +81,15 @@ public class PriceManageAction extends Action{
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			List<Object> params = new ArrayList<Object>();
 			params.add(comid);
+			//添加删除标志
+			params.add(0);
 			if(count>0){
-				list = daService.getAll(sql+ " order by id desc",params, pageNum, pageSize);
+				try{
+					list = daService.getAll(sql+ " and is_delete=? order by id desc ",params, pageNum, pageSize);
+				}catch(Exception e){
+					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>查询价格列表异常"+"sql:"+sql+ " and is_delete=? order by id desc "+"params:"+params);
+				}
+				
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
@@ -110,8 +117,14 @@ public class PriceManageAction extends Action{
 			//System.out.println(sqlInfo);
 			Long count= daService.getLong(countSql, values);
 			List list = null;//daService.getPage(sql, null, 1, 20);
+			//添加删除标志
+			params.add(0);
 			if(count>0){
-				list = daService.getAll(sql + " order by id desc", params, pageNum, pageSize);
+				try{
+					list = daService.getAll(sql + " and is_delete=? order by id desc", params, pageNum, pageSize);
+				}catch(Exception e){
+					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>查询价格列表异常"+"sql:"+sql+ " and is_delete=? order by id desc "+"params:"+params);
+				}
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
@@ -221,10 +234,15 @@ public class PriceManageAction extends Action{
 		}else if(action.equals("delete")){
 			String id =RequestUtil.processParams(request, "selids");
 			Map priceMap = daService.getMap("select * from price_tb where id =?", new Object[]{Long.valueOf(id)});
-			String sql = "delete from price_tb where id =?";
-			Object [] values = new Object[]{Long.valueOf(id)};
+//			String sql = "delete from price_tb where id =?";
+//			Object [] values = new Object[]{Long.valueOf(id)};
+			//添加删除操作
+			String sql = "update price_tb set is_delete=? where id =?";
+			Object [] values = new Object[]{1,Long.valueOf(id)};
 			int result = daService.update(sql, values);
 			if(result==1){
+				if(comid==0)
+					comid = daService.getLong("select comid from price_tb where id = ?", new Object[]{Long.valueOf(id)});
 				if(publicMethods.isEtcPark(comid)){
 					int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"price_tb",Long.valueOf(id),System.currentTimeMillis()/1000,2});
 					logger.error("parkadmin or admin:"+operater+" delete comid:"+comid+" price ,add sync ret:"+re);

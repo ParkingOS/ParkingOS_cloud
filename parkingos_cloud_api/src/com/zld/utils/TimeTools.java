@@ -814,6 +814,11 @@ public class TimeTools {
 		// System.out.println(rightNow.getTime()/1000);
 		return rightNow.getTime() / 1000;
 	}
+	public static void main(String[] args) {
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+		cal.setTimeInMillis(System.currentTimeMillis());
+		System.err.println(cal.get(Calendar.HOUR_OF_DAY));
+	}
 	/**
 	 * @返回当上月第一天据1970-01-01 00:00:00 的秒数 2007-4-12
 	 */

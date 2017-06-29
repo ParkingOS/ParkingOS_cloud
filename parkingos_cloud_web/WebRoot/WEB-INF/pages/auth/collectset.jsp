@@ -74,6 +74,11 @@
 			<option value="0"> 否</option>
 			<option value="1" selected=true>是</option> 
 	     </select></td></tr>
+	     <tr> <td>小票是否打印收费员名字:</td> <td>
+		<select name="is_print_name" style='width:173px' > 
+			<option value="0"> 否</option>
+			<option value="1" selected=true>是</option> 
+	     </select></td></tr>
 		<tr> <td><input type="submit" value=" 保 存 "/></td> <td></td></tr>
 		</table>
 	</form>
@@ -171,6 +176,14 @@ if(data.print_order_place2){
 if(data.is_duplicate_order){
 	var options = form.is_duplicate_order.options;
 	if(data.is_duplicate_order=='1')
+		options[1].selected=true;
+	else {
+		options[0].selected=true;
+	}
+}
+if(data.is_print_name){
+	var options = form.is_print_name.options;
+	if(data.is_print_name=='1')
 		options[1].selected=true;
 	else {
 		options[0].selected=true;

@@ -19,6 +19,7 @@ import com.zld.pojo.WorkRecord;
 import com.zld.pojo.WorkTime;
 import com.zld.service.DataBaseService;
 import com.zld.service.PgOnlyReadService;
+import com.zld.utils.Check;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
@@ -1762,8 +1763,8 @@ public class CommonMethods {
 			Long comid = (Long)map.get("comid");
 			Long nextid = daService.getLong(
 					"SELECT nextval('seq_com_pass_tb'::REGCLASS) AS newid", null);
-			String sql = "insert into com_pass_tb(id,worksite_id,comid,passname,passtype,description,month_set,month2_set) values(?,?,?,?,?,?,?,?)";
-			int r = daService.update(sql, new Object[]{nextid,map.get("worksite_id"),comid,map.get("passname"),map.get("passtype"),map.get("description"),map.get("month_set"),map.get("month2_set")});
+			String sql = "insert into com_pass_tb(id,worksite_id,comid,passname,passtype,description,month_set,month2_set,channel_id) values(?,?,?,?,?,?,?,?,?)";
+			int r = daService.update(sql, new Object[]{nextid,map.get("worksite_id"),comid,map.get("passname"),map.get("passtype"),map.get("description"),map.get("month_set"),map.get("month2_set"),map.get("channel_id")});
 			logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" pass ");
 			if(r == 1){
 				if(publicMethods.isEtcPark(comid)){
@@ -1981,6 +1982,51 @@ public class CommonMethods {
 	}
 	
 	/**
+	 * 
+	 * @param comid
+	 * @param btime
+	 * @param etime
+	 * @return
+	 * @time 2017年 下午4:48:20
+	 * @author QuanHao
+	 */
+	public String getParkTotalStatistic(Long comid, Long btime, Long etime){
+		double cash = 0.0;
+		double wallet = 0.0;
+		double total = 0.0;
+		Integer month = 0;
+		String sql = "select total,cash_pay,(electronic_prepay+electronic_pay) electronic_pay,reduce_amount reduce_pay,pay_type from order_tb where comid = ? and end_time between ? and ?" +
+				"and state= ? and out_uid> ? and ishd=?";
+		List<Map<String, Object>> parkList = pgOnlyReadService.getAll(sql, new Object[]{comid,btime,etime,1,0,0});
+		for (Map<String, Object> map : parkList) {
+			Integer payType = (Integer) map.get("pay_type");
+			double totalmoney = StringUtils.formatDouble(map.get("total"));
+			total += totalmoney;
+			
+			double cash_pay = StringUtils.formatDouble(map.get("cash_pay"));
+			double electronic_pay = StringUtils.formatDouble(map.get("electronic_pay"));
+			double reduce_pay = StringUtils.formatDouble(map.get("reduce_pay"));
+			//详细金额信息都不记录，统计total(畅盈长沙)
+			if((Check.isEmpty(cash_pay+"") || cash_pay == 0)
+					&& (Check.isEmpty(electronic_pay+"") || electronic_pay == 0) 
+					&&  (Check.isEmpty(reduce_pay+"") || reduce_pay == 0)){
+				if(payType == 1){
+					cash += totalmoney;
+				}else if(payType == 2){
+					wallet += totalmoney;
+				}
+			}else{
+				cash += cash_pay;
+				wallet += electronic_pay;
+			}
+			if(payType==3){
+				month += 1;
+			}
+		}
+		return cash+"_"+month+"_"+wallet+"_"+total;
+	}
+	
+	/**
 	 * 获取某个收费员的减免券，中央预支付、现金金额
 	 * @param uid
 	 * @param comid
@@ -1996,8 +2042,8 @@ public class CommonMethods {
 		Double pmoney = 0d;
 //		String sql1 = "select sum(b.amount)money from order_tb a,parkuser_cash_tb b where  a.end_time between" +
 //				" ? and ? and a.state=? and a.uid=? and a.id=b.orderid and b.type=?";
-		String sql1 = "select sum(c.amount)money from (select distinct(orderid,amount,b.create_time),orderid,amount from order_tb a," +
-				"parkuser_cash_tb b where a.comid=? and  a.end_time between ? and ? and a.state=? and a.uid=?  " +
+		String sql1 = "select sum(c.amount)money from (select distinct(orderid,amount),orderid,amount from order_tb a," +
+				"parkuser_cash_tb b where a.comid=? and  a.end_time between ? and ? and a.state=? and a.out_uid=?  " +
 				"and a.id=b.orderid and b.type=?  ";
 		
 		Object [] v1 = new Object[]{comid,btime,etime,1,uid,0};
@@ -2012,7 +2058,7 @@ public class CommonMethods {
 		}
 		
 		String sql2 = "select sum(b.amount)money from order_tb a,parkuser_cash_tb b where a.comid=? and  a.end_time between" +
-				" ? and ? and a.state=? and a.uid=? and a.id=b.orderid and b.type=? ";
+				" ? and ? and a.state=? and a.out_uid=? and a.id=b.orderid and b.type=? ";
 		Object [] v2 = new Object[]{comid,btime,etime,1,uid,1};
 		if(ishd!=null&&ishd==1){
 			sql2 += " and ishd=? ";
@@ -2025,7 +2071,7 @@ public class CommonMethods {
 		}
 		
 		String sql3 = "select sum(b.umoney)money from order_tb a,ticket_tb b where a.comid=? and  a.end_time between" +
-				" ? and ? and a.state=? and a.uid=? and a.id=b.orderid and (b.type=3 or b.type=4)";
+				" ? and ? and a.state=? and a.out_uid=? and a.id=b.orderid and (b.type=3 or b.type=4)";
 		Object [] v3 =new Object[]{comid,btime,etime,1,uid};
 		if(ishd!=null&&ishd==1){
 			sql3 += " and ishd=? ";

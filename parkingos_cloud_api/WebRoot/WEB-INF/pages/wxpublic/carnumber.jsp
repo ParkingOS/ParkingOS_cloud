@@ -14,9 +14,13 @@
 		window.location.href = "http://s.tingchebao.com/zld/error.html";
 	}
 </script>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.3.2.min.css?v=1" />
+<!-- head 中 -->
 <link rel="stylesheet" type="text/css" href="css/list.css?v=1" />
+<link href="css/weui-0.4.3.css" rel="stylesheet">
+<link href="css/jquery-weui-0.8.3.css" rel="stylesheet">
+<!-- <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.3.2.min.css?v=1" /> -->
 <script src="js/jquery.js"></script>
+<script src="js/wxpublic/jquery-weui-0.8.3.js"></script>
 <style type="text/css">
 #scroller li {
     padding:0 10px;
@@ -36,10 +40,9 @@ a{
 	text-decoration:none;
 	color:#6D6D6D;
 	font-size:16px;
-	
-	position: relative;
-	top:-35px;
-	left:30px;
+	//position: relative;
+	//top:-35px;
+	//left:30px;
 }
 
 #header {
@@ -60,7 +63,7 @@ li{
 .img1{
 	width:20px;
 	height:20px;
-	margin-top:15px;
+	margin-top:16px;
 }
 .img2{
 	width:80px;
@@ -150,7 +153,13 @@ div{border:none;outline:none;}
 	background-repeat: no-repeat;
 	background-position: right center;
 }
+.delete{
+	background-image: url(images/wxpublic/tf_qrcode_close.png);
+	background-size: 20px 20px;
+	background-repeat: no-repeat;
+	background-position: center center;
 
+}
 .three{
 	padding-left:5px;
 	padding-right:5px;
@@ -187,7 +196,7 @@ div{border:none;outline:none;}
 </style>
 </head>
 <body style="background-color:#EEEEEE;">
-<div id="wrapper" style="margin-top:-25px;">
+<div id="wrapper" style="margin-top:-45px;">
 	<div id="scroller">
 		<ul id="thelist">
 		</ul>
@@ -201,13 +210,14 @@ div{border:none;outline:none;}
 				type : "post",
 				url : "carinter.do",
 				data : {
-					'mobile' : '${mobile}',
+					'openid' : '${openid}',
 					'action' : 'getcarnumbs'
 				},
 				async : false,
 				success : function(result) {
 					var jsonData = eval("(" + result + ")");
 					for ( var i = 0; i < jsonData.length; i++) {
+						var id = jsonData[i].id;
 						var carnumber = jsonData[i].car_number;
 						var is_default = jsonData[i].is_default;
 						var is_auth = jsonData[i].is_auth;
@@ -231,15 +241,58 @@ div{border:none;outline:none;}
 							url = "wxpaccount.do?action=toupload&carnumber="+carnumber+"&openid=${openid}";
 						}
 						
-						$("#thelist").append('<li class="'+classli+'"><img class="img1" src="images/wxpublic/carnumber1.png" /><a href="'+url+'"><div class="company_name"><span>'+carnumber+shtml+'</span><span class="right1 money">'+phtml+'</span></div></a></li>');
-						
+						$("#thelist").append('<li><img class="img1" src="images/wxpublic/carnumber1.png" /><a ><span style="font-size:17px;top:-4px;left:10px;position:relative">'+carnumber+'</span></a><div class="delete" onclick="delcarnumber(\''+carnumber+'\','+id+')" style="width:30px;height:50px;float:right"></div></li>');
+						//$("#thelist").append('<a href="'+url+'"><li class="'+classli+'"><span>认证状态:'+shtml+'</span><span style="float:right;margin-right:30px;color:#6D6D6D">'+phtml+'</span></li></a>');
+						//$("#thelist").append('<div style="height:15px"></div>');
 					}
 					count = parseInt(count);
 					if(count < 3){
-						$("#thelist").append('<li style="margin-top:20px;"><img class="img1" src="images/wxpublic/add.png" /><a href="wxpaccount.do?action=toupload&openid=${openid}&type=add"><div class="company_name"><span>点击添加车牌</span><span class="right1 money"></span></div></a></li>');
+						$("#thelist").append('<li style="margin-top:20px;"><img class="img1" src="images/wxpublic/add.png" /><a style="top:-35px;left:30px;position:relative" href="wxpaccount.do?action=toupload&openid=${openid}&type=add"><div class="company_name"><span>点击添加车牌</span><span class="right1 money"></span></div></a></li>');
 					}
 				}
 			});
+		}
+		function delcarnumber(carnumber,id) {
+			$.confirm("您确定要解绑该车牌吗?", function() {
+			  //点击确认后的回调函数
+			  $.showLoading("解绑中...");
+				jQuery.ajax({
+					type : "post",
+					url : "carinter.do",
+					data : {
+						'carid' : id,
+						'mobile' : '${mobile}',
+						'action' : 'deletecarnum'
+					},
+					async : true,
+					beforeSend :function(){
+						
+					},
+					success : function(result) {
+						$.hideLoading();
+						if(result>0){
+							$.alert("解绑成功!");
+							$("#thelist").empty()
+							count -= 1
+							getcarnumber();
+						}else if(result==-2){
+							$.alert("解绑失败!该车牌有已锁定的在场订单,请解锁后尝试解绑");
+							$("#thelist").empty()
+							getcarnumber();
+						}else if(result==-3){ 
+							$.alert("解绑失败!您的月卡信息异常,请与客服人员联系");
+							$("#thelist").empty()
+							getcarnumber();
+						}else{
+							$.alert("解绑失败!您可以尝试重新解绑");
+							$("#thelist").empty()
+							getcarnumber();
+						}
+					}
+				});
+			  }, function() {
+			  //点击取消后的回调函数
+			  });
 		}
 	getcarnumber();
 </script>

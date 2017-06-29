@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
-<title>客户管理</title>
+<title>客户管理11</title>
 <link href="css/tq.css" rel="stylesheet" type="text/css">
 <link href="css/iconbuttons.css" rel="stylesheet" type="text/css">
 
@@ -251,6 +251,9 @@ function getAuthButtons(){
 			location = "carower.do?type=-1";
 		}});
 	}
+	bts.push({dname:"泊链车主管理",icon:"edit_add.png",onpress:function(Obj){
+		location = "carower.do?action=unioncarowner&authid=${authid}";
+	}});
 	if(bts.length>0)
 		return bts;
 	else 

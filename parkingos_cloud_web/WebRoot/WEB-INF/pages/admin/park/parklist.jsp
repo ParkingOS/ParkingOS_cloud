@@ -108,7 +108,9 @@ var _mediaField = [
 		{fieldcnname:"车位满进场设置",fieldname:"full_set",fieldvalue:'',defaultValue:'可进||0',inputtype:"select", noList:[{"value_no":0,"value_name":"可进"},{"value_no":1,"value_name":"禁止"}] , twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"离场设置",fieldname:"leave_set",fieldvalue:'',defaultValue:'默认设置||0',inputtype:"select", noList:[{"value_no":0,"value_name":"默认设置"},{"value_no":1,"value_name":"识别就抬杆"}] , twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"活动内容",fieldname:"activity_content",fieldvalue:'',inputtype:"text", twidth:"80" ,height:"",issort:false},
-		{fieldcnname:"每日停车券补贴额度上限",fieldname:"allowance",fieldvalue:'',inputtype:"text", twidth:"80" ,height:"",issort:false}
+		{fieldcnname:"每日停车券补贴额度上限",fieldname:"allowance",fieldvalue:'',inputtype:"text", twidth:"80" ,height:"",issort:false},
+		//添加车场秘钥展示列表
+		{fieldcnname:"车场秘钥",fieldname:"ukey",fieldvalue:'',inputtype:"text", twidth:"150" ,height:"",edit:false}
 		];
 var _addField = [
 		{fieldcnname:"名称",fieldname:"company_name",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false},
@@ -250,6 +252,9 @@ function getAuthButtons(){
 			}
 		)}})
 	}});
+	bus.push({dname:"泊链停车场管理",icon:"edit_add.png",onpress:function(Obj){
+		location = "parking.do?action=unionparks";
+	}});
 	/*bus.push({dname:"导入车场",onpress:function(Obj){
 		Tconfirm({Title:"确认导入车场吗",Content:"确认导入车场",OKFn:function(){T.A.sendData("parking.do?action=import","GET","",
 			function callbackfun(ret){
@@ -257,6 +262,7 @@ function getAuthButtons(){
 			}
 		)}})
 	}});*/
+	
 	return bus;
 }
 //查看,注册,编辑,删除,不显示在APP,设置,车场趋势,审核UGC车场

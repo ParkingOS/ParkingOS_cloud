@@ -76,7 +76,7 @@ public class SyncInterfaceThrid extends Action{
 				return null;
 			}else {
 				long comId = -1;
-				Map comMap = daService.getPojo("select * from user_session_tb where token=?", new Object[]{token});
+				Map comMap = pgService.getPojo("select * from user_session_tb where token=?", new Object[]{token});
 				if(comMap!=null&&comMap.get("comid")!=null){
 					comId=(Long)comMap.get("comid");
 					if(!publicMethods.isEtcPark(comId)){

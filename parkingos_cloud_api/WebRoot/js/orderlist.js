@@ -16,12 +16,14 @@ document.addEventListener('touchmove', function(e) {
 
 document.addEventListener('DOMContentLoaded', function() {
 	$(document).ready(function() {
-		var mobile=$("#mobile")[0].value;
+		var openid=$("#openid")[0].value;
+		loaded(openid);
+/*		var mobile=$("#mobile")[0].value;
 		loaded(mobile);
-	});
+*/	});
 }, false);
 
-function loaded(mobile) {
+function loaded(openid) {
 	pullDownEl = document.getElementById('pullDown');
 	pullDownOffset = pullDownEl.offsetHeight;
 	pullUpEl = document.getElementById('pullUp');
@@ -38,7 +40,7 @@ function loaded(mobile) {
 	$.post("wxpaccount.do", {
 			"page": page,
 			"size": PAGESIZE,
-			"mobile" : mobile,
+			"openid" : openid,
 			"action" : "orderlist",
 			"r" : Math.random()
 		},
@@ -118,6 +120,9 @@ function loaded(mobile) {
 					if(value.state == 0){
 						pay = "未支付";
 						pay_class = "red";
+					}else if(value.state == 2){
+						pay = "逃单";
+						pay_class = "red";
 					}
 					$("#thelist").append('<li onclick="orderdetail('+value.orderid+','+mobile+')"><div class="company_name"><span>' + value.date + 
 							'</span><span class="right2 money_in">￥' +value.total + 
@@ -130,7 +135,9 @@ function loaded(mobile) {
 				// pullDownEl.className = 'idle';
 				// pullDownEl.querySelector('.pullDownLabel').innerHTML = 'Pull down to refresh...';
 				// this.minScrollY = -pullDownOffset;
-
+				if(response.length == 0){
+					$(".middle1").removeClass("hide1");
+				}
 				if (hasMoreData) {
 					myScroll.maxScrollY = myScroll.maxScrollY + pullUpOffset;
 				} else {
@@ -143,12 +150,12 @@ function loaded(mobile) {
 }
 
 function refresh() {
-	var mobile=$("#mobile")[0].value;
+	var openid=$("#openid")[0].value;
 	page = 1;
 	$.post("wxpaccount.do", {
 			"page": page,
 			"size": PAGESIZE,
-			"mobile" : mobile,
+			"openid" : openid,
 			"action" : "orderlist"
 		},
 		function(response, status) {
@@ -171,6 +178,9 @@ function refresh() {
 					if(value.state == 0){
 						pay = "未支付";
 						pay_class = "red";
+					}else if(value.state == 2){
+						pay = "逃单";
+						pay_class = "red";
 					}
 					$("#thelist").append('<li onclick="orderdetail('+value.orderid+','+mobile+')"><div class="company_name"><span>' + value.date + 
 							'</span><span class="right2 money_in">￥' +value.total + 
@@ -179,7 +189,9 @@ function refresh() {
 				});
 				// $("#thelist").listview("refresh");
 				myScroll.refresh(); // Remember to refresh when contents are loaded (ie: on ajax completion)
-
+				if(response.length == 0){
+					$(".middle1").removeClass("hide1");
+				}
 				if (hasMoreData) {
 					myScroll.maxScrollY = myScroll.maxScrollY + pullUpOffset;
 				} else {
@@ -192,12 +204,12 @@ function refresh() {
 }
 
 function nextPage() {
-	var mobile=$("#mobile")[0].value;
+	var openid=$("#openid")[0].value;
 	page++;
 	$.post("wxpaccount.do", {
 			"page": page,
 			"size": PAGESIZE,
-			"mobile" : mobile,
+			"openid" : openid,
 			"action" : "orderlist"
 		},
 		function(response, status) {
@@ -216,6 +228,9 @@ function nextPage() {
 					if(value.state == 0){
 						pay = "未支付";
 						pay_class = "red";
+					}else if(value.state == 2){
+						pay = "逃单";
+						pay_class = "red";
 					}
 					$("#thelist").append('<li onclick="orderdetail('+value.orderid+','+mobile+')"><div class="company_name"><span>' + value.date + 
 							'</span><span class="right2 money_in">￥' +value.total + 
@@ -224,6 +239,9 @@ function nextPage() {
 				});
 				// $("#thelist").listview("refresh");
 				myScroll.refresh(); // Remember to refresh when contents are loaded (ie: on ajax completion)
+				if(response.length == 0){
+					$(".middle1").removeClass("hide1");
+				}
 				if (hasMoreData) {
 					myScroll.maxScrollY = myScroll.maxScrollY + pullUpOffset;
 				} else {
@@ -237,7 +255,7 @@ function nextPage() {
 
 function orderdetail(orderid,mobile){
 	var domain=$("#domain")[0].value;
-	window.location.href = "http://"+domain+"/zld/wxpaccount.do?action=orderdetail&orderid="+orderid+"&mobile="+mobile;
+	window.location.href = "http://"+domain+"/zld/wxpaccount.do?action=orderdetail&orderid="+orderid+"&openid="+openid;
 }
 
 //扩展Date的format方法   

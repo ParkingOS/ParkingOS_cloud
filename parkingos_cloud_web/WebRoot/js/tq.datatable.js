@@ -2525,9 +2525,21 @@ TQTable.prototype = {
 		var FInputtype = _items.inputtype;
 		switch (FInputtype){
 			case "select":
-			for(var j=0;j<_items.noList.length;j++){
-				(value!="请选择"&&(value == _items.noList[j].value_no||value == _items.noList[j].value_name))?inputhtml.push(_items.noList[j].value_name):"";
-			}
+				var ischecked = false;
+				for(var j=0;j<_items.noList.length;j++){
+					if(value!="请选择"&&(value == _items.noList[j].value_no||value == _items.noList[j].value_name)){
+						var vfff = _items.noList[j].value_name;
+						if(vfff=="请选择"||vfff=="全部")
+							vfff="无";
+						inputhtml.push(vfff);
+						ischecked=true;
+					}
+				}
+				if(!ischecked) {
+					if(value==''||vfff=="全部")
+						value='无';
+					inputhtml.push(value);
+				}
 			break;
 			case "cselect":
 				if(_items.noList&&_items.noList.length>0){

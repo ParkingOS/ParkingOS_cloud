@@ -317,5 +317,7 @@
 	<bean name="/sensormanage" class="com.zld.struts.admin.SensorManageAction"></bean>
 	
 	<bean name="/cheatsensor" class="com.zld.struts.request.CheatSensorAction"></bean>
+	<!-- 月卡续费记录 -->
+	<bean name="/buycardrecord" class="com.zld.struts.parkadmin.BuyCardRecordAction"></bean>
 	<context:component-scan base-package="com.zld" />
 	</beans>

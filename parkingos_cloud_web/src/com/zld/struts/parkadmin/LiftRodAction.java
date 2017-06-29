@@ -18,8 +18,15 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
 import com.zld.AjaxUtil;
 import com.zld.CustomDefind;
+import com.zld.impl.MongoClientFactory;
 import com.zld.impl.MongoDbUtils;
 import com.zld.service.DataBaseService;
 import com.zld.utils.ExportExcelUtil;
@@ -169,8 +176,90 @@ public class LiftRodAction extends Action{
 			}else {
 				response.sendRedirect("images/nopic.jpg");
 			}
+		}else if(action.equals("liftpicnew")){
+			String fileName = RequestUtil.getString(request, "filename");
+			//查询对应的抬杆图片
+			if(fileName !=null && comid !=null){
+				Map map = daService.getMap("select * from carpic_tb where liftrod_id=? and comid=?", new Object[]{fileName,String.valueOf(comid)});
+				String content="";
+				if(map !=null && !map.isEmpty()){
+					content = (String) map.get("content");
+					try {
+						byte[] picture = Base64.decode(content);
+						response.setDateHeader("Expires", System.currentTimeMillis()+12*60*60*1000);
+						response.setContentLength(picture.length);
+						response.setContentType("image/jpeg");
+					    OutputStream o = response.getOutputStream();
+					    o.write(picture);
+					    o.flush();
+					    o.close();
+					} catch (Base64DecodingException e) {
+						e.printStackTrace();
+						logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>base64调用异常");
+						response.sendRedirect("images/nopic.jpg");
+					}
+				}else{
+					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>没有查到对应的图片！"+fileName);
+					response.sendRedirect("images/nopic.jpg");
+				}
+			}else{
+				logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>没有查到对应的图片！"+fileName);
+				response.sendRedirect("images/nopic.jpg");
+			}
+		}else if(action.equals("liftpicturenew")){
+			String fileName = RequestUtil.getString(request, "filename");
+			if(fileName!=null && comid !=null){
+				DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
+				//根据抬杆编号查询出mongodb中存入的对应个表名
+//				Map map = daService.getMap("select * from lift_rod_tb where liftrod_id=? and comid=?", new Object[]{fileName,comid});
+				Map map = daService.getMap("select * from carpic_tb where liftrod_id=? and comid=?", new Object[]{fileName,String.valueOf(comid)});
+				String collectionName = "";
+				if(map !=null && !map.isEmpty()){
+					collectionName = (String) map.get("liftpic_table_name");
+				}
+				if(collectionName==null||"".equals(collectionName)||"null".equals(collectionName)){
+					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>没有查到对应的图片！"+fileName);
+					response.sendRedirect("images/nopic.jpg");
+					return null;
+				}
+				DBCollection collection = db.getCollection(collectionName);
+				if(collection != null){
+					BasicDBObject document = new BasicDBObject();
+					document.put("parkid", String.valueOf(comid));
+					document.put("liftrodid", fileName);
+					DBObject obj  = collection.findOne(document);
+					if(obj == null){
+						AjaxUtil.ajaxOutput(response, "");
+						logger.error("取图片错误.....");
+					}
+					byte[] content = (byte[])obj.get("content");
+					logger.error("取图片成功.....大小:"+content.length);
+					db.requestDone();
+					response.setDateHeader("Expires", System.currentTimeMillis()+12*60*60*1000);
+					response.setContentLength(content.length);
+					response.setContentType("image/jpeg");
+				    OutputStream o = response.getOutputStream();
+				    o.write(content);
+				    o.flush();
+				    o.close();
+				    System.out.println("mongdb over.....");
+				}else{
+					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>没有查到对应的图片！"+fileName);
+					response.sendRedirect("images/nopic.jpg");
+				}
+			}else{
+				logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>没有查到对应的图片！"+fileName);
+				response.sendRedirect("images/nopic.jpg");
+			}
 		}else if(action.equals("getUids")){
 			
+		}else if(action.equals("getliftrodpic")){
+			//修改查看图片接口
+			String liftrodId = RequestUtil.getString(request, "liftrodid");
+			logger.error(">>>>>>>>>>>>>>>>>>>>>>订单信息显示查询抬杆图片接口：getliftrodpic");
+			String html = "<img src='liftrod.do?action=liftpicturenew&comid="+comid+"&filename="+liftrodId+"' id='p1' width='600px' height='600px'></img>";
+			request.setAttribute("html", html);
+			return mapping.findForward("liftrodpics");
 		}
 		
 		return null;

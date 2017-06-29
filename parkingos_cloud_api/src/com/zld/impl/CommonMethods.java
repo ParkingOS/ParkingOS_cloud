@@ -109,7 +109,7 @@ public class CommonMethods {
 					Tenant tenant = pService.getPOJO("select is_group_pursue from org_city_merchants " +
 							" where state=? and id=? ", new Object[]{0, group.getCityid()}, Tenant.class);
 					if(tenant != null && tenant.getIs_group_pursue() == 1){
-						logger.error("该集团所属的城市商户设置了可以跨集团追缴,groupid:"+groupId);
+						//logger.error("该集团所属的城市商户设置了可以跨集团追缴,groupid:"+groupId);
 						return true;
 					}
 				}
@@ -997,6 +997,10 @@ public class CommonMethods {
 	 */
 	public boolean escape(Long orderid, Long uid, Double money, Long endtime){
 		logger.error("orderid:"+orderid+",uid:"+uid+",money:"+money+",endtime:"+endtime);
+		//先查询是否已经是逃单
+		Long count = daService.getLong("select count(*) from no_payment_tb where order_id=? ", new Object[]{orderid});
+		if(count>0)//已经写入逃单了
+			return true;
 		long comId = -1;
 		long workId = -1L;//工作记录编号
 		boolean result = false;//订单记录生成结果
@@ -1022,12 +1026,12 @@ public class CommonMethods {
 				}
 				if(order.getState() == 2){
 					logger.error("已经置为逃单");
-					return false;
+					return true;
 				}
 				//------------------------绑定的车检器订单时间----------------------------//
 				Long brethorderid = getBerthOrderId(orderid);
 				Long end_time = getSensorTime(brethorderid, 1, uid, endtime);
-				logger.error("brethorderid:"+brethorderid+",end_time:"+end_time);
+				//logger.error("brethorderid:"+brethorderid+",end_time:"+end_time);
 				//------------------------获取订单参数----------------------------//
 				comId = order.getComid();
 				Long berthId = order.getBerthnumber();
@@ -1044,7 +1048,7 @@ public class CommonMethods {
 						workId = workRecord.getId();
 					}
 				}
-				logger.error("workId:"+workId);
+				//logger.error("workId:"+workId);
 				//------------------------具体逻辑----------------------------//
 				List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
 				//更新订单状态，收费成功
@@ -1072,11 +1076,11 @@ public class CommonMethods {
 			logger.error("escapeorderid:"+orderid, e);
 		} finally {
 			boolean b = memcacheUtils.delLock(lock);
-			logger.error("b:"+b);
+			//logger.error("b:"+b);
 			if(result && workId > 0){//订单结算成功，更新出车数量
-				logger.error("workId:"+workId);
+				//logger.error("workId:"+workId);
 				boolean b1 = updateInOutCar(workId, 1);
-				logger.error("更新出场车辆,b1:"+b1);
+				//logger.error("更新出场车辆,b1:"+b1);
 			}
 			updateRemainBerth(comId, 1);
 		}
@@ -1128,7 +1132,7 @@ public class CommonMethods {
 	 * @return
 	 */
 	private Long getSensorTime(Long berthOrderId, Integer type, Long uid, Long curtime){
-		logger.error("getSensorTime>>>berthOrderId:"+berthOrderId+",type:"+type+",uid:"+uid+",curtime:"+curtime);
+		//logger.error("getSensorTime>>>berthOrderId:"+berthOrderId+",type:"+type+",uid:"+uid+",curtime:"+curtime);
 		Long sensortime = curtime;
 		try {
 			if(uid != null && uid > 0){
@@ -1136,7 +1140,7 @@ public class CommonMethods {
 						" where s.role_id=u.role_id and u.id=? ", new Object[]{uid});
 				if(setMap != null){
 					Integer is_sensortime = (Integer)setMap.get("is_sensortime");
-					logger.error("getSensorTime>>>berthOrderId:"+berthOrderId+",is_sensortime:"+is_sensortime);
+					//logger.error("getSensorTime>>>berthOrderId:"+berthOrderId+",is_sensortime:"+is_sensortime);
 					if(is_sensortime == 1){
 						return sensortime;
 					}
@@ -1329,7 +1333,7 @@ public class CommonMethods {
 		List<Map<String, Object>> allList = pService.getAll(sql, new Object[]{comid,time2,0});
 		if(allList != null && !allList.isEmpty()){
 			for(Map<String, Object> map : allList){
-				Integer c_type = (Integer)map.get("c_type");
+				Integer c_type = Integer.valueOf(String.valueOf(map.get("c_type")));
 				Long ucount = (Long)map.get("ucount");
 				if(c_type == 5 || c_type == 7 || c_type == 8){//月卡车位占用数
 					month_used_count += ucount;
@@ -1345,7 +1349,7 @@ public class CommonMethods {
 		List<Map<String, Object>> invList = pService.getAll(sql1, new Object[]{comid,time16,time2,0});
 		if(invList != null && !invList.isEmpty()){
 			for(Map<String, Object> map : invList){
-				Integer c_type = (Integer)map.get("c_type");
+				Integer c_type = Integer.valueOf(String.valueOf(map.get("c_type")));
 				Long ucount = (Long)map.get("ucount");
 				if(c_type == 5 || c_type == 7 || c_type == 8){//月卡车位占用数
 					invmonth_used_count += ucount;
@@ -1712,6 +1716,7 @@ public class CommonMethods {
 		map.put("uin", uin);
 		map.put("mobile", mobile);
 		map.put("balance", balance);
+		logger.error("add car:map:"+map);
 		return map;
 	}
 	
@@ -1761,11 +1766,12 @@ public class CommonMethods {
 			Double aftertotal = 0d;//使用减免券之后的停车费金额
 			Double distotal = 0d;//减免券抵扣的金额
 			Integer distime = 0;//抵扣的时长
-			Integer car_type = (Integer)orderMap.get("car_type");//0：通用，1：小车，2：大车
+			//Integer car_type = (Integer)orderMap.get("car_type");//0：通用，1：小车，2：大车
+			//String car_type = (String) orderMap.get("car_type");
 			Integer pid = (Integer)orderMap.get("pid");
 			Long create_time = (Long)orderMap.get("create_time");
 			if(state == 0){//未结算订单
-				beforetotal = getPrice(car_type, pid, comid, create_time, end_time,orderId);
+				beforetotal = getPrice(null, pid, comid, create_time, end_time,orderId);
 			}else if(orderMap.get("total") != null){//已结算或者逃单
 				beforetotal = Double.valueOf(orderMap.get("total") + "");
 			}
@@ -1774,7 +1780,7 @@ public class CommonMethods {
 				if(type == 3){//减时券
 					Integer time = (Integer)shopTicketMap.get("money");
 					if(end_time > create_time + time *60 *60){
-						aftertotal = getPrice(car_type, pid, comid, create_time, end_time - time * 60 *60,orderId);
+						aftertotal = getPrice(null, pid, comid, create_time, end_time - time * 60 *60,orderId);
 						distime = time * 60 * 60;
 					}else if(end_time > create_time){
 						distime = (end_time.intValue() - create_time.intValue());
@@ -1927,34 +1933,57 @@ public class CommonMethods {
 			Long count = daService.getLong("select count(*) from car_info_tb where uin!=? and car_number=? ",
 					new Object[] { uin, carnumber });
 			if(count > 0){//该车牌号已被别人注册
-				return -1;
+				//删除该车牌
+				int del = daService.update("delete from car_info_tb where uin!=? and car_number = ?", new Object[]{uin,carnumber});
+				logger.error("addCarnumber>>>删除车牌:(成功1/失败0)"+del);
+				/*if(del>0){
+					publicMethods.syncUserPlateNumberDelete(uin, carnumber);
+				}*/
+				//return -1;
 			}
 			count = daService.getLong("select count(*) from car_info_tb where uin=? and car_number=? ",
 					new Object[] { uin, carnumber});
 			if(count > 0){//该车主已经注册过该车牌号
-				return -2;
+				//更新时间
+				int update = daService.update("update car_info_tb set create_time = ? where uin = ? and car_number = ?", new Object[]{curTime,uin,carnumber});
+				if(update>0){
+					logger.error("addCarnumber>>>更新时间"+update);
+					
+					return 1;
+				}
 			}else{
-				count = daService.getLong("select count(*) from car_info_tb where uin=? ",
+				/*count = daService.getLong("select count(*) from car_info_tb where uin=? ",
 						new Object[] { uin });
 				if(count >= 3){//该车主注册的车牌号的个数
 					return -3;
-				}
+				}*/
 				int r=daService.update("insert into car_info_Tb (uin,car_number,create_time) values(?,?,?)", 
 						new Object[]{uin, carnumber, curTime});
+				logger.error("addCarnumber>>>add userinfotb:"+r);
 				if(r > 0){
-					publicMethods.syncUserCarNumber(uin, carnumber, "");
+					publicMethods.syncUserAddPlateNumber(uin, carnumber, "");
 					return 1;
 				}
 			}
 		}else if(bindflag == 0){
-			Long count = daService.getLong("select count(*) from wxp_user_tb where  car_number=? ",
-					new Object[] { carnumber});
-			if(count > 0){//该车牌号已被别人注册
-				return -1;
+			//修改本次操作用户的车牌号,并同步到泊链
+			int update = daService.update("update wxp_user_tb set car_number = ? where car_number = ? ", new Object[]{"",carnumber});
+			logger.error("相同的微信用户车牌数："+update);
+			Map map = daService.getMap("select car_number from wxp_user_tb where uin = ?", new Object[]{uin});
+			String oldPlateNumber = "";
+			if(map!=null){
+				oldPlateNumber = (String) map.get("car_number");
 			}
 			int r = daService.update("update wxp_user_tb set car_number=? where uin=? ", 
 					new Object[]{carnumber, uin});
+			logger.error("addCarnumber>>>add wxpuserinfo:"+r);
 			if(r > 0){
+				//去泊链更新车牌
+				if(!StringUtils.isNotNull(oldPlateNumber)){
+					publicMethods.syncUserAddPlateNumber(uin, carnumber, "");//添加
+				}else{
+					publicMethods.syncUserAddPlateNumber(uin, oldPlateNumber, carnumber);//更新
+				}
 				return 1;
 			}
 		}
@@ -2939,4 +2968,216 @@ public class CommonMethods {
 		return areas;
 	}
 	//----------------选券逻辑end--------------------//
+	
+	/**
+	 * 获取用户所有车牌号
+	 * @param uin
+	 * @return
+	 */
+	public List<String> getAllCarnumbers(Long uin){
+		List<String> carnumbers = new ArrayList<String>();
+		List<Map> all = daService.getAll("select car_number from car_info_tb where uin = ?", new Object[]{uin});
+		if(all!=null){
+			for (Map map : all) {
+				String carnum = (String) map.get("car_number");
+				carnumbers.add(carnum);
+			}
+		}
+		return carnumbers;
+	}
+	
+	/**
+	 * 添加车牌号
+	 * 策略:如果所属临时用户,则删除临时用户,将车牌和月卡转给当前绑定用户;如果是永久用户,则将车牌号所有记录删除,给新用户添加一个
+	 */
+	public int addCarnum(Long uin, String carnumber){
+		//1.是否已经是自己的车牌
+		Map carMap = daService.getMap("select uin,is_auth,state from car_info_tb where car_number = ? order by id desc", new Object[]{carnumber});
+		if(carMap!=null){
+			Long cuin = (Long) carMap.get("uin");
+			Integer state = (Integer) carMap.get("state");
+			if(cuin.intValue()==uin&&state!=0){
+				logger.error("车牌已被自己注册");
+				return -3;
+			}
+		}
+		//2.绑定个数
+		Long count = daService.getLong("select count(id) from car_info_tb where uin=? and state=? ", new Object[]{uin, 1});
+		if(count > 3){
+			logger.error("车牌已经超过 三个，uin:"+uin+",carnumber:"+carnumber+",count:"+count);
+			return -4;
+		}
+		
+		//没有锁定的在场订单,且不是月卡真实用户
+		Long curorder = daService.getLong("select count(id) from order_tb where car_number = ? and state = ? and islocked = ? ", 
+				new Object[]{carnumber,0,1});
+		if(curorder.intValue()<1){
+			//可以绑定
+			int bindCarnumber = bindCarnumber(uin, carnumber);
+			return bindCarnumber;
+		}else{
+			//有锁定中的在场订单,不可绑定
+			return -2;
+		}
+		/*//3.车牌对应月卡是否全部过期
+		Map<String, Object> ret = isProdBeOverdue(carnumber,uin);
+		Integer overdued = (Integer)ret.get("overdued");
+		if(overdued==1){
+			//全过期,不关心用户uin,直接绑,更新uin
+			logger.error("全过期");
+			List<Long> hasuser = (List<Long>) ret.get("hasuser");
+			//删除车牌在usercar数据,新加车牌,用户为uin,
+			return bindCarnumber(hasuser, uin, carnumber,false);
+		}else if(overdued==2){
+			//有未过期,对于未过期的,如果uin是-1,可以绑:绑的是uin是-1 的
+			logger.error("有未过期");
+			List<Long> nouser = (List<Long>) ret.get("nouser");
+			return bindCarnumber(nouser, uin, carnumber,false);
+		}else{
+			logger.error("无月卡,直接绑定");
+			return bindCarnumber(null, uin, carnumber, true);
+		}*/
+	}
+	
+	//绑定车牌
+	private int bindCarnumber(Long uin,String carnumber){
+		//可以绑定:删除之前车牌,更新月卡用户信息,新加车牌
+		List<Map<String , Object>> sqlMaps = new ArrayList<Map<String,Object>>();
+		Map map = daService.getMap("select * from car_info_tb where car_number = ? order by create_time desc limit ?", new Object[]{carnumber,1});
+		Long cuin = -1L;
+		if(map!=null){
+			Map<String, Object> delMap = new HashMap<String, Object>();
+			String delSql = "delete from car_info_tb where car_number = ?";
+			delMap.put("sql", delSql);
+			delMap.put("values", new Object[]{carnumber});
+			sqlMaps.add(delMap);
+			cuin = (Long) map.get("uin");
+		}
+		
+		//查看该车牌在场订单列表,如果有,更新uin
+		Long curcount = daService.getLong("select count(id) from order_tb where car_number = ?", new Object[]{carnumber});
+		if(curcount.intValue()>0){
+			int update = daService.update("update order_tb set uin = ? where car_number = ?", new Object[]{uin,carnumber});
+			if(update>0){
+				logger.error("更新在场订单用户信息成功!");
+			}else{
+				logger.error("更新在场订单用户信息失败!");
+			}
+		}
+		//查该车牌月卡列表,更新月卡
+		String sql = "select id from carower_product where car_number like ? ";
+		List<Map> prodlist = daService.getAll(sql, new Object[]{"%"+carnumber+"%"});
+		if(prodlist!=null&&prodlist.size()>0){
+			for (Map prod : prodlist) {
+				Long prodid = (Long) prod.get("id");
+				Map<String, Object> updateMap = new HashMap<String, Object>();
+				String updateSql = "update carower_product set uin = ? where id = ?";
+				updateMap.put("sql", updateSql);
+				updateMap.put("values", new Object[]{uin,prodid});
+				sqlMaps.add(updateMap);
+			}
+			logger.error("更新月卡成功!");
+		}
+		//添加车牌
+		Map<String, Object> addMap = new HashMap<String, Object>();
+		String addSql = "insert into car_info_tb(uin,car_number,create_time) values(?,?,?)";
+		addMap.put("sql", addSql);
+		addMap.put("values", new Object[]{uin,carnumber,System.currentTimeMillis()/1000});
+		sqlMaps.add(addMap);
+		boolean bathUpdate = daService.bathUpdate(sqlMaps);
+		if(bathUpdate){
+			publicMethods.syncUserAddPlateNumber(uin, carnumber, "");
+			/*if(cuin!=-1){
+				publicMethods.syncUserPlateNumberDelete(cuin+"", carnumber);
+			}*/
+			return 1;//绑定成功
+		}else{
+			logger.error("绑定失败");
+			return -1;//绑定失败
+		}
+	}
+	
+	/*//绑定车牌
+	private int bindCarnumber(List<Long> prodlist,Long uin,String carnumber,boolean noprod){
+		if(prodlist!=null&&prodlist.size()>0||noprod){
+			//这些月卡为无用户,未过期月卡,可以绑定:创建车牌,更新月卡用户信息
+			List<Map<String , Object>> sqlMaps = new ArrayList<Map<String,Object>>();
+			Long count = daService.getLong("select count(id) from car_info_tb where car_number = ?", new Object[]{carnumber});
+			if(count>0){
+				Map<String, Object> delMap = new HashMap<String, Object>();
+				String delSql = "delete from car_info_tb where car_number = ?";
+				delMap.put("sql", delSql);
+				delMap.put("values", new Object[]{carnumber});
+				sqlMaps.add(delMap);
+			}
+			
+			if(prodlist!=null&&prodlist.size()>0){
+				for (Long prodid : prodlist) {
+					Map<String, Object> updateMap = new HashMap<String, Object>();
+					String updateSql = "update carower_product set uin = ? where id = ?";
+					updateMap.put("sql", updateSql);
+					updateMap.put("values", new Object[]{uin,prodid});
+					sqlMaps.add(updateMap);
+				}
+			}
+			//添加车牌
+			Map<String, Object> addMap = new HashMap<String, Object>();
+			String addSql = "insert into car_info_tb(uin,car_number,create_time) values(?,?,?)";
+			addMap.put("sql", addSql);
+			addMap.put("values", new Object[]{uin,carnumber,System.currentTimeMillis()/1000});
+			sqlMaps.add(addMap);
+			boolean bathUpdate = daService.bathUpdate(sqlMaps);
+			if(bathUpdate){
+				return 1;//绑定成功
+			}else{
+				logger.error("绑定失败");
+				return -1;//绑定失败
+			}
+		}
+		logger.error("不可绑定");
+		return -2;
+	}*/
+	
+	/**
+	 * 判断该车牌对应月卡是否全部过期
+	 * 策略:有未过期月卡(查月卡去月卡表,根据车牌查时间是否过期)
+	 * @param carnumber
+	 * @return
+	 */
+	public Map<String, Object> isProdBeOverdue(String carnumber,Long cuin){
+		int ret = 1;
+		List<Long> hasuser = new ArrayList<Long>();
+		List<Long> nouser = new ArrayList<Long>();
+		String sql = "select id,e_time,uin from carower_product where car_number like ? ";
+		Long toDayBeginTime = TimeTools.getToDayBeginTime();
+		List<Map> all = daService.getAll(sql, new Object[]{"%"+carnumber+"%"});
+		logger.error("根据车牌"+carnumber+"查出的所有月卡: "+all);
+		if(all!=null&&all.size()>0){
+			for (Map map : all) {
+				Long etime = (Long) map.get("e_time");
+				Long uin = (Long) map.get("uin");
+				Long id = (Long) map.get("id");
+				if(etime>toDayBeginTime){
+					//未过期
+					ret = 2;
+					logger.error(uin+"~~"+cuin);
+					if(uin==-1||uin.intValue()==cuin.intValue()){
+						//未过期,无用户
+						nouser.add(id);
+					}
+				}else{
+					//过期,所有月卡
+					hasuser.add(id);
+				}
+			}
+		}else{
+			//无月卡
+			ret = -1;
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("overdued", ret);
+		map.put("hasuser", hasuser);
+		map.put("nouser", nouser);
+		return map;
+	}
 }

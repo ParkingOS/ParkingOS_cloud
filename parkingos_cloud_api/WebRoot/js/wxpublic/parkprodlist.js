@@ -23,13 +23,13 @@ document.addEventListener('touchmove', function(e) {
 
 document.addEventListener('DOMContentLoaded', function() {
 	$(document).ready(function() {
-		var mobile=$("#mobile")[0].value;
+		//var mobile=$("#mobile")[0].value;
 		openid=$("#openid")[0].value;
-		loaded(mobile,openid);
+		loaded(openid);
 	});
 }, false);
 
-function loaded(mobile,openid) {
+function loaded(openid) {
 	pullDownEl = document.getElementById('pullDown');
 	pullDownOffset = pullDownEl.offsetHeight;
 	pullUpEl = document.getElementById('pullUp');
@@ -46,13 +46,12 @@ function loaded(mobile,openid) {
 	$.post("carowner.do", {
 			"page": page,
 			"pagesize": PAGESIZE,
-			"mobile" : mobile,
+			"openid" : openid,
 			"action" : "products"
 		},
 		function(response, status) {
 			if (status == "success") {
 				$("#thelist").show();
-
 				if (response.length < PAGESIZE) {
 					hasMoreData = false;
 					$("#pullUp").hide();
@@ -119,15 +118,21 @@ function loaded(mobile,openid) {
 
 				$("#thelist").empty();
 				$.each(response, function(key, value) {
+					var cid = value.cid;//云端月卡记录编号
+					var comid = value.comid;
+					var cardid = value.cardid;
+					var carnumber = value.carnumber;
+					var mid = value.mid;
 					var state = value.state;//0：未开始 1:使用中 2已过期
 					var cname = value.name;//停车场名称
 					var pname = value.parkname;//套餐名称
 					var price = value.price;//套餐单价
 					var prodid = value.prodid;
+					//var cid = value.cid;//套餐单价
 					var limitdate = "有效期 " + value.limitdate;//有效期
-					var limittime = "可用时间："+ value.limittime;//有效时段
+					//var limittime = "可用时段："+ value.limittime;//有效时段
 					var limitday = value.limitday;//剩余天数
-					
+					var isthirdpay = value.isthirdpay;//是否去第三方支付
 					var money_class = "money";
 					var ticketname_class = "ticketname";
 					var ticketinfo_class = "ticketinfo";
@@ -147,12 +152,14 @@ function loaded(mobile,openid) {
 						line_class = "lineuesd";
 						useinfo_class = "useinfoexp";
 					}
-					var click=' onclick="rewand('+prodid+')"';
+					//var click=' onclick="rewand('+prodid+','+cid+')"';
+					var click=' onclick="rewand(\''+cardid+'\',\''+prodid+'\',\''+cid+'\',\''+comid+'\',\''+isthirdpay+'\')"';
 					$("#thelist").append('<li '+click+' class="li1"><div class="moneyouter"><span class="'+money_class+'">'+price+'<span class="fuhao">元</span></span></div><a class="a1" href="#"><div class="'+ticketname_class+'">'+
-							pname+'</div><div class="'+ticketinfo_class+'">'+limittime+'</div><div class="ticketlimit"><span class="sel_fee '+ticketlimit_class+'">'+cname+'</span></div></a><div class="rewand">续费</div></li>');
-					$("#thelist").append('<li class="li2"><div class="'+line_class+'"></div><a class="a2" href="#"><div class="'+useinfo_class+'">'+guoqi+'</div><div class="limittime">'+limitdate+'</div></a></li>');
+							cname+'</div><div class="ticketlimit"><div style="height:10px"></div><span class="sel_fee '+ticketlimit_class+'">'+pname+'</span></div><div style="height:8px"></div><div class="ticketlimit2"><span>'+carnumber+'</span></div></a><div class="rewand">续费</div></li>');
+					$("#thelist").append('</div><li class="li2"><div style="height:5px"><div class="'+line_class+'"></div><a class="a2" href="#"><div class="'+useinfo_class+'">'+guoqi+'</div><div class="limittime">'+limitdate+'</div></a></li>');
 					
 				});
+				
 				myScroll.refresh(); 
 				if(response.length == 0){
 					$(".middle").removeClass("hide");
@@ -167,17 +174,22 @@ function loaded(mobile,openid) {
 		},
 		"json");
 }
-function rewand(prodid){
-	var url = "wxpaccount.do?action=tobuyprod&openid="+openid+"&prodid="+prodid+"&type=1";
+function rewand(cardid,prodid,cid,comid,isthirdpay){
+	isthirdpay = 0
+	if(isthirdpay==1){
+		var url = "https://s.bolink.club/unionapi/toqrcode"//park_id="++"&union_id="+
+	}else{
+		var url = "wxpaccount.do?action=tobuyprod&openid="+openid+"&cardid="+cardid+"&prodid="+prodid+"&cid="+cid+"&comid="+comid+"&type=1";
+	}
 	window.location.href = url;
 }
 function refresh() {
-	var mobile=$("#mobile")[0].value;
+	var openid=$("#openid")[0].value;
 	page = 1;
 	$.post("carowner.do", {
 		"page": page,
 		"pagesize": PAGESIZE,
-		"mobile" : mobile,
+		"openid" : openid,
 		"action" : "products"
 	},
 	function(response, status) {
@@ -250,14 +262,18 @@ function refresh() {
 
 			$("#thelist").empty();
 			$.each(response, function(key, value) {
+				var cid = value.cid;//云端月卡记录编号
+				var cardid = value.cardid;
+				var carnumber = value.carnumber;
+				var mid = value.mid;
 				var state = value.state;//0：未开始 1:使用中 2已过期
 				var cname = value.name;//停车场名称
 				var pname = value.parkname;//套餐名称
 				var price = value.price;//套餐单价
 				var prodid = value.prodid;
-				var cid = value.cid;//套餐单价
+				//var cid = value.cid;//套餐单价
 				var limitdate = "有效期 " + value.limitdate;//有效期
-				var limittime = "可用时间："+ value.limittime;//有效时段
+				//var limittime = "可用时段："+ value.limittime;//有效时段
 				var limitday = value.limitday;//剩余天数
 				
 				var money_class = "money";
@@ -279,9 +295,10 @@ function refresh() {
 					line_class = "lineuesd";
 					useinfo_class = "useinfoexp";
 				}
-				var click=' onclick="rewand('+prodid+','+cid+')"';
+				//var click=' onclick="rewand('+prodid+','+cid+')"';
+				var click=' onclick="rewand(\''+cardid+'\',\''+prodid+'\',\''+cid+'\')"';
 				$("#thelist").append('<li '+click+' class="li1"><div class="moneyouter"><span class="'+money_class+'">'+price+'<span class="fuhao">元</span></span></div><a class="a1" href="#"><div class="'+ticketname_class+'">'+
-						pname+'</div><div class="'+ticketinfo_class+'">'+limittime+'</div><div class="ticketlimit"><span class="sel_fee '+ticketlimit_class+'">'+cname+'</span></div></a><div class="rewand">续费</div></li>');
+						pname+'</div><div class="ticketlimit"><span class="sel_fee '+ticketlimit_class+'">'+cname+'</span></div><div class="ticketlimit2"><span>'+carnumber+'</span></div></a><div class="rewand">续费</div></li>');
 				$("#thelist").append('<li class="li2"><div class="'+line_class+'"></div><a class="a2" href="#"><div class="'+useinfo_class+'">'+guoqi+'</div><div class="limittime">'+limitdate+'</div></a></li>');
 				
 			});
@@ -301,12 +318,12 @@ function refresh() {
 }
 
 function nextPage() {
-	var mobile=$("#mobile")[0].value;
+	var openid=$("#openid")[0].value;
 	page++;
 	$.post("carowner.do", {
 		"page": page,
 		"pagesize": PAGESIZE,
-		"mobile" : mobile,
+		"openid" : openid,
 		"action" : "products"
 	},
 	function(response, status) {
@@ -379,12 +396,18 @@ function nextPage() {
 
 			$("#thelist").empty();
 			$.each(response, function(key, value) {
+				var cid = value.cid;//云端月卡记录编号
+				var cardid = value.cardid;
+				var carnumber = value.carnumber;
+				var mid = value.mid;
 				var state = value.state;//0：未开始 1:使用中 2已过期
 				var cname = value.name;//停车场名称
 				var pname = value.parkname;//套餐名称
 				var price = value.price;//套餐单价
+				var prodid = value.prodid;
+				//var cid = value.cid;//套餐单价
 				var limitdate = "有效期 " + value.limitdate;//有效期
-				var limittime = "可用时间："+ value.limittime;//有效时段
+				//var limittime = "可用时段："+ value.limittime;//有效时段
 				var limitday = value.limitday;//剩余天数
 				
 				var money_class = "money";
@@ -406,7 +429,10 @@ function nextPage() {
 					line_class = "lineuesd";
 					useinfo_class = "useinfoexp";
 				}
-				$("#thelist").append('<li class="li1"><div class="moneyouter"><span class="'+money_class+'">'+price+'<span class="fuhao">元</span></span></div><a class="a1" href="#"><div class="'+ticketname_class+'">'+pname+'</div><div class="'+ticketinfo_class+'">'+limittime+'</div><div class="ticketlimit"><span class="sel_fee '+ticketlimit_class+'">'+cname+'</span></div></a><div class="rewand">续费</div></li>');
+				//var click=' onclick="rewand('+prodid+','+cid+')"';
+				var click=' onclick="rewand(\''+cardid+'\',\''+prodid+'\',\''+cid+'\')"';
+				$("#thelist").append('<li '+click+' class="li1"><div class="moneyouter"><span class="'+money_class+'">'+price+'<span class="fuhao">元</span></span></div><a class="a1" href="#"><div class="'+ticketname_class+'">'+
+						pname+'</div><div class="ticketlimit"><span class="sel_fee '+ticketlimit_class+'">'+cname+'</span></div><div class="ticketlimit2"><span>'+carnumber+'</span></div></a><div class="rewand">续费</div></li>');
 				$("#thelist").append('<li class="li2"><div class="'+line_class+'"></div><a class="a2" href="#"><div class="'+useinfo_class+'">'+guoqi+'</div><div class="limittime">'+limitdate+'</div></a></li>');
 				
 			});

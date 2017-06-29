@@ -1,5 +1,6 @@
 package com.zld.struts.parkadmin;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,11 +9,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.bouncycastle.util.encoders.UrlBase64Encoder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.zld.AjaxUtil;
@@ -20,6 +23,7 @@ import com.zld.impl.CommonMethods;
 import com.zld.impl.MongoDbUtils;
 import com.zld.impl.PublicMethods;
 import com.zld.service.DataBaseService;
+import com.zld.utils.HttpProxy;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 
@@ -77,6 +81,7 @@ public class PassManageAction extends Action {
 			int month_set =RequestUtil.getInteger(request, "month_set", -1);
 			int month2_set =RequestUtil.getInteger(request, "month2_set", -1);
 			Long worksite_id = RequestUtil.getLong(request, "worksite_id", -1L);
+			String channelId = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "channel_id"));
 			if(passname.equals("")) passname = null;
 			if(description.equals("")) description = null;
 			if(passtype.equals("")) passtype = null;
@@ -92,6 +97,7 @@ public class PassManageAction extends Action {
 			map.put("description", description);
 			map.put("month_set", month_set);
 			map.put("month2_set", month2_set);
+			map.put("channel_id", channelId);
 			Long result = commonMethods.createPass(request, map);
 			if(result > 0){
 				AjaxUtil.ajaxOutput(response, "1");
@@ -106,6 +112,7 @@ public class PassManageAction extends Action {
 			String description = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "description"));
 			String passtype = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "passtype"));
 			Long worksite_id = RequestUtil.getLong(request, "worksite_id", -1L);
+			String channelId = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "channel_id"));
 			if(passname.equals("")) passname = null;
 			if(description.equals("")) description = null;
 			if(passtype.equals("")) passtype = null;
@@ -113,8 +120,8 @@ public class PassManageAction extends Action {
 				AjaxUtil.ajaxOutput(response, "-1");
 				return null;
 			}
-			String sql = "update com_pass_tb set worksite_id=?,passname=?,passtype=?,description=?,month_set=?,month2_set=? where id=?";
-			int r = daService.update(sql, new Object[]{worksite_id,passname,passtype,description,month_set,month2_set,id});
+			String sql = "update com_pass_tb set worksite_id=?,passname=?,passtype=?,description=?,month_set=?,month2_set=?,channel_id=? where id=?";
+			int r = daService.update(sql, new Object[]{worksite_id,passname,passtype,description,month_set,month2_set,channelId,id});
 			if(r == 1){
 				if(publicMethods.isEtcPark(comid)){
 					int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_pass_tb",id,System.currentTimeMillis()/1000,1});
@@ -201,6 +208,45 @@ public class PassManageAction extends Action {
 				}
 			}
 			mongoDbUtils.saveLogs( request,0, 2, "添加了通闸:"+brake_name);
+		}else if(action.equals("liftrod")){
+			//获取通道名称
+			String passname = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "passname"));
+			//获取通道编号
+			String channelId = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "channel_id"));
+			//获取道闸指令
+			Integer channelOperate = RequestUtil.getInteger(request, "channel_operate", 4);
+			System.out.println(passname+channelId+channelOperate);
+			//发送消息到收费系统
+			HttpProxy httpProxy = new HttpProxy();
+			String url = "http://127.0.0.1/zld/sendmsgtopark.do?action=sendliftrodmsg";
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("comid", comid);
+			params.put("channelName", URLEncoder.encode(passname,"UTF-8"));
+			params.put("channelId", URLEncoder.encode(channelId,"UTF-8"));
+			params.put("operate", channelOperate);
+			String result = httpProxy.doPostTwo(url, params);
+			System.out.println(result);
+			//发送消息后查询数据库是否完成操作
+			Long state = -1L;
+			for(int i=0;i<30;i++){
+				Thread.sleep(100);
+				Map map = daService.getMap("select state from liftrod_info_tb where channel_id=? and operate=? and comid=?", 
+						new Object[]{channelId,channelOperate,String.valueOf(comid)});
+				if(map != null && !map.isEmpty()){
+					state = Long.valueOf(String.valueOf(map.get("state")));
+				}
+				if(state == 1){
+					break;
+				}else{
+					continue;
+				}
+			}
+			if(state == 1){
+				result = "1";
+			}else{
+				result = "0";
+			}
+			AjaxUtil.ajaxOutput(response, result);
 		}
 		return null;
 	}

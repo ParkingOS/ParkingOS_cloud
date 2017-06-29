@@ -233,7 +233,7 @@ public class HttpProxy {
 		paramsMap.put("opState", "");
 		paramsMap.put("pageNo", "1");
 		paramsMap.put("pageSize", "100");
-		String linkedParam=StringUtils.createLinkedJson(paramsMap);
+		String linkedParam=StringUtils.createLinkedJson(paramsMap,1);
 		System.out.println(linkedParam);
 		String sign =null;
 		try {

@@ -78,10 +78,10 @@ public class PackageManageAction extends Action{
 			List list = null;//daService.getAll(sql, null, 1, 20);
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
-
-
+			//Ìí¼ÓÉ¾³ý±êÖ¾
+			params.add(0);
 			if(count>0){
-				list = daService.getAll(sql+ " order by id desc", params, pageNum, pageSize);
+				list = daService.getAll(sql+ " and is_delete=? order by id desc", params, pageNum, pageSize);
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
@@ -109,8 +109,10 @@ public class PackageManageAction extends Action{
 			//System.out.println(sqlInfo);
 			Long count= daService.getLong(countSql, values);
 			List list = null;//daService.getAll(sql, null, 1, 20);
+			//Ìí¼ÓÉ¾³ý±êÖ¾¡¢
+			params.add(0);
 			if(count>0){
-				list = daService.getAll(sql+ " order by id desc", params, pageNum, pageSize);
+				list = daService.getAll(sql+ " and is_delete=? order by id desc", params, pageNum, pageSize);
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
@@ -169,7 +171,7 @@ public class PackageManageAction extends Action{
 				int ret = daService.update(" update com_info_tb set monthlypay=? where id=?",new Object[]{1,comid});
 				if(ret==1){
 					if(publicMethods.isEtcPark(comid)){
-						int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_info_tb",comid,System.currentTimeMillis()/1000,1});
+						int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate,state) values(?,?,?,?,?,?)", new Object[]{comid,"com_info_tb",comid,System.currentTimeMillis()/1000,1,1});
 						logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" com_info_tb ,add sync ret:"+re);
 					}else{
 						logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" com_info_tb ");
@@ -226,10 +228,16 @@ public class PackageManageAction extends Action{
 				return null;
 			}
 			Map parkMap = daService.getMap("select * from product_package_tb where id =?", new Object[]{Long.valueOf(id)});
-			String sql = "delete from product_package_tb where id =?";
-			Object [] values = new Object[]{Long.valueOf(id)};
+//			String sql = "delete from product_package_tb where id =?";
+//			Object [] values = new Object[]{Long.valueOf(id)};
+			//Ìí¼ÓÉ¾³ýÂß¼­
+			String sql = "update product_package_tb set is_delete=? where id =?";
+			Object [] values = new Object[]{1,Long.valueOf(id)};
 			int result = daService.update(sql, values);
 			if(result==1){
+				if(comid==0){
+					comid = daService.getLong("select comid from product_package_tb where id=? ", new Object[]{Long.valueOf(id)});
+				}
 				if(publicMethods.isEtcPark(comid)){
 					int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"product_package_tb",Long.valueOf(id),System.currentTimeMillis()/1000,2});
 				}

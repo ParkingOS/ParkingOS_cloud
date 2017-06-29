@@ -25,10 +25,13 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import pay.Constants;
 
+import com.zld.CustomDefind;
 import com.zld.impl.CommonMethods;
 import com.zld.impl.PublicMethods;
 import com.zld.service.DataBaseService;
 import com.zld.service.LogService;
+import com.zld.utils.HttpsProxy;
+import com.zld.utils.RequestUtil;
 import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 import com.zld.utils.ZLDType;
@@ -81,6 +84,7 @@ public class WeixinPublicHandle extends HttpServlet {
 					logger.error("=========微信公众号付款成功========");
 					//TODO 本地逻辑
 					String openid = (String)map.get("openid");//账户
+					logger.error("=========微信公众号付款成功=====支付账户是===:"+openid);
 					String total_fee = (String)map.get("total_fee");
 					Double wx_total = Double.valueOf(total_fee) * 0.01;//微信支付的金额
 					String attach = (String)map.get("attach");//附加参数
@@ -105,6 +109,7 @@ public class WeixinPublicHandle extends HttpServlet {
 					Integer months = 0;//购买的月卡月数
 					Long prodid = -1L;//月卡编号
 					Long end_time = -1L;//订单结算时间,2016-07-07添加
+					
 					JSONObject jsonObject = JSONObject.fromObject(attach);
 					if(jsonObject.get("ticketId") != null){
 						ticketId = Long.valueOf(jsonObject.get("ticketId")+"");//停车券
@@ -148,6 +153,8 @@ public class WeixinPublicHandle extends HttpServlet {
 					}
 					if(jsonObject.get("prodid") != null){
 						prodid = Long.valueOf((String)jsonObject.get("prodid"));
+					}else if(jsonObject.get("cardid") != null){
+						prodid = Long.valueOf((String)jsonObject.get("cardid"));
 					}
 					if(jsonObject.get("end_time") != null){
 						end_time = Long.valueOf((String)jsonObject.get("end_time"));
@@ -157,6 +164,9 @@ public class WeixinPublicHandle extends HttpServlet {
 					}
 					if(jsonObject.get("disTicketMoney") != null){
 						disTicketMoney = Double.valueOf((String)jsonObject.get("disTicketMoney"));
+					}
+					if(jsonObject.get("pay_time") != null){
+						disTicketMoney = Double.valueOf((String)jsonObject.get("pay_time"));
 					}
 					
 					Long count = daService.getLong("select count(*) from alipay_log where notify_no=? and create_time>?",
@@ -169,22 +179,25 @@ public class WeixinPublicHandle extends HttpServlet {
 					Map<String, Object> userMap = daService.getMap(
 							"select * from user_info_tb where wxp_openid=? ",
 							new Object[] { openid });
-					boolean isBolinkUser = false;//是否是泊链用户
+					//boolean isBolinkUser = false;//是否是泊链用户
 					if(userMap == null){//未绑定账户
 						bind_flag = 0;
-					}else{
+					}
+					/*else{
 						Integer unionState = (Integer)userMap.get("union_state");//有同步状态，已同步到泊链了
 						if(unionState>0)
 							isBolinkUser=true;
 					}
-						
+						*/
 					Integer ret = -1;
 					if(bind_flag == 0){//未绑定账户，操作虚拟账户
 						Map<String, Object> nobindMap= daService.getMap("select * from wxp_user_tb where openid=? ",
 								new Object[] { openid });
 						logger.error("未绑定账户，微信账户："+openid + ",attach:"+attach +"type:"+type);
 						if(nobindMap != null){
+							logger.info("pay monthcard=====微信调用传给的uin:"+uin);
 							uin = (Long)nobindMap.get("uin");
+							logger.error("pay monthcard,未绑定账户，根据微信账户："+openid + "查询到的uin:"+uin);
 							ret = daService.update("update wxp_user_tb set balance =balance+? where uin=?  ",
 									new Object[] { wx_total, uin });
 							logger.error("未绑定账户，往虚拟账户里充值："+wx_total + "元,openid:"+openid +"type:"+type);
@@ -194,6 +207,7 @@ public class WeixinPublicHandle extends HttpServlet {
 						logger.error("已绑定账户，微信账户："+openid + ",attach:"+attach +"type:"+type);
 						if (uin == null) {
 							uin = (Long)userMap.get("id");
+							logger.error("pay monthcard,已绑定账户，根据微信账户："+openid + "查询到的uin:"+uin);
 						}
 						if(uin != null){
 							ret = daService.update("update user_info_tb set balance =balance+? where id=?  ",
@@ -204,14 +218,21 @@ public class WeixinPublicHandle extends HttpServlet {
 					logger.error("uin:"+uin+",orderid:"+orderId+",type:"+type+",money:"+money+",wx_total:"+wx_total);
 					if(uin != null){
 						try {
-							// 写入用户账户表--充值
-							daService.update("insert into user_account_tb(uin,amount,type,create_time,remark,pay_type,orderid) values(?,?,?,?,?,?,?)",
-											new Object[] {uin,wx_total,0,System.currentTimeMillis() / 1000 - 2,"微信公众号充值", 9, orderId });
-							
-							// 扣除微信手续费
-							daService.update("insert into tingchebao_account_tb(amount,type,create_time,remark,utype,orderid) values(?,?,?,?,?,?)",
-											new Object[] {wx_total * 0.006,1,System.currentTimeMillis() / 1000 - 2,"微信公众号充值手续费", 5, orderId });
-							
+							//begin by zhangq 2017-5-24 月卡续费
+							if(type == 11){
+								// 写入用户账户表--月卡续费
+								daService.update("insert into user_account_tb(uin,amount,type,create_time,remark,pay_type,orderid) values(?,?,?,?,?,?,?)",
+												new Object[] {uin,wx_total,0,System.currentTimeMillis() / 1000 - 2,"第三方月卡续费充值——"+CustomDefind.UNIONID+"——"+out_trade_no, 9, orderId });
+							}else{
+								// 写入用户账户表--充值
+								daService.update("insert into user_account_tb(uin,amount,type,create_time,remark,pay_type,orderid) values(?,?,?,?,?,?,?)",
+												new Object[] {uin,wx_total,0,System.currentTimeMillis() / 1000 - 2,"微信公众号充值", 9, orderId });
+								
+								// 扣除微信手续费
+								daService.update("insert into tingchebao_account_tb(amount,type,create_time,remark,utype,orderid) values(?,?,?,?,?,?)",
+												new Object[] {wx_total * 0.006,1,System.currentTimeMillis() / 1000 - 2,"微信公众号充值手续费", 5, orderId });
+							}
+							//end by zhangq 2017-5-24 月卡续费
 							//写用户支付账号信息表
 							logService.insertUserAccountMesg(2, uin, openid);
 						} catch (Exception e) {
@@ -318,6 +339,7 @@ public class WeixinPublicHandle extends HttpServlet {
 								}
 							}else if(type == 3){//仅充值
 								logger.error("仅充值...");
+								publicMethods.syncUserToBolink(uin);
 								daService.update("insert into money_record_tb(comid,create_time,amount,uin,type,pay_type,remark) values (?,?,?,?,?,?,?)",
 												new Object[] {-1L,System.currentTimeMillis() / 1000,wx_total, uin,ZLDType.MONEY_RECARGE, 9,"充值" });
 								
@@ -381,7 +403,6 @@ public class WeixinPublicHandle extends HttpServlet {
 								} catch (Exception e) {
 									// TODO: handle exception
 								}
-								
 								logger.error("充值成功，写入充值日志 ....");
 								// 给用户（车主）发消息
 								logService.insertMessage(-1L, 1, uin, "", 0L,wx_total, wx_total + "元充值成功", 0, 0L,0L, 2);
@@ -461,11 +482,26 @@ public class WeixinPublicHandle extends HttpServlet {
 								int r = publicMethods.buyTickets(uin,ticketmoney,ticketnum,ptype);
 								logger.error("buyticket online>>>uin:"+uin+"r:"+r);
 							}else if(type==9){//泊链订单预支付
-								logger.error("需要同步到泊链账户中......");
-								String carNumber = publicMethods.getCarNumber(uin);
-								if(!isBolinkUser)
+								logger.error("需要同步到泊链账户中......orderId:"+orderId);
+								if(orderId!=null){
+									publicMethods.prepayToBolink(uin,money,orderId);
+									logger.error("prepay bolink order ,update prepay :"+daService.update("update bolink_order_tb set prepay=?,prepay_time=? where id =? ", new Object[]{money,ntime,orderId}));
+								}else
 									publicMethods.syncUserToBolink(uin);
+								//}
+							}else if(type == 11){//begin by zhangq 2017-5-24 月卡续费
+								logger.error("月卡会员续费...");
+								Map<String, Object> paramMap = new HashMap<String, Object>();
+								String params = jsonObject.getString("params");//附加参数
+								logger.info("pay monthcard, 获取到的信息params"+params);
+								paramMap.put("params", params);//支付回调信息 
+								paramMap.put("user_id", uin+"");//车主第三方编号
+								paramMap.put("rand", Math.random());//随机数 用于数字签名
+								paramMap.put("union_id", CustomDefind.UNIONID);//支付厂商编号  用于数字签名
+								//同步续费信息到泊链
+								publicMethods.syncMothPayToBolink(paramMap);
 							}
+							//end by zhangq 2017-5-24 月卡续费
 						} else {
 							logService.insertMessage(-1L, 0, uin, "", 0L,wx_total, "写入用户余额失败", 0, 0L, 0L, 2);
 						}
@@ -476,7 +512,6 @@ public class WeixinPublicHandle extends HttpServlet {
 						logService.insertMessage(-1L, 0, uin, "", 0L,wx_total, "车主信息不存在", 0, 0L, 0L, 2);
 						// return;
 					}
-					
 					//响应微信服务器
 			        response.getWriter().write(PayCommonUtil.setXML("SUCCESS", ""));//告诉微信服务器，我收到信息了，不要在调用回调action了
 					System.out.println("-------------"+PayCommonUtil.setXML("SUCCESS", ""));

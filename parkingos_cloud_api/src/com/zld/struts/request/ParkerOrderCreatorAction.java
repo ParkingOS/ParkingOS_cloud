@@ -127,7 +127,7 @@ public class ParkerOrderCreatorAction extends Action{
 						Map<Integer, Integer> map = new HashMap<Integer, Integer>();//月卡信息
 						Integer monthcount = 0;//月卡数
 						String subCar = carNumber.startsWith("无")?carNumber:"%"+carNumber.substring(1);
-						List<Map> carinfoList = daService.getAll("select uin,car_number from  car_info_tb where car_number like ?", new Object[]{subCar});
+						List carinfoList = onlyReadService.getAll("select uin,car_number from  car_info_tb where car_number like ?", new Object[]{subCar});
 						Long uin =-1L;
 						String cid = "";//客户端登录后，上传的个推消息编号
 						String monthcar_number = "";
@@ -638,7 +638,7 @@ public class ParkerOrderCreatorAction extends Action{
 			if(list != null && list.size() > 0){
 				for(Map<String, Object> map : list){
 					Map<String, Object> info = new HashMap<String, Object>();
-					Integer c_type = (Integer)map.get("c_type");//进场方式 ，0:NFC，2:照牌    3:通道照牌进场 4直付 5月卡用户
+					Integer c_type = Integer.valueOf(String.valueOf(map.get("c_type")));//进场方式 ，0:NFC，2:照牌    3:通道照牌进场 4直付 5月卡用户
 					Integer isfast = (Integer)map.get("type");
 					if(isfast==2){
 						String cardno = (String) map.get("nfc_uuid");
@@ -1227,12 +1227,15 @@ public class ParkerOrderCreatorAction extends Action{
 		Long ntime = System.currentTimeMillis()/1000;
 		List<Map<String , Object>> sqlMaps = new ArrayList<Map<String,Object>>();
 		//月卡重复入场以月卡方式结算
-		int ret = daService.update("update order_tb set end_time=?,total=?,state=?,pay_type=?,uin=?,uid=?,isclick=? where comid=? and car_number =? and state=? and c_type=?", 
-				new Object[]{System.currentTimeMillis() / 1000, 0d, 1, 3, uin, uid,0, comId, carNumber, 0,5 });
+		Long monthTime = TimeTools.getMonthStartSeconds();
+		if(ntime-monthTime<2*86400)
+			monthTime=ntime-15*86400;
+		int ret = daService.update("update order_tb set end_time=?,total=?,state=?,pay_type=?,uin=?,uid=?,isclick=? where create_time>? and comid=? and car_number =? and state=? and c_type=?", 
+				new Object[]{System.currentTimeMillis() / 1000, 0d, 1, 3, uin, uid,0,monthTime, comId, carNumber, 0,String.valueOf(5) });
 		logger.error("月卡重复入场0元结算ret:"+ret);
 		//非月卡重复入场以现金0元方式结算
-		ret += daService.update("update order_tb set end_time=?,total=?,state=?,pay_type=?,uin=?,uid=?,isclick=? where comid=? and car_number =? and state=? and c_type <>?",  
-				new Object[]{System.currentTimeMillis() / 1000, 0d, 1, 1, uin, uid,0, comId, carNumber, 0,5 });logger.error("非月卡重复入场0元结算ret:"+ret);
+		ret += daService.update("update order_tb set end_time=?,total=?,state=?,pay_type=?,uin=?,uid=?,isclick=? where create_time>? and comid=? and car_number =? and state=? and c_type <>?",  
+				new Object[]{System.currentTimeMillis() / 1000, 0d, 1, 1, uin, uid,0,monthTime, comId, carNumber, 0,String.valueOf(5) });logger.error("非月卡重复入场0元结算ret:"+ret);
 		if(ret>0){
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			list = onlyReadService.getAll("select id from order_tb where comid=? and car_number =? and state=? ", new Object[]{comId,carNumber,0});

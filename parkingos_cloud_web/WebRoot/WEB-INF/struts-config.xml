@@ -127,12 +127,18 @@
 				redirect="false" />
 			<forward name="preauthuser" path="/WEB-INF/pages/admin/carower_preauth.jsp"
 				redirect="false" />
+			<forward name="unioncarower" path="/WEB-INF/pages/admin/carower_union.jsp"
+				redirect="false" />
+			<forward name="unioncarowerupload" path="/WEB-INF/pages/admin/carower_union_upload.jsp"
+				redirect="false" />
 		</action>
 		<action path="/parking" type="org.springframework.web.struts.DelegatingActionProxy" >
 			<forward name="list" path="/WEB-INF/pages/admin/park/parklist.jsp" redirect="false" />
 			<forward name="ugclist" path="/WEB-INF/pages/admin/park/ugclist.jsp" redirect="false" />
 			<forward name="ugcverify" path="/WEB-INF/pages/admin/park/ugcverify.jsp" redirect="false" />
 			<forward name="verifydetail" path="/WEB-INF/pages/admin/park/verifydetail.jsp" redirect="false" />
+			<forward name="unionparks" path="/WEB-INF/pages/admin/park/unionlist.jsp" redirect="false" />
+			<forward name="uploadparks" path="/WEB-INF/pages/admin/park/uploadparks.jsp" redirect="false" />
 		</action>
 		<action path="/freepark"
 			type="org.springframework.web.struts.DelegatingActionProxy" >
@@ -739,6 +745,8 @@
 		
 		<action path="/liftrod" type="org.springframework.web.struts.DelegatingActionProxy" >
 			<forward name="list" path="/WEB-INF/pages/parkadmin/liftrod.jsp" redirect="false" />
+			<forward name="liftrodpics" path="/WEB-INF/pages/parkadmin/liftrodpics.jsp"
+				redirect="false" />
 		</action>
 		<action path="/parklogs" type="org.springframework.web.struts.DelegatingActionProxy" >
 			<forward name="list" path="/WEB-INF/pages/parkadmin/parklogs.jsp" redirect="false" />
@@ -845,6 +853,7 @@
 		</action>
 		<action path="/colltrend" type="org.springframework.web.struts.DelegatingActionProxy" >
 			<forward name="trend" path="/WEB-INF/pages/anlysis/colltrend.jsp" redirect="false" />
+			<forward name="list" path="/WEB-INF/pages/anlysis/colllist.jsp" redirect="false" />
 		</action>
 		<action path="/cityparkanly" type="org.springframework.web.struts.DelegatingActionProxy" >
 			<forward name="column" path="/WEB-INF/pages/anlysis/cityparkanly.jsp" redirect="false" />
@@ -878,11 +887,20 @@
 		<action path="/feebypark" type="org.springframework.web.struts.DelegatingActionProxy">
 			<forward name="list" path="/WEB-INF/pages/anlysis/feebypark.jsp" redirect="false" /> 
         </action>
+        <action path="/feebygroup" type="org.springframework.web.struts.DelegatingActionProxy">
+			<forward name="list" path="/WEB-INF/pages/anlysis/feebygroup.jsp" redirect="false" /> 
+        </action>
         <action path="/feebycoll" type="org.springframework.web.struts.DelegatingActionProxy">
 			<forward name="list" path="/WEB-INF/pages/anlysis/feebycoll.jsp" redirect="false" /> 
         </action>
         <action path="/staticfeebycoll" type="org.springframework.web.struts.DelegatingActionProxy">
 			<forward name="list" path="/WEB-INF/pages/anlysis/staticfeebycoll.jsp" redirect="false" /> 
+        </action>
+        <action path="/staticfeebygroup" type="org.springframework.web.struts.DelegatingActionProxy">
+			<forward name="list" path="/WEB-INF/pages/anlysis/staticfeebygroup.jsp" redirect="false" /> 
+        </action>
+        <action path="/staticfeebypark" type="org.springframework.web.struts.DelegatingActionProxy">
+			<forward name="list" path="/WEB-INF/pages/anlysis/staticfeebypark.jsp" redirect="false" /> 
         </action>
         <action path="/citysensororder" type="org.springframework.web.struts.DelegatingActionProxy">
 			<forward name="list" path="/WEB-INF/pages/city/citysensororderlist.jsp" redirect="false" /> 
@@ -924,6 +942,13 @@
         <action path="/cheatsensor" type="org.springframework.web.struts.DelegatingActionProxy">
 			<forward name="list" path="/WEB-INF/pages/zld/cheatSensor.jsp" redirect="false" />
         </action>
+        <action path="/worktime" type="org.springframework.web.struts.DelegatingActionProxy">
+			<forward name="list" path="/WEB-INF/pages/city/worktime.jsp" redirect="false" />
+        </action>
+        <!-- 新添加查询月卡续费action地址 -->
+        <action path="/buycardrecord" type="org.springframework.web.struts.DelegatingActionProxy" >
+			<forward name="list" path="/WEB-INF/pages/parkadmin/buycardrecord.jsp" redirect="false" />
+		</action>
 	</action-mappings>
 </struts-config>
 

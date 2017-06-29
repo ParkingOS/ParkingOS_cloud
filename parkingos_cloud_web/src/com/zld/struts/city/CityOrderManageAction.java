@@ -100,6 +100,8 @@ public class CityOrderManageAction extends Action {
 			SqlInfo sqlInfo = RequestUtil.customSearch(request, "order_tb", "o", new String[]{"cid","groupid"});
 			SqlInfo sqlInfo1 = getSuperSqlInfo(request);
 			Double total = 0d;
+			Double cash_total = 0d;
+			Double elec_total = 0d;
 			List list = null;
 			Long count = 0L;
 			if(groupid==-1){
@@ -112,6 +114,12 @@ public class CityOrderManageAction extends Action {
 					" where o.state=? and o.ishd=? and o.end_time between ? and ? ";
 			String sumSql = "select sum(o.total) total from order_tb o left join com_park_tb p on o.berthnumber=p.id" +
 					" where o.state=? and o.ishd=? and o.end_time between ? and ? ";
+			//现金支付-总金额
+			String cashSql = "select sum(o.total) total from order_tb o left join com_park_tb p on o.berthnumber=p.id" +
+					" where pay_type=1 and o.state=? and o.ishd=? and o.end_time between ? and ? ";
+			//电子(手机)支付-总金额
+			String elecSql = "select sum(o.total) total from order_tb o left join com_park_tb p on o.berthnumber=p.id" +
+					" where pay_type=2 and o.state=? and o.ishd=? and o.end_time between ? and ?";
 			params.add(1);
 			params.add(0);
 			params.add(b);
@@ -133,18 +141,24 @@ public class CityOrderManageAction extends Action {
 				sql += " and o.comid in ("+preParams+") ";
 				countSql += " and o.comid in ("+preParams+") ";
 				sumSql +=" and o.comid in ("+preParams+") ";
+				cashSql +=" and o.comid in ("+preParams+") ";
+				elecSql +=" and o.comid in ("+preParams+") ";
 				params.addAll(parks);
 				
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
 					sumSql +=" and "+sqlInfo.getSql();
+					cashSql +=" and "+sqlInfo.getSql();
+					elecSql +=" and "+sqlInfo.getSql();
 					params.addAll(sqlInfo.getParams());
 				}
 				if(sqlInfo1 != null){
 					countSql+=" and "+ sqlInfo1.getSql();
 					sql +=" and "+sqlInfo1.getSql();
 					sumSql +=" and "+sqlInfo1.getSql();
+					cashSql +=" and o.comid in ("+preParams+") ";
+					elecSql +=" and o.comid in ("+preParams+") ";
 					params.addAll(sqlInfo1.getParams());
 				}
 				if(orderfield.equals("")){
@@ -162,19 +176,31 @@ public class CityOrderManageAction extends Action {
 				QuerySum querySum = new QuerySum(pgOnlyReadService, sumSql, params);
 				QueryCount queryCount = new QueryCount(pgOnlyReadService, countSql, params);
 				QueryList queryList = new QueryList(pgOnlyReadService, sql, params, pageNum, pageSize);
+				QuerySum queryCash = new QuerySum(pgOnlyReadService, cashSql, params);
+				QuerySum queryElec = new QuerySum(pgOnlyReadService, elecSql, params);
 				Future<Long> future0 = pool.submit(queryCount);
 				Future<List> future1 = pool.submit(queryList);
 				Future<Map> future2 = pool.submit(querySum);
+				Future<Map> futureCash = pool.submit(queryCash);
+				Future<Map> futureElec = pool.submit(queryElec);
 				count = future0.get();
 				list = future1.get();
 				Map<String, Object> map = future2.get();
 				if(map != null && map.get("total") != null){
 					total = Double.valueOf(map.get("total") + "");
 				}
+				Map<String, Object> cashMap = futureCash.get();
+				if(cashMap != null && cashMap.get("total") != null){
+					cash_total = Double.valueOf(cashMap.get("total") + "");
+				}
+				Map<String, Object> elecMap = futureElec.get();
+				if(elecMap != null && elecMap.get("total") != null){
+					elec_total = Double.valueOf(elecMap.get("total") + "");
+				}
 				getCollector(list);
 				queryShopTicket(list);
 			}
-			String json = JsonUtil.anlysisMap2Json(list,pageNum,count, fieldsstr,"id", "订单总金额："+total+"元");
+			String json = JsonUtil.anlysisMap2Json(list,pageNum,count, fieldsstr,"id", "订单总金额："+total+"元,现金支付："+cash_total+"元,手机支付："+elec_total+"元");
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("getcollname")){
 			Long id = RequestUtil.getLong(request, "id", -1L);

@@ -18,6 +18,12 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.security.cert.CertificateException;
+import javax.security.cert.X509Certificate;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
@@ -43,8 +49,6 @@ import com.zld.CustomDefind;
 import com.zld.service.DataBaseService;
 import com.zld.service.LogService;
 import com.zld.service.PgOnlyReadService;
-import com.zld.tcp.client.ResponseEntity;
-import com.zld.tcp.client.TcpRequest;
 import com.zld.utils.Check;
 import com.zld.utils.CountPrice;
 import com.zld.utils.ExecutorsUtil;
@@ -55,6 +59,7 @@ import com.zld.utils.SendMessage;
 import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 import com.zld.utils.ZLDType;
+import com.zld.utils.ZldMap;
 import com.zld.weixinpay.utils.util.JsonUtil;
 import com.zld.wxpublic.util.CommonUtil;
 import com.zld.wxpublic.util.PayCommonUtil;
@@ -146,6 +151,7 @@ public class PublicMethods {
 		boolean result = daService.bathUpdate(bathSql);
 		logger.error("uin:"+uin+",value:"+value+",number:"+number+",result:"+result);
 		if(result){
+			syncUserToBolink(uin);
 			return 1;
 		} else {
 			return 0;
@@ -309,6 +315,7 @@ public class PublicMethods {
 				updateAllowCache(comId, ticketId, ticketMoney);
 				logger.error("update allowance today>>>uin:"+uin+",orderid:"+orderId+",ticketMoney:"+ticketMoney);
 			}
+			syncUserToBolink(uin);
 			return 1;
 		} else {
 			return 0;
@@ -447,6 +454,7 @@ public class PublicMethods {
 				
 //				SendMessage.sendMessage(pmobile, "尊敬的合作伙伴您好，车主"+carNumber+"已通过停车宝购买贵车场包月服务1个月，费用"+total+"元，您可以在后台查看相应信息。"+
 //						"车主将凭短信前来换取月卡，请备好相应月卡，谢谢。客服：01053618108 【停车宝】");
+			syncUserToBolink(uin);
 			return 1;
 		}
 		return 0;
@@ -791,6 +799,7 @@ public class PublicMethods {
 				logService.updateOrderLog(comid,uin,time+",帐号："+uin+",车牌："+carNumber+",停车收费："+total+",停车场："+comName,1);
 			}
 			sendPayOrderMsg(ptype, orderId, total, out_uid, uin);
+			syncUserToBolink(uin);
 			return 5;
 		}else {
 			return -7;
@@ -1178,8 +1187,8 @@ public class PublicMethods {
 				updateAllowCache(comid, ticketId, ticketMoney);
 				logger.error("update allowance cache>>>uin:"+uin+",ticketMoney:"+ticketMoney);
 			}
-			
 			updateShopTicket(orderId, uin);
+			syncUserToBolink(uin);
 		}
 		return 1;
 	}
@@ -1815,7 +1824,7 @@ public class PublicMethods {
 			try {
 				boolean isBlack = isBlackUser(uin);
 				double ownpay = total-ticketMoney;
-				if(!isBlack && false){
+				/*if(!isBlack && false){
 					if(ownpay>=1&&memcacheUtils.readBackMoneyCache(comId+"_"+uin)){//可以给车场返现 
 						boolean isCanBackMoney = isCanBackMoney(comId);//是否是济南车场
 						Double backmoney = getBackMoney();
@@ -1864,17 +1873,18 @@ public class PublicMethods {
 					}
 				}else {
 					logger.error(">>>>>black>>>>车主："+uin+",在黑名单内，不给车场返现 ......");
-				}
-				if(!isBlack && false){
+				}*/
+				/*if(!isBlack && false){
 					backTicket(total-ticketMoney, orderId, uin,comId,wxp_orderid);
 //					if(ownpay>=1)
 //						updateSorce(ntime, ntime+16*60, 0, uid, comId);
 				}else {
 					logger.error(">>>>>black>>>>车主："+uin+",在黑名单内，不能返红包......");
-				}
-				if(ownpay>=1){
+				}*/
+				/*if(ownpay>=1){
 					//handleRecommendCode(uin,isBlack);//2016-09-07
-				}
+				}*/
+				syncUserToBolink(uin);
 			} catch (Exception e) {
 				logger.error(">>>>>>>>>>停车宝返现、停车宝返券失败！...............");
 				e.printStackTrace();
@@ -1890,7 +1900,7 @@ public class PublicMethods {
 				logger.error(">>>epay,写入订单..."+orderRet);
 				//处理5折券，在停车券表不存在 ，插入一条记录，方便对账
 				if(ticket_type==11&&ticketId<0&&ticketMoney>0){
-					int ret = ret = daService.update( "insert into ticket_tb (create_time,limit_day,money,state,uin,comid,type,orderid,utime,umoney,wxp_orderid)" +
+					int  ret = daService.update( "insert into ticket_tb (create_time,limit_day,money,state,uin,comid,type,orderid,utime,umoney,wxp_orderid)" +
 							" values(?,?,?,?,?,?,?,?,?,?,?) ",
 							new Object[]{TimeTools.getToDayBeginTime(),TimeTools.getToDayBeginTime()+24*60*60-1,5,1,uin,comId,2,orderId,ntime,ticketMoney,wxp_orderid});
 					memcacheUtils.updateUseTicketCache(uin);//用券缓存使用券次数
@@ -2386,11 +2396,11 @@ public class PublicMethods {
 		// }else {
 		// ntime = ntime +60;
 		// }
-		Integer cType = (Integer) orderMap.get("c_type");// 进场方式
+		//Integer cType = (Integer) orderMap.get("c_type");// 进场方式
 		// ，0:NFC,1:IBeacon,2:照牌
 		// 3通道照牌 4直付 5月卡用户
 		// 6车位二维码7月卡第二辆车
-		orMap.put("ctype", cType);
+		//orMap.put("ctype", cType);
 		String btimestr = TimeTools.getTime_MMdd_HHmm(btLong * 1000);
 		String etimestr = TimeTools.getTime_MMdd_HHmm(end_time * 1000);
 		String btime = btimestr.substring(6);
@@ -2465,7 +2475,7 @@ public class PublicMethods {
 			return StringUtils.createJson(orMap);
 		}
 		// 先判断月卡
-		if (uin != null && uin != -1 && cType == 5) {
+		if (uin != null && uin != -1 ) {//&& cType == 5
 			List comsList = pgOnlyReadService.getAll("select * from com_info_tb where pid = ?",new Object[]{comId});
 			Long parcomid = pgOnlyReadService.getLong("select pid from com_info_tb where id = ?", new Object[]{comId});
 			String sql = "";
@@ -2501,8 +2511,8 @@ public class PublicMethods {
 				return StringUtils.createJson(orMap);
 			}
 		}
-		Integer car_type = (Integer) orderMap.get("car_type");
-		if (car_type == 0) {// 0:通用
+		//Integer car_type = (Integer) orderMap.get("car_type");
+		/*if (car_type == 0) {// 0:通用
 			Long count = daService
 					.getLong(
 							"select count(*) from com_info_tb where id=? and car_type=?",
@@ -2510,21 +2520,21 @@ public class PublicMethods {
 			if (count > 0) {// 区分大小车
 				car_type = 1;// 默认成小车计费策略
 			}
-		}
+		}*/
 		Map dayMap = null;// 日间策略
 		Map nigthMap = null;// 夜间策略
 		// 按时段价格策略
 		List<Map<String, Object>> priceList1 = daService
 				.getAll(
 						"select * from price_tb where comid=? "
-								+ "and state=? and pay_type=? and car_type=? order by id desc",
-						new Object[] { comId, 0, 0, car_type });
+								+ "and state=? and pay_type=? order by id desc",
+						new Object[] { comId, 0, 0});//car_type
 		// 查按次策略
 		List<Map<String, Object>> priceList2 = daService
 				.getAll(
 						"select * from price_tb where comid=? "
-								+ "and state=? and pay_type=? and car_type=? order by id desc",
-						new Object[] { comId, 0, 1, car_type });
+								+ "and state=? and pay_type=? order by id desc",
+						new Object[] { comId, 0, 1});//car_type
 		// boolean isHasTimePrice=false;//是否有按次价格
 		if (priceList2 != null && !priceList2.isEmpty()) {// 按次策略
 			int i = 0;
@@ -2597,7 +2607,7 @@ public class PublicMethods {
 							"select * from price_assist_tb where comid = ? and type = ?",
 							new Object[] { comId, 0 });
 			Map<String, Object> oMap = null;
-			if ((uin != null && uin != -1 && (cType == 8||cType==5))) {
+			if ((uin != null && uin != -1 )) {//&& (cType == 8||cType==5)
 				List<Map<String, Object>> list = daService
 						.getAll(
 								"select p.b_time,p.e_time,p.bmin,p.emin,p.type,c.b_time bt,c.e_time et from product_package_tb p,"
@@ -4016,6 +4026,7 @@ public class PublicMethods {
 			if(total>=1){
 				//handleRecommendCode(uin,isBlack);//2016-09-07
 			}
+			syncUserToBolink(uin);
 			return 5;
 		}else {
 			return -7;
@@ -5136,72 +5147,7 @@ public class PublicMethods {
 		}
 		return new Long(millSeconds / 1000);
 	}
-	/**
-	 * 注册和充值发送给第三方，国脉
-	 * @param uin
-	 * @param money
-	 * @param mobile
-	 * @param carNumber
-	 * @param strid
-	 * @param type
-	 */
-	public void sendMessageToThird(Long uin,Integer money,String mobile,String carNumber,String strid,Integer type){
-		
-		if(type==0){
-			TcpRequest tcpRequest = new TcpRequest();
-			Map<String,Object> paramMap = new HashMap<String, Object>();
-			paramMap.put("loginName",strid);
-			paramMap.put("mobile", mobile);
-			paramMap.put("password", strid);
-			paramMap.put("license", carNumber);
-			paramMap.put("action", "register");
-			logger.error("register user>>>>注册用户到国脉平台，发送"+paramMap);
-			ResponseEntity entity = tcpRequest.request("register", StringUtils.createJson(paramMap));
-			if(entity!=null)
-				logger.error("register user>>>>注册用户到国脉平台，返回："+entity.getStatusCode()+","+entity.getJsonResult()+","+entity.getMessage());
-			else {
-				logger.error("register user>>>>注册用户到国脉平台，返回空");
-			}
-			if(entity!=null&&"0".equals(entity.getStatusCode())){
-				String jsonData =entity.getJsonResult();
-				logger.error("register user>>>>注册用户到国脉平台，返回Json:"+jsonData);
-				if(jsonData!=null){
-					JSONObject objectJson;
-					try {
-						objectJson = new JSONObject(jsonData);
-						Object object = objectJson.get("id");
-						logger.error("register user>>>>注册用户到国脉平台，返回用户ID:"+object);
-						if(object!=null){
-							String uuid = object.toString();
-							int ret = daService.update("update user_info_tb set uuid=? where id =? ", new Object[]{uuid,uin});
-							logger.error("register user>>>>注册用户到国脉平台，写入用户ID:"+uuid+",结果："+ret);
-						}
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-				}
-			}
-		}else if(type==1){
-			Map userMap = daService.getMap("select cityid,uuid from user_info_Tb where id=?", new Object[]{uin});
-			Long cityId = (Long)userMap.get("cityid");
-			logger.error("充值到国脉：money："+money+",user:"+userMap);
-			if(cityId!=null&&cityId==321000L&&userMap.get("uuid")!=null){
-				TcpRequest tcpRequest = new TcpRequest();
-				Map<String,Object> paramMap = new HashMap<String, Object>();
-				paramMap.put("usrId",userMap.get("uuid"));
-				paramMap.put("stampTime", System.currentTimeMillis()/1000);
-				paramMap.put("money", money);
-				logger.error("register user>>>>充值用户到国脉平台，发送"+paramMap);
-				ResponseEntity entity = tcpRequest.request("recharge", StringUtils.createJson(paramMap));
-				logger.error("register user>>>>充值用户到国脉平台，返回："+entity);
-				if(entity!=null&&"0".equals(entity.getStatusCode())){
-					logger.error("register user>>>>充值用户到国脉平台，返回Json:"+entity.getJsonResult()+",返回消息："+entity.getMessage());
-				}
-			}
-		}
-	}
+	
 	
 	public Long getGroup(Long comid){
 		Long groupid = -1L;
@@ -5273,6 +5219,7 @@ public class PublicMethods {
 			public void run() {
 				if(!isUnionPark(parkId))
 					return;
+				logger.error("同上订单到泊链....");
 				String url = CustomDefind.UNIONIP+"order/addorder";
 				Map<String, Object> paramMap = new HashMap<String, Object>();
 				paramMap.put("order_id", orderId);//"京G9E2R9"
@@ -5281,6 +5228,7 @@ public class PublicMethods {
 				paramMap.put("record_time", System.currentTimeMillis()/1000);
 				paramMap.put("park_id", parkId);
 				paramMap.put("union_id", CustomDefind.UNIONID);
+				paramMap.put("empty_plot", getParkEmptyPlot(parkId,0));
 				paramMap.put("rand", Math.random());
 				String ret = "";
 				try {
@@ -5298,7 +5246,7 @@ public class PublicMethods {
 						}else {
 							logger.error(object.get("errmsg"));
 						}
-						int r = daService.update("update order_tb set is_union_user=? where id =? ", new Object[]{uploadState,orderId});
+						int r = daService.update("update order_tb set is_union_user=? where id =? ", new Object[]{object.getInt("is_union_user"),orderId});
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -5318,6 +5266,8 @@ public class PublicMethods {
 		paramMap.put("total", total);//结算订单
 		paramMap.put("end_time", endTime);
 		paramMap.put("pay_time", System.currentTimeMillis()/1000);
+		paramMap.put("empty_plot", getParkEmptyPlot(comid,1));
+		paramMap.put("park_id", comid);
 		paramMap.put("union_id", CustomDefind.UNIONID);
 		paramMap.put("rand", Math.random());
 		String ret = "";
@@ -5330,9 +5280,8 @@ public class PublicMethods {
 				Integer uploadState = object.getInt("state");
 				if(uploadState==1){
 					String payType = object.getString("pay_type");
-					logger.error("upload pay order to nuion ,is union user...pay_type"+payType);
+					logger.error("upload pay order to nuion ,is union user...pay_type= "+payType);
 					if(payType!=null)
-						//@ TODO 处理订单为泊链会员订单，出场时直接调用泊链平台接口去结算
 						return payType;
 				}else {
 					logger.error(object.get("errmsg"));
@@ -5345,81 +5294,60 @@ public class PublicMethods {
 		return "cash";
 	}
 	
-	/**
-	 * 同步车牌到泊链
-	 * @param uin
-	 * @param carNumber
-	 * @param newCarNumber 为空时，是新加一个车牌
-	 * @param type 0添加车牌 1修改车牌
-	 */
-	public void syncUserCarNumber(final Long uin,final String carNumber,final String newCarNumber){
-		ExecutorService messagePool=ExecutorsUtil.getMessageService();
-		messagePool.execute(new Runnable() {
-			@Override
-			public void run() {
-//				String isUpToUnion  = CustomDefind.ISUPTOUNION;
-//				if(isUpToUnion.equals("0"))
-//					return ;
-				Long count = daService.getLong("select count(id) from user_info_tb where id =? and union_state>?", new Object[]{uin,0});
-				if(count==0){
-					logger.error("update car_number,车主未同步到泊链平台");
-					return;
-				}
-				logger.error("update car_number,需要同步车主车到泊链平台，carnumber:"+carNumber+",newcarnumber:"+newCarNumber);
-				bolinkUpdatePlateNumber(uin, carNumber,newCarNumber);
-				/*String url = CustomDefind.UNIONIP+"user/updateuser";
-				Map<String, Object> paramMap = new HashMap<String, Object>();
-				paramMap.put("user_id", uin);
-				paramMap.put("type",3);//1添加车主  2删除车主 3修改或添加车牌
-				paramMap.put("plate_number", carNumber);
-				paramMap.put("new_plate_number", newCarNumber);
-				paramMap.put("union_id", CustomDefind.UNIONID);
-				paramMap.put("rand", Math.random());
-				String ret = "";
-				try {
-					StringUtils.createSign(paramMap);
-					String param = StringUtils.createJson(paramMap);
-					ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
-					logger.error("update car_number"+ret);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}*/
+	//查询车场余位数 type 0进场，1出场
+	private Integer getParkEmptyPlot(Long comid,int type){
+		Map<String, Object> parkEmptyPlotMap = pgOnlyReadService.getMap("select sum(amount) as empty  from remain_berth_tb where comid =?", new Object[]{comid});
+		Integer emptyPlot = null;
+		if(parkEmptyPlotMap!=null){
+			String empty = parkEmptyPlotMap.get("empty")+"";
+			if(Check.isNumber(empty)){
+				emptyPlot = Integer.valueOf(empty);
+				if(type==0&&emptyPlot>1)
+					emptyPlot = emptyPlot-1;
+				else if(type==1)
+					emptyPlot = emptyPlot+1;
 			}
-		});
-		
+		}
+		return emptyPlot;
 	}
 	
 	/**
 	 * 根据用户ID获取是临时账户还是正式账户
 	 * @param uin
-	 * @return
+	 * @return 1已注册 ，0未注册 
 	 */
 	public Integer getBindflag(Long uin){
 		Long count = daService.getLong("select count(1) from user_info_tb where id=? and auth_flag=? ", new Object[]{uin,4});
 		return count.intValue();
 	}
+	
+	
+	
 	/**
-	 * 同步车主到泊链
-	 * @param uin
-	 * @param money
+	 * 同步车主到泊链 //已同步过的车主，同步余额
+	 * @param uin 车主账户
+	 * @param type 0正常同步，1 预付订单编号
+	 * @param prepay 预付金额 
 	 */
 	public void syncUserToBolink(final Long uin){
 		ExecutorService messagePool=ExecutorsUtil.getMessageService();
 		messagePool.execute(new Runnable() {
 			@Override
 			public void run() {
+				logger.error("同步泊链车主 uin:"+uin);
+				String loggstr ="upload user : ";
 				Double money = 0.0;
 				String plateNumber = ""; 
 				int isRegUser = 0;//用户是否已注册为停车宝用户 0未注册 1已注册
 				List<Map<String, Object>> carList = null;//注册车主车牌
-				
 				Map<String, Object> userInfo = daService.getMap("select id as uin,balance,union_state from user_info_tb where id=? ", new Object[]{uin});
-				if(userInfo==null||userInfo.isEmpty()){
+				if(userInfo==null||userInfo.isEmpty()){//账户不存在 ，查询微信虚拟账户
 					userInfo = daService.getMap("select uin,balance,car_number,union_state from wxp_user_tb where uin=? ", new Object[]{uin});
 					if(userInfo!=null){
 						Integer unionState  = (Integer)userInfo.get("union_state");
-						if(unionState>0){//已经同步过，不再同步
-							logger.error("同步车主错误，微信用户已是泊链会员....");
+						if(unionState>0){//已经同步过，同步余额
+							logger.error(loggstr+"同步车主错误，微信用户已是泊链会员，开始同步余额....");
+							syncUserBalance(uin);
 							return ;
 						}
 						plateNumber = (String)userInfo.get("car_number");
@@ -5427,51 +5355,64 @@ public class PublicMethods {
 					}
 				}else {
 					Integer unionState  = (Integer)userInfo.get("union_state");
-					isRegUser = 1;
+					isRegUser = 1;//是注册用户
 					if(unionState>0){//已经同步过，不再同步
-						logger.error("同步车主错误，用户已是泊链会员....");
+						syncUserBalance(uin);
+						logger.error(loggstr+"同步车主错误，用户已是泊链会员，开始同步余额....");
 						return ;
 					}
-					carList = pgOnlyReadService.getAll("select car_number from car_info_tb where uin=? ", new Object[]{uin});
+					carList = daService.getAll("select car_number from car_info_tb where uin=? ", new Object[]{uin});
 					Map<String , Object> profileMap = daService.getMap("select auto_cash,limit_money from " +
 							"user_profile_tb where uin =? ", new Object[]{userInfo.get("uin")});
 					Integer auto = (Integer)profileMap.get("auto_cash");
 					Integer limit  =(Integer)profileMap.get("limit_money");
 					money =StringUtils.formatDouble(userInfo.get("balance"));
 					if(auto==1){//用户设置了限额时，余额和限额比较，哪个小，传给泊链哪个
-						if(limit<money)
+						if(limit!=-1&&limit<money)
 							money = limit.doubleValue();
 					}
 				}
 				if(userInfo==null||userInfo.isEmpty()){
-					logger.error("同步车主错误，用户不存在....");
+					logger.error(loggstr+"同步车主错误，用户不存在....");
 					return ;
 				}
 				
 				if(isRegUser==0){
 					if(plateNumber==null||plateNumber.length()<7||plateNumber.length()>8){
-						logger.error("同步微信车主错误，车牌不合法...."+plateNumber);
+						logger.error(loggstr+"同步微信车主错误，车牌不合法...."+plateNumber);
 						return ;
 					}
 					bolinkRegUser(uin,money,plateNumber,0);
 				}else {
+					logger.error(loggstr+"开始上传车主，车牌："+carList);
 					if(carList!=null&&!carList.isEmpty()){
-						Map<String, Object> car = carList.get(0);
+						Map<String, Object> car = carList.get(0);//第一个车牌，在同步用户时传入
 						plateNumber = (String)car.get("car_number");
-						
+						boolean isUpdated=false;//第一个车牌是否上传成功
 						if(plateNumber!=null&&(plateNumber.length()==7||plateNumber.length()==8)){
-							bolinkRegUser(uin,money,plateNumber,1);
+							int r = bolinkRegUser(uin,money,plateNumber,1);
+							if(r==1)
+								isUpdated=true;
+							logger.error(loggstr+"第一个车牌上传结果："+r);
 						}else {
-							logger.error("同步车主错误，车牌不合法...."+plateNumber);
+							logger.error(loggstr+"同步车主错误，车牌不合法...."+plateNumber);
 						}
-						if(carList.size()>1){
+						if(carList.size()>1){//第二个以上车牌通过车牌添加接口上传
 							 for(int i=1;i<carList.size();i++){
 								 Map<String, Object> carInfo = carList.get(i);
 									plateNumber = (String)carInfo.get("car_number");
 									if(plateNumber!=null&&(plateNumber.length()==7||plateNumber.length()==8)){
-										bolinkUpdatePlateNumber(uin,plateNumber,null);
+										if(isUpdated){//第一个车牌已上传成功，调用上传更新车牌
+											logger.error(loggstr+"上传车主车牌："+plateNumber);
+											bolinkUpdatePlateNumber(uin,plateNumber,null);
+										}else {
+											int r = bolinkRegUser(uin,money,plateNumber,1);
+											logger.error(loggstr+"上传车主,车牌："+plateNumber+",结果 ："+r);
+											if(r==1)
+												isUpdated = true;
+										}
 									}else {
-										logger.error("同步车主错误，车牌不合法...."+plateNumber);
+										logger.error(loggstr+"同步车主错误，车牌不合法...."+plateNumber);
 									}
 							 }
 						}
@@ -5480,44 +5421,144 @@ public class PublicMethods {
 			}
 		});
 	}
-	
 	/**
-	 * 注册车主到泊链
-	 * @param uin 账户
-	 * @param money 余额 
-	 * @param carNumber 车牌
-	 * @param type 0微信用户，1注册车主
-	 * @return
+	 * 同步车主到泊链 //已同步过的车主，同步余额
+	 * @param uin 车主账户
+	 * @param type 0正常同步，1 预付订单编号
+	 * @param prepay 预付金额 
 	 */
-	private void bolinkRegUser(Long uin,Double money,String carNumber,int type){
+	public void prepayToBolink(final Long uin,final Double prepay, final Long bolinkOrderId){
+		ExecutorService messagePool=ExecutorsUtil.getMessageService();
+		messagePool.execute(new Runnable() {
+			@Override
+			public void run() {
+				String loggstr ="prepay order to bolink : ";
+				logger.error(loggstr+"uin="+uin+",prepay:"+prepay+",orderid:"+bolinkOrderId);
+				Double balance = 0.0;//车主余额
+				Map<String, Object> userInfo = daService.getMap("select id as uin,balance,union_state from user_info_tb where id=? ", new Object[]{uin});
+				if(userInfo==null||userInfo.isEmpty()){//账户不存在 ，查询微信虚拟账户
+					userInfo = daService.getMap("select uin,balance,car_number,union_state from wxp_user_tb where uin=? ", new Object[]{uin});
+					if(userInfo!=null){
+						balance = StringUtils.formatDouble(userInfo.get("balance"));
+					}
+				}
+				logger.error(loggstr+"balance="+balance);
+				Map<String, Object> bolinkOrderMap = daService.getMap("select * from bolink_order_tb where id = ? ", new Object[]{bolinkOrderId});
+				if(bolinkOrderMap!=null&&!bolinkOrderMap.isEmpty()){
+					String logstr="prepay order to bolink : ";
+					Map<String, Object> paramMap = new HashMap<String, Object>();
+					paramMap.put("park_id",bolinkOrderMap.get("park_id"));
+					paramMap.put("order_id", bolinkOrderMap.get("order_id"));
+					paramMap.put("plate_number", bolinkOrderMap.get("plate_number"));
+					paramMap.put("prepay", prepay+"");
+					paramMap.put("balance", balance+"");
+					paramMap.put("user_id", uin);
+					paramMap.put("union_id", CustomDefind.UNIONID);
+					paramMap.put("rand", Math.random());
+					String ret = "";
+					try {
+						logger.error(logstr+paramMap);
+						StringUtils.createSign(paramMap);;
+						String param = StringUtils.createJson(paramMap);
+						logger.error(logstr+param);
+						String url = CustomDefind.UNIONIP;
+						//测试地址，上线前去掉
+						//url  ="https://192.168.199.127:8443/api-web/";
+						ret = HttpsProxy.doPost(url+"order/prepay", param, "utf-8", 20000, 20000);
+						logger.error(logstr+ret);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+	}
+	/**
+	 * 同步车主余额到泊链
+	 * @param uin
+	 * @param money
+	 * @type 0普通同步，1预付订单
+	 */
+	private void syncUserBalance(final Long uin){
+		logger.error("update balance ,需要同步到泊链平台 uin:"+uin);
+		Double money = 0.0; 
+		Integer isBindUser = getBindflag(uin);
+		Map<String, Object> user =null; 
+		boolean isSend = false;		
+		if(isBindUser==0){//微信虚拟用户
+			user = daService.getMap("select balance from wxp_user_tb" +
+					" where uin = ? ", new Object[]{uin});
+			if(user==null||user.isEmpty()){
+				logger.error("update balance 同步用户余额出错，微信用户不存在 ....");
+				return ;
+			}
+			money = StringUtils.formatDouble(user.get("balance"));
+			isSend = true;
+		}else {
+			user = daService.getMap("select balance from user_info_tb " +
+					" where id = ? and auth_flag=? ", new Object[]{uin,4});
+			if(user==null||user.isEmpty()){
+				logger.error("update balance 同步用户余额出错，用户不存在 ....");
+				return ;
+			}
+			Map profileMap =daService.getMap("select * from user_profile_tb where uin = ? ", new Object[]{uin});
+			if(profileMap==null||profileMap.isEmpty()){
+				logger.error("update balance 同步用户余额出错，用户没有设置文件 ....");
+				return;
+			}
+			Double balance = StringUtils.formatDouble(user.get("balance"));//用户当前余额
+			Integer auto_cash   = (Integer)profileMap.get("auto_cash");//是否自动支付，0不支付，1自动支付
+			Double bolinkLimit = StringUtils.formatDouble(profileMap.get("bolink_limit"));//当前泊链设置限额
+			Integer limit_money = (Integer)profileMap.get("limit_money");//用户在停车宝平台限额，-1时是不限额度
+			if(auto_cash==0){//用户关闭了自动支付
+				money=0.0;
+			}else {
+				if(limit_money==-1){//用户设置了不封顶
+					money = balance;
+				}else {//用户设置了限额值
+					money = balance>limit_money?limit_money.doubleValue():balance;//余额和限额比较，取小的
+				}
+			}
+			logger.error("update balance 同步余额，需要同步的余额："+money+"，泊链当前余额："+bolinkLimit);
+			if(money!=bolinkLimit)//需要同步的余额与上次不同时，需要同步
+				isSend = true;
+		}
+		if(!isSend){
+			logger.error("update balance 同步用户余额，账户与泊链账户一致，不需要同步 ....");
+			return;
+		}
+		String url = CustomDefind.UNIONIP+"user/updateuser";
+		/*Integer isPrepay = type==0?type:1;
+		String prePayInfo=null;
+		if(type>1){
+			Map<String, Object> bolinkOrderMap = unionPrepayOrderInfo(type);
+			if(bolinkOrderMap!=null&&!bolinkOrderMap.isEmpty())
+				prePayInfo = bolinkOrderMap.get("union_id")+"_"+bolinkOrderMap.get("order_id");
+		}*/
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("user_id", uin);
-		paramMap.put("plate_number", carNumber);
-		paramMap.put("balance", money);
+		paramMap.put("type",1);//1更新余额，2删除会员 3更新或添加新车牌 4删除车牌
+		paramMap.put("balance",money);
+		//paramMap.put("is_prepay",isPrepay);
 		paramMap.put("union_id", CustomDefind.UNIONID);
+		//paramMap.put("prepay_info", prePayInfo);//预付订单信息 ，停车平台厂商账户_第三方订单号
+		//paramMap.put("prepay_money", prepay);
 		paramMap.put("rand", Math.random());
 		String ret = "";
-		int uploadState=0;
 		try {
-			logger.error(paramMap);
-			StringUtils.createSign(paramMap);;
+			StringUtils.createSign(paramMap);
 			String param = StringUtils.createJson(paramMap);
-			logger.error(param);
-			String url = CustomDefind.UNIONIP+"user/adduser";
+			logger.error("update balance"+paramMap);
 			ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
 			JSONObject object = new JSONObject(ret);
+			logger.error("update balance"+ret);
 			if(object!=null){
-				uploadState = object.getInt("state");
-				if(uploadState==1){
-					if(type==1){
-						daService.update("update user_info_tb set upload_union_time=?,union_state=? " +
-								"where id =?", new Object[]{System.currentTimeMillis()/1000,1,uin});
-						daService.update("update user_profile_tb set bolink_limit=? where uin = ? ", new Object[]{money,uin});
-					}else {
-						daService.update("update wxp_user_tb union_state=? where id =?", new Object[]{1,uin});
-					}
+				Integer uploadState = object.getInt("state");
+				if(uploadState==1&&isBindUser==1){
+					int r = daService.update("update user_profile_tb set bolink_limit =? where uin =? ", new Object[]{money,uin});
+					logger.error("update balance,update bolink_limit :"+r);
 				}else {
-					logger.error(object.get("errmsg"));
+					logger.error("update balance:"+object.get("errmsg"));
 				}
 			}
 		} catch (Exception e) {
@@ -5526,11 +5567,172 @@ public class PublicMethods {
 	}
 	
 	/**
+	 * 删除泊链会员
+	 * @param uin
+	 * @param money
+	 */
+	private void syncUserDelete(final String uin){
+		ExecutorService messagePool=ExecutorsUtil.getMessageService();
+		messagePool.execute(new Runnable() {
+			@Override
+			public void run() {
+				logger.error("delete bolink user....");
+				String url = CustomDefind.UNIONIP+"user/updateuser";
+				Map<String, Object> paramMap = new HashMap<String, Object>();
+				paramMap.put("user_id", uin);
+				paramMap.put("type",2);//1更新余额，2删除会员 3更新或添加新车牌 4删除车牌
+				paramMap.put("union_id", CustomDefind.UNIONID);
+				paramMap.put("rand", Math.random());
+				String ret = "";
+				try {
+					StringUtils.createSign(paramMap);
+					String param = StringUtils.createJson(paramMap);
+					ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
+					logger.error("delete bolink user. ret ="+ret);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	/**
+	 * 同步车牌到泊链
+	 * @param uin
+	 * @param carNumber
+	 * @param newCarNumber 为空时，是新加一个车牌
+	 * @param type 0添加车牌 1修改车牌
+	 */
+	public void syncUserAddPlateNumber(final Long uin,final String plateNumber,final String newPlateNumber){
+		ExecutorService messagePool=ExecutorsUtil.getMessageService();
+		messagePool.execute(new Runnable() {
+			@Override
+			public void run() {
+//				String isUpToUnion  = CustomDefind.ISUPTOUNION;
+//				if(isUpToUnion.equals("0"))
+//					return ;
+				Integer isBind = getBindflag(uin);
+				if(isBind==1){
+					Long count = daService.getLong("select count(id) from user_info_tb where id =? and union_state>?", new Object[]{uin,0});
+					if(count==0){
+						logger.error("update car_number,车主未同步到泊链平台,开始同步车主...");
+						syncUserToBolink(uin);
+						return;
+					}
+				}else {
+					Long count = daService.getLong("select count(id) from wxp_user_tb where uin =? and union_state>?", new Object[]{uin,0});
+					if(count==0){
+						logger.error("update car_number,微信车主未同步到泊链平台,开始同步车主...");
+						syncUserToBolink(uin);
+						return;
+					}
+				}
+				logger.error("update car_number,需要同步车主车到泊链平台，carnumber:"+plateNumber+",newcarnumber:"+newPlateNumber);
+				bolinkUpdatePlateNumber(uin, plateNumber,newPlateNumber);
+			}
+		});
+		
+	}
+	/**
+	 * 同步删除泊链会员车牌
+	 * @param uin
+	 * @param money
+	 */
+	public void syncUserPlateNumberDelete(final String uin, final String plateNumber){
+		ExecutorService messagePool=ExecutorsUtil.getMessageService();
+		messagePool.execute(new Runnable() {
+			@Override
+			public void run() {
+				logger.error("delete bolink user plateNumber....");
+				String url = CustomDefind.UNIONIP+"user/updateuser";
+				Map<String, Object> paramMap = new HashMap<String, Object>();
+				paramMap.put("user_id", uin);
+				paramMap.put("plate_number", plateNumber);
+				paramMap.put("type",4);//1更新余额，2删除会员 3更新或添加新车牌 4删除车牌
+				paramMap.put("union_id", CustomDefind.UNIONID);
+				paramMap.put("rand", Math.random());
+				String ret = "";
+				try {
+					StringUtils.createSign(paramMap);
+					String param = StringUtils.createJson(paramMap);
+					ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
+					logger.error("delete bolink user plateNumber. ret ="+ret);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+	}
+	
+	/**
+	 * 注册车主到泊链
+	 * @param uin 账户
+	 * @param money 余额 
+	 * @param carNumber 车牌
+	 * @param type 0微信用户，1注册车主 
+	 * @param uptype 0普通同步，1预付
+	 * @return
+	 */
+	private int bolinkRegUser(Long uin,Double money,String carNumber,int type){
+		String loggstr = "upload user to bolink : ";
+		Map<String, Object> paramMap = new HashMap<String, Object>();  
+		/*Integer isPrepay = uptype==0?uptype:1;
+		String prePayInfo=null;
+		if(uptype>1){
+			Map<String, Object> bolinkOrderMap = unionPrepayOrderInfo(uptype);
+			if(bolinkOrderMap!=null&&!bolinkOrderMap.isEmpty())
+				prePayInfo = bolinkOrderMap.get("union_id")+"_"+bolinkOrderMap.get("order_id");
+		}*/
+		paramMap.put("user_id", uin);
+		paramMap.put("plate_number", carNumber);
+		paramMap.put("balance", money);
+		paramMap.put("union_id", CustomDefind.UNIONID);
+		paramMap.put("rand", Math.random());
+		//paramMap.put("is_prepay", isPrepay);
+		//paramMap.put("prepay_info", prePayInfo);//预付订单信息，停车平台厂商账户_第三方订单号
+		//paramMap.put("prepay_money", prepay);
+		String ret = "";
+		int uploadState=0;
+		try {
+			logger.error(loggstr+paramMap);
+			StringUtils.createSign(paramMap);;
+			String param = StringUtils.createJson(paramMap);
+			logger.error(loggstr+param);
+			String url = CustomDefind.UNIONIP+"user/adduser";
+			ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
+			JSONObject object = new JSONObject(ret);
+			if(object!=null){
+				uploadState = object.getInt("state");
+				if(uploadState==1){
+					if(type==1){
+						int r = daService.update("update user_info_tb set upload_union_time=?,union_state=? " +
+								"where id =?", new Object[]{System.currentTimeMillis()/1000,1,uin});
+						logger.error(loggstr+"update user:"+r);
+						r = daService.update("update user_profile_tb set bolink_limit=? where uin = ? ", new Object[]{money,uin});
+						logger.error(loggstr+"update userprofile:"+r);
+						return r;
+					}else {
+						int r = daService.update("update wxp_user_tb set union_state=? where uin =?", new Object[]{1,uin});
+						logger.error(loggstr+"update weixin user :"+r);
+						return r;
+					}
+				}else {
+					logger.error(object.get("errmsg"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	/**
 	 * 添加车牌到泊链
 	 * @param uin
 	 * @param plateNumber
 	 */
 	private void bolinkUpdatePlateNumber(Long uin,String plateNumber,String newPlateNumber){
+		String logstr="upload user car_number : ";
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("user_id", uin);
 		paramMap.put("type", 3);
@@ -5541,108 +5743,46 @@ public class PublicMethods {
 		String ret = "";
 		int uploadState=0;
 		try {
-			logger.error(paramMap);
+			logger.error(logstr+paramMap);
 			StringUtils.createSign(paramMap);;
 			String param = StringUtils.createJson(paramMap);
-			logger.error(param);
+			logger.error(logstr+param);
 			ret = HttpsProxy.doPost(CustomDefind.UNIONIP+"user/updateuser", param, "utf-8", 20000, 20000);
-			logger.error(ret);
+			logger.error(logstr+ret);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	/**
-	 * 删除泊链会员
-	 * @param uin
-	 * @param money
-	 */
-	public void syncUserDelete(String uin){
-		logger.error("delete bolink user....");
-		String url = CustomDefind.UNIONIP+"user/updateuser";
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		paramMap.put("user_id", uin);
-		paramMap.put("type",2);//1更新余额，2删除会员 3更新或添加新车牌 4删除车牌
-		paramMap.put("union_id", CustomDefind.UNIONID);
-		paramMap.put("rand", Math.random());
-		String ret = "";
-		try {
-			StringUtils.createSign(paramMap);
-			String param = StringUtils.createJson(paramMap);
-			ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
-			logger.error("delete bolink user. ret ="+ret);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	/**
-	 * 同步删除泊链会员车牌
-	 * @param uin
-	 * @param money
-	 */
-	public void syncUserPlateNumberDelete(String uin,String plateNumber){
-		logger.error("delete bolink user plateNumber....");
-		String url = CustomDefind.UNIONIP+"user/updateuser";
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		paramMap.put("user_id", uin);
-		paramMap.put("plate_number", plateNumber);
-		paramMap.put("type",4);//1更新余额，2删除会员 3更新或添加新车牌 4删除车牌
-		paramMap.put("union_id", CustomDefind.UNIONID);
-		paramMap.put("rand", Math.random());
-		String ret = "";
-		try {
-			StringUtils.createSign(paramMap);
-			String param = StringUtils.createJson(paramMap);
-			ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
-			logger.error("delete bolink user plateNumber. ret ="+ret);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	/**
-	 * 同步车主余额到泊链
-	 * @param uin
-	 * @param money
-	 */
-	public void syncUserBalance(final Long uin){
-		ExecutorService messagePool=ExecutorsUtil.getMessageService();
-		messagePool.execute(new Runnable() {
-			@Override
-			public void run() {
-				logger.error("update profile,需要同步到泊链平台");
-				Double money = 0.0;
-				String url = CustomDefind.UNIONIP+"user/updateuser";
-				Map<String, Object> paramMap = new HashMap<String, Object>();
-				paramMap.put("user_id", uin);
-				paramMap.put("type",1);//1更新余额，2删除会员 3更新或添加新车牌 4删除车牌
-				paramMap.put("balance",money);
-				paramMap.put("union_id", CustomDefind.UNIONID);
-				paramMap.put("rand", Math.random());
-				String ret = "";
-				try {
-					StringUtils.createSign(paramMap);
-					String param = StringUtils.createJson(paramMap);
-					ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
-					JSONObject object = new JSONObject(ret);
-					logger.error("update profile"+ret);
-					if(object!=null){
-						Integer uploadState = object.getInt("state");
-						if(uploadState==1){
-							int r = daService.update("update user_profile_tb set bolink_limit =? where uin =? ", new Object[]{money,uin});
-							logger.error("update profile,update bolink_limit :"+r);
-						}else {
-							logger.error(object.get("errmsg"));
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	
 	/**到泊链查询实时订单价格**/
-	public Map<String, Object> catBolinkOrder(Long id,String orderId,String plateNumber,String parkId,Integer delayTime){
+	public Map<String, Object> catBolinkOrder(Long id,String orderId,String plateNumber,String parkId,Integer delayTime,Long uin){
+		Map<String, Object> bolinkOrderMap =null;
+		
+		if(id!=null&&id>0){//上次查询不足100秒时，直接返回上次查询价格
+			bolinkOrderMap = pgOnlyReadService.getMap("select * from bolink_order_tb where id =?", new Object[]{id});
+		}else if(orderId!=null){
+			bolinkOrderMap = pgOnlyReadService.getMap("select * from bolink_order_tb where order_id =? and park_id=? ", new Object[]{orderId,parkId});
+		}
+		if(bolinkOrderMap!=null&&!bolinkOrderMap.isEmpty()){
+			Long updateTime = (Long)bolinkOrderMap.get("update_time");
+			Double total = StringUtils.formatDouble(bolinkOrderMap.get("money"));
+			Integer state = (Integer)bolinkOrderMap.get("state");
+			if(state!=null&&state==1){
+				logger.error("query bolink order,订单已支付..."+bolinkOrderMap);
+				bolinkOrderMap.put("state", 2);
+				return bolinkOrderMap;
+			}
+			if(updateTime!=null&&System.currentTimeMillis()/1000-updateTime<10){
+				logger.error("query bolink order,上次查询时间是（"+(System.currentTimeMillis()/1000-updateTime)+"）秒前，从本地订单记录中返回..");
+				bolinkOrderMap.put("state", 1);
+				return bolinkOrderMap;
+			}
+		}
+		
 		logger.error("query bolink order money,需要调用泊链平台查询价格:"+orderId+","+plateNumber+","+id);
-		String url = CustomDefind.UNIONIP+"order/quercurrorder";//CustomDefind.UNIONIP+
+		//String url ="https://120.76.53.128:8443/unionapi/order/quercurrorder";
+		//String url = "https://s.bolink.club/unionapi/order/quercurrorder";//"https://192.168.199.127:8443/api-web/order/quercurrorder";//
+		String url = "https://192.168.199.127:8443/api-web/order/quercurrorder";//
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("order_id", orderId);
 		paramMap.put("plate_number",plateNumber);
@@ -5656,26 +5796,78 @@ public class PublicMethods {
 		try {
 			StringUtils.createSign(paramMap);
 			String param = StringUtils.createJson(paramMap);
+			//trustAllHosts();
 			ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
 			JSONObject object = new JSONObject(ret);
 			retMap.put("money", 0.0);
 			logger.error("query bolink order money "+ret);
 			if(object!=null){
 				Integer uploadState = object.getInt("state");
+				for (Iterator<String> iter = object.keys(); iter.hasNext();) { 
+					String key = (String)iter.next();
+					Object value = object.get(key);
+					retMap.put(key, value);
+				}
 				if(uploadState==1){
 					money = object.getDouble("money");
-					for (Iterator<String> iter = object.keys(); iter.hasNext();) { 
-						String key = (String)iter.next();
-					    Object value = object.get(key);
-					    retMap.put(key, value);
-					}
+					logger.error("money:"+money);
 					if(id!=null){
 						if(money>0){
-							int r = daService.update("update bolink_order_tb set money =?,update_time=? where id =? ",
-									new Object[]{money,System.currentTimeMillis()/1000,id});
+							int r = daService.update("update bolink_order_tb set money =?,update_time=?,order_id=?,uin=?,duration=?,park_id=? where id =? ",
+									new Object[]{money,System.currentTimeMillis()/1000,retMap.get("order_id"),uin,retMap.get("duration"),retMap.get("park_id"),id});
 							logger.error("query bolink order money by orderid ,update order :"+r);
 						}
+					}else {//先查询是否已有记录，没有就写订单到本地
+						Map preOrderMap  = pgOnlyReadService.getMap("select id,prepay from bolink_order_tb " +
+								"where order_id=? and union_id =?  and state =?   ",
+								new Object[]{retMap.get("order_id"),Long.valueOf(retMap.get("union_id")+""),0});
+						logger.error("query bolink order 扫码查订单，本地记录数："+preOrderMap);
+						if(preOrderMap==null||preOrderMap.isEmpty()){
+							Long oid = daService.getkey("seq_bolink_order_tb");
+							String sql ="insert into bolink_order_tb (id,union_id,start_time,state," +
+									"in_time,update_time,union_name,park_name,plate_number,order_id,uin,money,duration,park_id) " +
+									"values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+							Object[] parmas = new Object[]{oid,
+									Long.valueOf(retMap.get("union_id")+""),
+									Long.valueOf(retMap.get("start_time")+""),
+									0,Long.valueOf(retMap.get("start_time")+""),
+									System.currentTimeMillis()/1000,
+									AjaxUtil.decodeUTF8(retMap.get("union_name")+""),
+									AjaxUtil.decodeUTF8(retMap.get("park_name")+""),
+									AjaxUtil.decodeUTF8(retMap.get("plate_number")+""),
+									retMap.get("order_id"),uin,money,retMap.get("duration"),retMap.get("park_id")};
+							int r  = daService.update(sql, parmas);
+							logger.error("query bolink order 扫码查订单，本地没有，新建一条："+r);
+							retMap.put("id", oid);
+						}else {
+							String sql = "update bolink_order_tb set money = ? ,park_id=?,duration=?, update_time =? ";
+							Object[] params = new Object[]{money,retMap.get("park_id"),retMap.get("duration"),System.currentTimeMillis()/1000,preOrderMap.get("id")};
+							if(uin!=null&&uin.intValue()!=-1){
+								sql += ",uin = ? ";
+								params = new Object[]{money,retMap.get("park_id"),retMap.get("duration"),System.currentTimeMillis()/1000,uin,preOrderMap.get("id")};
+							}
+							sql += "where id =? ";
+							int re= daService.update(sql, params);
+							logger.error("query bolink order 扫码查订单，本地存在，更新订单："+re);
+							retMap.put("id", preOrderMap.get("id"));
+							retMap.put("prepay", preOrderMap.get("prepay"));
+						}
 					}
+				}else if(uploadState==2){//电子支付过
+					if(Check.isEmpty(plateNumber)&&retMap.containsKey("plate_number"))
+						plateNumber = (String)retMap.get("plate_number");
+					Map orderMap = daService.getMap("select * from bolink_order_tb where plate_number =? and order_id =? ", 
+							new Object[]{plateNumber,retMap.get("order_id")});
+					if(orderMap!=null&&orderMap.get("prepay")!=null){
+						Double prepay = StringUtils.formatDouble(orderMap.get("prepay"));
+						Double total = StringUtils.formatDouble(retMap.get("money"));
+						if(prepay.equals(total)){
+							logger.error("query bolink order money,已预付过...");
+							orderMap.put("state", 2);
+							return orderMap;
+						}
+					}
+					
 				}else {
 					logger.error("query bolink order money "+object.get("errmsg"));
 				}
@@ -5685,111 +5877,311 @@ public class PublicMethods {
 		}
 		return retMap;
 	}
+	
+	
+	/**
+	 * 去泊链查询当前订单价格,订单在第三方支付平台的订单编号,在第三方平台的用户编号
+	 * @return
+	 */
+	public Map<String,Object> catPresentOrderPrice(Long unionId, String parkId, String plateNumber, String orderId){
+		logger.error("query present order money,需要调用泊链平台查询价格:"+orderId+","+plateNumber+","+parkId+","+unionId);
+		String url ="https://s.bolink.club/unionapi/tothirdprice";// CustomDefind.UNIONIP+"order/quercurrorder";//CustomDefind.UNIONIP+
+		//String url ="https://120.76.53.128:8443/unionapi/tothirdprice";// CustomDefind.UNIONIP+"order/quercurrorder";//CustomDefind.UNIONIP+
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("order_id", orderId);
+		paramMap.put("plate_number",plateNumber);
+		paramMap.put("park_id",parkId);
+		//paramMap.put("delay_time",delayTime);
+		paramMap.put("union_id", CustomDefind.UNIONID);
+		//paramMap.put("rand", Math.random());
+		Double money = 0.0d;
+		Double prepay = 0.0d;
+		Map<String, Object> retMap = new HashMap<String, Object>();
+		String ret = "";
+		try {
+			String signstr = StringUtils.createLinkString(paramMap,0)+"key="+CustomDefind.UNIONKEY;
+			logger.error("query present order>>>签名串:"+signstr);
+			StringUtils.createSign(paramMap);
+			String param = StringUtils.createJson(paramMap);
+			//trustAllHosts();
+			logger.error("query present order>>>"+param);
+			ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
+			if(ret.length()<5){
+				retMap.put("state", 0);
+				retMap.put("errmsg", "泊链没有在场订单");
+				return retMap;
+			}
+			logger.error("query present order>>>ret"+ret);
+			JSONObject object = new JSONObject(ret);
+			retMap.put("money", 0.0);
+			if(object!=null){
+				Integer state = object.getInt("state");
+				if(state>0){
+					//验签
+					money = object.getDouble("money");
+					if(state==2){
+						prepay = object.getDouble("prepay");
+						retMap.put("prepay", prepay);
+					}
+					retMap.put("state", state);
+					retMap.put("money", money);
+				}else{
+					retMap.put("state", 0);
+					//retMap.put("errmsg", object.get("errmsg"));
+				}
+				//retMap.put("uin", object.get("uin"));
+				logger.error("query present order>>>retMap:"+object);
+			}else{
+				logger.error("query present order>>>查询失败");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return retMap;
+	}
+	
 	/**查询是否是已上传到泊链的车场*/
 	private boolean isUnionPark(Long comid) {
 		String isUpToUnion  = CustomDefind.ISUPTOUNION;
 		if(isUpToUnion.equals("0"))
 			return false;
 		Map<String, Object> park = pgOnlyReadService.getMap(
-				"select union_state from com_info_tb where id =? ", new Object[]{comid});
+				"select * from com_info_tb where id =? ", new Object[]{comid});
 		if(park!=null){
 			Integer unionState =(Integer)park.get("union_state");
 			if(unionState!=null&&unionState>0)
 				return true;
+			else {
+				uploadParkToBolink(park);
+			}
 		}
  		return false;
 	}
+
 	/**
-	 * 检查是否是更新用户余额
-	 * @param sql
-	 * @return
+	 * 上传车场到泊链
+	 * @param map
 	 */
-	public String isUpdateUserBalance(String sql){
-		if(sql.toLowerCase().indexOf("balance")!=-1){
-			if(sql.toLowerCase().indexOf("user_info_tb")!=-1)
-				return "user";//注册用户
-			else if(sql.toLowerCase().indexOf("wxp_user_tb")!=-1)
-				return "weixin";//微信虚拟账户
-		}
-		return "";//不是用户余额变化
-	}
-	
-	/*//同步用户限额到泊链 
-	public void syncUserLimit(final Long uin,final String type){
+	private void uploadParkToBolink(final Map<String, Object> map){
+		if(map.get("longitude")==null||map.get("latitude")==null)
+			return;
 		ExecutorService messagePool=ExecutorsUtil.getMessageService();
 		messagePool.execute(new Runnable() {
 			@Override
 			public void run() {
-				boolean isSync= false;
-				Double sysMoney = 0.0;
-				if(type.equals("user")){//注册车主同步到泊链
-					Map user = pgOnlyReadService.getPojo("select balance from user_info_tb where union_state>? and id =? ", new Object[]{0,uin});
-					logger.error("update user balance :user="+user);
-					if(user!=null){
-						Map userLimt = pgOnlyReadService.getPojo("select limit_money,auto_cash,bolink_limit from user_profile_tb where uin = ? ", new Object[]{uin});
-						logger.error("update user balance :userLimt="+userLimt);
-						if(userLimt!=null){
-							Integer userSetLimit = (Integer)userLimt.get("limit_money");
-							Double balance =StringUtils.formatDouble(user.get("balance"));
-							Integer isAuto =(Integer)userLimt.get("auto_cash");
-							Double bolinkLimit = StringUtils.formatDouble(userLimt.get("bolink_limit"));
-							logger.error("update user balance :userSetLimit="+userSetLimit+",balance="+balance+",bolinkLimit="+bolinkLimit);
-							sysMoney=balance;
-							if(isAuto==1){//设置了自动支付，需要同步
-								if(userSetLimit>0){//有限额
-									if(balance<userSetLimit){//余额小于用户设置的限额，把余额同步到泊链
-										isSync=true;
-									}else if(userSetLimit.doubleValue()!=bolinkLimit){//余额大于或等于用户设置的限额，如果用户设置的限额与泊链的限额不等，把用户设置的限额同步到泊链
-										isSync=true;
-										sysMoney = userSetLimit.doubleValue();
-									}
-								}else {
-									isSync=true; 
-								}
-							}
-							logger.error("update user balance :isSync="+isSync+",syncMoney:"+sysMoney);
+				String url = CustomDefind.UNIONIP+"park/addpark";
+				Map<String, Object> paramMap = new HashMap<String, Object>();
+				paramMap.put("park_id", map.get("id"));
+				paramMap.put("name", map.get("company_name"));
+				paramMap.put("address", map.get("address"));
+				paramMap.put("phone", map.get("phone"));
+				paramMap.put("lng",  map.get("longitude")+"");
+				paramMap.put("lat",  map.get("latitude")+"");
+				paramMap.put("total_plot",  map.get("parking_total"));
+				paramMap.put("empty_plot",  map.get("parking_total"));
+				paramMap.put("price_desc", getPrice(Long.valueOf(map.get("id")+"")));
+				paramMap.put("remark",map.get("remarks"));
+				paramMap.put("union_id", CustomDefind.UNIONID);
+				paramMap.put("server_id", CustomDefind.SERVERID);
+				paramMap.put("rand", Math.random());
+				String ret = "";
+				try {
+					StringUtils.createSign(paramMap);
+					String param = StringUtils.createJson(paramMap);
+					logger.error("upload park to bolink..."+param);
+					ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
+					JSONObject object = new JSONObject(ret);
+					logger.error("upload park to bolink..."+ret);
+					if(object!=null){
+						Integer uploadState = object.getInt("state");
+						if(uploadState==1){
+							daService.update("update com_info_tb set upload_union_time=?,union_state=? " +
+									"where id =?", new Object[]{System.currentTimeMillis()/1000,2,map.get("id")});
+						}else {
+							logger.error(object.get("errmsg"));
 						}
 					}
-				}else {//虚拟账户（微信）同步到泊链
-					Map user = pgOnlyReadService.getPojo("select balance from wxp_user_tb where uin=?  ", new Object[]{uin});
-					logger.error("update user balance :user="+user);
-					if(user!=null&&!user.isEmpty()){
-						sysMoney = StringUtils.formatDouble(user.get("balance"));
-						isSync=true;
-					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-			    if(isSync){
-			    	logger.error("update user balance,需要同步到泊链平台");
-			    	String url = CustomDefind.UNIONIP+"user/updateuser";
-			    	Map<String, Object> paramMap = new HashMap<String, Object>();
-			    	paramMap.put("user_id", uin);
-			    	paramMap.put("type",1);//1结算订单  2修改订单金额
-			    	paramMap.put("balance", sysMoney);
-			    	paramMap.put("union_id", CustomDefind.UNIONID);
-			    	paramMap.put("rand", Math.random());
-			    	String ret = "";
-			    	try {
-			    		StringUtils.createSign(paramMap);
-			    		String param = StringUtils.createJson(paramMap);
-			    		ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
-			    		JSONObject object = new JSONObject(ret);
-			    		logger.error("update  user balance"+ret);
-			    		if(object!=null){
-			    			Integer uploadState = object.getInt("state");
-			    			if(uploadState==1){
-			    				if(type.equals("user")){
-			    					int r = daService.update("update user_profile_tb set bolink_limit =? where uin =? ", new Object[]{sysMoney,uin});
-			    					logger.error("update  user balance,update bolink_limit :"+r);
-			    				}
-			    			}else {
-			    				logger.error("update user balance"+object.get("errmsg"));
-			    			}
-			    		}
-			    	} catch (Exception e) {
-			    		e.printStackTrace();
-			    	}
-			    }
+				logger.error(ret);
 			}
 		});
-	}*/
+	}
+	/**
+	 * 取首小时价格
+	 * @param parkId
+	 * @return
+	 */
+	private String getPrice(Long parkId){
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+		//开始小时
+		int bhour = calendar.get(Calendar.HOUR_OF_DAY);
+		List<Map> priceList=daService.getAll("select * from price_tb where comid=? " +
+				"and state=? and pay_type=? order by id desc", new Object[]{parkId,0,0});
+		if(priceList==null||priceList.size()==0){//没有按时段策略
+			//查按次策略
+			priceList=daService.getAll("select * from price_tb where comid=? " +
+					"and state=? and pay_type=? order by id desc", new Object[]{parkId,0,1});
+			if(priceList==null||priceList.size()==0){//没有按次策略，返回提示
+				return "0元/次";
+			}else {//有按次策略，直接返回一次的收费
+				Map timeMap =priceList.get(0);
+				Integer unit = (Integer)timeMap.get("unit");
+				if(unit!=null&&unit>0){
+					if(unit>60){
+						String t = "";
+						if(unit%60==0)
+							t = unit/60+"小时";
+						else
+							t = unit/60+"小时 "+unit%60+"分钟";
+						return timeMap.get("price")+"元/"+t;
+					}else {
+						return timeMap.get("price")+"元/"+unit+"分钟";
+					}
+				}else {
+					return timeMap.get("price")+"元/次";
+				}
+			}
+			//发短信给管理员，通过设置好价格
+		}else {//从按时段价格策略中分拣出日间和夜间收费策略
+			if(priceList.size()>0){
+				//logger.error(priceList);
+				for(Map map : priceList){
+					Integer btime = (Integer)map.get("b_time");
+					Integer etime = (Integer)map.get("e_time");
+					Double price = Double.valueOf(map.get("price")+"");
+					Double fprice = Double.valueOf(map.get("fprice")+"");
+					Integer ftime = (Integer)map.get("first_times");
+					if(ftime!=null&&ftime>0){
+						if(fprice>0)
+							price = fprice;
+					}
+					if(btime<etime){//日间 
+						if(bhour>=btime&&bhour<etime){
+							return price+"元/"+map.get("unit")+"分钟";
+						}
+					}else {
+						if(bhour>=btime||bhour<etime){
+							return price+"元/"+map.get("unit")+"分钟";
+						}
+					}
+				}
+			}
+		}
+		return "0.0元/小时";
+	}
+	
+	/**
+	 * 查询泊链订单信息
+	 * @param bolinkOrderId
+	 * @return
+	 */
+	private Map<String, Object> unionPrepayOrderInfo(Integer bolinkOrderId){
+		 Map<String, Object> orderMap = pgOnlyReadService.getMap("select union_id,order_id " +
+		 		"from bolink_order_tb where id = ? ", new Object[]{bolinkOrderId.longValue()});
+		 return orderMap;
+	}
+	
+	/**
+	 * 判断是否是攻击，3秒内请求了6次，定义为攻击，放入黑名单缓存
+	 * @param ip
+	 * @return
+	 */
+	public boolean isTruck(String ip) {
+		//取出已缓存的黑名单
+		List<String> ipTruckList =memcacheUtils.doListStringCache("login_ip_caches", null, null);
+		if(ipTruckList!=null&&ipTruckList.contains(ip))//黑名单中存在，直接返回
+			return true;
+		//取出已请求的历史
+		List<Long> times = ZldMap.ipMap.get(ip);
+		if(times==null)
+			times = new ArrayList<Long>();
+		Long ntime = System.currentTimeMillis()/1000;
+		//如果已请求的已超过5次
+		if(times.size()>5){
+			Long fistTime = times.get(0);
+			if(ntime-fistTime<3){//3秒内请求了6次，定义为攻击，放入黑名单缓存
+				if(ipTruckList==null)
+					ipTruckList = new ArrayList<String>();
+				ipTruckList.add(ip);
+				memcacheUtils.doListStringCache("login_ip_caches", ipTruckList, "update");
+				return true;
+			}else{//不符合攻击条件，移除第一次请求时间，加上最后一次请求时间
+				times.remove(0);
+				times.add(ntime);
+			}
+		}else {
+			times.add(ntime);
+			ZldMap.putIpMap(ip, times);
+		}
+		return false;
+	}
+	
+	
+	
+	/**
+	 * 同步月卡续费信息到泊链
+	 * zhangq
+	 * 2017-5-24
+	 */
+	public void syncMothPayToBolink(final Map<String, Object> paramMap){
+		ExecutorService messagePool=ExecutorsUtil.getMessageService();
+		messagePool.execute(new Runnable() {
+			@Override
+			public void run() {
+				logger.error("pay monthcard--月卡续费时发给泊链的参数Map"+paramMap);
+				String url = CustomDefind.UNIONIP+"monthcard/paymonthcard";
+				String ret = "";
+				try {
+					StringUtils.createSign(paramMap);
+					String param = StringUtils.createJson(paramMap);
+					logger.error("pay monthcard---月卡续费时发给泊链的转json后的参数Map"+param);
+					ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
+					logger.error("pay monthcard-----月卡续费泊链操作后的返回结果--"+ret);
+					JSONObject object = new JSONObject(ret);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	public static void trustAllHosts() {
+        // Create a trust manager that does not validate certificate chains
+        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[] {};
+                    }
+ 
+                    public void checkClientTrusted(X509Certificate[] chain, String authType)
+                            throws CertificateException {
+                    }
+ 
+                    public void checkServerTrusted(X509Certificate[] chain, String authType)
+                            throws CertificateException {
+                    }
+
+					@Override
+					public void checkClientTrusted(
+							java.security.cert.X509Certificate[] arg0,
+							String arg1)
+							throws java.security.cert.CertificateException {
+				}
+				@Override
+				public void checkServerTrusted(
+						java.security.cert.X509Certificate[] arg0,
+						String arg1)
+						throws java.security.cert.CertificateException {
+				}
+            }
+        };
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -2,11 +2,14 @@ package com.zld.struts.request;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -136,15 +139,18 @@ public class ZldHdApi {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)       
 	public void insertSensor(String params,
 			@Context ServletContext context,
-			@Context HttpServletResponse response)throws IOException {
+			@Context HttpServletResponse response
+			,@Context HttpServletRequest request)throws IOException {
 		Map<String, String> paramMap = ZldUploadUtils.stringToMap(params);
-		logger.error("paramMap:"+paramMap);
+		//logger.error("paramMap:"+paramMap);
 		ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(context);
 		DataBaseService daService = (DataBaseService) ctx.getBean("dataBaseService");
 		PgOnlyReadService pService = (PgOnlyReadService) ctx.getBean("pgOnlyReadService");
 		CommonMethods commonMethods = (CommonMethods)ctx.getBean("commonMethods");
 		Long curTime = System.currentTimeMillis()/1000;
 		String sensornumber = paramMap.get("sensornumber");
+		logger.error(StringUtils.getIpAddr(request));
+		logger.error("心跳,paramMap:"+paramMap);
 		double magnetism = 0;
 		double battery = 0;
 		long siteId = -1L;
@@ -162,38 +168,41 @@ public class ZldHdApi {
 				siteId = (Long)map.get("id");
 			}
 		}
-		logger.error("siteId:"+siteId);
+		//logger.error("paramMap:"+paramMap+",siteId:"+siteId);
 		Long count = daService.getLong("select count(id) from dici_tb where did=? and is_delete=? ", 
 				new Object[]{sensornumber, 0});
-		logger.error("count:"+count);
+		//logger.error("count:"+count);
 		if(count == 0){
 			int ret = daService.update("insert into dici_tb (did,magnetism,battery,site_id," +
 					"operate_time,beart_time) values(?,?,?,?,?,?)", 
 					new Object[]{sensornumber, magnetism, battery, siteId, curTime, curTime});
-			logger.error("ret:"+ret);
+			//logger.error("ret:"+ret);
 		}else{
 			if(battery > 0){//讯朗的车间器每天只传几次电压，其他时候电压值都传0
 				int ret = daService.update("update dici_tb set beart_time=?,magnetism=?," +
 						"battery=?,site_id=? where did=? ", 
 						new Object[]{curTime, magnetism, battery, siteId, sensornumber});
-				logger.error("ret:"+ret);
+				//logger.error("ret:"+ret);
 			}else{
 				int ret = daService.update("update dici_tb set beart_time=?,magnetism=?," +
 						"site_id=? where did=? ", 
 						new Object[]{curTime, magnetism, siteId, sensornumber});
-				logger.error("ret:"+ret);
+				//logger.error("ret:"+ret);
 			}
 		}
 		AjaxUtil.ajaxOutput(response, StringUtils.createXML1(paramMap));
-		
-		commonMethods.deviceRecover(0, sensornumber, curTime);
-		Map<String, Object> diciMap = pService.getMap("select comid from dici_tb where did=? and is_delete=? ", 
-				new Object[]{sensornumber, 0});
-		Integer comid = -1;
-		if(diciMap != null && diciMap.get("comid") != null){
-			comid = (Integer)diciMap.get("comid");
-		}
-		paramMap.put("source", "InsertSensor");
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+		cal.setTimeInMillis(System.currentTimeMillis());
+		if(cal.get(Calendar.HOUR_OF_DAY)!=18)//每天18点不更新此表
+			commonMethods.deviceRecover(0, sensornumber, curTime);
+		logger.error("心跳,paramMap:处理完成....");
+//		Map<String, Object> diciMap = pService.getMap("select comid from dici_tb where did=? and is_delete=? ", 
+//				new Object[]{sensornumber, 0});
+//		Integer comid = -1;
+//		if(diciMap != null && diciMap.get("comid") != null){
+//			comid = (Integer)diciMap.get("comid");
+//		}
+		//paramMap.put("source", "InsertSensor");
 		//writeToMongodb("zld_hdbeart_logs", paramMap, comid.longValue());
 	}
 	/**
@@ -214,6 +223,7 @@ public class ZldHdApi {
 		DataBaseService daService = (DataBaseService) ctx.getBean("dataBaseService");
 		CommonMethods commonMethods = (CommonMethods)ctx.getBean("commonMethods");
 		PgOnlyReadService pService = (PgOnlyReadService) ctx.getBean("pgOnlyReadService");
+		logger.error("InsertTransmitter ,paramsMap :"+paramMap);
 		String sql = "update sites_tb set heartbeat=? where uuid=? ";
 		Object []values = new Object[]{System.currentTimeMillis()/1000,paramMap.get("transmitternumber")};
 		Double vol = StringUtils.formatDouble(paramMap.get("voltagecaution"));
@@ -223,8 +233,11 @@ public class ZldHdApi {
 					System.currentTimeMillis()/1000,System.currentTimeMillis()/1000,paramMap.get("transmitternumber")};
 		}
 		int ret = daService.update(sql, values);
-		logger.error("InsertTransmitter ret :"+ret+",paramsMap :"+paramMap);
-		commonMethods.deviceRecover(1, paramMap.get("transmitternumber"), System.currentTimeMillis()/1000);
+		//logger.error("InsertTransmitter ret :"+ret+",paramsMap :"+paramMap);
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+		cal.setTimeInMillis(System.currentTimeMillis());
+		if(cal.get(Calendar.HOUR_OF_DAY)!=18)//每天18点不更新此表
+			commonMethods.deviceRecover(1, paramMap.get("transmitternumber"), System.currentTimeMillis()/1000);
 		Integer comid=-1;
 		if(ret>0){
 			Map diciMap = pService.getMap("select comid from dici_tb where did = ? and is_delete=? ",
@@ -236,13 +249,14 @@ public class ZldHdApi {
 			Long ntime = System.currentTimeMillis()/1000;
 			ret = daService.update("insert into sites_tb (uuid,state,voltage,heartbeat,create_time) values(?,?,?,?,?)", 
 					new Object[]{paramMap.get("transmitternumber"),1,Double.valueOf(paramMap.get("voltagecaution")),ntime,ntime});
-			logger.error("InsertTransmitter insert ret :"+ret);
+			//logger.error("InsertTransmitter insert ret :"+ret);
 		}
 		AjaxUtil.ajaxOutput(response, StringUtils.createXML1(paramMap));
 		paramMap.put("battery", paramMap.get("voltagecaution"));
 		paramMap.remove("voltagecaution");
 		paramMap.put("source", "InsertTransmitter");
 		writeToMongodb("zld_hdbeart_logs", paramMap,comid.longValue());
+		logger.error("InsertTransmitter ,处理完成 .....");
 		//logger.error("InsertTransmitter write to mongodb result :"+result+",paramsMap :"+paramMap);
 		
 	}
@@ -280,6 +294,7 @@ public class ZldHdApi {
 		DataBaseService daService = (DataBaseService) ctx.getBean("dataBaseService");
 		MemcacheUtils  memcacheUtils=(MemcacheUtils)ctx.getBean("memcacheUtils");
 		PgOnlyReadService pService = (PgOnlyReadService) ctx.getBean("pgOnlyReadService");
+		logger.error("InsertCarAdmission>>>>>>>车辆进场>>>>>>>>>>InsertCarAdmission "+paramMap);
 		//CarInTime 进场时间
 		//Indicate 配对标示
 		//SensorNumber 车检器编号
@@ -302,7 +317,7 @@ public class ZldHdApi {
 		Long intime = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(carIntime);
 		String sql = "update dici_tb set state = ? where did =? ";
 		int ret =daService.update(sql, new Object[]{1,paramMap.get("sensornumber")});
-		logger.error("InsertCarAdmission>>>>>>>车辆进场>>>>>>>>>>InsertCarAdmission "+paramMap+", update dici state:"+ret);
+		//logger.error("InsertCarAdmission>>>>>>>车辆进场>>>>>>>>>>InsertCarAdmission "+paramMap+", update dici state:"+ret);
 		if(ret<1){//地磁不存在 ，直接返回
 			paramMap.put("error", "地磁不存在");
 			AjaxUtil.ajaxOutput(response, StringUtils.createXML1(paramMap));
@@ -315,12 +330,12 @@ public class ZldHdApi {
 		if(diciMap!=null&&diciMap.get("comid")!=null){
 			dici_id = (Long)diciMap.get("id");
 		}
-		logger.error("did:"+paramMap.get("sensornumber")+",dici_id:"+dici_id);
+		//logger.error("did:"+paramMap.get("sensornumber")+",dici_id:"+dici_id);
 		if(dici_id > 0){
 			//根据地磁编号查找是否已注册到车位
 			Map<String, Object> comParkMap = pService.getMap("select id,berthsec_id,comid,state,order_id from com_park_tb " +
 					"where is_delete=? and  dici_id =? ", new Object[]{0,dici_id});
-			logger.error("did:"+paramMap.get("sensornumber")+",comParkMap:"+comParkMap+",dici_id:"+dici_id);
+			//logger.error("did:"+paramMap.get("sensornumber")+",comParkMap:"+comParkMap+",dici_id:"+dici_id);
 			Long bid =-1L;
 			if(comParkMap != null && !comParkMap.isEmpty()){//地磁已绑定到车位
 				Long pid = (Long)comParkMap.get("id");
@@ -329,14 +344,14 @@ public class ZldHdApi {
 				Long uin = -1L;
 				sql ="select uid from parkuser_work_record_tb where state=? and start_time>? and  berthsec_id =? ";
 				Map userMap = pService.getMap(sql, new Object[]{0,0,comParkMap.get("berthsec_id")});
-				logger.error("InsertCarAdmission find user:"+userMap);
+				//logger.error("InsertCarAdmission find user:"+userMap);
 				if(userMap!=null&&userMap.get("uid")!=null){//查到了收费员
 					uin = (Long)userMap.get("uid");
 				}
 				//是否已生成过订单
-				Long count = daService.getLong("select count(ID) from berth_order_tb where berth_id=? and indicate=? and in_time=? ",
+				Long count = pService.getLong("select count(ID) from berth_order_tb where berth_id=? and indicate=? and in_time=? ",
 						new Object[]{paramMap.get("sensornumber"),paramMap.get("indicate"),intime});
-				logger.error("sensor come in>>>uin:"+uin+",paramMap:"+paramMap+",count:"+count);
+				//logger.error("sensor come in>>>uin:"+uin+",paramMap:"+paramMap+",count:"+count);
 				if(count==0){
 					Integer bind_flag = 0;//默认不可以绑定POS机订单
 					if(state == 0){//当泊位状态是空闲的时候才可以绑定POS机订单
@@ -348,7 +363,7 @@ public class ZldHdApi {
 							paramMap.get("indicate"),comId,comParkMap.get("id"),uin,bind_flag});
 					logger.error("InsertCarAdmission insert berth_order_tb state:"+ret);
 				}
-				logger.error("bid:"+bid+",ret:"+ret);
+				//logger.error("bid:"+bid+",ret:"+ret);
 				//查询地磁对应的泊位对应的泊位段对应的上岗收费员
 //				"(select berthsec_id from com_park_tb where is_delete=? and dici_id ="+
 //				"(select id from dici_tb where did= ?))";
@@ -365,7 +380,7 @@ public class ZldHdApi {
 //			sql ="select berthsec_id from com_park_tb where is_delete=? and dici_id ="+
 //					"(select id from dici_tb where did= ?)";
 //			Map berthMap = daService.getMap(sql, new Object[]{0,paramMap.get("sensornumber")});
-					logger.error("InsertCarAdmission no user write to berthsecid:"+comParkMap.get("berthsec_id"));
+					//logger.error("InsertCarAdmission no user write to berthsecid:"+comParkMap.get("berthsec_id"));
 					//if(berthMap!=null&&berthMap.get("berthsec_id")!=null){//找到了泊位段
 					Long berthSegId = (Long)comParkMap.get("berthsec_id");
 					if(berthSegId != null && berthSegId > 0){
@@ -382,6 +397,7 @@ public class ZldHdApi {
 		paramMap.put("type", "in");
 		writeToMongodb("zld_hdinout_logs", paramMap,comId);
 		//logger.error("InsertCarAdmission write to mongodb result :"+result+",paramsMap :"+paramMap);
+		logger.error("InsertCarAdmission>>>>>>>车辆进场>>>>>>>>>>处理完成");
 		AjaxUtil.ajaxOutput(response, StringUtils.createXML1(paramMap));
 	}
 	
@@ -403,6 +419,7 @@ public class ZldHdApi {
 		CommonMethods  commonMethods=(CommonMethods)ctx.getBean("commonMethods");
 		PublicMethods  publicMethods=(PublicMethods)ctx.getBean("publicMethods");
 		PgOnlyReadService pService = (PgOnlyReadService) ctx.getBean("pgOnlyReadService");
+		logger.error(">>>>>>>车辆出场>>>>>>>>>>InsertCarEntrance "+paramMap);
 		//CarOutTime 出场时间
 		//Indicate  配对标示
 		//SensorNumber 车检器编号
@@ -424,7 +441,7 @@ public class ZldHdApi {
 		Long outtime = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(carIntime);
 		String sql = "update dici_tb set state = ?  where did =? ";
 		int ret =daService.update(sql, new Object[]{0,paramMap.get("sensornumber")});
-		logger.error(">>>>>>>车辆出场>>>>>>>>>>InsertCarEntrance "+paramMap+",update dici state:"+ret);
+		//logger.error(">>>>>>>车辆出场>>>>>>>>>>InsertCarEntrance "+paramMap+",update dici state:"+ret);
 		if(ret<1){//地磁不存在 ，直接返回
 			paramMap.put("error", "地磁不存在");
 			AjaxUtil.ajaxOutput(response, StringUtils.createXML1(paramMap));
@@ -442,7 +459,7 @@ public class ZldHdApi {
 		}
 		Map botMap = pService.getMap("select id,in_time,orderid from berth_order_tb where berth_id=? and indicate=? and state=? order by in_time desc limit ? ", 
 				new Object[]{paramMap.get("sensornumber"),paramMap.get("indicate"),0, 1});
-		logger.error("sensor come out>>>comId:"+comId+",botMap:"+botMap);
+		//logger.error("sensor come out>>>comId:"+comId+",botMap:"+botMap);
 		Long bid = -1L;
 		Long orderid = -1L;
 		if(botMap!=null&&botMap.get("in_time")!=null){
@@ -452,7 +469,9 @@ public class ZldHdApi {
 			if(intime>0){
 				if(comId>0){
 					try {
-						Map<String, Object> orderMap = daService.getMap("select * from order_tb where id=? ", new Object[]{orderid});
+						Map<String, Object> orderMap = null;
+						if(orderid>0)
+							orderMap=pService.getMap("select * from order_tb where id=? ", new Object[]{orderid});
 						if(orderMap != null){
 							Long uin = (Long)orderMap.get("uin");
 							String carNumber =orderMap.get("car_number")+"";
@@ -492,9 +511,9 @@ public class ZldHdApi {
 			}
 			ret = daService.update("update berth_order_tb set out_time =?,state=?,total=? where id=? ", 
 					new Object[]{outtime,1,total,bid});
-			logger.error("InsertCarEntrance update berth_order_tb state:"+ret);
+			//logger.error("InsertCarEntrance update berth_order_tb state:"+ret);
 		}
-		logger.error("bid:"+bid+",ret:"+ret);
+		//logger.error("bid:"+bid+",ret:"+ret);
 		//根据地磁编号查找是否已注册到车位
 		Map<String, Object> comParkMap = pService.getMap("select id,berthsec_id,comid from com_park_tb " +
 				"where is_delete=? and  dici_id =(select id from dici_tb where did=? and is_delete=? )  ", 
@@ -506,18 +525,22 @@ public class ZldHdApi {
 //					"(select berthsec_id from com_park_tb where is_delete=? and dici_id ="+
 //					"(select id from dici_tb where did= ?))";
 			Map userMap = pService.getMap(sql, new Object[]{0,0,comParkMap.get("berthsec_id")});
-			logger.error("InsertCarEntrance find user:"+userMap);
+			//logger.error("InsertCarEntrance find user:"+userMap);
 			String pid =comParkMap.get("id")+"";	
 //			if(comParkMap!=null&&comParkMap.get("id")!=null){
 //				pid = comParkMap.get("id")+"";
 //			}
-			logger.error("userMap:"+userMap);
+			//logger.error("userMap:"+userMap);
 			if(userMap!=null&&userMap.get("uid")!=null){//查到了收费员
 				uin = (Long)userMap.get("uid");
 				if(ret==1&&uin!=null&&uin>0){
-					ret = daService.update("update berth_order_tb set out_uid =? where berth_id=? and indicate=? ", 
-							new Object[]{uin,paramMap.get("sensornumber"),paramMap.get("indicate")});
-					logger.error("InsertCarEntrance >>>>更新出场收费员到地磁订单表："+ret);
+					Long monthTime = TimeTools.getMonthStartSeconds();
+					Long ntime = System.currentTimeMillis()/1000;
+					if(ntime-monthTime<10*86400)
+						monthTime = ntime-10*86400;
+					ret = daService.update("update berth_order_tb set out_uid =? where in_time>? and berth_id=? and indicate=? ", 
+							new Object[]{uin,monthTime,paramMap.get("sensornumber"),paramMap.get("indicate")});
+					//logger.error("InsertCarEntrance >>>>更新出场收费员到地磁订单表："+ret);
 					putMesgToCache("10",uin,pid,"0",bid,memcacheUtils);
 					paramMap.put("uid",uin+"");
 				}
@@ -525,7 +548,7 @@ public class ZldHdApi {
 //				sql ="select berthsec_id from com_park_tb where is_delete=?  and dici_id ="+
 //						"(select id from dici_tb where did= ?)";
 //				Map berthMap = daService.getMap(sql, new Object[]{0,paramMap.get("sensornumber")});
-				logger.error("InsertCarEntrance no user write to berthsecid:"+comParkMap.get("berthsec_id"));
+				//logger.error("InsertCarEntrance no user write to berthsecid:"+comParkMap.get("berthsec_id"));
 				//if(berthMap!=null&&berthMap.get("berthsec_id")!=null){//找到了泊位段
 				Long berthId = (Long)comParkMap.get("berthsec_id");
 				if(berthId!=null&&berthId>0){
@@ -541,6 +564,7 @@ public class ZldHdApi {
 		paramMap.put("type", "out");
 		writeToMongodb("zld_hdinout_logs", paramMap,comId.longValue());
 		//logger.error("InsertCarEntrance write to mongodb result :"+result+",paramsMap :"+paramMap);
+		logger.error(">>>>>>>车辆出场>>>>>>>>>>处理完成.....");
 		AjaxUtil.ajaxOutput(response, StringUtils.createXML1(paramMap));
 	}
 	/**

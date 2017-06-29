@@ -175,6 +175,17 @@ function getAuthIsoperateButtons(){
 			})
 			
 		}});
+		bts.push(
+			{name:"上班时间",
+				fun:function(id){
+					Twin({
+						Id:"collector_set"+id,
+						Title:"上班时间  &nbsp;&nbsp;&nbsp;&nbsp;<font color='red'> 提示：双击关闭此对话框</font>",
+						Content:"<iframe src=\"worktime.do?role_id="+id+"\" style=\"width:100%;height:100%;over-flow:auto\" frameborder=\"0\"></iframe>",
+						Width:T.gww()-100,
+						Height:T.gwh()-50
+					});	
+		}});
 	if(bts.length <= 0){return false;}
 	return bts;
 }

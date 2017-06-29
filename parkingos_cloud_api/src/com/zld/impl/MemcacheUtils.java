@@ -160,6 +160,18 @@ public class MemcacheUtils {
 		});
 	}
 	
+	/**
+	 * @param 
+	 * @return
+	 */
+	public  List<String> doListStringCache(String key,final List<String> value,String updateFlag) {
+		return (List<String>) cacheXMemcache.doCachedTask(new CachedTask<List<String>>(key, updateFlag) {
+			public List<String> run() {
+				return value;
+			}
+		});
+	}
+	
 	/*支付返现缓存，同一车场，同一车主每天只能一个返现3次  ,key = backmoney_times**/
 	/*@SuppressWarnings("unchecked")
 	public   Map<String ,String> doBackMoneyCache(String key,

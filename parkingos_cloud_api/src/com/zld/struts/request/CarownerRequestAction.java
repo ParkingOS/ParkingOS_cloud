@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import pay.Constants;
+import pay.PayConfigDefind;
 
 import com.zld.AjaxUtil;
 import com.zld.CustomDefind;
@@ -66,6 +67,7 @@ public class CarownerRequestAction extends Action{
 			throws Exception {
 		Long ntime = System.currentTimeMillis()/1000;
 		String mobile =RequestUtil.processParams(request, "mobile");
+		String openid =RequestUtil.processParams(request, "openid");
 		String action =RequestUtil.processParams(request, "action");
 		logger.info("-----------------------------action:"+action+",mobile="+mobile);
 		Long comId= RequestUtil.getLong(request, "comid", -1L);
@@ -73,8 +75,8 @@ public class CarownerRequestAction extends Action{
 		Long uin = null;
 		Map userMap =null;
 		Integer client_type=0;
-		if(!"".equals(mobile)){
-			userMap = daService.getPojo("select * from user_info_Tb where mobile=? and auth_flag=? ", new Object[]{mobile,4});
+		if(!"".equals(openid)){
+			userMap = daService.getPojo("select * from user_info_tb where wxp_openid=? and auth_flag=? ", new Object[]{openid,4});
 			if(userMap!=null){
 				uin =(Long) userMap.get("id");
 				if(userMap.get("client_type")!=null)
@@ -87,13 +89,16 @@ public class CarownerRequestAction extends Action{
 //					}
 //				}
 			}else {
-				infoMap.put("info", "mobile is invalid");
+				infoMap.put("info", "openid is invalid");
+				AjaxUtil.ajaxOutput(response, StringUtils.createJson(infoMap));
+				return null;
 			}
-		}else if(comId==-1&&action.indexOf("bonus")==-1){
-			AjaxUtil.ajaxOutput(response, StringUtils.createJson(infoMap));
-			return null;
+		}else {
+			userMap = daService.getPojo("select * from user_info_tb where mobile=? and auth_flag=? ", new Object[]{mobile,4});
+			if(userMap!=null)
+				uin = (Long)userMap.get("id");
 		}
-		logger.error("-----------------------------action:"+action+",uin="+uin+",mobile="+mobile+",client_type:"+client_type);
+		logger.error("-----------------------------action:"+action+",uin="+uin+",mobile="+mobile+",openid="+openid+",client_type:"+client_type);
 		if(action.equals("orderdetail")){//orderdetail:订单详情（历史订单）==
 			infoMap = orderDetail(request,uin);
 			String info = StringUtils.createJson(infoMap);
@@ -156,7 +161,8 @@ public class CarownerRequestAction extends Action{
 			return null;
 			//购买停车券： http://192.168.199.240/zld/carowner.do?action=buyticket&mbile=18101333937&value=10&number=2
 		}else if(action.equals("products")){//products:我已买的包月产品==
-			List<Map<String, Object >> infoList = products(request,uin);
+			//List<Map<String, Object >> infoList = products(request,uin);
+			List<Map<String, Object>> infoList = getproducts(request, uin);
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(infoList));
 			return null;
 			//我的包月产品  http://127.0.0.1/zld/carowner.do?action=products&mobile=15375242041 ==
@@ -271,7 +277,7 @@ public class CarownerRequestAction extends Action{
 			//查代金券 http://127.0.0.1/zld/carowner.do?action=usetickets&mobile=15375242041 
 		}else if(action.equals("getaccount")){
 			//返回余额及可用停车券
-			//查代余额及代金券 http://127.0.0.1/zld/carowner.do?action=getaccount&mobile=18101333937&total=2.8&ptype=1&uid=21694&utype=1
+			//查代余额及代金券 http://127.0.0.1/zld/carowner.do?action=getaccount&mobile=13439680500&total=2.8&ptype=1&uid=21694&utype=1
 			Object balance = userMap.get("balance");
 			String ret = getAccount(request,balance,uin,mobile);
 			//处理没有返回到账户中的停车券
@@ -537,7 +543,7 @@ public class CarownerRequestAction extends Action{
 				logger.error(">>>>>>>>>>>>>>>>>>>>carhonbai target:"+target);
 				return mapping.findForward(target);
 			}else if(operate.equals("caibonusret")){//取红包结果，及全部拆红包结果
-				String openid = RequestUtil.getString(request, "openid");
+				openid = RequestUtil.getString(request, "openid");
 				String accToken = RequestUtil.getString(request, "acctoken");
 				if(uin!=null&&uin!=-1){
 					int isnewuser=setWxUser(openid, accToken, mobile, uin,bid);
@@ -1043,7 +1049,7 @@ public class CarownerRequestAction extends Action{
 						"update car_info_tb set car_number=? where uin=?",
 						new Object[] { carNumber, uin });
 				if(result==1&&oldCarMap!=null){
-					publicMethods.syncUserCarNumber(uin, carNumber, (String)oldCarMap.get("car_number"));
+					publicMethods.syncUserAddPlateNumber(uin, carNumber, (String)oldCarMap.get("car_number"));
 				}
 			} catch (Exception e) {
 				if(e.getMessage().indexOf("car_info_tb_car_number_key")!=-1){
@@ -1098,6 +1104,8 @@ public class CarownerRequestAction extends Action{
 					" auto_cash=?,limit_money=?,update_time=? where uin=?",
 					new Object[]{low_recharge,auto_cash,limit_money,time,uin});
 			logger.error(">>>>>>>>>>>>>>>update profile uin:"+uin+",ret:"+result);
+			if(result==1)
+				publicMethods.syncUserToBolink(uin);//同步到泊链
 			/*if(result==1){//通知泊链平台，修改用户限额
 				//查询车场是否同步过到泊链平台，查出上次同步的限额
 				Map userMap = daService.getMap("select balance ,bolink_limit from user_info_tb u " +
@@ -1961,13 +1969,14 @@ public class CarownerRequestAction extends Action{
 		}
 		return infoMap;
 	}
+	
 	/**
 	 * 我的包月产品
 	 * @param request
 	 * @param uin
 	 * @return
 	 * http://127.0.0.1/zld/carowner.do?action=products&mobile=15375242041 ==
-	 */ 
+	 *//* 
 	private List<Map<String, Object >> products(HttpServletRequest request,Long uin){
 		Long ntime = System.currentTimeMillis()/1000;
 		List<Map<String, Object >> infoList = new ArrayList<Map<String,Object>>();
@@ -2019,7 +2028,184 @@ public class CarownerRequestAction extends Action{
 			}
 		}
 		return infoList;
+	}*/
+	
+	/**
+	 * 我的包月
+	 * @param request
+	 * @param uin
+	 * @return
+	 */
+	private List<Map<String, Object >> getproducts(HttpServletRequest request,Long uin){
+		//uin==>car_number==>prod
+		logger.error("getproducts>>>进入查询用户月卡的action");
+		Long ntime = System.currentTimeMillis()/1000;
+		Long curtime = ntime;
+		List<Map<String, Object >> infoList = new ArrayList<Map<String,Object>>();
+		List<String> allCarnumbers = commonMethods.getAllCarnumbers(uin);
+		ArrayList<Long> ulist = new ArrayList<Long>();
+		for (String cnumber : allCarnumbers) {
+			//根据车牌号查和用户id查月卡记录
+			/*List<Map> pList = daService.getAll("select c.card_id cardid,c.member_id mid,c.car_number carnumbers,p.id prodid,p.p_name,p.b_time pb ,p.e_time pe " +
+					",p.price,p.bmin,p.emin,c.id cid,c.b_time cb,c.e_time ce,c.create_time ,t.company_name " +
+					"from carower_product c ,product_package_tb p ,com_info_tb t where p.comid=t.id and c.pid=p.id and car_number like ? and uin = ?", 
+					new Object[]{"%"+cnumber+"%",uin});*/
+			List<Map> pList = daService.getAll("select c.pid,c.card_id cardid,c.member_id mid,c.car_number carnumbers,c.total," +
+					"c.id cid,c.b_time cb,c.e_time ce,c.create_time ,t.company_name,t.id tid " +
+					"from carower_product c ,com_info_tb t where c.com_id=t.id and car_number like ? and uin = ?", 
+					new Object[]{"%"+cnumber+"%",uin});
+			if(pList!=null&&pList.size()>0){
+				for(Map map : pList){
+					Map<String,Object> infoMap = new HashMap<String, Object>();
+					Long cid = (Long)map.get("cid");
+					Long comid = (Long)map.get("tid");
+					if(ulist.contains(cid)){
+						break;
+					}
+					ulist.add(cid);
+					String cardid = (String) map.get("cardid");
+					String mid = (String) map.get("mid");
+					String carnumbers = (String) map.get("carnumbers");
+					String[] carnums = carnumbers.split("\\|");
+					String carnumber = "";
+					for (String carnum : carnums) {
+						carnumber += carnum+",";
+					}
+					carnumber = carnumber.substring(0, carnumber.length()-1);
+					Long cbtime = (Long)map.get("cb");
+					Long cetime = (Long)map.get("ce");
+					Long pid = (Long) map.get("pid");
+					logger.error("pid:"+pid);
+					if(pid!=null&&pid.intValue()!=-1){
+						Map pmap = daService.getMap("select p_name,b_time,e_time,bmin,emin,price,card_id from product_package_tb where id = ?", new Object[]{pid});
+						//Integer pbtime = (Integer)pmap.get("b_time");
+						//Integer petime = (Integer)pmap.get("e_time");
+						//Integer bmin = (Integer)pmap.get("bmin");
+						//Integer emin = (Integer)pmap.get("emin");
+						//String limtime = pbtime+":";
+						//if(bmin<10)
+						//	limtime +="0";
+						//limtime +=bmin+" - "+petime+":";
+						//if(emin<10)
+						//	limtime+="0";
+						//limtime +=emin;
+						//infoMap.put("limittime",limtime);//时效时段
+						if(pmap!=null){
+							infoMap.put("prodid", pmap.get("card_id"));//包月产品编号
+							infoMap.put("parkname", pmap.get("p_name"));//月卡名称
+						}else{
+							infoMap.put("parkname", "月卡");
+							infoMap.put("prodid", -1);
+						}
+					}else{
+						infoMap.put("parkname", "月卡");
+						infoMap.put("prodid", -1);
+					}
+					infoMap.put("price", map.get("total"));
+					Long limitDay = cetime-curtime;
+					if(limitDay<0)
+						limitDay =0L;
+					infoMap.put("cid", cid);
+					infoMap.put("comid", comid);
+					infoMap.put("cardid", cardid);//月卡订单本地编号
+					infoMap.put("mid", mid);//用户本地编号
+					infoMap.put("carnumber", carnumber);//该月卡对应车牌号
+					infoMap.put("name", map.get("company_name"));
+					infoMap.put("limitdate",TimeTools.getTimeStr_yyyy_MM_dd(cbtime*1000)
+							+" 至  "+TimeTools.getTimeStr_yyyy_MM_dd(cetime*1000));//有效期限
+					//infoMap.put("number", map.get("remain_number"));//剩余数量
+					infoMap.put("resume", map.get("resume"));//描述
+					infoMap.put("limitday", limitDay/(24*60*60));//剩余天数
+					int state = 0;//月卡状态 0：未开始 1:使用中 2已过期
+					if(cbtime <= curtime){
+						if(cetime > curtime){
+							state = 1;//正在使用中
+						}else{
+							state = 2;//已过期
+						}
+					}
+					infoMap.put("state", state);
+					infoMap.put("isthirdpay", PayConfigDefind.getValue("IS_TO_THIRD_WXPAY"));
+					infoList.add(infoMap);
+				}
+			}
+		}
+		
+		return infoList;
 	}
+	
+	/**
+	 * 我的包月产品
+	 * @param request
+	 * @param uin
+	 * @return
+	 * http://127.0.0.1/zld/carowner.do?action=products&mobile=15375242041 ==
+	 */ 
+	private List<Map<String, Object >> products(HttpServletRequest request,Long uin){
+		Long ntime = System.currentTimeMillis()/1000;
+		List<Map<String, Object >> infoList = new ArrayList<Map<String,Object>>();
+		Long curtime = ntime;
+		List<Map> pList = daService.getAll("select c.card_id cardid,c.member_id mid,c.car_number carnumbers,p.id prodid,p.p_name,p.b_time pb ,p.e_time pe " +
+				//",p.remain_number" +
+				",p.price,p.bmin,p.emin,c.id cid,c.b_time cb,c.e_time ce,c.create_time ,t.company_name " +
+				"from carower_product c ,product_package_tb p ,com_info_tb t where p.comid=t.id and c.pid=p.id and uin=?", 
+				new Object[]{uin});
+		if(pList!=null&&pList.size()>0){
+			for(Map map : pList){
+				Map<String,Object> infoMap = new HashMap<String, Object>();
+				String cardid = (String) map.get("cardid");
+				String mid = (String) map.get("mid");
+				String carnumbers = (String) map.get("carnumbers");
+				String[] carnums = carnumbers.split("\\|");
+				String carnumber = "";
+				for (String carnum : carnums) {
+					carnumber += carnum+",";
+				}
+				carnumber = carnumber.substring(0, carnumber.length()-1);
+				Long cbtime = (Long)map.get("cb");
+				Long cetime = (Long)map.get("ce");
+				Integer pbtime = (Integer)map.get("pb");
+				Integer petime = (Integer)map.get("pe");
+				Integer bmin = (Integer)map.get("bmin");
+				Integer emin = (Integer)map.get("emin");
+				String limtime = pbtime+":";
+				if(bmin<10)
+					limtime +="0";
+				limtime +=bmin+" - "+petime+":";
+				if(emin<10)
+					limtime+="0";
+				limtime +=emin;
+				Long limitDay = cetime-curtime;
+				if(limitDay<0)
+					limitDay =0L;
+				infoMap.put("cardid", cardid);//月卡订单本地编号
+				infoMap.put("mid", mid);//用户本地编号
+				infoMap.put("carnumber", carnumber);//该月卡对应车牌号
+				infoMap.put("name", map.get("company_name"));
+				infoMap.put("parkname", map.get("p_name"));
+				infoMap.put("price", map.get("price"));
+				infoMap.put("limitdate",TimeTools.getTimeStr_yyyy_MM_dd(cbtime*1000)
+						+" 至  "+TimeTools.getTimeStr_yyyy_MM_dd(cetime*1000));//有效期限
+				infoMap.put("limittime",limtime);//时效时段
+				//infoMap.put("number", map.get("remain_number"));//剩余数量
+				infoMap.put("resume", map.get("resume"));//描述
+				infoMap.put("limitday", limitDay/(24*60*60));//剩余天数
+				infoMap.put("prodid", map.get("prodid"));//包月产品编号
+				int state = 0;//月卡状态 0：未开始 1:使用中 2已过期
+				if(cbtime <= curtime){
+					if(cetime > curtime){
+						state = 1;//正在使用中
+					}else{
+						state = 2;//已过期
+					}
+				}
+				infoMap.put("state", state);
+				infoList.add(infoMap);
+			}
+		}
+		return infoList;
+	}
+	
 	
 	/**
 	 * 当前订单，正在停车的订单，没有或只有一条
@@ -2245,7 +2431,7 @@ public class CarownerRequestAction extends Action{
 			}
 			if(money==0){//没有15分钟内的缓存价格，重新查询
 				Map<String,Object> oMap =  publicMethods.catBolinkOrder((Long)orderMap.get("id"), 
-						(String)orderMap.get("order_id"), (String)orderMap.get("plate_number"),null,0);
+						(String)orderMap.get("order_id"), (String)orderMap.get("plate_number"),null,0,uin);
 				if(oMap!=null)
 					money =StringUtils.formatDouble(oMap.get("money"));
 			}

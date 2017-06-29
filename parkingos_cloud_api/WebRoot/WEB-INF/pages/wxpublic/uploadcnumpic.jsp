@@ -7,17 +7,23 @@
 <meta content="yes" name="apple-mobile-web-app-capable">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta http-equiv="x-ua-compatible" content="IE=edge">
-<title>上传认证照片</title>
+<!-- <title>上传认证照片</title> -->
+<title>上传车牌</title>
 <script type="text/javascript"> 
 		var ua = navigator.userAgent.toLowerCase();
 		if (ua.match(/MicroMessenger/i) != "micromessenger"){
 			window.location.href = "http://s.tingchebao.com/zld/error.html";
 		}
 	</script>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.3.2.min.css?v=1" />
+<!-- <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.3.2.min.css?v=1" /> -->
 <link rel="stylesheet" type="text/css" href="css/list.css?v=12" />
+<link rel="stylesheet" href="css/weui-0.4.3.css">
+<link rel="stylesheet" href="css/jquery-weui-0.8.3.css">
 <script src="js/jquery.js"></script>
+<script src="js/wxpublic/jquery-weui-0.8.3.js"></script>
+<script src="js/wxpublic/fastclick.js"></script>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+
 <style type="text/css">
 #scroller .li1 {
     padding:0 10px;
@@ -43,10 +49,9 @@ a{
 	text-decoration:none;
 	color:#6D6D6D;
 	font-size:16px;
-	
-	position: relative;
-	top:-35px;
-	left:30px;
+	//position: relative;
+	//top:-35px;
+	//left:30px;
 }
 
 li{
@@ -126,15 +131,20 @@ li{
 	font-size: 15px;
 	margin-top:20px;
 }
+.fix-a{
+	top:-35px;
+	left:30px;
+	position:relative;
+}
 </style>
 </head>
 <body style="background-color:#EEEEEE;">
-<div id="wrapper" style="margin-top:-30px;">
+<div id="wrapper" style="margin-top:-40px;">
 <form method="post" role="form" action="wxpaccount.do?action=tocarnumber&openid=${openid}" id="checkform">
 	<div id="scroller">
 		<ul id="thelist">
-			<li class="li1"><img class="img1" src="images/wxpublic/carnumber1.png" /><a href="#"><div class="company_name"><span>我的车牌</span><input type="text" placeholder="请输入车牌号" maxlength="7" id="carnumber" class="carnumber" value="${carnumber}" /></div></a></li>
-			<li class="li2">
+			<li class="li1"><img class="img1" src="images/wxpublic/carnumber1.png" /><a href="#" class="fix-a"><div class="company_name"><span>我的车牌</span><input type="text" placeholder="请输入车牌号" maxlength="8" id="carnumber" style="background:white" class="carnumber" value="${carnumber}" /></div></a></li>
+			<!-- <li class="li2">
 				<div style="margin-top:15px;color:#696969;font-size:30px;">上传行驶证照</div>
 				<div style="margin-top:25px;color:#B8B8B8;">1.车牌号需清晰可见，其余可挡</div>
 				<div style="margin-top:10px;color:#B8B8B8;">2.需拍摄两种不同遮挡方式的照片</div>
@@ -143,8 +153,8 @@ li{
 			</li>
 			<input type="button" id="picture" class="wx_pay" onclick='choosepic();' value="拍照" />
 			<input type="button" id="picagain" class="picagain hide" onclick='choosepic();' value="重新拍照" />
-			<input type="button" id="preview" class="preview hide" onclick='previewpic();' value="预览图片" />
-			<input type="button" id="upload" class="wx_public" onclick='check();' value="提交" />
+			<input type="button" id="preview" class="preview hide" onclick='previewpic();' value="预览图片" /> -->
+			<div style="height:15px"></div><input type="button" id="upload" class="weui_btn weui_btn_primary" style="width:95%" onclick='check();' value="提交" />
 			
 			<div style="text-align:center;" id="error" class="error"></div>
 		</ul>
@@ -154,6 +164,15 @@ li{
 
 <div id="footer"></div>
 <script type="text/javascript">
+	window.onload=function(){
+	 	FastClick.attach(document.body);
+		var carnum = '${carnumber}'
+		console.log(carnum!="")
+		if(carnum!=""){
+			$("#carnumber").attr('disabled',true);
+		}
+	}
+	
 	wx.config({
 	    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
 	    appId: '${appid}', // 必填，公众号的唯一标识
@@ -269,6 +288,7 @@ li{
 	}
 	
 	function uploadcnum(carnumber){
+		$.showLoading("上传中,请稍后...");
 		jQuery.ajax({
 				type : "post",
 				url : "wxpaccount.do",
@@ -282,15 +302,22 @@ li{
 				async : false,
 				success : function(result) {
 					if(result == "-1"){
-						document.getElementById("error").innerHTML = "请重新提交";
+						setTimeout('$.hideLoading();$.alert("请重新提交")',500)
+						//document.getElementById("error").innerHTML = "请重新提交";
 					}else if(result == "-2"){
-						document.getElementById("error").innerHTML = "该车牌已被注册<br>在公众号内点击【联系客服】解决";
+						setTimeout('$.hideLoading();$.alert("该车牌已被注册<br>在公众号内点击【联系客服】解决")',500)
+						//$.hideLoading();$.alert("该车牌已被注册<br>在公众号内点击【联系客服】解决")
+						//document.getElementById("error").innerHTML = "该车牌已被注册<br>在公众号内点击【联系客服】解决";
 					}else if(result == "-3"){
-						document.getElementById("error").innerHTML = "您已注册该车牌";
+						//$.hideLoading();$.alert("该车牌已被注册<br>在公众号内点击【联系客服】解决")
+						setTimeout('$.hideLoading();$.alert("您已注册该车牌!")',500)
+						//document.getElementById("error").innerHTML = "您已注册该车牌";
 					}else if(result == "-4"){
-						document.getElementById("error").innerHTML = "最多添加三个车牌";
+						setTimeout('$.hideLoading();$.alert("最多添加三个车牌")',500)
+						//document.getElementById("error").innerHTML = "最多添加三个车牌";
 					}else{
-						$("#checkform")[0].submit();
+						setTimeout(()=>{$.hideLoading();$.showLoading("上传成功,跳转中...");setTimeout('$.hideLoading();$("#checkform")[0].submit()',500)},500)
+						//setTimeout('$.showLoading("上传成功");$.hideLoading();$("#checkform")[0].submit()',500)
 					}
 				}
 			});
@@ -304,7 +331,7 @@ li{
 						"晋", "冀", "豫", "川", "渝", "辽", "吉", "黑", "皖", "鄂", "湘", "赣",
 						"闽", "陕", "甘", "宁", "蒙", "津", "贵", "云", "桂", "琼", "青", "新",
 						"藏", "港", "澳", "使", "军", "空", "海", "北", "沈", "兰","济", "南", "广", "成", "WJ", "警", "消", "边","水", "电", "林", "通" );  
-			var m = /^[A-Z]{1}[A-Z_0-9]{5}$/;
+			var m = /^[A-Z]{1}[A-Z_0-9]{5,6}$/;
 			car_number_char = car_number.substr(1);
 			if(array.toString().indexOf(city) > -1){
 				if(city == "使"){
@@ -372,5 +399,4 @@ li{
 				return false;
 			}
 </script>
-</body>
 </html>

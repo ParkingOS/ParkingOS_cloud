@@ -169,8 +169,8 @@ public class HttpsProxy {
 //    	querypark();
 //    	adduser();
 //    	updateuser();
-    	addorder();
-    	updateorder();
+//    	addorder();
+//    	updateorder();
 	}
 	private static void updateorder(){
 		String url = "https://127.0.0.1/api-web/order/updateorder";

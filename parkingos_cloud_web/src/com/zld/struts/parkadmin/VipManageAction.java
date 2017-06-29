@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +18,6 @@ import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.zld.AjaxUtil;
-import com.zld.dao.PgOnlyReadDao;
 import com.zld.impl.CommonMethods;
 import com.zld.impl.MongoDbUtils;
 import com.zld.impl.PublicMethods;
@@ -155,15 +152,24 @@ public class VipManageAction extends Action{
 			return null;
 		}else if(action.equals("addcar")){
 			String carNumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "carnumber"));
-			String []cars = new String[]{carNumber};
+			Long id = RequestUtil.getLong(request, "id", -1L);
+			int ret =0;
+			if(id>0&&carNumber.length()>6){
+				ret = daService.update("update carower_product set car_number=? where id=? ", new Object[]{carNumber,id});
+			}
+			int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"carower_product",id,System.currentTimeMillis()/1000,1});
+			logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" vipuser ,add sync ret:"+r);
+	
+				
+			/*String []cars = new String[]{carNumber};
 			if(carNumber.indexOf(",")!=-1){
 				cars = carNumber.split(",");//做个限制，要不然出现一个账户下多个车牌
 			}
 			Long curTime = System.currentTimeMillis()/1000;
-			/*if(cars.length>3){
+			if(cars.length>3){
 				AjaxUtil.ajaxOutput(response, "每个账户最多绑定三个车牌");
 				return null;
-			}*/
+			}
 			Long uin = RequestUtil.getLong(request, "uin", -1L);
 			int ret = 0;
 			if(carNumber!=null&&uin!=-1){
@@ -285,27 +291,27 @@ public class VipManageAction extends Action{
 						e.printStackTrace();
 					}
 				}
-			}
+			}*/
 			AjaxUtil.ajaxOutput(response, ret+"");
 			return null;
 		}else if(action.equals("create")){
 			String result = buyProduct(request,comid);
 			if(result.equals("1")){//短信通知车主
 				//车主手机
-				String mobile =RequestUtil.processParams(request, "mobile").trim();
+				/*String mobile =RequestUtil.processParams(request, "mobile").trim();
 				//车牌号码
 				String car_number =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "car_number")).toUpperCase();
 				Map<String, Object> map = daService.getMap("select company_name from com_info_tb where id=? ", new Object[]{comid});
 				String company_name = (String)map.get("company_name");
 				String msg = "【重大喜讯】亲爱的"+company_name+"会员：为方便您的停靠，本车场重金引入停车宝，您的车牌号码【"+car_number+"】已录入系统，出入自动抬杆放行。手机下载停车宝APP，随时可更换车牌号，立改立生效，单双号限行也不怕。更可通过APP查看包月详情，办理续费，续费几个月您说了算。另送您会员专享停车券，用本手机号登录停车宝APP即可领取，全市225家车场通用哦！登录www.tingchebao.com火速下载，退订回N【停车宝】";
 				//SendMessage.sendMultiMessage(mobile, msg);
-			}
+*/			}
 			AjaxUtil.ajaxOutput(response, result);
 		}else if(action.equals("edit")){
 			
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			//车牌号码
-			String car_number =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "car_number")).toUpperCase();
+			
 			if(id == -1){
 				AjaxUtil.ajaxOutput(response, "-1");
 				return null;
@@ -323,22 +329,23 @@ public class VipManageAction extends Action{
 			AjaxUtil.ajaxOutput(response, result);
 		}else if(action.equals("delete")){
 			String id =RequestUtil.processParams(request, "selids");
-			Map cpMap = daService.getMap("select uin from carower_product where id =? ",new Object[]{Long.valueOf(id)});
+			String carNumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number"));
+			/*Map cpMap = daService.getMap("select uin from carower_product where id =? ",new Object[]{Long.valueOf(id)});
 			
 			Long uin =-1L;
 			if(cpMap!=null)
-				uin=(Long)cpMap.get("uin");
+				uin=(Long)cpMap.get("uin");*/
 			
-			int result = daService.update("delete from carower_product where id =?", new Object[]{Long.valueOf(id)});
+			int result = daService.update("update carower_product set is_delete =?  where id =?", new Object[]{1,Long.valueOf(id)});
 			if(result==1){
-				if(publicMethods.isEtcPark(comid)){
+				//if(publicMethods.isEtcPark(comid)){
 					int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"carower_product",Long.valueOf(id),System.currentTimeMillis()/1000,2});
 					logger.error("parkadmin or admin:"+operater+" delete comid:"+comid+" vipuser  ,add sync ret:"+r);
-				}else{
+				//}else{
 					logger.error("parkadmin or admin:"+operater+" delete comid:"+comid+" vipuser");
-				}
+				//}
 //				result = deleteUser(comid, uin);
-				mongoDbUtils.saveLogs( request,0, 4, "删除了车主（"+uin+"）的套餐");
+				mongoDbUtils.saveLogs( request,0, 4, "删除了车主（"+carNumber+"）的套餐");
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("checkmobile")){
@@ -428,10 +435,16 @@ public class VipManageAction extends Action{
 		String b_time =RequestUtil.processParams(request, "b_time");
 		//购买月数
 		Integer months = RequestUtil.getInteger(request, "months", 1);
-		
+		//修改原来的月卡会员cardId生成及使用逻辑
+		String cardId =RequestUtil.getString(request, "card_id");
+		Long count = daService.getLong("select count(ID) from carower_product where com_id=? and card_id=? and is_delete =?  ", new Object[]{comid,cardId,0});
+		if(count>0){
+			return "-3";
+		}
 		Integer flag = RequestUtil.getInteger(request, "flag", -1);
 		//备注
 		String remark = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "remark"));
+		String carNumber = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "car_number"));
 		
 		//停车位编号
 		String p_lot = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "p_lot")).trim();
@@ -463,15 +476,15 @@ public class VipManageAction extends Action{
 		if(!acttotal.equals("")){
 			act_total = Double.valueOf(acttotal);
 		}
-		
-		Map userMap = daService.getMap("select id from user_info_Tb where mobile=? and auth_flag=? ", new Object[]{mobile,4});
+		 Long uin =-1L;
+		//Map userMap = daService.getMap("select id from user_info_Tb where mobile=? and auth_flag=? ", new Object[]{mobile,4});
 		
 		List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-		Map<String, Object> userSqlMap = new HashMap<String, Object>();
-		Map<String, Object> recomSqlMap = new HashMap<String, Object>();
-		Map<String, Object> carInfoMap = new HashMap<String, Object>();
+//		Map<String, Object> userSqlMap = new HashMap<String, Object>();
+//		Map<String, Object> recomSqlMap = new HashMap<String, Object>();
+//		Map<String, Object> carInfoMap = new HashMap<String, Object>();
 	    Map<String, Object> carowerPackMap = new HashMap<String, Object>();
-	    Long uin =-1L;
+	    /* 
 	    boolean f = true;
 		if(userMap==null){//车主未注册
 			uin = daService.getkey("seq_user_info_tb");
@@ -494,16 +507,22 @@ public class VipManageAction extends Action{
 		if(result != null){
 			return result;
 		}
-		
+		*/
+	    //修改月卡会员编号cardId为主键id
 		Long nextid = daService.getkey("seq_carower_product");
-		carowerPackMap.put("sql", "insert into carower_product (id,uin,pid,create_time,b_time,e_time,total,remark,name,address,p_lot,act_total) values(?,?,?,?,?,?,?,?,?,?,?,?)");
-		carowerPackMap.put("values", new Object[]{nextid,uin,pid,ntime,btime,etime,total,remark,name,address,p_lot,act_total});
+		carowerPackMap.put("sql", "insert into carower_product " +
+				"(id,uin,pid,create_time,update_time,b_time,e_time,total,remark,name," +
+				"address,p_lot,act_total,com_id,mobile,car_number,card_id)" +
+				" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		carowerPackMap.put("values", new Object[]{nextid,uin,pid,ntime,ntime,
+				btime,etime,total,remark,name,address,p_lot,act_total,comid,mobile,carNumber,String.valueOf(nextid)});
 		bathSql.add(carowerPackMap);
 		if(daService.bathUpdate(bathSql)){
 			String operater = request.getSession().getAttribute("loginuin")+"";
-			if(publicMethods.isEtcPark(comid)){
+			//if(publicMethods.isEtcPark(comid)){
 //				if(f){
-					int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"user_info_tb",uin,System.currentTimeMillis()/1000,0});
+					/*int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)",
+							new Object[]{comid,"user_info_tb",uin,System.currentTimeMillis()/1000,0});
 					logger.error("parkadmin or admin:"+operater+" add  comid:"+comid+" user ,add sync ret:"+re);
 					if(uin>-1){
 						List list = daService.getAll("select id from car_info_tb where uin = ?", new Object[]{uin});
@@ -514,11 +533,11 @@ public class VipManageAction extends Action{
 								daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"car_info_tb",carid,System.currentTimeMillis()/1000,0});
 							}
 						}
-					}
+					}*/
 //				}
 				int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"carower_product",nextid,System.currentTimeMillis()/1000,0});
 				logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" vipuser ,add sync ret:"+r);
-			}
+			//}
 			mongoDbUtils.saveLogs( request,0, 2, "车主"+mobile+"购买了套餐（编号："+pid+"）,金额："+act_total);
 			return "1";
 		}else {
@@ -542,7 +561,7 @@ public class VipManageAction extends Action{
 		String b_time =RequestUtil.processParams(request, "b_time");
 		//购买月数
 		Integer months = RequestUtil.getInteger(request, "months", 1);
-				
+		String cardId =RequestUtil.getString(request, "card_id");	
 		Integer flag = RequestUtil.getInteger(request, "flag", -1);
 		//备注
 		String remark = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "remark"));
@@ -551,10 +570,13 @@ public class VipManageAction extends Action{
 		String p_lot = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "p_lot"));
 		//实收金额
 		String acttotal = RequestUtil.processParams(request, "act_total");
+		
+		//车牌
+		String car_number =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "car_number")).toUpperCase();
 		//金额
 		Double total = commonMethods.getProdSum(pid, months);//RequestUtil.getDouble(request, "total", 0d);
 				
-		Map pMap = daService.getMap("select limitday,price from product_package_tb where id=? ", new Object[]{pid});
+		//Map pMap = daService.getMap("select limitday,price from product_package_tb where id=? ", new Object[]{pid});
 				
 		Long ntime = System.currentTimeMillis()/1000;
 		Long btime = TimeTools.getLongMilliSecondFrom_HHMMDD(b_time)/1000;
@@ -563,7 +585,7 @@ public class VipManageAction extends Action{
 		calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)+months);
 		Long etime = calendar.getTimeInMillis()/1000;
 				
-		Long limitDay = null;//pMap.get("limitday");
+		/*Long limitDay = null;//pMap.get("limitday");
 		if(pMap!=null&&pMap.get("limitday")!=null){
 			limitDay = (Long)pMap.get("limitday");
 		}
@@ -571,22 +593,22 @@ public class VipManageAction extends Action{
 			if(limitDay<etime){//超出有效期
 				return "-2";
 			}
-		}
+		}*/
 
 		Double act_total = total;
 		if(!acttotal.equals("")){
 			act_total = Double.valueOf(acttotal);
 		}
 		
-		Map userMap = daService.getMap("select id from user_info_Tb where mobile=? and auth_flag=? ", new Object[]{mobile,4});
+		Long uin =-1L;
+		//Map userMap = daService.getMap("select id from user_info_Tb where mobile=? and auth_flag=? ", new Object[]{mobile,4});
 				
 		List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-		Map<String, Object> userSqlMap = new HashMap<String, Object>();
-		Map<String, Object> recomSqlMap = new HashMap<String, Object>();
+//		Map<String, Object> userSqlMap = new HashMap<String, Object>();
+//		Map<String, Object> recomSqlMap = new HashMap<String, Object>();
 		//Map<String, Object> carInfoMap = new HashMap<String, Object>();
 		Map<String, Object> carowerPackMap = new HashMap<String, Object>();
-		Long uin =-1L;
-		if(userMap==null){//车主未注册
+		/*if(userMap==null){//车主未注册
 			uin = daService.getkey("seq_user_info_tb");
 			userSqlMap.put("sql", "insert into user_info_tb (id,strid,nickname,mobile,auth_flag,reg_time,media) values(?,?,?,?,?,?,?)");
 			userSqlMap.put("values", new Object[]{uin,"carower_"+uin,"车主",mobile,4,ntime,10});
@@ -601,22 +623,25 @@ public class VipManageAction extends Action{
 		}
 		if(uin==null||uin==-1)
 			return "-1";
-				
+			*/	
 		String result = commonMethods.checkplot(comid, p_lot, btime, etime, id);
 		if(result != null){
 			return result;
 		}
 		
-		carowerPackMap.put("sql", "update carower_product set uin=?,pid=?,create_time=?,b_time=?,e_time=?,total=?,remark=?,name=?,address=?,p_lot=?,act_total=? where id=? ");
-		carowerPackMap.put("values", new Object[]{uin,pid,ntime,btime,etime,total,remark,name,address,p_lot,act_total,id});
+		carowerPackMap.put("sql", "update carower_product set b_time=?,e_time=?," +
+				"total=?,remark=?,name=?,card_id=?," +
+				"address=?,p_lot=?,act_total=?,mobile=?,car_number=?,update_time=? where id=? ");
+		carowerPackMap.put("values", new Object[]{btime,etime,total,
+				remark,name,cardId,address,p_lot,act_total,mobile,car_number,ntime,id});
 		bathSql.add(carowerPackMap);
 		if(daService.bathUpdate(bathSql)){
 			String operater = request.getSession().getAttribute("loginuin")+"";
 			if(bathSql.size()==1){
-				if(publicMethods.isEtcPark(comid)){
+				//if(publicMethods.isEtcPark(comid)){
 					int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"carower_product",id,System.currentTimeMillis()/1000,1});
 					logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" vipuser ,add sync ret:"+r);
-				}
+				//}
 			}else{
 				if(publicMethods.isEtcPark(comid)){
 					int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"user_info_tb",uin,System.currentTimeMillis()/1000,0});
@@ -632,7 +657,7 @@ public class VipManageAction extends Action{
 		}
 	}
 
-	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
+	/*private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		String mobile = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "mobile"));
 		String p_name = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "p_name"));
 		String car_nubmer = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number"));
@@ -660,7 +685,7 @@ public class VipManageAction extends Action{
 			return sqlInfo2;
 		}
 		return sqlInfo3;
-	}
+	}*/
 	
 	private void setList(List<Map<String,Object>> list){
 		if(list != null && !list.isEmpty()){
@@ -673,47 +698,30 @@ public class VipManageAction extends Action{
 		}
 	}
 	private List query(HttpServletRequest request,long comid){
-		ArrayList arrayList = new ArrayList();
-		List comsList = pService.getAll("select * from com_info_tb where pid = ?",new Object[]{comid});
 		List<Object> params = new ArrayList<Object>();
-		String sqlparm = "";
-		for (int i = 1; i < comsList.size()+1; i++) {
-			sqlparm += " or p.comid = ? ";
-		}
-		String sql = "select p.id p_name,c.uin,c.id,c.name,c.address,c.create_time,c.b_time ,c.e_time ,c.remark,c.total,u.mobile,c.p_lot,c.act_total from " +
-		"product_package_tb p,carower_product c ,user_info_tb u where c.pid=p.id and u.id=c.uin and (p.comid=? "+sqlparm+")";
-		String countSql = "select count(c.id) from product_package_tb p,carower_product c ,user_info_tb u " +
-				"where c.pid=p.id and  u.id=c.uin and (p.comid=? "+sqlparm +")";
+		params.add(comid);
+		params.add(0);
+		String sql = "select * from carower_product c where  com_id=? and is_delete =?  ";
+		String countSql = "select count(*)   from carower_product c where  com_id=?  and is_delete =? ";
 		Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 		Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 		String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
-		SqlInfo sqlInfo = RequestUtil.customSearch(request, "c_product", "c", new String[]{"mobile", "car_number", "p_name"});
-		SqlInfo ssqlInfo = getSuperSqlInfo(request);
+		SqlInfo sqlInfo = RequestUtil.customSearch(request, "c_product", "c", null);
+	//	SqlInfo ssqlInfo = getSuperSqlInfo(request);
 		if(sqlInfo!=null){
-			if(ssqlInfo!=null)
-				sqlInfo = SqlInfo.joinSqlInfo(sqlInfo,ssqlInfo, 2);
+			/*if(ssqlInfo!=null)
+				sqlInfo = SqlInfo.joinSqlInfo(sqlInfo,ssqlInfo, 2);*/
 			countSql+=" and "+ sqlInfo.getSql();
 			sql +=" and "+sqlInfo.getSql();
-			params= sqlInfo.getParams();
-		}else if(ssqlInfo!=null){
+			params.addAll(sqlInfo.getParams());
+		}
+		/*else if(ssqlInfo!=null){
 			countSql+=" and "+ ssqlInfo.getSql();
 			sql +=" and "+ssqlInfo.getSql();
 			params= ssqlInfo.getParams();
-		}
-		params.add(0,comid);
-		for (int i = 1; i < comsList.size()+1; i++) {
-			long comidoth = Long.parseLong(((Map)comsList.get(i-1)).get("id")+"");
-			params.add(i,comidoth);
-//			sqlparm += " or p.comid = ? ";
-		}
-		Integer p_name = RequestUtil.getInteger(request, "p_name_start",-1);
-		String relation = "";
-		if(p_name > 0){
-			relation = " and p.id = ?";
-			params.add(params.size(),Long.valueOf(p_name));
-		}
+		}*/
 		//System.out.println(sqlInfo);
-		Long count=daService.getCount(countSql+relation, params);
+		Long count=daService.getCount(countSql, params);
 		List list = null;//daService.getPage(sql, null, 1, 20);
 		if(count>0){
 			String orderby="id";
@@ -724,8 +732,10 @@ public class VipManageAction extends Action{
 				orderby=orderfield;
 			if(StringUtils.isNotNull(orderfield))
 				sort=reqorderby;
-			list = daService.getAll(sql+ relation+" order by "+orderby+" "+sort, params, pageNum, pageSize);
+			list = daService.getAll(sql+" order by "+orderby+" "+sort, params, pageNum, pageSize);
+			
 		}
+		List<Object> arrayList = new ArrayList<Object>();
 		arrayList.add(list);
 		arrayList.add(pageNum);
 		arrayList.add(count);

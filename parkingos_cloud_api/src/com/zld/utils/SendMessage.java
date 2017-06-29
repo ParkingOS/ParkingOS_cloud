@@ -23,16 +23,16 @@ public class SendMessage {
 		String message = "您本次的验证码:"+code;
 		String result ="";
 		try {
-			result = MessageUtils.sendMsg(mobile, message);
+			//result = MessageUtils.sendMsg(mobile, message);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		//String result = sendMessage(mobile, "您本次的验证码:"+code+" "+time+"【停车宝】");//sendMsg_ManDao_Http(mobile,code);
 		//System.out.println("======手机号："+mobile+"=========短信发送结果"+result);
 		
-		if(result!=null&&result.indexOf("return=\"0\"")!=-1)
-			return code;
-		return null;
+		//if(result!=null&&result.indexOf("return=\"0\"")!=-1)
+		return code;
+		//return null;
 	}
 	
 	/**
@@ -77,7 +77,7 @@ public class SendMessage {
 			e.printStackTrace();
 			return null;
 		}
-		result = new HttpProxy().doGet(url);
+		result = "";//new HttpProxy().doGet(url);
 		/*Map<String, String> params = new HashMap<String, String>();
 		params.put("username", "tq");
 		params.put("password", "123456");
@@ -125,7 +125,7 @@ public class SendMessage {
 		params.put("stime", "");
 		params.put("Rrid", "");
 		try {
-			result = new HttpProxy().doPost(url, params);
+			result = "";//new HttpProxy().doPost(url, params);
 			//result = send(param, url, "utf-8",  "utf-8");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

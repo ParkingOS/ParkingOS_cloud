@@ -33,10 +33,10 @@ public class MongoDbUtils {
 			DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");//
 			DBCollection mdb = db.getCollection(dbName);
 			DBCursor dbCursor = mdb.find(conditions);
-			if(dbCursor!=null&&dbCursor.size()==0&&dbName.equals("car_hd_pics")){
-				 mdb = db.getCollection("car_pics");
+			if(dbCursor!=null&&dbCursor.size()==0&&dbName.equals("car_inout_pics")){
+				 mdb = db.getCollection("car_hd_pics");
 				 dbCursor = mdb.find(conditions);
-				 logger.error("mongodb>>>>>>>>>>>car_hd_pics表中没有，从car_pics表中查询:"+dbCursor);
+				 logger.error("mongodb>>>>>>>>>>>car_inout_pics表中没有，从car_hd_pics表中查询:"+dbCursor);
 			}
 			while(dbCursor.hasNext()){
 				DBObject dbObject = dbCursor.next();
@@ -55,13 +55,13 @@ public class MongoDbUtils {
 			BasicDBObject document = new BasicDBObject();
 			document.put("filename", filename);
 			DBObject obj = collection.findOne(document);
-			if(obj == null&&dbName.equals("car_hd_pics")){
+			if(obj == null&&dbName.equals("car_inout_pics")){
 				//db = MongoDBFactory.getInstance().getMongoDBBuilder("zld");//
-				collection = db.getCollection("car_pics");
+				collection = db.getCollection("car_hd_pics");
 //				document = new BasicDBObject();
 //				document.put("filename", filename);
 				obj = collection.findOne(document);
-				logger.error("mongodb>>>>>>>>>>>car_hd_pics表中没有，从car_pics表中查询"+obj);
+				logger.error("mongodb>>>>>>>>>>>car_inout_pics表中没有，从car_hd_pics表中查询"+obj);
 			}
 			if(obj == null){
 				return;

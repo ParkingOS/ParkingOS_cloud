@@ -42,12 +42,12 @@ var oType=eval(T.A.sendData("parklogs.do?action=getOtype"));
 var role=${role};
 var comid=${comid};
 var _mediaField = [
-		{fieldcnname:"操作日期",fieldname:"time",fieldvalue:'',inputtype:"date",twidth:"140" ,height:"",issort:false},
-		{fieldcnname:"操作人",fieldname:"uin",fieldvalue:'',inputtype:"select",noList:users,twidth:"80" ,height:"",issort:false},
-		{fieldcnname:"操作类型",fieldname:"otype",fieldvalue:'',inputtype:"select",noList:operateType,twidth:"80" ,height:"",issort:false},
-		{fieldcnname:"操作模块",fieldname:"uri",fieldvalue:'',inputtype:"select",noList:oType,twidth:"80" ,height:"",issort:false},
-		{fieldcnname:"IP地址",fieldname:"ip",fieldvalue:'',inputtype:"text",noList:operateType,twidth:"150" ,height:"",issort:false},
-		{fieldcnname:"内容",fieldname:"content",fieldvalue:'',inputtype:"text",twidth:"600" ,height:"",issort:false}
+		{fieldcnname:"编号",fieldname:"id",fieldvalue:'',inputtype:"number",twidth:"80" ,height:"",issort:false},
+		{fieldcnname:"日志编号",fieldname:"log_id",fieldvalue:'',inputtype:"text",twidth:"80" ,height:"",issort:false},
+		{fieldcnname:"操作时间",fieldname:"operate_time",fieldvalue:'',inputtype:"date",twidth:"180" ,height:"",issort:false},
+		{fieldcnname:"操作内容",fieldname:"content",fieldvalue:'',inputtype:"text",twidth:"280" ,height:"",issort:false},
+		{fieldcnname:"收费员",fieldname:"operate_user",fieldvalue:'',inputtype:"text",noList:operateType,twidth:"150" ,height:"",issort:false},
+		{fieldcnname:"备注",fieldname:"remark",fieldvalue:'',inputtype:"text",twidth:"100" ,height:"",issort:false}
 	];
 var _parklogsT = new TQTable({
 	tabletitle:"系统日志",
@@ -66,7 +66,7 @@ var _parklogsT = new TQTable({
 });
 function getAuthButtons(){
  	var bts=[];
- 	if(subauth[0])
+ 	/*if(subauth[0])
 		bts.push({dname:"高级查询",icon:"edit_add.png",onpress:function(Obj){
 		T.each(_parklogsT.tc.tableitems,function(o,j){
 			o.fieldvalue ="";
@@ -118,7 +118,7 @@ function getAuthButtons(){
 				});	
 			}
 		})
-	}});
+	}});*/
 	return bts;
 }
 

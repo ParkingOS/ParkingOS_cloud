@@ -33,7 +33,7 @@ public class GenPosOrderCashServiceImpl implements GenPosOrderService {
 	public GenPosOrderResp genPosOrder(GenPosOrderReq req) {
 		GenPosOrderResp resp = new GenPosOrderResp();
 		try {
-			logger.error(req.toString());
+			//logger.error(req.toString());
 			Long orderId = req.getOrderId();//¶©µ¥ºÅ
 			String carNumber = req.getCarNumber();//³µÅÆºÅ
 			Berth berth = req.getBerth();//²´Î»

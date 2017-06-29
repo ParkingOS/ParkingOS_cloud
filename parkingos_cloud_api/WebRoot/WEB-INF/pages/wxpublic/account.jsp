@@ -150,7 +150,7 @@ body {
 
 .wx_name{
 	margin-left:50px;
-	margin-top:-15px;
+	margin-top:-5px;
 	color:#101010;
 	font-size:20px;
 }
@@ -220,12 +220,12 @@ body {
 <div id="wrapper" style="margin-top:-25px;">
 	<div id="scroller">
 		<ul id="thelist">
-			<li class="li2"><img class="img2" src="${wximg}" /><a href="#"><div class="wx_name">${wxname}</div><div class="wx_img">${mobile}</div><div class="credit">信用额度:${credit}</div></a></li>
-			<li class="li1" style="margin-top:20px;"><img class="img1" src="images/wxpublic/carnumber1.png" /><a href="wxpaccount.do?action=tocarnumber&openid=${openid}"><div><span style="color:#101010;margin-left: 15px;">车牌</span></div></a></li>
-			<li class="li1" style="margin-top:20px;"><img class="img1" src="images/wxpublic/package.png" /><a href="wxpaccount.do?action=balance&openid=${openid}"><div><span style="color:#101010;margin-left: 15px;">余额</span><span class="money">￥${balance}</span></div></a></li>
-			<li class="li1" id="testClick1" style="margin-top:1px;"><img class="img1" src="images/wxpublic/ticketaccount.png" /><a href="#"><div><span style="color:#101010;margin-left: 15px;">停车券<span class='sel_fee three nopass'>${ticket_count}张可用</span></span></div></a></li>
-			<%--<li class="li1" style="margin-top:20px;"><img class="img1" src="images/wxpublic/package.png" /><a href="wxpaccount.do?action=parkprod&openid=${openid}"><div><span style="color:#101010;margin-left: 15px;">月卡</span></div></a></li>
-			--%><li class="li1" style="margin-top:20px;"><img class="img1" src="images/wxpublic/orderdetail.png" /><a href="wxpaccount.do?action=toorderlist&mobile=${mobile}"><div><span style="color:#101010;margin-left: 15px;">订单</span></div></a></li>
+			<li class="li2"><img class="img2" src="${wximg}" /><a href="#"><div class="wx_name">${wxname}</div><!-- <div class="wx_img">${mobile}</div><div class="credit">信用额度:${credit}</div> --></a></li>
+			<li class="li1" style="margin-top:20px;"><img class="img1" src="images/wxpublic/carnumber1.png" /><a href="wxpaccount.do?action=tocarnumber&openid=${openid}"><div><span style="color:#101010;margin-left: 15px;">我的车辆</span></div></a></li>
+			<!--<li class="li1" style="margin-top:20px;"><img class="img1" src="images/wxpublic/package.png" /><a href="wxpaccount.do?action=balance&openid=${openid}"><div><span style="color:#101010;margin-left: 15px;">余额</span><span class="money">￥${balance}</span></div></a></li>-->
+			<!--<li class="li1" id="testClick1" style="margin-top:1px;"><img class="img1" src="images/wxpublic/ticketaccount.png" /><a href="#"><div><span style="color:#101010;margin-left: 15px;">停车券<span class='sel_fee three nopass'>${ticket_count}张可用</span></span></div></a></li>-->
+			<!-- <li class="li1" style="margin-top:20px;"><img class="img1" src="images/wxpublic/package.png" /><a href="wxpaccount.do?action=parkprod&openid=${openid}"><div><span style="color:#101010;margin-left: 15px;">月卡</span></div></a></li> -->
+			<li class="li1" style="margin-top:20px;"><img class="img1" src="images/wxpublic/orderdetail.png" /><a href="wxpaccount.do?action=toorderlist&openid=${openid}"><div><span style="color:#101010;margin-left: 15px;">历史订单</span></div></a></li>
 			<li class="li1" style="margin-top:1px;"><img class="img1" src="images/wxpublic/dooller.png" /><a href="wxpaccount.do?action=toaccountdetail&openid=${openid}"><div><span style="color:#101010;margin-left: 15px;">账户明细</span></div></a></li>
 			
 		</ul>

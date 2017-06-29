@@ -88,7 +88,12 @@ public class DataBaseService {
 		return getMap(sql, valObjects);
 	}
 	public int update(String sql,Object[] values){
+		Long t1 = System.currentTimeMillis();
 		int ret = databasedao.update(sql, values);
+		Long t2 = System.currentTimeMillis();
+		logger.error("sql:"+sql+":params:"+StringUtils.objArry2String(values));
+		if(t2-t1>3000)
+			logger.error("query too long ,sql :"+sql+",params:"+StringUtils.objArry2String(values)+" ,time:"+(t2-t1));
 		return ret;
 	}
 
@@ -121,7 +126,7 @@ public class DataBaseService {
 				_values[i]=values.get(i);
 			}
 		}
-		//System.err.println(sql+",params:"+StringUtils.objArry2String(_values));
+		System.err.println(sql+",params:"+StringUtils.objArry2String(_values));
 		//return 0;
 		return update(sql, _values);
 	}

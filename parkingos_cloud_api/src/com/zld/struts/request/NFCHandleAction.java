@@ -903,7 +903,7 @@ public class NFCHandleAction extends Action {
 				if(pay_type!=4){
 					pay_type = 1;//现金支付 ;
 				}
-				Integer cType = (Integer)orderMap.get("c_type");//进场方式 ，0:NFC，2:照牌    3:通道照牌进场 4直付 5月卡用户
+				Integer cType = Integer.valueOf(String.valueOf(orderMap.get("c_type")));//进场方式 ，0:NFC，2:照牌    3:通道照牌进场 4直付 5月卡用户
 				logger.error("completeorder>>>>orderid:"+orderId+",money:"+money+",_uin"+_uin+",cType:"+cType);
 				if(money==0&&_uin!=null&&_uin!=-1){//判断月卡用户
 					if(cType==5){//月卡用户
@@ -934,8 +934,8 @@ public class NFCHandleAction extends Action {
 //				if(etime==intime)
 //					etime = etime+60;
 				int result = daService.update("update order_tb set end_time=?,total=?,state=?,uin=?," +
-						"pay_type=?,uid=?,imei=?,out_passid=?,isclick=?  where comid=? and id=?", 
-						new Object[]{etime,money,1,_uin,pay_type,uid,imei,out_passid,isClick,comId,orderId});
+						"pay_type=?,uid=?,imei=?,out_passid=?,isclick=?  where  id=?", 
+						new Object[]{etime,money,1,_uin,pay_type,uid,imei,out_passid,isClick,orderId});
 				logger.error("NFC刷卡.完成订单。NFC号："+uuid+",comid="+comId+",车主："+_uin+",结果："+result+",orderid:"+orderId);
 				if(result == 1){
 					try {
@@ -1179,9 +1179,16 @@ public class NFCHandleAction extends Action {
 				}
 				//20160301pay_type = 4也写现金记录
 				if((pay_type == 1|| pay_type ==4) && _state == 0){//写现金明细
-					int r = daService.update("insert into parkuser_cash_tb(uin,amount,type,orderid,create_time) values(?,?,?,?,?)",
-									new Object[] { uid, money, 0, orderId, System.currentTimeMillis() / 1000 });
-					logger.error("completeorder>>>>写一笔现金支付明细orderid:"+orderId+",money:"+money+",uid:"+uid+"r:"+r);
+					Long c = onlyReadService.getLong("select count (*) from parkuser_cash_tb where orderid=? ", new Object[]{orderId}) ;
+					if(c>0){//已经存在，更新记录
+						int r = daService.update("update parkuser_cash_tb set uin =?,amount=?,type=?,create_time=? where orderid=? ",
+								new Object[] { uid, money, 0, System.currentTimeMillis() / 1000 , orderId});
+						logger.error("completeorder>>>>写一笔现金支付明细orderid:"+orderId+",money:"+money+",uid:"+uid+"r:"+r);
+					}else {
+						int r = daService.update("insert into parkuser_cash_tb(uin,amount,type,orderid,create_time) values(?,?,?,?,?)",
+								new Object[] { uid, money, 0, orderId, System.currentTimeMillis() / 1000 });
+						logger.error("completeorder>>>>写一笔现金支付明细orderid:"+orderId+",money:"+money+",uid:"+uid+"r:"+r);
+					}
 				}
 				if(!isShuTong && uin!=-1){//推送结算订单的消息给车主微信公众号
 					Integer state = (Integer)orderMap.get("state");

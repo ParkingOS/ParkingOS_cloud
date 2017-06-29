@@ -1,5 +1,7 @@
 package com.zld.utils;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -99,5 +101,50 @@ public class HttpProxy {
 		}
 		return result;
 	}
-	
+	/**
+	 * POST2 ÇëÇó£¬·µ»Ø×Ö·û
+	 * @param url
+	 * @param params
+	 * @return
+	 */
+	public  String doPostTwo(String url,Map<String,Object> params){
+		System.err.println(">>>>>>>>>>>http url:"+url);
+		HttpClient httpClient = new HttpClient();
+		PostMethod post = new PostMethod(url);
+		int state = 0;
+		String result = "";
+		try {
+			
+			NameValuePair[] pairs = new NameValuePair[params.size()];
+			int i = 0;
+			for(String key : params.keySet()){
+				pairs[i]=new NameValuePair(key,String.valueOf(params.get(key)));
+				i++;
+			}
+			post.setRequestBody( pairs);
+		    httpClient.setConnectionTimeout(50000);
+		    httpClient.getHttpConnectionManager().getParams().setSoTimeout(50000);
+		    state = httpClient.executeMethod(post);
+			if(state==HttpStatus.SC_OK){
+				//result= post.getResponseBodyAsString();
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						post.getResponseBodyAsStream()));
+	            StringBuffer stringBuffer = new StringBuffer();
+	            String str = "";
+	            while ((str = br.readLine()) != null) {
+	                  stringBuffer.append(str);
+	            }
+	            String line = stringBuffer.toString();
+	            System.err.println(">>>>>>>>>>>>>>>>>>http doPost result:"+line);
+				result=line;
+			}
+			post.releaseConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if(post!=null)
+				post.releaseConnection();
+		}
+		return result;
+	}
 }

@@ -35,5 +35,5 @@ memcached°²×°
 4.Ö´ÐÐ 
 
  #cd /usr/local//bin
- # ./memcached -d -p 11211 -u nobody -m 600 -c 1024 -P /var/run/memcached/memcached.pid       
+ # cdd ./memcached -d -p 11211 -u nobody -m 600 -c 1024 -P /var/run/memcached/memcached.pid       
 

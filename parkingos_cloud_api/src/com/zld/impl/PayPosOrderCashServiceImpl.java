@@ -142,7 +142,7 @@ public class PayPosOrderCashServiceImpl implements PayPosOrderService {
 	public ManuPayPosOrderResp manuPayPosOrder(ManuPayPosOrderReq req) {
 		ManuPayPosOrderResp resp = new ManuPayPosOrderResp();
 		try {
-			logger.error(req.toString());
+		//	logger.error(req.toString());
 			Long curTime = req.getCurTime();
 			Order order = req.getOrder();
 			long uid = req.getUid();//收费员编号
@@ -164,7 +164,7 @@ public class PayPosOrderCashServiceImpl implements PayPosOrderService {
 				return resp;
 			}
 			//-----------------------------获取订单信息-----------------------------//
-			logger.error("order:"+order.toString());
+		//	logger.error("order:"+order.toString());
 			
 			long orderId = order.getId();
 			double prepay = order.getPrepaid();
@@ -247,7 +247,7 @@ public class PayPosOrderCashServiceImpl implements PayPosOrderService {
 	public PayEscapePosOrderResp payEscapePosOrder(PayEscapePosOrderReq req) {
 		PayEscapePosOrderResp resp = new PayEscapePosOrderResp();
 		try {
-			logger.error(req.toString());
+			//logger.error(req.toString());
 			Long curTime = req.getCurTime();
 			Order order = req.getOrder();
 			long uid = req.getUid();//收费员编号
@@ -270,7 +270,7 @@ public class PayPosOrderCashServiceImpl implements PayPosOrderService {
 				return resp;
 			}
 			//-----------------------------获取订单信息-----------------------------//
-			logger.error("order:"+order.toString());
+			//logger.error("order:"+order.toString());
 			long orderId = order.getId();
 			double prepay = order.getPrepaid();
 			int state = order.getState();

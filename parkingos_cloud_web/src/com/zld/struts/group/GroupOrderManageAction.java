@@ -315,7 +315,7 @@ public class GroupOrderManageAction extends Action{
 		}else if(action.equals("carpics")){
 			Long orderid = RequestUtil.getLong(request, "orderid", -1L);
 			DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
-			DBCollection collection = db.getCollection("car_hd_pics");
+			DBCollection collection = db.getCollection("car_inout_pics");
 			BasicDBObject document = new BasicDBObject();
 			document.put("orderid", orderid);
 			document.put("gate", 0);
@@ -331,11 +331,11 @@ public class GroupOrderManageAction extends Action{
 			Long outsize =collection.count(document);
 			
 			if(insize==0&&outsize==0){//查不到时查另外一张表
-				collection = db.getCollection("car_pics");
+				collection = db.getCollection("car_hd_pics");
 				outsize =collection.count(document);
 				document.put("gate", 0);
 				insize  = collection.count(document);
-				logger.error("mongodb>>>>>>>>>>>car_hd_pics表中没有，从car_pics表中查询"+insize+","+outsize);
+				logger.error("mongodb>>>>>>>>>>>car_inout_pics表中没有，从car_hd_pics表中查询"+insize+","+outsize);
 			}
 			
 			String inhtml = "<img src='carpicsup.do?action=downloadpic&comid=0&type=0&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";

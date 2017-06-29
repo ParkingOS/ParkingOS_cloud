@@ -10,7 +10,7 @@
 
 <script src="js/tq.js?0817" type="text/javascript">//±í¸ñ</script>
 <script src="js/tq.public.js?0817" type="text/javascript">//±í¸ñ</script>
-<script src="js/tq.datatable.js?0817" type="text/javascript">//±í¸ñ</script>
+<script src="js/tq.datatable.js?2ee22s2" type="text/javascript">//±í¸ñ</script>
 <script src="js/tq.form.js?0817" type="text/javascript">//±íµ¥</script>
 <script src="js/tq.searchform.js?0817" type="text/javascript">//²éÑ¯±íµ¥</script>
 <script src="js/tq.window.js?0817" type="text/javascript">//µ¯´°</script>
@@ -49,23 +49,33 @@ var paytype=[{"value_no":-1,"value_name":"È«²¿"},{"value_no":0,"value_name":"×Ô¶
 var pass = getpass();
 var _mediaField = [
 		{fieldcnname:"±àºÅ",fieldname:"id",fieldvalue:'',inputtype:"number", twidth:"60" ,height:"",hide:true},
-		{fieldcnname:"½ø³¡·½Ê½",fieldname:"c_type",fieldvalue:'',inputtype:"select",noList:[{"value_no":-1,"value_name":"È«²¿"},{"value_no":0,"value_name":"NFCË¢¿¨"},{"value_no":1,"value_name":"Ibeacon"},{"value_no":2,"value_name":"ÊÖ»úÉ¨ÅÆ"},{"value_no":3,"value_name":"Í¨µÀÉ¨ÅÆ"},{"value_no":4,"value_name":"Ö±¸¶"},{"value_no":5,"value_name":"È«ÌìÔÂ¿¨"},{"value_no":6,"value_name":"³µÎ»¶þÎ¬Âë"},{"value_no":7,"value_name":"ÔÂ¿¨µÚ¶þÁ¾³µ"},{"value_no":8,"value_name":"·Ö¶ÎÔÂ¿¨"}] ,twidth:"100" ,height:"",issort:true},
+		{fieldcnname:"½ø³¡·½Ê½",fieldname:"c_type",fieldvalue:'',inputtype:"select",noList:[{"value_no":-1,"value_name":"È«²¿"},{"value_no":0,"value_name":"Í¨µÀÉ¨ÅÆ"},{"value_no":1,"value_name":"Ibeacon"},{"value_no":2,"value_name":"ÊÖ»úÉ¨ÅÆ"},{"value_no":3,"value_name":"Í¨µÀÉ¨ÅÆ"},{"value_no":4,"value_name":"Ö±¸¶"},{"value_no":5,"value_name":"È«ÌìÔÂ¿¨"},{"value_no":6,"value_name":"³µÎ»¶þÎ¬Âë"},{"value_no":7,"value_name":"ÔÂ¿¨µÚ¶þÁ¾³µ"},{"value_no":8,"value_name":"·Ö¶ÎÔÂ¿¨"}] ,twidth:"100" ,height:"",issort:true},
 		{fieldcnname:"³µÅÆºÅ",fieldname:"car_number",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:true},
+		{fieldcnname:"³µÐÍ",fieldname:"car_type",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:true},
 		{fieldcnname:"½ø³¡Ê±¼ä",fieldname:"create_time",fieldvalue:'',inputtype:"date", twidth:"140" ,height:"",hide:true},
 		{fieldcnname:"³ö³¡Ê±¼ä",fieldname:"end_time",fieldvalue:'',inputtype:"date", twidth:"140" ,height:"",issort:true},
 		{fieldcnname:"Ê±³¤",fieldname:"duration",fieldvalue:'',inputtype:"text", twidth:"140" ,height:"",issort:true},
 		{fieldcnname:"Ö§¸¶·½Ê½",fieldname:"pay_type",fieldvalue:'',inputtype:"select",noList:[{"value_no":-1,"value_name":"È«²¿"},{"value_no":0,"value_name":"ÕË»§Ö§¸¶"},{"value_no":1,"value_name":"ÏÖ½ðÖ§¸¶"},{"value_no":2,"value_name":"ÊÖ»úÖ§¸¶"},{"value_no":3,"value_name":"°üÔÂ"},{"value_no":4,"value_name":"ÖÐÑëÔ¤Ö§¸¶ÏÖ½ð"},{"value_no":5,"value_name":"ÖÐÑëÔ¤Ö§¸¶ÒøÁª¿¨"},{"value_no":6,"value_name":"ÖÐÑëÔ¤Ö§¸¶ÉÌ¼Ò¿¨"},{"value_no":8,"value_name":"Ãâ·Ñ"},{"value_no":9,"value_name":"Ë¢¿¨"}] ,twidth:"80" ,height:"",issort:true},
 		{fieldcnname:"Ãâ·ÑÔ­Òò",fieldname:"freereasons",fieldvalue:'',inputtype:"select",noList:freereasons ,twidth:"80" ,height:""},
-		{fieldcnname:"½ð¶î",fieldname:"total",fieldvalue:'',inputtype:"number", height:"",issort:false,issort:true},
-		{fieldcnname:"ÊÕ¿îÈË",fieldname:"uid",fieldvalue:'',inputtype:"select", noList:collectors, twidth:"100" ,height:"",issort:false,issort:true},
+		{fieldcnname:"Ó¦ÊÕ½ð¶î",fieldname:"amount_receivable",fieldvalue:'',inputtype:"number", height:"",issort:false,issort:true},
+		{fieldcnname:"ÊµÊÕ½ð¶î",fieldname:"total",fieldvalue:'',inputtype:"number", height:"",issort:false,issort:true},
+		{fieldcnname:"µç×ÓÔ¤¸¶½ð¶î",fieldname:"electronic_prepay",fieldvalue:'',inputtype:"number", height:"",issort:false,issort:true},
+		{fieldcnname:"ÏÖ½ðÔ¤¸¶½ð¶î",fieldname:"cash_prepay",fieldvalue:'',inputtype:"number", height:"",issort:false,issort:true},
+		{fieldcnname:"µç×Ó½áËã½ð¶î",fieldname:"electronic_pay",fieldvalue:'',inputtype:"number", height:"",issort:false,issort:true},
+		{fieldcnname:"ÏÖ½ð½áËã½ð¶î",fieldname:"cash_pay",fieldvalue:'',inputtype:"number", height:"",issort:false,issort:true},
+		{fieldcnname:"¼õÃâ½ð¶î",fieldname:"reduce_amount",fieldvalue:'',inputtype:"number", height:"",issort:false,issort:true},
+		{fieldcnname:"Èë³¡ÊÕ·ÑÔ±",fieldname:"uid",fieldvalue:'',inputtype:"select", noList:collectors, twidth:"100" ,height:"",issort:false,issort:true},
+		{fieldcnname:"ÊÕ¿îÈË",fieldname:"out_uid",fieldvalue:'',inputtype:"select", noList:collectors, twidth:"100" ,height:"",issort:false,issort:true},
 		{fieldcnname:"×´Ì¬",fieldname:"state",fieldvalue:'',inputtype:"select",noList:[{"value_no":-1,"value_name":"È«²¿"},{"value_no":0,"value_name":"Î´Ö§¸¶"},{"value_no":1,"value_name":"ÒÑÖ§¸¶"},{"value_no":2,"value_name":"ÌÓµ¥"}] ,twidth:"100" ,height:"",issort:true},
 		{fieldcnname:"½áËã·½Ê½",fieldname:"isclick",fieldvalue:'',inputtype:"select",noList:[{"value_no":-1,"value_name":"ÎÞ"},{"value_no":0,"value_name":"×Ô¶¯½áËã"},{"value_no":1,"value_name":"ÊÖ¶¯½áËã"}] ,twidth:"100" ,height:"",issort:true},
-		{fieldcnname:"²é¿´³µÁ¾Í¼Æ¬",fieldname:"id",inputtype:"text", twidth:"100",issort:false,
-			process:function(value,cid,id){
+		{fieldcnname:"²é¿´³µÁ¾Í¼Æ¬",fieldname:"url",inputtype:"text", twidth:"100",issort:false
+			,process:function(value,cid,id){
 				return "<a href=# onclick=\"viewdetail('hn','"+value+"','"+cid+"')\" style='color:blue'>²é¿´³µÁ¾Í¼Æ¬</a>";
 			}},
 		{fieldcnname:"½ø³¡Í¨µÀ",fieldname:"in_passid",fieldvalue:'',inputtype:"select",noList:pass, twidth:"100" ,height:"",issort:true},
-		{fieldcnname:"³ö³¡Í¨µÀ",fieldname:"out_passid",fieldvalue:'',inputtype:"select",noList:pass, twidth:"100" ,height:"",issort:true}
+		{fieldcnname:"³ö³¡Í¨µÀ",fieldname:"out_passid",fieldvalue:'',inputtype:"select",noList:pass, twidth:"100" ,height:"",issort:true},
+		/*Ìí¼Ó³µ³¡ÊÕ·ÑÏµÍ³µÄ¶©µ¥±àºÅ*/
+		{fieldcnname:"³µ³¡¶©µ¥±àºÅ",fieldname:"order_id_local",fieldvalue:'',inputtype:"text",twidth:"100" ,height:"",hidden:true}
 	];
 var _searchField = [
 		{fieldcnname:"±àºÅ",fieldname:"id",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",hide:true},
@@ -84,7 +94,9 @@ var _searchField = [
 				return "<a href=# onclick=\"viewdetail('hn','"+value+"','"+cid+"')\" style='color:blue'>²é¿´³µÁ¾Í¼Æ¬</a>";
 			}},
 		{fieldcnname:"½ø³¡Í¨µÀ",fieldname:"in_passid",fieldvalue:'',inputtype:"select",noList:pass, twidth:"100" ,height:"",issort:false},
-		{fieldcnname:"³ö³¡Í¨µÀ",fieldname:"out_passid",fieldvalue:'',inputtype:"select",noList:pass, twidth:"100" ,height:"",issort:false}
+		{fieldcnname:"³ö³¡Í¨µÀ",fieldname:"out_passid",fieldvalue:'',inputtype:"select",noList:pass, twidth:"100" ,height:"",issort:false},
+		/*Ìí¼Ó³µ³¡ÊÕ·ÑÏµÍ³µÄ¶©µ¥±àºÅ*/
+		{fieldcnname:"³µ³¡¶©µ¥±àºÅ",fieldname:"order_id_local",fieldvalue:'',inputtype:"text",twidth:"100" ,height:"",hidden:true}
 	];
 /*var _excelField = [
 		{fieldcnname:"½ø³¡·½Ê½",fieldname:"c_type",fieldvalue:'',inputtype:"select",noList:[{"value_no":-1,"value_name":"È«²¿"},{"value_no":0,"value_name":"NFCË¢¿¨"},{"value_no":1,"value_name":"Ibeacon"},{"value_no":2,"value_name":"ÊÖ»úÉ¨ÅÆ"},{"value_no":3,"value_name":"Í¨µÀÉ¨ÅÆ"},{"value_no":4,"value_name":"Ö±¸¶"},{"value_no":5,"value_name":"ÔÂ¿¨"}] ,twidth:"100" ,height:"",issort:false},
@@ -100,8 +112,8 @@ var _searchField = [
 	];*/
 var _excelField = [
 		{fieldcnname:"½ø³¡Ê±¼ä",fieldname:"create_time",fieldvalue:'',inputtype:"date", twidth:"200" ,height:"",hide:true},
-		{fieldcnname:"½ð¶î",fieldname:"total",fieldvalue:'',inputtype:"number", height:"",issort:false},
-		{fieldcnname:"½áËã·½Ê½",fieldname:"isclick",fieldvalue:'',inputtype:"select",noList:[{"value_no":-1,"value_name":"È«²¿"},{"value_no":0,"value_name":"×Ô¶¯½áËã"},{"value_no":1,"value_name":"ÊÖ¶¯½áËã"}] ,twidth:"100" ,height:"",issort:false}
+		{fieldcnname:"½ð¶î",fieldname:"total",fieldvalue:'',inputtype:"number", height:"",issort:false}
+		//{fieldcnname:"½áËã·½Ê½",fieldname:"isclick",fieldvalue:'',inputtype:"select",noList:[{"value_no":-1,"value_name":"È«²¿"},{"value_no":0,"value_name":"×Ô¶¯½áËã"},{"value_no":1,"value_name":"ÊÖ¶¯½áËã"}] ,twidth:"100" ,height:"",issort:false}
 	];
 
 var _orderT = new TQTable({
@@ -117,7 +129,7 @@ var _orderT = new TQTable({
 	param:"action=query&comid="+comid,
 	tableObj:T("#orderobj"),
 	fit:[true,true,true],
-	//isidentifier:false,
+	isidentifier:false,
 	tableitems:_mediaField,
 	isoperate:getAuthIsoperateButtons()
 });
@@ -303,6 +315,7 @@ function getAuthIsoperateButtons(){
 
 function viewdetail(type,value,id){
 	var car_number =_orderT.GD(id,"car_number");
+	var orderIdLocal =_orderT.GD(id,"order_id_local");
 	var tip = "³µÁ¾Í¼Æ¬";
 	Twin({
 		Id:"carpics_detail_"+id,
@@ -310,7 +323,9 @@ function viewdetail(type,value,id){
 		Width:T.gww()-100,
 		Height:T.gwh()-50,
 		sysfunI:id,
-		Content:"<iframe name='carpics_detail_'"+id+" id='carpics_detail_'"+id+" src='order.do?action=carpics&orderid="+id+"&comid="+comid+"&r="+Math.random()+"' width='100%' height='"+(T.gwh()-100)+"' frameborder='0' style='overflow:auto;' ></iframe>"
+		/*ÐÞ¸ÄÍ¼Æ¬×¢ÊÍÔ­À´µ÷ÓÃÂß¼­*/
+		/* Content:"<iframe name='carpics_detail_'"+id+" id='carpics_detail_'"+id+" src='order.do?action=carpics&orderid="+id+"&comid="+comid+"&r="+Math.random()+"' width='100%' height='"+(T.gwh()-100)+"' frameborder='0' style='overflow:auto;' ></iframe>" */
+		Content:"<iframe name='carpics_detail_'"+id+" id='carpics_detail_'"+id+" src='order.do?action=carpicsnew&orderid="+orderIdLocal+"&comid="+comid+"&r="+Math.random()+"' width='100%' height='"+(T.gwh()-100)+"' frameborder='0' style='overflow:auto;' ></iframe>"
 	})
 }
 _orderT.C();
