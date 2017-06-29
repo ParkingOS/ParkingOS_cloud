@@ -33,11 +33,11 @@
 	</proxool>
 	<proxool>
 		<alias>p4read</alias>
-        <driver-url>jdbc:jtds:sqlserver://120.25.101.147:1433/P4</driver-url>
+        <driver-url>jdbc:jtds:sqlserver://</driver-url>
         <driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>
         <driver-properties>
-            <property name="user" value="taizhoup4" />
-            <property name="password" value="bouwa@2018" />
+            <property name="user" value="" />
+            <property name="password" value="" />
         </driver-properties>
 		<maximum-connection-count>100</maximum-connection-count>
 		<minimum-connection-count>10</minimum-connection-count>
