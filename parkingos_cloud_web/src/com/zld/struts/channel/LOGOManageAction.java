@@ -39,19 +39,19 @@ public class LOGOManageAction extends Action {
 	private DataBaseService daService;
 	@Autowired
 	private PublicMethods publicMethods;
-	
+
 	private Logger logger = Logger.getLogger(LOGOManageAction.class);
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		Long chanid = (Long)request.getSession().getAttribute("chanid");
 		request.setAttribute("authid", request.getParameter("authid"));
-		logger.error("ÇşµÀ¹ÜÀíºóÌ¨>>>chanid:"+chanid+",action:"+action+",uin:"+uin);
+		logger.error("æ¸ é“ç®¡ç†åå°>>>chanid:"+chanid+",action:"+action+",uin:"+uin);
 		if(uin==null){
 			response.sendRedirect("login.do");
 			return null;
@@ -79,43 +79,43 @@ public class LOGOManageAction extends Action {
 		}else if(action.equals("uploadpic")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			String table = RequestUtil.getString(request, "table");
-			Integer type = RequestUtil.getInteger(request, "type", 0);//0:±íÊ¾ÇşµÀ 
+			Integer type = RequestUtil.getInteger(request, "type", 0);//0:è¡¨ç¤ºæ¸ é“
 			Integer logotype = RequestUtil.getInteger(request, "logotype", 1);
-			logger.error("ÇşµÀ¹ÜÀíºóÌ¨ÉÏ´«logo>>chanid:"+chanid+",id:"+id+",table:"+table+",type:"+type+",logotype:"+logotype);
+			logger.error("æ¸ é“ç®¡ç†åå°ä¸Šä¼ logo>>chanid:"+chanid+",id:"+id+",table:"+table+",type:"+type+",logotype:"+logotype);
 			if(id!=-1&&!"".equals(table)){
 				String picurl = uploadPicToMongodb(request, id, table, type, logotype);
-				logger.error("ÇşµÀ¹ÜÀíºóÌ¨ÉÏ´«logo>>chanid:"+chanid+",id:"+id+",picurl:"+picurl);
+				logger.error("æ¸ é“ç®¡ç†åå°ä¸Šä¼ logo>>chanid:"+chanid+",id:"+id+",picurl:"+picurl);
 				int ret = 0;
 				if(picurl!=null&&!"".equals(picurl)){
-					if(logotype == 1){//ÇşµÀºóÌ¨ÉÏ´«logo
+					if(logotype == 1){//æ¸ é“åå°ä¸Šä¼ logo
 						ret = daService.update("update logo_tb set url_fir=? where id=? ", new Object[]{picurl,id});
 					}else if(logotype == 2){
 						ret = daService.update("update logo_tb set url_sec=? where id=? ", new Object[]{picurl,id});
 					}
 				}
-				logger.error("ÇşµÀ¹ÜÀíºóÌ¨ÉÏ´«logo>>chanid:"+chanid+",id:"+id+",ret:"+ret);
+				logger.error("æ¸ é“ç®¡ç†åå°ä¸Šä¼ logo>>chanid:"+chanid+",id:"+id+",ret:"+ret);
 				if(ret==1)
-					request.setAttribute("result", "ÉÏ´«³É¹¦£¬Çë¹Ø±Õµ±Ç°´°¿Ú!");
-				else 
-					request.setAttribute("result", "ÉÏ´«Ê§°Ü!");
+					request.setAttribute("result", "ä¸Šä¼ æˆåŠŸï¼Œè¯·å…³é—­å½“å‰çª—å£!");
+				else
+					request.setAttribute("result", "ä¸Šä¼ å¤±è´¥!");
 			}else {
-				request.setAttribute("result", "ÉÏ´«Ê§°Ü!");
+				request.setAttribute("result", "ä¸Šä¼ å¤±è´¥!");
 			}
 			return mapping.findForward("uploadret");
 		}else if(action.equals("create")){
 			String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "logoname"));
 			Integer type = RequestUtil.getInteger(request, "type", 0);
-			logger.error("ÇşµÀ¹ÜÀíºóÌ¨Ìí¼ÓLOGO¼ÇÂ¼>>chanid:"+chanid+",name:"+name+",type:"+type);
+			logger.error("æ¸ é“ç®¡ç†åå°æ·»åŠ LOGOè®°å½•>>chanid:"+chanid+",name:"+name+",type:"+type);
 			if(chanid != null && chanid > 0){
 				Long count = daService.getLong("select count(*) from logo_tb where type=? and orgid=? ", new Object[]{type, chanid});
-				logger.error("ÇşµÀ¹ÜÀíºóÌ¨Ìí¼ÓLOGO¼ÇÂ¼>>chanid:"+chanid+",count:"+count);
+				logger.error("æ¸ é“ç®¡ç†åå°æ·»åŠ LOGOè®°å½•>>chanid:"+chanid+",count:"+count);
 				if(count > 0){
 					AjaxUtil.ajaxOutput(response, "2");
 					return null;
 				}
-				int r = daService.update("insert into logo_tb(orgid,type,name) values(?,?,?) ", 
+				int r = daService.update("insert into logo_tb(orgid,type,name) values(?,?,?) ",
 						new Object[]{chanid, type, name});
-				logger.error("ÇşµÀ¹ÜÀíºóÌ¨Ìí¼ÓLOGO¼ÇÂ¼>>chanid:"+chanid+",r:"+r);
+				logger.error("æ¸ é“ç®¡ç†åå°æ·»åŠ LOGOè®°å½•>>chanid:"+chanid+",r:"+r);
 				AjaxUtil.ajaxOutput(response, r+"");
 				return null;
 			}
@@ -123,15 +123,15 @@ public class LOGOManageAction extends Action {
 		}else if(action.equals("edit")){
 			String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			logger.error("ÇşµÀ¹ÜÀíºóÌ¨±à¼­LOGO¼ÇÂ¼>>chanid:"+chanid+",name:"+name+",id:"+id);
+			logger.error("æ¸ é“ç®¡ç†åå°ç¼–è¾‘LOGOè®°å½•>>chanid:"+chanid+",name:"+name+",id:"+id);
 			if(id > 0){
 				int r = daService.update("update logo_tb set name=? where id=? ", new Object[]{name,id});
-				logger.error("ÇşµÀ¹ÜÀíºóÌ¨±à¼­LOGO¼ÇÂ¼>>chanid:"+chanid+",r:"+r+",id:"+id);
+				logger.error("æ¸ é“ç®¡ç†åå°ç¼–è¾‘LOGOè®°å½•>>chanid:"+chanid+",r:"+r+",id:"+id);
 				AjaxUtil.ajaxOutput(response, r + "");
 			}else{
 				AjaxUtil.ajaxOutput(response, "0");
 			}
-			
+
 		}else if(action.equals("downloadlogo")){
 			Long orgid = RequestUtil.getLong(request, "orgid", -1L);
 			Integer type = RequestUtil.getInteger(request, "type", 0);
@@ -149,7 +149,7 @@ public class LOGOManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void downloadLogoPics (String picurl, HttpServletRequest request,HttpServletResponse response) throws Exception{
 		logger.error("download from mongodb....");
 		System.err.println("downloadlogo from mongodb picurl="+picurl);
@@ -161,23 +161,23 @@ public class LOGOManageAction extends Action {
 			DBObject obj  = collection.findOne(document);
 			if(obj == null){
 				AjaxUtil.ajaxOutput(response, "");
-				logger.error("È¡Í¼Æ¬´íÎó.....");
+				logger.error("å–å›¾ç‰‡é”™è¯¯.....");
 				return;
 			}
 			byte[] content = (byte[])obj.get("content");
-			logger.error("È¡Í¼Æ¬³É¹¦.....´óĞ¡:"+content.length);
+			logger.error("å–å›¾ç‰‡æˆåŠŸ.....å¤§å°:"+content.length);
 			db.requestDone();
 			response.setDateHeader("Expires", System.currentTimeMillis()+12*60*60*1000);
 			response.setContentLength(content.length);
 			response.setContentType("image/jpeg");
-		    OutputStream o = response.getOutputStream();
-		    o.write(content);
-		    o.flush();
-		    o.close();
-		    System.out.println("mongdb over.....");
+			OutputStream o = response.getOutputStream();
+			o.write(content);
+			o.flush();
+			o.close();
+			System.out.println("mongdb over.....");
 		}
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void setLogo(List<Map> list, Integer type){
 		if(list != null && !list.isEmpty()){
@@ -210,18 +210,18 @@ public class LOGOManageAction extends Action {
 			}
 		}
 	}
-	
+
 	private String uploadPicToMongodb (HttpServletRequest request,Long id,String table,int type,int logotype) throws Exception{
 		Map<String, String> extMap = new HashMap<String, String>();
-	    extMap.put(".jpg", "image/jpeg");
-	    extMap.put(".jpeg", "image/jpeg");
-	    extMap.put(".png", "image/png");
-	    extMap.put(".gif", "image/gif");
-		request.setCharacterEncoding("UTF-8"); // ÉèÖÃ´¦ÀíÇëÇó²ÎÊıµÄ±àÂë¸ñÊ½
-		DiskFileItemFactory  factory = new DiskFileItemFactory(); // ½¨Á¢FileItemFactory¶ÔÏó
+		extMap.put(".jpg", "image/jpeg");
+		extMap.put(".jpeg", "image/jpeg");
+		extMap.put(".png", "image/png");
+		extMap.put(".gif", "image/gif");
+		request.setCharacterEncoding("UTF-8"); // è®¾ç½®å¤„ç†è¯·æ±‚å‚æ•°çš„ç¼–ç æ ¼å¼
+		DiskFileItemFactory  factory = new DiskFileItemFactory(); // å»ºç«‹FileItemFactoryå¯¹è±¡
 		factory.setSizeThreshold(16*4096*1024);
 		ServletFileUpload upload = new ServletFileUpload(factory);
-		// ·ÖÎöÇëÇó£¬²¢µÃµ½ÉÏ´«ÎÄ¼şµÄFileItem¶ÔÏó
+		// åˆ†æè¯·æ±‚ï¼Œå¹¶å¾—åˆ°ä¸Šä¼ æ–‡ä»¶çš„FileItemå¯¹è±¡
 		upload.setSizeMax(16*4096*1024);
 		List<FileItem> items = null;
 		try {
@@ -230,45 +230,45 @@ public class LOGOManageAction extends Action {
 			e.printStackTrace();
 			return "-1";
 		}
-		String filename = ""; // ÉÏ´«ÎÄ¼ş±£´æµ½·şÎñÆ÷µÄÎÄ¼şÃû
-		InputStream is = null; // µ±Ç°ÉÏ´«ÎÄ¼şµÄInputStream¶ÔÏó
-		// Ñ­»·´¦ÀíÉÏ´«ÎÄ¼ş
+		String filename = ""; // ä¸Šä¼ æ–‡ä»¶ä¿å­˜åˆ°æœåŠ¡å™¨çš„æ–‡ä»¶å
+		InputStream is = null; // å½“å‰ä¸Šä¼ æ–‡ä»¶çš„InputStreamå¯¹è±¡
+		// å¾ªç¯å¤„ç†ä¸Šä¼ æ–‡ä»¶
 		for (FileItem item : items){
-			// ´¦ÀíÆÕÍ¨µÄ±íµ¥Óò
+			// å¤„ç†æ™®é€šçš„è¡¨å•åŸŸ
 			if (item.isFormField()){
 				/*if(item.getFieldName().equals("comid")){
 					if(!item.getString().equals(""))
 						comId = item.getString("UTF-8");
 				}*/
-				
-			}else if (item.getName() != null && !item.getName().equals("")){// ´¦ÀíÉÏ´«ÎÄ¼ş
-				// ´Ó¿Í»§¶Ë·¢ËÍ¹ıÀ´µÄÉÏ´«ÎÄ¼şÂ·¾¶ÖĞ½ØÈ¡ÎÄ¼şÃû
+
+			}else if (item.getName() != null && !item.getName().equals("")){// å¤„ç†ä¸Šä¼ æ–‡ä»¶
+				// ä»å®¢æˆ·ç«¯å‘é€è¿‡æ¥çš„ä¸Šä¼ æ–‡ä»¶è·¯å¾„ä¸­æˆªå–æ–‡ä»¶å
 				filename = item.getName().substring(item.getName().lastIndexOf("\\")+1);
-				is = item.getInputStream(); // µÃµ½ÉÏ´«ÎÄ¼şµÄInputStream¶ÔÏó
-				
+				is = item.getInputStream(); // å¾—åˆ°ä¸Šä¼ æ–‡ä»¶çš„InputStreamå¯¹è±¡
+
 			}
 		}
-		String file_ext =filename.substring(filename.lastIndexOf(".")).toLowerCase();// À©Õ¹Ãû
+		String file_ext =filename.substring(filename.lastIndexOf(".")).toLowerCase();// æ‰©å±•å
 		String picurl = type+"_"+id+"_"+logotype+"_"+System.currentTimeMillis()+file_ext;
-		BufferedInputStream in = null;  
+		BufferedInputStream in = null;
 		ByteArrayOutputStream byteout =null;
-	    try {
-	    	in = new BufferedInputStream(is);   
-	    	byteout = new ByteArrayOutputStream(1024);        	       
-		      
-	 	    byte[] temp = new byte[1024];        
-	 	    int bytesize = 0;        
-	 	    while ((bytesize = in.read(temp)) != -1) {        
-	 	          byteout.write(temp, 0, bytesize);        
-	 	    }        
-	 	      
-	 	    byte[] content = byteout.toByteArray(); 
-	 	    DB mydb = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
-		    mydb.requestStart();
-			  
-		    DBCollection collection = mydb.getCollection(table);
-		  //  DBCollection collection = mydb.getCollection("records_test");
-			  
+		try {
+			in = new BufferedInputStream(is);
+			byteout = new ByteArrayOutputStream(1024);
+
+			byte[] temp = new byte[1024];
+			int bytesize = 0;
+			while ((bytesize = in.read(temp)) != -1) {
+				byteout.write(temp, 0, bytesize);
+			}
+
+			byte[] content = byteout.toByteArray();
+			DB mydb = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
+			mydb.requestStart();
+
+			DBCollection collection = mydb.getCollection(table);
+			//  DBCollection collection = mydb.getCollection("records_test");
+
 			BasicDBObject document = new BasicDBObject();
 			document.put("id", id);
 			document.put("ctime",  System.currentTimeMillis()/1000);
@@ -277,14 +277,14 @@ public class LOGOManageAction extends Action {
 			document.put("type", extMap.get(file_ext));
 			document.put("content", content);
 			document.put("filename", picurl);
-			  //¿ªÊ¼ÊÂÎñ
+			//å¼€å§‹äº‹åŠ¡
 			mydb.requestStart();
 			collection.insert(document);
-			  //½áÊøÊÂÎñ
+			//ç»“æŸäº‹åŠ¡
 			mydb.requestDone();
-			in.close();        
-		    is.close();
-		    byteout.close();
+			in.close();
+			is.close();
+			byteout.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "-1";
@@ -296,7 +296,7 @@ public class LOGOManageAction extends Action {
 			if(is!=null)
 				is.close();
 		}
-	    
+
 		return picurl;
 	}
 }

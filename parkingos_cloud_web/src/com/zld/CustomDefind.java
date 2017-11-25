@@ -11,16 +11,16 @@ import org.apache.log4j.Logger;
 import com.ibatis.common.resources.Resources;
 
 /**
- * ¶ÁÈ¡ÅäÖÃÎÄ¼ş
+ * è¯»å–é…ç½®æ–‡ä»¶
  * @author Administrator
  *
  */
 public class CustomDefind {
 
-	
+
 	Logger logger = Logger.getLogger(CustomDefind.class);
 	//private static String PATH = ;
-	
+
 	public static String CUSTOMPARKIDS = getValue("CUSTOMPARKIDS");
 	public static String ISLOTTERY = getValue("ISLOTTERY");
 	public static String MONGOADDRESS = getValue("MONGOADDRESS");
@@ -30,15 +30,19 @@ public class CustomDefind {
 	public static String LOCALMAXVERSION = getValue("LOCALMAXVERSION");
 	public static String TASKTYPE = getValue("TASKTYPE");
 
-	public static String UNIONIP = CustomDefind.getValue("UNIONIP");//²´Á´Æ½Ì¨µØÖ·
-	public static String UNIONID = CustomDefind.getValue("UNIONID");//²´Á´Æ½Ì¨ÕË»§
-	public static String SERVERID = CustomDefind.getValue("SERVERID");//²´Á´Æ½Ì¨·şÎñÉÌºÅ
-	public static String UNIONKEY = CustomDefind.getValue("UNIONKEY");//²´Á´Æ½Ì¨Éí·İÃÜÔ¿
-	public static String USERUPMONEY = CustomDefind.getValue("USERUPMONEY");//³µÖ÷ÔÚ²´Á´Æ½Ì¨µÄÏŞ¶î
-	
+	public static String UNIONIP = CustomDefind.getValue("UNIONIP");//æ³Šé“¾å¹³å°åœ°å€
+	public static String UNIONID = CustomDefind.getValue("UNIONID");//æ³Šé“¾å¹³å°è´¦æˆ·
+	public static String SERVERID = CustomDefind.getValue("SERVERID");//æ³Šé“¾å¹³å°æœåŠ¡å•†å·
+	public static String UNIONKEY = CustomDefind.getValue("UNIONKEY");//æ³Šé“¾å¹³å°èº«ä»½å¯†é’¥
+	public static String USERUPMONEY = CustomDefind.getValue("USERUPMONEY");//è½¦ä¸»åœ¨æ³Šé“¾å¹³å°çš„é™é¢
+	public static String UNIONVALUE = CustomDefind.getValue("UNIONVALUE");//æ³Šé“¾å¹³å°è‹±æ–‡ç®€ç§°
+
+	//æ·»åŠ æ˜¯å¦æ”¯æŒåˆ¤æ–­ETCPARKçš„å­—æ®µåˆ¤å®šå€¼
+	public static String ISSUPPORTETCPARK = CustomDefind.getValue("ISSUPPORTETCPARK");
+
 	public static String getValue(String key){
 		String fileName ="config.properties";
-		//System.out.println(">>>00>>>>config file path:"+fileName);
+		System.out.println(">>>00>>>>config file path:"+fileName);
 		Properties properties = new Properties();
 		try {
 			File file = Resources.getResourceAsFile(fileName);
@@ -51,7 +55,7 @@ public class CustomDefind {
 		}
 		return "0";
 	}
-	
+
 	public static void setValue(String key,String value){
 		String fileName ="config.properties";
 		Properties properties = new Properties();
@@ -65,25 +69,25 @@ public class CustomDefind {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void reSetConfig() {
 		CUSTOMPARKIDS = getValue("CUSTOMPARKIDS");
 		ISLOTTERY = getValue("ISLOTTERY");
 	}
-	//Í£³µ·Ñ£¬Í£³µÈ¯×î¸ßµÖ¿Û½ğ¶î
+	//åœè½¦è´¹ï¼Œåœè½¦åˆ¸æœ€é«˜æŠµæ‰£é‡‘é¢
 	/**
 	 * @param totle
-	 * @param type 0 ¸ù¾İ½ğ¶î²éÈ¯£¬1¸ù¾İÈ¯²éÊ¹ÓÃ½ğ¶î
+	 * @param type 0 æ ¹æ®é‡‘é¢æŸ¥åˆ¸ï¼Œ1æ ¹æ®åˆ¸æŸ¥ä½¿ç”¨é‡‘é¢
 	 * @return
 	 */
 	public static Integer getUseMoney(Double totle,Integer type){
 		//Map<Integer, Integer> totalTicketMap = new HashMap<Integer, Integer>();
 		Double dfeeTop = Math.ceil(totle);
 		Integer feeTop = dfeeTop.intValue();
-		//ÆÕÍ¨È¯  X£º³µ·Ñ½ğ¶îÂú (total) Y£º¿ÉÓÃÈ¯µÖ¿Û½ğ¶î (common_distotal) Ëã·¨£ºX=Y+2+Y/3 ÉÏÏŞÊÇuplimit
-		//Double common_distotal = Math.ceil((feeTop - 2)*(3.0/4.0));//ÏòÉÏÈ¡Õû
-		Double common_distotal = Math.floor((feeTop - 1)/3.0);//ÏòÉÏÈ¡Õû
-		//Double common_distotal = Math.floor((feeTop - 1)/2.0);//ÏòÉÏÈ¡Õû
+		//æ™®é€šåˆ¸  Xï¼šè½¦è´¹é‡‘é¢æ»¡ (total) Yï¼šå¯ç”¨åˆ¸æŠµæ‰£é‡‘é¢ (common_distotal) ç®—æ³•ï¼šX=Y+2+Y/3 ä¸Šé™æ˜¯uplimit
+		//Double common_distotal = Math.ceil((feeTop - 2)*(3.0/4.0));//å‘ä¸Šå–æ•´
+		Double common_distotal = Math.floor((feeTop - 1)/3.0);//å‘ä¸Šå–æ•´
+		//Double common_distotal = Math.floor((feeTop - 1)/2.0);//å‘ä¸Šå–æ•´
 		if(common_distotal<0)
 			return 0;
 //		if(common_distotal>12)
@@ -222,6 +226,6 @@ public class CustomDefind {
 		System.err.println("2:"+getUseMoney(2.0,1));
 		System.err.println("1:"+getUseMoney(1.0,1));*/
 	}
-	
-	
+
+
 }

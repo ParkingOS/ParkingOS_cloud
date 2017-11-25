@@ -22,11 +22,11 @@ import com.zld.utils.RequestUtil;
 public class PassManageAction extends Action {
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(PassManageAction.class);
-	
+
 	/*
-	 * Í¨µÀÉèÖÃ
+	 * é€šé“è®¾ç½®
 	 */
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
@@ -142,7 +142,7 @@ public class PassManageAction extends Action {
 			}
 			Long count = daService.getLong("select count(1) from com_brake_tb where passid=?", new Object[]{passid});
 			if(count > 0){
-				//±à¼­
+				//ç¼–è¾‘
 				String sql = "update com_brake_tb set brake_name=?,serial=?,ip=? where passid=?";
 				int re = daService.update(sql, new Object[]{brake_name,serial,ip,passid});
 				if(re == 1){
@@ -151,7 +151,7 @@ public class PassManageAction extends Action {
 					AjaxUtil.ajaxOutput(response, "0");
 				}
 			}else{
-				//Ìí¼Ó
+				//æ·»åŠ 
 				String sql = "insert into com_brake_tb(passid,brake_name,serial,ip) values(?,?,?,?)";
 				int re = daService.update(sql, new Object[]{passid,brake_name,serial,ip});
 				if(re == 1){

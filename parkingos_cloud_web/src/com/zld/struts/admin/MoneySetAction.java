@@ -18,7 +18,7 @@ import com.zld.utils.RequestUtil;
 
 
 /**
- * Ω∂Ó…Ë∂®
+ * ÈáëÈ¢ùËÆæÂÆö
  * @author Administrator
  *
  */
@@ -26,10 +26,10 @@ public class MoneySetAction extends Action{
 
 	@Autowired
 	private DataBaseService daService;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
@@ -51,14 +51,14 @@ public class MoneySetAction extends Action{
 			String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
-		}else if(action.equals("create")){//ÃÌº”’ ∫≈
+		}else if(action.equals("create")){//Ê∑ªÂä†Â∏êÂè∑
 			Integer mtype = RequestUtil.getInteger(request, "mtype", 0);
 			Integer giveto = RequestUtil.getInteger(request, "giveto", 0);
 			int result=0;
 			try {
 				result = daService.update("insert into money_set_tb (comid,mtype,giveto)" +
-							" values(?,?,?)",
-							new Object[]{comid,mtype,giveto});
+								" values(?,?,?)",
+						new Object[]{comid,mtype,giveto});
 			} catch (Exception e) {
 				if(e.getMessage().indexOf("money_set_tb_comid_mtype_key")!=-1)
 					result=-2;
@@ -80,5 +80,5 @@ public class MoneySetAction extends Action{
 		}
 		return null;
 	}
-	
+
 }

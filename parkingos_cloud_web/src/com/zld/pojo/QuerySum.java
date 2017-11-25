@@ -11,7 +11,7 @@ public class QuerySum implements Callable<Map> {
 	private ArrayList<Object> params;
 	private PgOnlyReadService readService;
 	public QuerySum(PgOnlyReadService readService, String sql,
-			ArrayList<Object> params){
+					ArrayList<Object> params){
 		this.sql = sql;
 		this.params = params;
 		this.readService = readService;

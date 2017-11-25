@@ -17,7 +17,7 @@ import com.zld.utils.StringUtils;
 
 @Repository
 public class PgOnlyReadImpl extends JdbcTemplate implements PgOnlyReadDao {
-	
+
 	@Autowired
 	@Override
 	public void setDataSource(@Qualifier("dataOnlyRead")DataSource dataSource) {
@@ -30,10 +30,10 @@ public class PgOnlyReadImpl extends JdbcTemplate implements PgOnlyReadDao {
 		List list = queryForList(sql,values);
 		return list;
 	}
-	
+
 	public Long getLong(String sql,Object[] values ){
 		return queryForLong(sql,values);
-		
+
 	}
 	public String getField(String sql, Object[] values) {
 		queryForObject(sql, values, String.class);
@@ -44,7 +44,7 @@ public class PgOnlyReadImpl extends JdbcTemplate implements PgOnlyReadDao {
 		int start = (pageNum - 1) * pageSize;
 		sql =sql +" limit ? offset ?";
 		int length =2;
-		
+
 		Object [] _params=null;
 		if(values!=null){
 			length= values.length+2;
@@ -64,17 +64,17 @@ public class PgOnlyReadImpl extends JdbcTemplate implements PgOnlyReadDao {
 	public Object getObject(String sql, Object[] values, Class type) {
 		return queryForObject(sql, values,type);
 	}
-	
+
 	public <T> List<T> getPOJOList(String sql, Object[] values, Class<T> type){
 		RowMapper rm = ParameterizedBeanPropertyRowMapper.newInstance(type);
 		return query(sql, values, rm);
 	}
-	
+
 	public <T> T getPOJO(String sql, Object[] values, Class<T> type){
 		try {
 			RowMapper rm = ParameterizedBeanPropertyRowMapper.newInstance(type);
 			return (T)queryForObject(sql, values, rm);
-		} catch (EmptyResultDataAccessException e) {//没有查到数据时抛出EmptyResultDataAccessException异常
+		} catch (EmptyResultDataAccessException e) {//娌℃湁鏌ュ埌鏁版嵁鏃舵姏鍑篍mptyResultDataAccessException寮傚父
 			return null;
 		}
 	}

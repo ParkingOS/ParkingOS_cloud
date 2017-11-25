@@ -35,10 +35,10 @@ public class ReadFile {
 					objects = new Object[5];
 					int b = str.indexOf("id");
 					int e = str.indexOf("label");
-					
+
 					String l_l  = str.substring(b+3,e);
 					str = str.substring(e);
-					
+
 					b = str.indexOf("label");
 					e = str.indexOf("id");
 					if(b==-1||e==-1)
@@ -61,7 +61,7 @@ public class ReadFile {
 	public static void main(String[] args) {
 		List<Object[]> valueList =praseFile();
 		for(Object[] objects : valueList){
-			System.out.println("¾­£º"+objects[0]+",Î³£º"+objects[1]+",Ãû³Æ£º"+objects[3]+",Ãû³Æ£º"+objects[2]+",ÀàĞÍ:"+objects[4]);
+			System.out.println("ç»ï¼š"+objects[0]+",çº¬ï¼š"+objects[1]+",åç§°ï¼š"+objects[3]+",åç§°ï¼š"+objects[2]+",ç±»å‹:"+objects[4]);
 		}
 	}
 }

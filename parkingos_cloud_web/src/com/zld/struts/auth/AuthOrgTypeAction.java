@@ -20,7 +20,7 @@ import com.zld.utils.RequestUtil;
 
 
 /**
- * È¨ÏŞ¹ÜÀí---×éÖ¯»ú¹¹¹ÜÀí
+ * æƒé™ç®¡ç†---ç»„ç»‡æœºæ„ç®¡ç†
  * @author Gecko
  *
  */
@@ -30,7 +30,7 @@ public class AuthOrgTypeAction extends Action {
 	private DataBaseService daService;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
 		request.setAttribute("authid", request.getParameter("authid"));
@@ -72,11 +72,11 @@ public class AuthOrgTypeAction extends Action {
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			Map orgTypeMap = daService.getMap("select name from zld_orgtype_tb where id =?", new Object[]{id});
 			int result = daService.update("insert into user_role_tb(role_name,oid,type,state)" +
-					"values(?,?,?,?)", new Object[]{orgTypeMap.get("name")+"¹ÜÀíÔ±",id,0,0});
+					"values(?,?,?,?)", new Object[]{orgTypeMap.get("name")+"ç®¡ç†å‘˜",id,0,0});
 			AjaxUtil.ajaxOutput(response, ""+result);
 			return null;
 		}
-		
+
 		return mapping.findForward(target);
 	}
 

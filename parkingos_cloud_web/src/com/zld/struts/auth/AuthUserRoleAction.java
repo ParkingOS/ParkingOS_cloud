@@ -19,7 +19,7 @@ import com.zld.utils.RequestUtil;
 
 
 /**
- * È¨ÏŞ¹ÜÀí---½ÇÉ«¹ÜÀí
+ * æƒé™ç®¡ç†---è§’è‰²ç®¡ç†
  * @author Gecko
  *
  */
@@ -29,23 +29,23 @@ public class AuthUserRoleAction extends Action {
 	private DataBaseService daService;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
 		request.setAttribute("authid", request.getParameter("authid"));
-		Long loginuin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long loginuin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		if(loginuin == null){
 			response.sendRedirect("login.do");
 			return null;
 		}
-		Map<String, Object> adminRoleMap = daService.getMap("select * from user_role_tb where type=? and oid =(select id from zld_orgtype_tb where name like ? limit ? ) limit ? ", 
-				new Object[]{0, "%BOSS%", 1, 1});//²éÕÒ¹ÜÀíÔ±½ÇÉ«
+		Map<String, Object> adminRoleMap = daService.getMap("select * from user_role_tb where type=? and oid =(select id from zld_orgtype_tb where name like ? limit ? ) limit ? ",
+				new Object[]{0, "%BOSS%", 1, 1});//æŸ¥æ‰¾ç®¡ç†å‘˜è§’è‰²
 		if(action.equals("")){
 			return mapping.findForward("orglist");
 		}else if(action.equals("query")){
 			String sql = "select * from user_role_tb  where adminid=? and oid=? order by id";
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
-			List<Map<String, Object>> list = daService.getAll(sql, 
+			List<Map<String, Object>> list = daService.getAll(sql,
 					new Object[]{loginuin, adminRoleMap.get("oid")});
 			int count =0;
 			if(list!=null)

@@ -23,7 +23,7 @@ import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 
 /**
- * ´òÉÍÍ³¼Æ
+ * æ‰“èµç»Ÿè®¡
  * @author Administrator
  *
  */
@@ -33,7 +33,7 @@ public class RewardAnlysisAction extends Action {
 	private DataBaseService daService;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -66,19 +66,19 @@ public class RewardAnlysisAction extends Action {
 				Long b = TimeTools.getLongMilliSecondFrom_HHMMDD(btime)/1000;
 				Long e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime+" 23:59:59");
 				sqlInfo =new SqlInfo(" ctime between ? and ?  ",
-						new Object[]{b,e});//c_type 0:NFC,1:IBeacon 2:ÕÕÅÆ
+						new Object[]{b,e});//c_type 0:NFC,1:IBeacon 2:ç…§ç‰Œ
 			}
-			
+
 			sql +=" where "+sqlInfo.getSql();
 			params= sqlInfo.getParams();
-			
+
 			list = daService.getAllMap(sql +" group by uid,comid order by money desc ",params);
 			setName(list,btime,etime);
 //			if(list!=null)
 //				list = setList(list);
 			int count = list!=null?list.size():0;
 			//Collections.sort(list, new ListSort());
-			//ÅÅĞò,°´½ğ¶îÓÉ´óµ½Ğ¡
+			//æ’åº,æŒ‰é‡‘é¢ç”±å¤§åˆ°å°
 			String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"comid");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
@@ -96,7 +96,7 @@ public class RewardAnlysisAction extends Action {
 			String btime = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "btime"));
 			String etime = RequestUtil.processParams(request, "etime");
 			String otype = RequestUtil.processParams(request, "otype");
-			Long state = 1L;//ÒÑÖ§¸¶
+			Long state = 1L;//å·²æ”¯ä»˜
 			Integer c_type = 0;//NFC
 			if(otype.equals("cn")){
 				state = 0L;
@@ -115,11 +115,11 @@ public class RewardAnlysisAction extends Action {
 			if(parkid!=-1){
 				if(!otype.equals("e")){
 					list = daService.getAll("select c.company_name cname,o.total,o.create_time,o.end_time,o.nfc_uuid,o.car_number carnumber from parkuser_reward_tb o,com_info_tb c where o.comid=c.id " +
-							"and o.comid=?  and o.create_time between ? and ? and o.c_type=? and o.state=? order by o.id desc ",
+									"and o.comid=?  and o.create_time between ? and ? and o.c_type=? and o.state=? order by o.id desc ",
 							new Object[]{parkid,b,e,c_type,state} );
 				}else{
 					list = daService.getAll("select c.company_name cname,o.total,o.create_time,o.end_time,o.nfc_uuid,o.car_number carnumber from parkuser_reward_tb o,com_info_tb c where o.comid=c.id " +
-							"and o.comid=?  and o.create_time between ? and ? and o.state=? order by o.id desc ",
+									"and o.comid=?  and o.create_time between ? and ? and o.state=? order by o.id desc ",
 							new Object[]{parkid,b,e,state} );
 				}
 				int count = list!=null?list.size():0;
@@ -132,7 +132,7 @@ public class RewardAnlysisAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void setName(List list,String btime,String etime){
 		List<Object> uins = new ArrayList<Object>();
 		if(list!=null&&list.size()>0){
@@ -175,7 +175,7 @@ public class RewardAnlysisAction extends Action {
 			}
 		}
 	}
-	
+
 /*	private List<Map<String, Object>> setList(List<Map<String, Object>> lists){
 		List<Map<String, Object>> result = new ArrayList<Map<String,Object>>();
 		List<Long> comidList = new ArrayList<Long>();
@@ -183,13 +183,13 @@ public class RewardAnlysisAction extends Action {
 			Long comId = (Long)map.get("comid");
 			Integer state = (Integer)map.get("state");
 			Integer ctype = (Integer)map.get("c_type");
-			if(state == 2){//ÌÓµ¥
+			if(state == 2){//é€ƒå•
 				if(comidList.contains(comId)){
 					for(Map<String, Object> eMap : result){
 						Long cid = (Long)eMap.get("comid");
 						if(cid.intValue() == comId.intValue()){
 							Long eorder = (Long)eMap.get("eorder");
-							eorder += (Long)map.get("scount");//ÌÓµ¥ÊıÁ¿²»Çø·Öc_type
+							eorder += (Long)map.get("scount");//é€ƒå•æ•°é‡ä¸åŒºåˆ†c_type
 							eMap.put("eorder", eorder.intValue());
 						}
 					}
@@ -198,17 +198,17 @@ public class RewardAnlysisAction extends Action {
 					map.put("eorder", map.get("scount"));
 					result.add(map);
 				}
-			}else if(state==1){//ÀúÊ·¶©µ¥
+			}else if(state==1){//å†å²è®¢å•
 				if(comidList.contains(comId)){
 					for(Map<String, Object> hMap : result){
 						Long cid = (Long)hMap.get("comid");
 						if(cid.intValue() == comId.intValue()){
 							if(ctype.equals(0)){//NFC
-								hMap.put("hncount", map.get("scount"));//NFCÀúÊ·¶©µ¥ÊıÁ¿
-								hMap.put("ntotal", map.get("total"));//NFC½áËã½ğ¶î
+								hMap.put("hncount", map.get("scount"));//NFCå†å²è®¢å•æ•°é‡
+								hMap.put("ntotal", map.get("total"));//NFCç»“ç®—é‡‘é¢
 							}else{
-								hMap.put("hzcount", map.get("scount"));//ÕÕÅÆÀúÊ·¶©µ¥ÊıÁ¿
-								hMap.put("ztotal", map.get("total"));//ÕÕÅÆ½áËã½ğ¶î
+								hMap.put("hzcount", map.get("scount"));//ç…§ç‰Œå†å²è®¢å•æ•°é‡
+								hMap.put("ztotal", map.get("total"));//ç…§ç‰Œç»“ç®—é‡‘é¢
 							}
 							if(hMap.get("ctotal") != null){
 								Double ctotal = Double.valueOf((String)(hMap.get("ctotal") + ""));
@@ -225,25 +225,25 @@ public class RewardAnlysisAction extends Action {
 				}else{
 					comidList.add(comId);
 					if(ctype.equals(0)){//NFC
-						map.put("hncount", map.get("scount"));//NFCÀúÊ·¶©µ¥ÊıÁ¿
-						map.put("ntotal", map.get("total"));//NFC½áËã½ğ¶î
+						map.put("hncount", map.get("scount"));//NFCå†å²è®¢å•æ•°é‡
+						map.put("ntotal", map.get("total"));//NFCç»“ç®—é‡‘é¢
 					}else{
-						map.put("hzcount", map.get("scount"));//ÕÕÅÆÀúÊ·¶©µ¥ÊıÁ¿
-						map.put("ztotal", map.get("total"));//ÕÕÅÆ½áËã½ğ¶î
+						map.put("hzcount", map.get("scount"));//ç…§ç‰Œå†å²è®¢å•æ•°é‡
+						map.put("ztotal", map.get("total"));//ç…§ç‰Œç»“ç®—é‡‘é¢
 					}
-					map.put("ctotal", map.get("total"));//ÓÃÓÚ±È½Ï´óĞ¡ÅÅĞòµÄÊıÖµ
+					map.put("ctotal", map.get("total"));//ç”¨äºæ¯”è¾ƒå¤§å°æ’åºçš„æ•°å€¼
 					map.put("eorder", null);
 					result.add(map);
 				}
-			}else {//µ±Ç°¶©µ¥£¬Î´½áËãµÄ
+			}else {//å½“å‰è®¢å•ï¼Œæœªç»“ç®—çš„
 				if(comidList.contains(comId)){
 					for(Map<String, Object> dMap : result){
 						Long cid = (Long)dMap.get("comid");
 						if(cid.intValue()==comId.intValue()){
 							if(ctype.equals(0)){//NFC
-								dMap.put("cncount", map.get("scount"));//NFCµ±Ç°¶©µ¥ÊıÁ¿
+								dMap.put("cncount", map.get("scount"));//NFCå½“å‰è®¢å•æ•°é‡
 							}else{
-								dMap.put("czcount", map.get("scount"));//ÕÕÅÆµ±Ç°¶©µ¥ÊıÁ¿
+								dMap.put("czcount", map.get("scount"));//ç…§ç‰Œå½“å‰è®¢å•æ•°é‡
 							}
 							break;
 						}
@@ -251,9 +251,9 @@ public class RewardAnlysisAction extends Action {
 				}else {
 					map.put("corder", map.get("scount"));
 					if(ctype.equals(0)){//NFC
-						map.put("cncount", map.get("scount"));//NFCµ±Ç°¶©µ¥ÊıÁ¿
+						map.put("cncount", map.get("scount"));//NFCå½“å‰è®¢å•æ•°é‡
 					}else{
-						map.put("czcount", map.get("scount"));//ÕÕÅÆµ±Ç°¶©µ¥ÊıÁ¿
+						map.put("czcount", map.get("scount"));//ç…§ç‰Œå½“å‰è®¢å•æ•°é‡
 					}
 					map.put("eorder", null);
 					map.put("hncount", null);
@@ -291,5 +291,5 @@ public class RewardAnlysisAction extends Action {
 		}
 		
 	}
-*/	
+*/
 }

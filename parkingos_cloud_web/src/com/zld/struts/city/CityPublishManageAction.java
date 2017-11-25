@@ -30,14 +30,14 @@ public class CityPublishManageAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null){
@@ -93,10 +93,10 @@ public class CityPublishManageAction extends Action {
 			int r = bathpublish(request, uin);
 			AjaxUtil.ajaxOutput(response, r + "");
 		}
-		
+
 		return null;
 	}
-	
+
 	private int bathpublish(HttpServletRequest request, Long publishor){
 		String ids = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "ids"));
 		String message = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "message"));
@@ -148,7 +148,7 @@ public class CityPublishManageAction extends Action {
 		}
 		return 0;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> creators = new ArrayList<Object>();
@@ -165,7 +165,7 @@ public class CityPublishManageAction extends Action {
 				else
 					preParams += ",?";
 			}
-			
+
 			List<Map<String, Object>> list2 = pgOnlyReadService.getAllMap("select id,nickname from user_info_tb where id in ("+preParams+")", creators);
 			if(list2 != null && !list2.isEmpty()){
 				for(Map<String, Object> map : list){
@@ -179,7 +179,7 @@ public class CityPublishManageAction extends Action {
 					}
 				}
 			}
-			
+
 			list2 = pgOnlyReadService.getAllMap("select id,nickname from user_info_tb where id in ("+preParams+")", updators);
 			if(list2 != null && !list2.isEmpty()){
 				for(Map<String, Object> map : list){
@@ -193,7 +193,7 @@ public class CityPublishManageAction extends Action {
 					}
 				}
 			}
-			
+
 
 			list2 = pgOnlyReadService.getAllMap("select induce_id,count(id) hcount from induce_ad_history_tb where induce_id in ("+preParams+") group by induce_id ", induceids);
 			if(list2 != null && !list2.isEmpty()){
@@ -210,7 +210,7 @@ public class CityPublishManageAction extends Action {
 			}
 		}
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		Integer comid = RequestUtil.getInteger(request, "comid_start", -1);
 		SqlInfo sqlInfo1 = null;

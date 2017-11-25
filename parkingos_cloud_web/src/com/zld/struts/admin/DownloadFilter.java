@@ -22,21 +22,21 @@ import com.zld.impl.MongoClientFactory;
 
 
 /**
- * 处理车场照片，从mongodb读取
+ * 澶勭悊杞﹀満鐓х墖锛屼粠mongodb璇诲彇
  * @author Administrator
  *
  */
 @Path("/")
 public class DownloadFilter {
-	
-	
+
+
 	/**
 	 * http://127.0.0.1/zld/parkpics/8689_1460623743229.jpg
 	 */
 	@GET
 	@Path("/{picurl}")
 	@Produces(MediaType.TEXT_HTML)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)       
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public void getLogoFile(@PathParam("picurl") String facklink,@Context HttpServletRequest request, @Context HttpServletResponse response)
 			throws IOException {
 		System.err.println("mongodb file:"+facklink);
@@ -59,13 +59,13 @@ public class DownloadFilter {
 			response.setHeader("Last-Modified", c.getTime().toString());
 			response.setContentLength(content.length);
 			response.setContentType("image/jpeg");
-		    OutputStream o = response.getOutputStream();
-		    o.write(content);
-		    o.flush();
-		    o.close();
-		    response.flushBuffer();
-		    //response.reset();
-		    System.out.println("mongdb over.....");
+			OutputStream o = response.getOutputStream();
+			o.write(content);
+			o.flush();
+			o.close();
+			response.flushBuffer();
+			//response.reset();
+			System.out.println("mongdb over.....");
 		}else {
 			response.sendRedirect("http://sysimages.tq.cn/images/webchat_101001/common/kefu.png");
 		}

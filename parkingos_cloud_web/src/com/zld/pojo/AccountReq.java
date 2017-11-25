@@ -7,13 +7,13 @@ import com.zld.utils.SqlInfo;
 
 public class AccountReq implements Serializable {
 	private long id;
-	private long startTime = -1;//²éÑ¯ÆğÊ¼Ê±¼ä
-	private long endTime = -1;//²éÑ¯½áÊøÊ±¼ä
-	private int type;//0£º°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ 1£º°´³µ³¡±àºÅÍ³¼Æ 2£º°´²´Î»¶Î±àºÅ²éÑ¯ 3£º°´²´Î»²éÑ¯ 4:°´ÔËÓª¼¯ÍÅ²éÑ¯
+	private long startTime = -1;//æŸ¥è¯¢èµ·å§‹æ—¶é—´
+	private long endTime = -1;//æŸ¥è¯¢ç»“æŸæ—¶é—´
+	private int type;//0ï¼šæŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡ 1ï¼šæŒ‰è½¦åœºç¼–å·ç»Ÿè®¡ 2ï¼šæŒ‰æ³Šä½æ®µç¼–å·æŸ¥è¯¢ 3ï¼šæŒ‰æ³Šä½æŸ¥è¯¢ 4:æŒ‰è¿è¥é›†å›¢æŸ¥è¯¢
 	private int pageNum = -1;
 	private int pageSize = -1;
 	private SqlInfo sqlInfo;
-	
+
 	public int getPageNum() {
 		return pageNum;
 	}

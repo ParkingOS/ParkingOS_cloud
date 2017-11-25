@@ -32,7 +32,7 @@ import com.zld.utils.TimeTools;
 
 
 /**
- * ³µ³¡ÔÆ²Ù×÷ÈÕÖ¾
+ * è½¦åœºäº‘æ“ä½œæ—¥å¿—
  * @author Administrator
  *
  */
@@ -45,14 +45,14 @@ public class SensorLogsAction extends Action{
 	Logger logger = Logger.getLogger(SensorLogsAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		Integer authId = RequestUtil.getInteger(request, "authid",-1);
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", authId);
 		if(uin==null){
 			response.sendRedirect("login.do");
@@ -80,9 +80,9 @@ public class SensorLogsAction extends Action{
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			BasicDBObject conditions =null;
 			conditions = getConditions(request, comids);
-			
+
 			BasicDBObject sort = new BasicDBObject("ctime",-1);
-			
+
 			Long count = mongoDbUtils.queryMongoDbCount("zld_hdbeart_logs", conditions);
 			List<Map<String, Object>> retList =null;
 			if(count>0){
@@ -92,18 +92,18 @@ public class SensorLogsAction extends Action{
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
 		}else if(action.equals("export")){
-			
+
 			BasicDBObject conditions =null;
 			BasicDBObject sort = new BasicDBObject("ctime",-1);
-			
+
 			List<Map<String, Object>>list=mongoDbUtils.queryMongoDbResult("zld_hdbeart_logs", conditions,sort, 0, 0);
 			List<List<String>> bodyList = new ArrayList<List<String>>();
 			String [] heards = null;
 			if(list!=null&&list.size()>0){
-				mongoDbUtils.saveLogs( request,0, 5, "µ¼³ö²Ù×÷ÈÕÖ¾£º"+list.size()+"Ìõ");
+				mongoDbUtils.saveLogs( request,0, 5, "å¯¼å‡ºæ“ä½œæ—¥å¿—ï¼š"+list.size()+"æ¡");
 				//setComName(list);
 				String [] f = new String[]{"time","uin","otype","uri","ip","content"};
-				heards = new String[]{"²Ù×÷ÈÕÆÚ","²Ù×÷ÈË","²Ù×÷ÀàĞÍ","²Ù×÷Ä£¿é","IPµØÖ·","ÄÚÈİ"};
+				heards = new String[]{"æ“ä½œæ—¥æœŸ","æ“ä½œäºº","æ“ä½œç±»å‹","æ“ä½œæ¨¡å—","IPåœ°å€","å†…å®¹"};
 				Map<Long, String> uinNameMap = new HashMap<Long, String>();
 				Map<String, Object> oMap = getOperateType();
 				for(Map<String, Object> map : list){
@@ -113,15 +113,15 @@ public class SensorLogsAction extends Action{
 						if(v==null)
 							v="";
 						if("otype".equals(field)){
-							switch(Integer.valueOf(v.toString())){//0:NFC,1:IBeacon,2:ÕÕÅÆ   3Í¨µÀÕÕÅÆ 4Ö±¸¶ 5ÔÂ¿¨ÓÃ»§
-							case 0:values.add("µÇÂ¼");break;
-							case 1:values.add("ÍË³ö");break;
-							case 2:values.add("Ìí¼Ó");break;
-							case 3:values.add("±à¼­");break;
-							case 4:values.add("É¾³ı");break;
-							case 5:values.add("µ¼³ö");break;
-							case 6:values.add("½áËã");break;
-							default:values.add("");
+							switch(Integer.valueOf(v.toString())){//0:NFC,1:IBeacon,2:ç…§ç‰Œ   3é€šé“ç…§ç‰Œ 4ç›´ä»˜ 5æœˆå¡ç”¨æˆ·
+								case 0:values.add("ç™»å½•");break;
+								case 1:values.add("é€€å‡º");break;
+								case 2:values.add("æ·»åŠ ");break;
+								case 3:values.add("ç¼–è¾‘");break;
+								case 4:values.add("åˆ é™¤");break;
+								case 5:values.add("å¯¼å‡º");break;
+								case 6:values.add("ç»“ç®—");break;
+								default:values.add("");
 							}
 						}else if("time".equals(field)){
 							if(map.get(field)!=null){
@@ -152,7 +152,7 @@ public class SensorLogsAction extends Action{
 					bodyList.add(values);
 				}
 			}
-			String fname = "²Ù×÷ÈÕÖ¾" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
+			String fname = "æ“ä½œæ—¥å¿—" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
 			fname = StringUtils.encodingFileName(fname);
 			java.io.OutputStream os;
 			try {
@@ -161,7 +161,7 @@ public class SensorLogsAction extends Action{
 						+ fname + ".xls");
 				response.setContentType("application/x-download");
 				os = response.getOutputStream();
-				ExportExcelUtil importExcel = new ExportExcelUtil("²Ù×÷ÈÕÖ¾",
+				ExportExcelUtil importExcel = new ExportExcelUtil("æ“ä½œæ—¥å¿—",
 						heards, bodyList);
 				importExcel.createExcelFile(os);
 			} catch (IOException e) {
@@ -169,7 +169,7 @@ public class SensorLogsAction extends Action{
 			}
 		}else if(action.equals("getOtype")){
 			Map<String, Object> oMap = getOperateType();
-			String result = "[{value_no:-1,value_name:\"È«²¿\"}";
+			String result = "[{value_no:-1,value_name:\"å…¨éƒ¨\"}";
 			for(String key : oMap.keySet()){
 				result+=",{value_no:\""+key+"\",value_name:\""+oMap.get(key)+"\"}";
 			}
@@ -178,7 +178,7 @@ public class SensorLogsAction extends Action{
 		}
 		return null;
 	}
-	
+
 	private BasicDBObject getConditions(HttpServletRequest request,Long[] comid){
 		String timeOperate = RequestUtil.getString(request, "ctime");
 		String btime = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "ctime_start"));
@@ -186,7 +186,7 @@ public class SensorLogsAction extends Action{
 		String transmitternumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "transmitternumber"));
 		String battery = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "battery_start"));
 		String magnetism = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "magnetism_start"));
-	
+
 		String sensornumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "sensornumber"));
 		String parkstatus = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "parkstatus_start"));
 
@@ -194,9 +194,9 @@ public class SensorLogsAction extends Action{
 		/*if(!transmitternumber.equals("")&&!transmitternumber.equals("-1"))
 			conditions.put("transmitternumber", transmitternumber);*/
 		if(!magnetism.equals("")&&!magnetism.equals("-1"))
-			conditions.put("magnetism", magnetism);	
+			conditions.put("magnetism", magnetism);
 		if(!battery.equals("")&&!battery.equals("-1"))
-			conditions.put("battery", battery);	
+			conditions.put("battery", battery);
 		/*if(!source.equals("")&&!source.equals("-1"))
 			conditions.put("source", source);*/
 		/*if(!sensornumber.equals("")&&!source.equals("-1"))
@@ -211,19 +211,19 @@ public class SensorLogsAction extends Action{
 			Pattern  patternsentrans=Pattern.compile(transmitternumber,Pattern.CASE_INSENSITIVE);
 			conditions.put("transmitternumber", patternsentrans);
 		}
-	
+
 		Pattern  patternsenmag=Pattern.compile(magnetism,Pattern.CASE_INSENSITIVE);
 		/*conditions.put("magnetism", patternsenmag);
 		Pattern  patternsenbat=Pattern.compile(battery,Pattern.CASE_INSENSITIVE);
 		conditions.put("battery", patternsenbat);*/
-		
-		
-		
+
+
+
 		if(btime!=null&&!"".equals(btime)){
 			if(timeOperate.equals("between")&&etime!=null&&!"".equals(etime)){//between
-				conditions.append("ctime", 
+				conditions.append("ctime",
 						new BasicDBObject(QueryOperators.GTE,TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(btime))
-						.append(QueryOperators.LTE, TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime)));
+								.append(QueryOperators.LTE, TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime)));
 			}else if(timeOperate.equals("1")){//>=
 				conditions.put("ctime", new BasicDBObject(QueryOperators.GTE,TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(btime)));
 			}else if(timeOperate.equals("3")){//=
@@ -237,8 +237,8 @@ public class SensorLogsAction extends Action{
 		}
 		return conditions;
 	}
-	
-	
+
+
 	private String getUinName(Long uin) {
 		Map list = onlyReadService.getPojo("select * from user_info_tb where id =?  ",new Object[]{uin});
 		String uinName = "";
@@ -247,23 +247,23 @@ public class SensorLogsAction extends Action{
 		}
 		return uinName;
 	}
-	
+
 	private Map<String, Object> getOperateType(){
 		Map<String, Object> oMap = new HashMap<String, Object>();
-		oMap.put("/price.do","¼Û¸ñ¹ÜÀí");
-		oMap.put("/dologin.do","µÇÂ¼");
-		oMap.put("/package.do","Ì×²Í¹ÜÀí");
-		oMap.put("/order.do","¶©µ¥¹ÜÀí");
-		oMap.put("/parklogs.do","ÈÕÖ¾¹ÜÀí");
-		oMap.put("/authrole.do","½ÇÉ«È¨ÏŞ");
-		oMap.put("/freereasons.do","Ãâ·ÑÔ­Òò");
-		oMap.put("/compark.do","³µÎ»¹ÜÀí");
-		oMap.put("/member.do","Ô±¹¤¹ÜÀí");
-		oMap.put("/parkcamera.do","ÉãÏñÍ·¹ÜÀí");
-		oMap.put("/vipuser.do", "ÔÂ¿¨»áÔ±");
-		oMap.put("/parkinfo.do", "ÕË»§¹ÜÀí");
-		oMap.put("/shop.do", "ÉÌ»§¹ÜÀí");
-		oMap.put("/adminrole.do", "½ÇÉ«¹ÜÀí");
+		oMap.put("/price.do","ä»·æ ¼ç®¡ç†");
+		oMap.put("/dologin.do","ç™»å½•");
+		oMap.put("/package.do","å¥—é¤ç®¡ç†");
+		oMap.put("/order.do","è®¢å•ç®¡ç†");
+		oMap.put("/parklogs.do","æ—¥å¿—ç®¡ç†");
+		oMap.put("/authrole.do","è§’è‰²æƒé™");
+		oMap.put("/freereasons.do","å…è´¹åŸå› ");
+		oMap.put("/compark.do","è½¦ä½ç®¡ç†");
+		oMap.put("/member.do","å‘˜å·¥ç®¡ç†");
+		oMap.put("/parkcamera.do","æ‘„åƒå¤´ç®¡ç†");
+		oMap.put("/vipuser.do", "æœˆå¡ä¼šå‘˜");
+		oMap.put("/parkinfo.do", "è´¦æˆ·ç®¡ç†");
+		oMap.put("/shop.do", "å•†æˆ·ç®¡ç†");
+		oMap.put("/adminrole.do", "è§’è‰²ç®¡ç†");
 		return oMap;
 	}
 }

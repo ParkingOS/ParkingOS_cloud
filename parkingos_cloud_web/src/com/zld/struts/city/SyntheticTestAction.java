@@ -35,10 +35,10 @@ public class SyntheticTestAction extends Action {
 	private CommonMethods commonMethods;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long) request.getSession().getAttribute("loginuin");// µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long) request.getSession().getAttribute("loginuin");// ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		String dataType = RequestUtil.getString(request, "datatype");
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
@@ -79,12 +79,12 @@ public class SyntheticTestAction extends Action {
 		}else if(action.equals("playvideo")){
 			Long videoid = RequestUtil.getLong(request, "videoid", -1L);
 			if(videoid > 0){
-				Map<String, Object> map = onlyReadService.getMap("select * from city_video_tb where id=? ", 
+				Map<String, Object> map = onlyReadService.getMap("select * from city_video_tb where id=? ",
 						new Object[]{videoid});
 				if(map != null){
 					Long comid = (Long)map.get("comid");
 					if(comid > 0){
-						List<Map<String, Object>> list = onlyReadService.getAll("select video_name,channelid from city_video_tb where comid=? order by id desc ", 
+						List<Map<String, Object>> list = onlyReadService.getAll("select video_name,channelid from city_video_tb where comid=? order by id desc ",
 								new Object[]{comid});
 						if(list.size() > 1){
 							String ret = "{\"playlist\":[]}";
@@ -92,7 +92,7 @@ public class SyntheticTestAction extends Action {
 							ret = ret.replace("[]", playlist);
 							request.setAttribute("playlist", ret);
 							return mapping.findForward("multivideo");
-							
+
 						}
 					}
 					request.setAttribute("channelID", map.get("channelid"));
@@ -105,7 +105,7 @@ public class SyntheticTestAction extends Action {
 		}
 		return null;
 	}
-  //»ñÈ¡¹«½»
+	//è·å–å…¬äº¤
 
 
 
@@ -140,7 +140,7 @@ public class SyntheticTestAction extends Action {
 		}
 		return "[]";
 	}
-   //»ñÈ¡×ÔĞĞ³µ
+	//è·å–è‡ªè¡Œè½¦
 	private String getBikeSttion(HttpServletRequest request) {
 		Double lon = RequestUtil.getDouble(request, "lon", 0.0);
 		Double lat = RequestUtil.getDouble(request, "lat", 0.0);
@@ -163,25 +163,25 @@ public class SyntheticTestAction extends Action {
 								"plot_count").toString());
 						double calc = surplus / plot_count;
 						if (calc < 0.1)
-					
+
 						{
 							ret += "["+ ((Double.valueOf(map.get("longitude")
-											+ "")) - 0.0055)+ ","+ ((Double.valueOf(map.get("latitude") + "") + 0.0019))
+									+ "")) - 0.0055)+ ","+ ((Double.valueOf(map.get("latitude") + "") + 0.0019))
 									+ ",\"" + map.get("name") + "\",\""
 									+ map.get("address") + "\"," + 1 + ","
 									+ map.get("surplus") + ","
-									+ map.get("plot_count") + ",\"³µÎ»Êı£º½ôÕÅ\"],";
+									+ map.get("plot_count") + ",\"è½¦ä½æ•°ï¼šç´§å¼ \"],";
 						} else {
 							ret += "["
 									+ ((Double.valueOf(map.get("longitude")
-											+ "")) - 0.0055)
+									+ "")) - 0.0055)
 									+ ","
 									+ ((Double
-											.valueOf(map.get("latitude") + "") + 0.0019))
+									.valueOf(map.get("latitude") + "") + 0.0019))
 									+ ",\"" + map.get("name") + "\",\""
 									+ map.get("address") + "\"," + 0 + ","
 									+ map.get("surplus") + ","
-									+ map.get("plot_count") + ",\"³µÎ»Êı£ºÕı³£\"],";
+									+ map.get("plot_count") + ",\"è½¦ä½æ•°ï¼šæ­£å¸¸\"],";
 						}
 					}
 
@@ -196,7 +196,7 @@ public class SyntheticTestAction extends Action {
 		}
 		return "[]";
 	}
-  //»ñÈ¡Í£³µ³¡
+	//è·å–åœè½¦åœº
 	private String getParkStation(HttpServletRequest request) {
 		SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 		String nowtime= df2.format(System.currentTimeMillis());
@@ -245,23 +245,23 @@ public class SyntheticTestAction extends Action {
 						if(totalObject>1)
 							total = totalObject;
 						double calc = empty / total;
-				
+
 						if (calc < 0.10) {
-							ret += "[" + gps + ",\"µØÖ·:" + map.get("address")
-									+ "\",\"Í£³µ³¡Ãû³Æ:" + map.get("company_name")
+							ret += "[" + gps + ",\"åœ°å€:" + map.get("address")
+									+ "\",\"åœè½¦åœºåç§°:" + map.get("company_name")
 									+ "\"," + 1 + "," + emptyObject + ","
-									+ totalObject + ",\"³µÎ»Êı£º½ôÕÅ\"],";
+									+ totalObject + ",\"è½¦ä½æ•°ï¼šç´§å¼ \"],";
 						} else {
-							ret += "[" + gps + ",\"µØÖ·:" + map.get("address")
-									+ "\",\"Í£³µ³¡Ãû³Æ:" + map.get("company_name")
+							ret += "[" + gps + ",\"åœ°å€:" + map.get("address")
+									+ "\",\"åœè½¦åœºåç§°:" + map.get("company_name")
 									+ "\"," + 0 + "," + emptyObject + ","
-									+ totalObject + ",\"³µÎ»Êı£ºÕı³£\"],";
+									+ totalObject + ",\"è½¦ä½æ•°ï¼šæ­£å¸¸\"],";
 						}
 					} else {
-						ret += "[" + gps + ",\"µØÖ·:" + map.get("address")
-								+ "\",\"Í£³µ³¡Ãû³Æ:" + map.get("company_name")
-								+ "\"," + 2 + ",\"Î´Öª\","
-								+ totalObject + ",\"³µÎ»Êı£ºÕı³£\"],";
+						ret += "[" + gps + ",\"åœ°å€:" + map.get("address")
+								+ "\",\"åœè½¦åœºåç§°:" + map.get("company_name")
+								+ "\"," + 2 + ",\"æœªçŸ¥\","
+								+ totalObject + ",\"è½¦ä½æ•°ï¼šæ­£å¸¸\"],";
 					}
 
 				}
@@ -274,7 +274,7 @@ public class SyntheticTestAction extends Action {
 		}
 		return "[]";
 	}
-    //»ñÈ¡³äµç×®
+	//è·å–å……ç”µæ¡©
 	private String getChargePoles(HttpServletRequest request) {
 		Double lon = RequestUtil.getDouble(request, "lon", 0.0);
 		Double lat = RequestUtil.getDouble(request, "lat", 0.0);
@@ -305,29 +305,29 @@ public class SyntheticTestAction extends Action {
 						if(calc<0.1)
 						{
 							ret += "[" + x + "," + y + ",\"" + name
-									+ "\",\"" + addr + "\","+free+","+total+","+0+",\"×®Î»Êı£º½ôÕÅ\"],";
+									+ "\",\"" + addr + "\","+free+","+total+","+0+",\"æ¡©ä½æ•°ï¼šç´§å¼ \"],";
 						}
-						else 
+						else
 						{
 							ret += "[" + x + "," + y + ",\"" + name
-									+ "\",\"" + addr + "\","+free+","+total+","+1+",\"×®Î»Êı£ºÕı³£\"],";
+									+ "\",\"" + addr + "\","+free+","+total+","+1+",\"æ¡©ä½æ•°ï¼šæ­£å¸¸\"],";
 						}
-					
+
+					}
+
 				}
-					
+
+				if (ret.endsWith(","))
+					ret = ret.substring(0, ret.length() - 1);
+				return ret + "]";
+
 			}
 
-			if (ret.endsWith(","))
-				ret = ret.substring(0, ret.length() - 1);
-			return ret + "]";
-
 		}
-		
-	}
 		return "[]";
 
 	}
-	//»ñÈ¡»ùÕ¾
+	//è·å–åŸºç«™
 	private String getTransmitter(HttpServletRequest request) {
 		Double lon = RequestUtil.getDouble(request, "lon", 0.0);
 		Double lat = RequestUtil.getDouble(request, "lat", 0.0);
@@ -340,33 +340,33 @@ public class SyntheticTestAction extends Action {
 			String ret ="[";
 			if(result!=null&&!result.isEmpty()){
 				for(Map<String, Object> map : result){
-					
-					   if((map.get("longitude"))!=null&& (map.get("latitude"))!=null){
-						   String  state="";
-							if(Integer.parseInt(map.get("state").toString())==0)
-							{
-								state="¹ÊÕÏ";
-							}
-							else {
-								state="Õı³£";
-							}
-					    String gps = (Double.valueOf(map.get("longitude") + ""))+ ","
-							+ (Double.valueOf(map.get("latitude") + ""));
-						ret +="["+gps+",\"µØÖ·:"+map.get("address")+"\",\"»ùÕ¾Ãû³Æ:"+map.get("name")+"\","+map.get("voltage")+",\"×´Ì¬:"+state+"\"],";
+
+					if((map.get("longitude"))!=null&& (map.get("latitude"))!=null){
+						String  state="";
+						if(Integer.parseInt(map.get("state").toString())==0)
+						{
+							state="æ•…éšœ";
+						}
+						else {
+							state="æ­£å¸¸";
+						}
+						String gps = (Double.valueOf(map.get("longitude") + ""))+ ","
+								+ (Double.valueOf(map.get("latitude") + ""));
+						ret +="["+gps+",\"åœ°å€:"+map.get("address")+"\",\"åŸºç«™åç§°:"+map.get("name")+"\","+map.get("voltage")+",\"çŠ¶æ€:"+state+"\"],";
 					}
-					
-					
+
+
 				}
-				
+
 				if(ret.endsWith(","))
 					ret = ret.substring(0,ret.length()-1);
 				return ret+"]";
 			}
-	
+
 		}
 		return "[]";
 	}
-	//»ñÈ¡ÓÕµ¼
+	//è·å–è¯±å¯¼
 	private String getInduce(HttpServletRequest request) {
 		Double lon = RequestUtil.getDouble(request, "lon", 0.0);
 		Double lat = RequestUtil.getDouble(request, "lat", 0.0);
@@ -377,26 +377,26 @@ public class SyntheticTestAction extends Action {
 			String ret ="[";
 			if(result!=null&&!result.isEmpty()){
 				for(Map<String, Object> map : result){
-				    if((map.get("longitude"))!=null && (map.get("latitude"))!=null){
+					if((map.get("longitude"))!=null && (map.get("latitude"))!=null){
 						String  type="";
 						if(Integer.parseInt(map.get("type").toString())==1){
-							type="¶ş¼¶ÓÕµ¼ÆÁ";
+							type="äºŒçº§è¯±å¯¼å±";
 						} else if (Integer.parseInt(map.get("type").toString())==3) {
-							type="Èı¼¶ÓÕµ¼ÆÁ";
+							type="ä¸‰çº§è¯±å¯¼å±";
 						}
-						String data=getIduceData((Long)map.get("id"),request);//"[{\"total\":1,\"parklist\":[{\"id\":20427,\"parkname\":\"ÇàÄê¶«Â·\",\"induce_id\":11,\"remain\":18,\"total\":58}],\"error\":null,\"success\":true}]";
-						ret +="["+(Double.valueOf(map.get("longitude")+ ""))+ ","+ (Double.valueOf(map.get("latitude") + "")) +",\"µØÖ·:"+map.get("address")+"\",\"ÓÕµ¼Ãû³Æ:"+map.get("name")+"\",\"¹ã¸æĞÅÏ¢:"+map.get("ad")+"\",\""+map.get("type")+"\",\""+map.get("id")+"\","+data+"],";
-	                }
+						String data=getIduceData((Long)map.get("id"),request);//"[{\"total\":1,\"parklist\":[{\"id\":20427,\"parkname\":\"é’å¹´ä¸œè·¯\",\"induce_id\":11,\"remain\":18,\"total\":58}],\"error\":null,\"success\":true}]";
+						ret +="["+(Double.valueOf(map.get("longitude")+ ""))+ ","+ (Double.valueOf(map.get("latitude") + "")) +",\"åœ°å€:"+map.get("address")+"\",\"è¯±å¯¼åç§°:"+map.get("name")+"\",\"å¹¿å‘Šä¿¡æ¯:"+map.get("ad")+"\",\""+map.get("type")+"\",\""+map.get("id")+"\","+data+"],";
+					}
 				}
 				if(ret.endsWith(","))
 					ret = ret.substring(0,ret.length()-1);
 				return ret+"]";
 			}
-			
+
 		}
 		return "[]";
 	}
-    private String getIduceData(Long id,HttpServletRequest request) {
+	private String getIduceData(Long id,HttpServletRequest request) {
 		String sql = "select * from induce_tb  where cityid=? and is_delete=? and id=?";
 		Long Cityid = (Long)request.getSession().getAttribute("cityid");
 		Map<String, Object> induceMap = onlyReadService.getMap(sql, new Object[]{Cityid,0,id});
@@ -404,17 +404,17 @@ public class SyntheticTestAction extends Action {
 		String result = new HttpProxy().doGet("http://s.tingchebao.com/zld/induceinfo.do?action=parkinfo&did="+did);
 		return result;
 	}
-	//»ñÈ¡¹«½»ÏßÂ·
+	//è·å–å…¬äº¤çº¿è·¯
 	private String getRoute(HttpServletRequest request,HttpServletResponse response) {
-		    String result = null;
-		    String stationid=RequestUtil.getString(request, "stationID");
-		    String	url = "http://121.40.130.8/zld/carinter.do?action=getstatbyid&routeID=-1&stationID="+stationid;
-			result = new HttpProxy().doGet(url);
-			System.out.println(result);
-			return result;
-		
+		String result = null;
+		String stationid=RequestUtil.getString(request, "stationID");
+		String	url = "http://121.40.130.8/zld/carinter.do?action=getstatbyid&routeID=-1&stationID="+stationid;
+		result = new HttpProxy().doGet(url);
+		System.out.println(result);
+		return result;
+
 	}
-	//»ñÈ¡ÊÓÆµ
+	//è·å–è§†é¢‘
 	private String getVideo(HttpServletRequest request, Long cityid) {
 		Double lon = RequestUtil.getDouble(request, "lon", 0.0);
 		Double lat = RequestUtil.getDouble(request, "lat", 0.0);
@@ -437,24 +437,24 @@ public class SyntheticTestAction extends Action {
 						Double longitude = Double.valueOf(map.get("longitude")+ "");
 						Double latitude = Double.valueOf(map.get("latitude")+ "");
 						ret +="["+(longitude - 0.01210)+ "," + (latitude - 0.00440) + ",\""
-										+map.get("state")+"\",\""+map.get("video_name")+"\",\""+map.get("id")+"\"],";
-		            }
+								+map.get("state")+"\",\""+map.get("video_name")+"\",\""+map.get("id")+"\"],";
+					}
 				}
 			}
-				
+
 			if(ret.endsWith(","))
 				ret = ret.substring(0,ret.length()-1);
 			return ret+"]";
 		}
 		return "[]";
 	}
-	//»ñÈ¡PDAÊı¾İ
+	//è·å–PDAæ•°æ®
 	private String getPda(HttpServletRequest request) {
-		
-		String sql = "SELECT ui.id, ui.nickname, ui.phone, ul.is_onseat, ul.ctime, ul.lat, ul.lon,ul.ctime"+ 
-						" from user_info_tb as ui left join user_local_tb as ul on ui.id = ul.uid"+
-						" where ui.cityid = ? and ui.auth_flag = "+Constants.AUTH_FLAG_COLLECTOR+
-						" and (ul.ctime = (select max(ult.ctime) from user_local_tb as ult where ult.uid = ui.id) or ul.ctime is null)";
+
+		String sql = "SELECT ui.id, ui.nickname, ui.phone, ul.is_onseat, ul.ctime, ul.lat, ul.lon,ul.ctime"+
+				" from user_info_tb as ui left join user_local_tb as ul on ui.id = ul.uid"+
+				" where ui.cityid = ? and ui.auth_flag = "+Constants.AUTH_FLAG_COLLECTOR+
+				" and (ul.ctime = (select max(ult.ctime) from user_local_tb as ult where ult.uid = ui.id) or ul.ctime is null)";
 		Long Cityid = (Long)request.getSession().getAttribute("cityid");
 		long time = System.currentTimeMillis()/1000 - 30*60;
 		List<Map<String, Object>> result = onlyReadService.getAll(sql, new Object[]{Cityid});
@@ -473,13 +473,13 @@ public class SyntheticTestAction extends Action {
 						",\"nickname\":\""+map.get("nickname")+"\""+
 						",\"update_time\":\""+ update_time +"\"},";
 				//str += "{\"uid\":1, \"latitude\":25.279087,\"longtitude\":110.29663, \"is_onseat\":1},";
-			}	
+			}
 		}
 		str += "]";
 		return str;
-	}	
+	}
 
-		
+
 
 
 }

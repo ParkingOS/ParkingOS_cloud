@@ -31,7 +31,7 @@ public class ZldTest {
 				mobiles +=","+lineString;
 			}
 		}catch (Exception e) {
-			
+
 		}finally{
 			try {
 				reader.close();
@@ -43,8 +43,8 @@ public class ZldTest {
 		return mobiles;
 		//http://vip.showji.com/locating/?m=1878952&outfmt=json&callback=phone.callBack
 	}
-	
-	
+
+
 	private  static String weixin(){
 		BufferedReader reader = null;
 		String lineString=null;
@@ -61,16 +61,16 @@ public class ZldTest {
 				}
 				String []info = lineString.split(",");
 				Integer t1 =0;
-				Integer t2 =0; 
+				Integer t2 =0;
 				if(Check.isNumber(info[6])&&Check.isNumber(info[5])){
 					t1=Integer.valueOf(info[5]);
 					t2=Integer.valueOf(info[6]);
 				}
 				int index = lineString.indexOf("oRo");
 				if(t2<t1){
-					result += lineString.substring(0,index)+"´òÕÛÈ¯,"+lineString.substring(index);
+					result += lineString.substring(0,index)+"æ‰“æŠ˜åˆ¸,"+lineString.substring(index);
 				}else {
-					result += lineString.substring(0,index)+"ÆÕÍ¨È¯,"+lineString.substring(index);
+					result += lineString.substring(0,index)+"æ™®é€šåˆ¸,"+lineString.substring(index);
 				}
 				result+="\n";
 				if(i%100==0){
@@ -95,7 +95,7 @@ public class ZldTest {
 				}
 			}
 		}
-	
+
 		//System.err.println(result);
 		return result;
 	}
@@ -136,119 +136,119 @@ public class ZldTest {
 				}
 			}
 		}
-	
+
 		//System.err.println(result);
 		return result;
 	}
-	
 
-	/*·ÖÎöÊ±¼ä¶Î*/
+
+	/*åˆ†ææ—¶é—´æ®µ*/
 	private static void testPrice(Long start,Long end,Integer bHour,
-			Integer bMinute,Integer eHour,Integer eMinute) {
-		/*·ÖÎöÊ±¼ä¶Î*/
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));//È¡µ±Ç°Ê±¼ä£»
-		
+								  Integer bMinute,Integer eHour,Integer eMinute) {
+		/*åˆ†ææ—¶é—´æ®µ*/
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));//å–å½“å‰æ—¶é—´ï¼›
+
 		calendar.setTimeInMillis(start*1000);
 		Long pes =0L;
-		
+
 		if(eHour==24){
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
 			calendar.set(Calendar.MINUTE, 0);
 			calendar.set(Calendar.SECOND, 0);
-			pes = calendar.getTimeInMillis()/1000+24*3600;//Èë³¡µ±ÌìµÄÌ×²Í½áÊøÊ±¼ä£¨NTC£©
+			pes = calendar.getTimeInMillis()/1000+24*3600;//å…¥åœºå½“å¤©çš„å¥—é¤ç»“æŸæ—¶é—´ï¼ˆNTCï¼‰
 		}else {
 			calendar.set(Calendar.HOUR_OF_DAY, eHour);
 			calendar.set(Calendar.MINUTE, eMinute);
 			calendar.set(Calendar.SECOND, 0);
-			pes = calendar.getTimeInMillis()/1000;//Èë³¡µ±ÌìµÄÌ×²Í½áÊøÊ±¼ä£¨NTC£©
+			pes = calendar.getTimeInMillis()/1000;//å…¥åœºå½“å¤©çš„å¥—é¤ç»“æŸæ—¶é—´ï¼ˆNTCï¼‰
 		}
-		
+
 		calendar.set(Calendar.HOUR_OF_DAY, bHour);
 		calendar.set(Calendar.MINUTE, bMinute);
 		calendar.set(Calendar.SECOND, 0);
-		Long pbs = calendar.getTimeInMillis()/1000;//Èë³¡µ±ÌìµÄÌ×²Í¿ªÊ¼Ê±¼ä£¨NTC£©
-		
-		List<List<Long>> out = new ArrayList<List<Long>>();//Ì×²ÍÍâÊ±¼ä¶Î
-		List<List<Long>> in = new ArrayList<List<Long>>(); //Ì×²ÍÄÚÊ±¼ä¶Î
-		
+		Long pbs = calendar.getTimeInMillis()/1000;//å…¥åœºå½“å¤©çš„å¥—é¤å¼€å§‹æ—¶é—´ï¼ˆNTCï¼‰
+
+		List<List<Long>> out = new ArrayList<List<Long>>();//å¥—é¤å¤–æ—¶é—´æ®µ
+		List<List<Long>> in = new ArrayList<List<Long>>(); //å¥—é¤å†…æ—¶é—´æ®µ
+
 		while( start<end){
-			if(start<pbs){//¶©µ¥¿ªÊ¼Ê±¼äĞ¡ÓÚÌ×²Í¿ªÊ¼Ê±¼ä
-				if(end<pbs){//¶©µ¥½áÊøÊ±¼äĞ¡ÓÚÌ×²Í¿ªÊ¼Ê±¼ä
+			if(start<pbs){//è®¢å•å¼€å§‹æ—¶é—´å°äºå¥—é¤å¼€å§‹æ—¶é—´
+				if(end<pbs){//è®¢å•ç»“æŸæ—¶é—´å°äºå¥—é¤å¼€å§‹æ—¶é—´
 					List<Long> outList = new ArrayList<Long>();
 					outList.add(start);
 					outList.add(end);
-					out.add(outList);//Ì×²ÍÍâÊ±¼ä¶ÎÌí¼ÓÒ»¶Î£º¶©µ¥¿ªÊ¼Ê±¼äµ½¶©µ¥½áÊ±¼ä£¬·ÖÎö½áÊø²¢ÇÒÌø³öÑ­»·
+					out.add(outList);//å¥—é¤å¤–æ—¶é—´æ®µæ·»åŠ ä¸€æ®µï¼šè®¢å•å¼€å§‹æ—¶é—´åˆ°è®¢å•ç»“æ—¶é—´ï¼Œåˆ†æç»“æŸå¹¶ä¸”è·³å‡ºå¾ªç¯
 					break;
-				}else {//¶©µ¥½áÊøÊ±¼ä´óÓÚ»òµÈÓÚÌ×²Í¿ªÊ¼Ê±¼ä
+				}else {//è®¢å•ç»“æŸæ—¶é—´å¤§äºæˆ–ç­‰äºå¥—é¤å¼€å§‹æ—¶é—´
 					List<Long> outList = new ArrayList<Long>();
 					outList.add(start);
 					outList.add(pbs);
-					out.add(outList);//Ì×²ÍÍâÊ±¼ä¶ÎÌí¼ÓÒ»¶Î£º¶©µ¥¿ªÊ¼Ê±¼äµ½Ì×²Í¿ªÊ¼Ê±¼ä
-					if(end>pes){//¶©µ¥½áÊøÊ±¼ä´óÓÚÌ×²Í½áÊøÊ±¼ä
+					out.add(outList);//å¥—é¤å¤–æ—¶é—´æ®µæ·»åŠ ä¸€æ®µï¼šè®¢å•å¼€å§‹æ—¶é—´åˆ°å¥—é¤å¼€å§‹æ—¶é—´
+					if(end>pes){//è®¢å•ç»“æŸæ—¶é—´å¤§äºå¥—é¤ç»“æŸæ—¶é—´
 						List<Long> inList = new ArrayList<Long>();
 						inList.add(pbs);
 						inList.add(pes);
-						in.add(inList);//Ì×²ÍÄÚÊ±¼ä¶ÎÌí¼ÓÒ»¶Î£ºÌ×²Í¿ªÊ¼Ê±¼äµ½Ì×²Í½áÊøÊ±¼ä
-						start = pes;//¶©µ¥¿ªÊ¼Ê±¼äÒÆ¶¯µ½Ì×²Í½áÊøÊ±¼ä£¬µ½ÏÂÒ»¸öÑ­»·£¬ĞèÒª¼ÌĞø·ÖÎö
+						in.add(inList);//å¥—é¤å†…æ—¶é—´æ®µæ·»åŠ ä¸€æ®µï¼šå¥—é¤å¼€å§‹æ—¶é—´åˆ°å¥—é¤ç»“æŸæ—¶é—´
+						start = pes;//è®¢å•å¼€å§‹æ—¶é—´ç§»åŠ¨åˆ°å¥—é¤ç»“æŸæ—¶é—´ï¼Œåˆ°ä¸‹ä¸€ä¸ªå¾ªç¯ï¼Œéœ€è¦ç»§ç»­åˆ†æ
 
-					}else {//¶©µ¥½áÊøÊ±¼äÔÚÌ×²Í½áÊøÊ±¼äÄÚ
+					}else {//è®¢å•ç»“æŸæ—¶é—´åœ¨å¥—é¤ç»“æŸæ—¶é—´å†…
 						List<Long> inList = new ArrayList<Long>();
 						inList.add(pbs);
 						inList.add(end);
-						in.add(inList);//Ì×²ÍÄÚÊ±¼ä¶ÎÌí¼ÓÒ»¶Î£ºÌ×²Í¿ªÊ¼Ê±¼äµ½¶©µ¥½áÊøÊ±¼ä£¬ ·ÖÎö½áÊø²¢ÇÒÌø³öÑ­»·
+						in.add(inList);//å¥—é¤å†…æ—¶é—´æ®µæ·»åŠ ä¸€æ®µï¼šå¥—é¤å¼€å§‹æ—¶é—´åˆ°è®¢å•ç»“æŸæ—¶é—´ï¼Œ åˆ†æç»“æŸå¹¶ä¸”è·³å‡ºå¾ªç¯
 						break;
 					}
 				}
-			}else {//¶©µ¥¿ªÊ¼Ê±¼ä´óÓÚ»òµÈÓÚÌ×²Í¿ªÊ¼Ê±¼ä
-				if(start<pes){//¶©µ¥¿ªÊ¼Ê±¼äĞ¡ÓÚÌ×²Í½áÊøÊ±¼ä
-					if(end>pes){//¶©µ¥½áÊøÊ±¼äĞ¡ÓÚÌ×²Í½áÊøÊ±¼ä
+			}else {//è®¢å•å¼€å§‹æ—¶é—´å¤§äºæˆ–ç­‰äºå¥—é¤å¼€å§‹æ—¶é—´
+				if(start<pes){//è®¢å•å¼€å§‹æ—¶é—´å°äºå¥—é¤ç»“æŸæ—¶é—´
+					if(end>pes){//è®¢å•ç»“æŸæ—¶é—´å°äºå¥—é¤ç»“æŸæ—¶é—´
 						List<Long> inList = new ArrayList<Long>();
 						inList.add(start);
 						inList.add(pes);
-						in.add(inList);//Ì×²ÍÄÚÊ±¼ä¶ÎÌí¼ÓÒ»¶Î£º¶©µ¥¿ªÊ¼Ê±¼äµ½Ì×²Í½áÊøÊ±¼ä
-						start = pes;//¶©µ¥¿ªÊ¼Ê±¼äÒÆ¶¯µ½Ì×²Í½áÊøÊ±¼ä£¬µ½ÏÂÒ»¸öÑ­»·£¬ĞèÒª¼ÌĞø·ÖÎö
+						in.add(inList);//å¥—é¤å†…æ—¶é—´æ®µæ·»åŠ ä¸€æ®µï¼šè®¢å•å¼€å§‹æ—¶é—´åˆ°å¥—é¤ç»“æŸæ—¶é—´
+						start = pes;//è®¢å•å¼€å§‹æ—¶é—´ç§»åŠ¨åˆ°å¥—é¤ç»“æŸæ—¶é—´ï¼Œåˆ°ä¸‹ä¸€ä¸ªå¾ªç¯ï¼Œéœ€è¦ç»§ç»­åˆ†æ
 					}else {
 						List<Long> inList = new ArrayList<Long>();
 						inList.add(start);
 						inList.add(end);
-						in.add(inList);//Ì×²ÍÄÚÊ±¼ä¶ÎÌí¼ÓÒ»¶Î£ºÌ×²Í¿ªÊ¼Ê±¼äµ½¶©µ¥½áÊøÊ±¼ä£¬ ·ÖÎö½áÊø²¢ÇÒÌø³öÑ­»·
+						in.add(inList);//å¥—é¤å†…æ—¶é—´æ®µæ·»åŠ ä¸€æ®µï¼šå¥—é¤å¼€å§‹æ—¶é—´åˆ°è®¢å•ç»“æŸæ—¶é—´ï¼Œ åˆ†æç»“æŸå¹¶ä¸”è·³å‡ºå¾ªç¯
 						break;
 					}
-				}else{//¶©µ¥Ê±¼ä´óÓÚ»òµÈÓÚÌ×²Í½áÊøÊ±¼ä
-					pbs = pbs + 24*3600;//Ì×²Íµ½µÚ¶şÌì
-					pes = pes + 24*3600;//Ì×²Íµ½µÚ¶şÌì
-					if(end<pbs){//¶©µ¥Ê±¼äĞ¡ÓÚµÚ¶şÌìµÄÌ×²Í¿ªÊ¼Ê±¼ä
+				}else{//è®¢å•æ—¶é—´å¤§äºæˆ–ç­‰äºå¥—é¤ç»“æŸæ—¶é—´
+					pbs = pbs + 24*3600;//å¥—é¤åˆ°ç¬¬äºŒå¤©
+					pes = pes + 24*3600;//å¥—é¤åˆ°ç¬¬äºŒå¤©
+					if(end<pbs){//è®¢å•æ—¶é—´å°äºç¬¬äºŒå¤©çš„å¥—é¤å¼€å§‹æ—¶é—´
 						List<Long> outList = new ArrayList<Long>();
 						outList.add(start);
 						outList.add(end);
-						out.add(outList);//Ì×²ÍÍâÊ±¼ä¶ÎÌí¼ÓÒ»¶Î£º¶©µ¥¿ªÊ¼Ê±¼äµ½¶©µ¥½áÊ±¼ä
+						out.add(outList);//å¥—é¤å¤–æ—¶é—´æ®µæ·»åŠ ä¸€æ®µï¼šè®¢å•å¼€å§‹æ—¶é—´åˆ°è®¢å•ç»“æ—¶é—´
 						break;
-					}else {//¶©µ¥Ê±¼ä´óÓÚ»òµÈÓÚµÚ¶şÌìµÄÌ×²Í¿ªÊ¼Ê±¼ä
+					}else {//è®¢å•æ—¶é—´å¤§äºæˆ–ç­‰äºç¬¬äºŒå¤©çš„å¥—é¤å¼€å§‹æ—¶é—´
 						List<Long> outList = new ArrayList<Long>();
 						outList.add(start);
 						outList.add(pbs);
-						out.add(outList);//Ì×²ÍÍâÊ±¼ä¶ÎÌí¼ÓÒ»¶Î£º¶©µ¥¿ªÊ¼Ê±¼äµ½µÚ¶şÌìµÄÌ×²Í¿ªÊ¼Ê±¼ä
-						start = pbs;//¶©µ¥¿ªÊ¼Ê±¼äÒÆ¶¯µ½µ½µÚ¶şÌìµÄÌ×²Í¿ªÊ¼Ê±¼ä,µ½ÏÂÒ»¸öÑ­»·£¬ĞèÒª¼ÌĞø·ÖÎö
+						out.add(outList);//å¥—é¤å¤–æ—¶é—´æ®µæ·»åŠ ä¸€æ®µï¼šè®¢å•å¼€å§‹æ—¶é—´åˆ°ç¬¬äºŒå¤©çš„å¥—é¤å¼€å§‹æ—¶é—´
+						start = pbs;//è®¢å•å¼€å§‹æ—¶é—´ç§»åŠ¨åˆ°åˆ°ç¬¬äºŒå¤©çš„å¥—é¤å¼€å§‹æ—¶é—´,åˆ°ä¸‹ä¸€ä¸ªå¾ªç¯ï¼Œéœ€è¦ç»§ç»­åˆ†æ
 					}
 				}
 			}
 		}
 		if(!in.isEmpty()){
-			System.out.println("Ì×²ÍÄÚ£º");
+			System.out.println("å¥—é¤å†…ï¼š");
 			for(List<Long> l: in){
-				System.out.println(TimeTools.getTime_yyyyMMdd_HHmmss(l.get(0)*1000)+"ÖÁ"+TimeTools.getTime_yyyyMMdd_HHmmss(l.get(1)*1000));
+				System.out.println(TimeTools.getTime_yyyyMMdd_HHmmss(l.get(0)*1000)+"è‡³"+TimeTools.getTime_yyyyMMdd_HHmmss(l.get(1)*1000));
 			}
 		}
 		if(!out.isEmpty()){
-			System.out.println("Ì×²ÍÍâ£º");
+			System.out.println("å¥—é¤å¤–ï¼š");
 			for(List<Long> l: out){
 				System.out.println(TimeTools.getTime_yyyyMMdd_HHmmss(l.get(0)*1000)+"-"+TimeTools.getTime_yyyyMMdd_HHmmss(l.get(1)*1000));
 			}
 		}
-		/*·ÖÎöÊ±¼ä¶Î*/
+		/*åˆ†ææ—¶é—´æ®µ*/
 	}
-	
-	//·¢ËÍ¶ÌĞÅ
+
+	//å‘é€çŸ­ä¿¡
 	public static void main(String[] args) {
 		Long start =1447541731L;//2015-11-15 6:55:31
 		Long end =  1448009731L;//2015-11-18 16:55:31
@@ -258,8 +258,8 @@ public class ZldTest {
 		Integer eMiunte = 0;
 		testPrice(start,end,bHour,bMiunte,eHour,eMiunte);
 		//System.out.println(TimeTools.getTime_MMdd_HHmm(1447567045L*1000));
-	//	weixin();//
-	//	getMobile();
+		//	weixin();//
+		//	getMobile();
 //		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 //		Map<String ,Object> m1 = new HashMap<String, Object>();
 //		Map<String ,Object> m2 = new HashMap<String, Object>();
@@ -280,9 +280,9 @@ public class ZldTest {
 //		list.add(m4);
 //		System.out.println(list);
 //		Collections.sort(list,new OrderSortCompare());
-//		
-		/*String carNumber =  "¾©A12334";
-		if(carNumber.equals("³µÅÆºÅÎ´Öª"))
+//
+		/*String carNumber =  "äº¬A12334";
+		if(carNumber.equals("è½¦ç‰Œå·æœªçŸ¥"))
 			carNumber = null;
 		if(carNumber!=null&&!carNumber.equals("")&&carNumber.length()>5)
 			carNumber = carNumber.substring(0,2)+"***"+carNumber.substring(5);
@@ -297,16 +297,16 @@ public class ZldTest {
 			System.err.println(k);
 		}*/
 		//String mobiles = getMobile();
-		//È«Ìå³µÖ÷£º
-		//String mesg = "µç×Ó¸¶³µ·Ñ£¬²»¾õÒÑ°ëÄê¡£Îª¸ĞĞ»Ö§³Ö£¬ĞÒÔË³µÖ÷Ã¿ÈË»ñ3ÕÅ4ÔªÈ¯£¬5ÔÂ²¦´ò010-56450585Ãâ·Ñ°ìËÙÍ¨¿¨£¬Ë³·á°üÓÊ¡£ÍË¶©»ØT ¡¾Í£³µ±¦¡¿";
-		//ËÙÍ¨»áÔ±³µÖ÷£º
-		//String mesg = "ÍÆ¼ö½±Ğè³µÖ÷Íê³ÉÒ»ÔªÔÚÏßÖ§¸¶²Åµ½ÕË£¡ÏÂÖÜÆğ£¬Ò»¶şµÈ½±ÓÉÍ£³µ±¦ÆÀ¶¨£»¶©µ¥»ı·Öµ÷Õû¡£Î¢ĞÅ¹Ø×¢tingchebao2014»Ø¡°½±¡±×ÉÑ¯";
-		
+		//å…¨ä½“è½¦ä¸»ï¼š
+		//String mesg = "ç”µå­ä»˜è½¦è´¹ï¼Œä¸è§‰å·²åŠå¹´ã€‚ä¸ºæ„Ÿè°¢æ”¯æŒï¼Œå¹¸è¿è½¦ä¸»æ¯äººè·3å¼ 4å…ƒåˆ¸ï¼Œ5æœˆæ‹¨æ‰“010-56450585å…è´¹åŠé€Ÿé€šå¡ï¼Œé¡ºä¸°åŒ…é‚®ã€‚é€€è®¢å›T ã€åœè½¦å®ã€‘";
+		//é€Ÿé€šä¼šå‘˜è½¦ä¸»ï¼š
+		//String mesg = "æ¨èå¥–éœ€è½¦ä¸»å®Œæˆä¸€å…ƒåœ¨çº¿æ”¯ä»˜æ‰åˆ°è´¦ï¼ä¸‹å‘¨èµ·ï¼Œä¸€äºŒç­‰å¥–ç”±åœè½¦å®è¯„å®šï¼›è®¢å•ç§¯åˆ†è°ƒæ•´ã€‚å¾®ä¿¡å…³æ³¨tingchebao2014å›â€œå¥–â€å’¨è¯¢";
+
 		//new SendMessage().sendMultiMessage("13860132164,15801482643,13041096867,18101333937"+mobiles, mesg);
-/*//		
-	   
-	        String[] ss = getUUID(1); 
-	        for(int i=0;i<ss.length;i++){ 
+/*//
+
+	        String[] ss = getUUID(1);
+	        for(int i=0;i<ss.length;i++){
 	        	String vInteger = "10258";
 	        	String c = ss[i];
 	        	StringBuffer nc = new StringBuffer();
@@ -330,10 +330,10 @@ public class ZldTest {
 	        		}else if(j==9){
 	        			nc.append(vInteger.charAt(4));
 	        		}
-	        		
+
 	        	}
 	        	String result = nc.toString();
-	            System.out.println(result); 
+	            System.out.println(result);
 	            System.out.println(result.length());
 	            System.out.println(result.charAt(2)+""+result.charAt(5)+result.charAt(8)+""+result.charAt(10)+""+result.charAt(14));
 	        } */
@@ -356,7 +356,7 @@ public class ZldTest {
         params.put("mch_id", Constants.WXPUBLIC_MCH_ID);
         params.put("nonce_str", timestamp);
         String paySign = PayCommonUtil.createSign("UTF-8", params);
-        
+
         Map<String, Object> parMap = new HashMap<String, Object>();
         parMap.put("appid", Constants.WXPUBLIC_APPID);
         parMap.put("bill_date", dString);
@@ -364,15 +364,15 @@ public class ZldTest {
         parMap.put("mch_id", Constants.WXPUBLIC_MCH_ID);
         parMap.put("nonce_str", timestamp);
         parMap.put("sign", paySign);
-        
+
         StringBuffer xml = new StringBuffer();
 		xml.append("<xml>");
 		for(String key : parMap.keySet()){
 			xml.append("<"+key+">"+parMap.get(key)+"</"+key+">");
 		}
 		xml.append("</xml>");
-        
-		 
+
+
         String result = CommonUtil.httpsRequest(url, "POST",xml.toString());*/
 		/*BufferedReader reader =null;
 		BufferedWriter writer=null;
@@ -423,7 +423,7 @@ public class ZldTest {
 				}
 			}
 			writer.flush();
-			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -436,29 +436,29 @@ public class ZldTest {
 			}
 		}*/
 	}
-	
-	 /** 
-     * »ñµÃÒ»¸öUUID 
-     * @return String UUID 
-     */ 
-    public static String getUUID(){ 
-        String s = UUID.randomUUID().toString(); 
-        //È¥µô¡°-¡±·ûºÅ 
-        return s.substring(s.lastIndexOf("-")+1);//.substring(0,8)+s.substring(9,13)+s.substring(14,18)+s.substring(19,23)+s.substring(24); 
-    } 
-    /** 
-     * »ñµÃÖ¸¶¨ÊıÄ¿µÄUUID 
-     * @param number int ĞèÒª»ñµÃµÄUUIDÊıÁ¿ 
-     * @return String[] UUIDÊı×é 
-     */ 
-    public static String[] getUUID(int number){ 
-        if(number < 1){ 
-            return null; 
-        } 
-        String[] ss = new String[number]; 
-        for(int i=0;i<number;i++){ 
-            ss[i] = getUUID(); 
-        } 
-        return ss; 
-    } 
+
+	/**
+	 * è·å¾—ä¸€ä¸ªUUID
+	 * @return String UUID
+	 */
+	public static String getUUID(){
+		String s = UUID.randomUUID().toString();
+		//å»æ‰â€œ-â€ç¬¦å·
+		return s.substring(s.lastIndexOf("-")+1);//.substring(0,8)+s.substring(9,13)+s.substring(14,18)+s.substring(19,23)+s.substring(24);
+	}
+	/**
+	 * è·å¾—æŒ‡å®šæ•°ç›®çš„UUID
+	 * @param number int éœ€è¦è·å¾—çš„UUIDæ•°é‡
+	 * @return String[] UUIDæ•°ç»„
+	 */
+	public static String[] getUUID(int number){
+		if(number < 1){
+			return null;
+		}
+		String[] ss = new String[number];
+		for(int i=0;i<number;i++){
+			ss[i] = getUUID();
+		}
+		return ss;
+	}
 }

@@ -17,87 +17,87 @@ import com.zld.utils.TimeTools;
 @Service
 public class LogService {
 
-	
+
 	@Autowired
 	private DataBaseService databasedao;
 	@Autowired
 	private MemcacheUtils memcacheUtils;
 	@Autowired
 	private PublicMethods publicMethods;
-	
+
 	private Logger logger = Logger.getLogger(LogService.class);
 	/**
-	 * 
+	 *
 	 * @param dService
 	 * @param comid
 	 * @param uin
 	 * @param log
 	 * @type:
-	 * 0:´´½¨¶©µ¥£¬1£º½áËã¶©µ¥,2:ÓÅ»İ£¬3:ÏÖ½ğÊÕ·Ñ
+	 * 0:åˆ›å»ºè®¢å•ï¼Œ1ï¼šç»“ç®—è®¢å•,2:ä¼˜æƒ ï¼Œ3:ç°é‡‘æ”¶è´¹
 	 */
 	public void updateOrderLog(Long comid,Long uin,String log,Integer type){
-		databasedao.update("insert into order_log_tb (comid,uin,create_time,log,type) values (?,?,?,?,?)", 
+		databasedao.update("insert into order_log_tb (comid,uin,create_time,log,type) values (?,?,?,?,?)",
 				new Object[]{comid,uin,System.currentTimeMillis()/1000,log,type});
 	}
 	/**
-	 * 
+	 *
 	 * @param dService
 	 * @param comid
 	 * @param uin
 	 * @param log
-	 * @param type 
-	 * 100:´´½¨Í£³µ³¡£¬101£ºĞŞ¸ÄÍ£³µ³¡£¬102£ºÉ¾³ıÍ£³µ³¡£¬
-	 * 201£ºĞŞ¸Ä¹ÜÀíÔ±£¬202£º´´½¨Í£³µÔ±£¬203£ºĞŞ¸ÄÍ£³µÔ±£¬204£º½ûÓÃÍ£³µÔ±£¬
-	 * 205£ºÉ¾³ıÍ£³µÔ±£¬206£ºĞŞ¸ÄÃÜÂë£¬207£ºÌí¼Ó¼Û¸ñ£¬208£ºĞŞ¸Ä¼Û¸ñ£¬209£ºÉ¾³ı¼Û¸ñ£¬210£ºÌí¼Ó°üÔÂ²úÆ·£¬211£ºÉ¾³ı°üÔÂ£¬
-	 * 300£ºÌí¼ÓÊĞ³¡×¨Ô±£¬301ĞŞ¸ÄÊĞ³¡×¨Ô±£¬302É¾³ıÊĞ³¡×¨Ô±£¬
-	 * 400£ºÌí¼ÓÉÌÈ¦£¬401£º±à¼­ÉÌÈ¦£¬402£ºÉ¾³ıÉÌÈ¦
+	 * @param type
+	 * 100:åˆ›å»ºåœè½¦åœºï¼Œ101ï¼šä¿®æ”¹åœè½¦åœºï¼Œ102ï¼šåˆ é™¤åœè½¦åœºï¼Œ
+	 * 201ï¼šä¿®æ”¹ç®¡ç†å‘˜ï¼Œ202ï¼šåˆ›å»ºåœè½¦å‘˜ï¼Œ203ï¼šä¿®æ”¹åœè½¦å‘˜ï¼Œ204ï¼šç¦ç”¨åœè½¦å‘˜ï¼Œ
+	 * 205ï¼šåˆ é™¤åœè½¦å‘˜ï¼Œ206ï¼šä¿®æ”¹å¯†ç ï¼Œ207ï¼šæ·»åŠ ä»·æ ¼ï¼Œ208ï¼šä¿®æ”¹ä»·æ ¼ï¼Œ209ï¼šåˆ é™¤ä»·æ ¼ï¼Œ210ï¼šæ·»åŠ åŒ…æœˆäº§å“ï¼Œ211ï¼šåˆ é™¤åŒ…æœˆï¼Œ
+	 * 300ï¼šæ·»åŠ å¸‚åœºä¸“å‘˜ï¼Œ301ä¿®æ”¹å¸‚åœºä¸“å‘˜ï¼Œ302åˆ é™¤å¸‚åœºä¸“å‘˜ï¼Œ
+	 * 400ï¼šæ·»åŠ å•†åœˆï¼Œ401ï¼šç¼–è¾‘å•†åœˆï¼Œ402ï¼šåˆ é™¤å•†åœˆ
 	 */
 	public void updateSysLog(Long comid,String uid,String log,Integer type){
-		databasedao.update("insert into user_log_tb (comid,uid,create_time,logs,type) values (?,?,?,?,?)", 
+		databasedao.update("insert into user_log_tb (comid,uid,create_time,logs,type) values (?,?,?,?,?)",
 				new Object[]{comid,uid,System.currentTimeMillis()/1000,log,type});
 	}
 	/**
-	 * ·ÖÏíÈÕÖ¾±í
-	 * @param comid Í£³µ³¡±àºÅ
-	 * @param uin ÊÕ·ÑÔ±»ò¹ÜÀíÔ±ºÅ
-	 * @param numer ·ÖÏíÊı
+	 * åˆ†äº«æ—¥å¿—è¡¨
+	 * @param comid åœè½¦åœºç¼–å·
+	 * @param uin æ”¶è´¹å‘˜æˆ–ç®¡ç†å‘˜å·
+	 * @param numer åˆ†äº«æ•°
 	 */
 	public void updateShareLog(Long comid,Long uin,Integer numer){
-		databasedao.update("insert into share_log_tb (comid,uin,create_time,s_number) values (?,?,?,?)", 
+		databasedao.update("insert into share_log_tb (comid,uin,create_time,s_number) values (?,?,?,?)",
 				new Object[]{comid,uin,System.currentTimeMillis()/1000,numer});
 	}
-	
+
 	/**
-	 * //Ğ´ÊÕ·ÑÔ±ÏûÏ¢£¬£¨ÊÕ·ÑÔ±¶¨Ê±È¡ÏûÏ¢£©
+	 * //å†™æ”¶è´¹å‘˜æ¶ˆæ¯ï¼Œï¼ˆæ”¶è´¹å‘˜å®šæ—¶å–æ¶ˆæ¯ï¼‰
 	 * @param comId
-	 * @param state  ---- 0:Î´½áËã£¬1£º´ıÖ§¸¶£¬2£ºÖ§¸¶Íê³É, -1:Ö§¸¶Ê§°Ü
-	 * @param uin ÕÊºÅ£¨ÓÃ»§»òÊÕ·ÑÔ±£©
-	 * @param body ³µÅÆºÅ
-	 * @param orderId ¶©µ¥±àºÅ
-	 * @param total ½ğ¶î
-	 * @param duration Ê±³¤
-	 * @param issale ÊÇ·ñ´òÕÛ£¬0·ñ 1:ÊÇ
-	 * @param btime ¿ªÊ¼Ê±¼äUTC
-	 * @param etime ½áÊøÊ±¼äUTC
-	 * @mtype  0:¶©µ¥ÏûÏ¢£¬1£º³µÎ»Ô¤¶¨ÏûÏ¢  2:³äÖµ¹ºÂò²úÆ·  3Ö±¸¶¶©µ¥ÏûÏ¢£¨ÊÕ·ÑÔ±ÓÃ£© 4Ibeacon½â°óÏûÏ¢(ÊÕ·ÑÔ±) 5:´òÉÍÏûÏ¢ 6Ê×Ò³Í¨ÖªÏûÏ¢  7³µÖ÷ÁìÈ¯ÏûÏ¢ 8ÍÆ¼ö½±µ½ÕÊÍ¨Öª9IbeaconÖ§¸¶ÏûÏ¢
+	 * @param state  ---- 0:æœªç»“ç®—ï¼Œ1ï¼šå¾…æ”¯ä»˜ï¼Œ2ï¼šæ”¯ä»˜å®Œæˆ, -1:æ”¯ä»˜å¤±è´¥
+	 * @param uin å¸å·ï¼ˆç”¨æˆ·æˆ–æ”¶è´¹å‘˜ï¼‰
+	 * @param body è½¦ç‰Œå·
+	 * @param orderId è®¢å•ç¼–å·
+	 * @param total é‡‘é¢
+	 * @param duration æ—¶é•¿
+	 * @param issale æ˜¯å¦æ‰“æŠ˜ï¼Œ0å¦ 1:æ˜¯
+	 * @param btime å¼€å§‹æ—¶é—´UTC
+	 * @param etime ç»“æŸæ—¶é—´UTC
+	 * @mtype  0:è®¢å•æ¶ˆæ¯ï¼Œ1ï¼šè½¦ä½é¢„å®šæ¶ˆæ¯  2:å……å€¼è´­ä¹°äº§å“  3ç›´ä»˜è®¢å•æ¶ˆæ¯ï¼ˆæ”¶è´¹å‘˜ç”¨ï¼‰ 4Ibeaconè§£ç»‘æ¶ˆæ¯(æ”¶è´¹å‘˜) 5:æ‰“èµæ¶ˆæ¯ 6é¦–é¡µé€šçŸ¥æ¶ˆæ¯  7è½¦ä¸»é¢†åˆ¸æ¶ˆæ¯ 8æ¨èå¥–åˆ°å¸é€šçŸ¥9Ibeaconæ”¯ä»˜æ¶ˆæ¯
 	 */
 	public void insertParkUserMessage(Long comId,Integer state,Long uin,String body,Long orderId,
-			Double total,String duration,Integer isSale,Long  btime,Long etime,Integer mtype){
+									  Double total,String duration,Integer isSale,Long  btime,Long etime,Integer mtype){
 		Long id = databasedao.getLong("SELECT nextval('seq_order_message_tb'::REGCLASS) AS newid", null);
 		int result = databasedao.update("insert into order_message_tb (id,comid,state,uin,create_time,car_number," +
-				"orderid,order_total,duartion,is_sale,btime,etime,message_type) values (?,?,?,?,?,?,?,?,?,?,?,?,?)", 
+						"orderid,order_total,duartion,is_sale,btime,etime,message_type) values (?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				new Object[]{id,comId,state,uin,System.currentTimeMillis()/1000,body,
-				orderId,total,duration,isSale,btime,etime,mtype});
-		if(result==1){//ÏûÏ¢Ğ´¿â³É¹¦
-			//Ğ´ÈëÊÕ·ÑÔ±ÏûÏ¢»º´æ
+						orderId,total,duration,isSale,btime,etime,mtype});
+		if(result==1){//æ¶ˆæ¯å†™åº“æˆåŠŸ
+			//å†™å…¥æ”¶è´¹å‘˜æ¶ˆæ¯ç¼“å­˜
 			String ret ="{}";
-			if(mtype==3){//²´³µÏûÏ¢
+			if(mtype==3){//æ³Šè½¦æ¶ˆæ¯
 				ret = "{\"mtype\":"+mtype+",\"info\":{\"orderid\":\""+orderId+"\""+
 						",\"carnumber\":\""+body+"\",\"duration\":\""+duration+"\"," +
 						"\"state\":\""+state+"\"}}";
-			}else if(mtype==4){//ÊÕ·ÑÔ±Àë¿ª¹¤×÷Õ¾Í¨Öª
+			}else if(mtype==4){//æ”¶è´¹å‘˜ç¦»å¼€å·¥ä½œç«™é€šçŸ¥
 				ret = "{\"mtype\":"+mtype+",\"info\":{}}";
-			}else if(mtype==5){//ÊÕ·ÑÔ±´òÉÍÍ¨Öª
+			}else if(mtype==5){//æ”¶è´¹å‘˜æ‰“èµé€šçŸ¥
 				int limit = 0;
 				if(comId == -2){
 					limit = 1;
@@ -110,8 +110,8 @@ public class LogService {
 				}
 				Long fivescore = 20 * (count + 1);
 				ret = "{\"mtype\":"+mtype+",\"info\":{\"carnumber\":\""+body+"\",\"uin\":\""+orderId+"\",\"rcount\":\""+duration+"\",\"total\":\""+total+"\",\"limit\":\""+limit+"\",\"fivelimit\":\""+fivelimit+"\",\"fivescore\":\""+fivescore+"\"}}";
-				System.out.println("rewardmessage£ºret:"+ret);
-			}else if(mtype==8){//ÍÆ¼ö½±µ½ÕÊÍ¨Öª
+				System.out.println("rewardmessageï¼šret:"+ret);
+			}else if(mtype==8){//æ¨èå¥–åˆ°å¸é€šçŸ¥
 				ret = "{\"mtype\":"+mtype+",\"info\":{\"mobile\":\""+body+"\",\"uin\":\""+orderId+"\",\"total\":\""+total+"\"}}";
 			}else {
 				Map<String, Object> infomMap = new HashMap<String, Object>();
@@ -120,7 +120,7 @@ public class LogService {
 				infomMap.put("carnumber", body);
 				infomMap.put("duration",duration);
 				infomMap.put("total",total);
-				infomMap.put("state",state);//0:Î´Ö§¸¶ 1£ºÒÑÖ§¸¶ 
+				infomMap.put("state",state);//0:æœªæ”¯ä»˜ 1ï¼šå·²æ”¯ä»˜
 				infomMap.put("orderid",orderId);
 				String json = StringUtils.createJson(infomMap);
 				ret= "{\"mtype\":"+mtype+",\"info\":"+json+"}";
@@ -133,13 +133,13 @@ public class LogService {
 			memcacheUtils.doMapLongStringCache("parkuser_messages", messCacheMap, "update");
 		}
 	}
-	
-	
+
+
 	/**
-	 * Ğ´ÈëÏûÏ¢»º´æ£¬ÔÚ¿Í»§¶Ë¶ÁÈ¡(¶¨Ê±È¡ÏûÏ¢)
-	 * @param type 6Ê×Ò³µ¯³öÏûÏ¢ 7:³µÖ÷ÁìÈ¯Í¨Öª
-	 * @param uin  ÓÃ»§/ÊÕ·ÑÔ±ÕÊºÅ
-	 * @param infoMap  ÆäËûĞÅÏ¢
+	 * å†™å…¥æ¶ˆæ¯ç¼“å­˜ï¼Œåœ¨å®¢æˆ·ç«¯è¯»å–(å®šæ—¶å–æ¶ˆæ¯)
+	 * @param type 6é¦–é¡µå¼¹å‡ºæ¶ˆæ¯ 7:è½¦ä¸»é¢†åˆ¸é€šçŸ¥
+	 * @param uin  ç”¨æˆ·/æ”¶è´¹å‘˜å¸å·
+	 * @param infoMap  å…¶ä»–ä¿¡æ¯
 	 */
 	public void insertParkUserMesg(Integer type, Map<String, Object> infoMap){
 		Map<Long, String> messCacheMap = memcacheUtils.doMapLongStringCache("parkuser_messages", null, null);
@@ -157,7 +157,7 @@ public class LogService {
 				Long uin = (Long)object;
 				messCacheMap.put(uin, ret);
 			}
-			System.out.print("notice msg>>>type:"+type+",Í¨ÖªÈËÊı:"+uins.size());
+			System.out.print("notice msg>>>type:"+type+",é€šçŸ¥äººæ•°:"+uins.size());
 		}else if(type == 7){
 			ret = "{\"mtype\":"+type+",\"info\":{\"carnumber\":\""+infoMap.get("carnumber")+"\",\"score\":\""+infoMap.get("score")+"\",\"tmoney\":\""+infoMap.get("tmoney")+"\"}}";
 			Long uin = (Long)infoMap.get("uin");
@@ -166,69 +166,69 @@ public class LogService {
 		}
 		memcacheUtils.doMapLongStringCache("parkuser_messages", messCacheMap, "update");
 	}
-	
+
 	/**
-	 * Ğ´ÈëÏµÍ³ÏûÏ¢±í£¬ÔÚ¿Í»§¶Ë¶ÁÈ¡
-	 * @param type 0 Ö§¸¶Ê§°ÜÌáĞÑ1 ºì°üÌáĞÑ2 ×Ô¶¯Ö§¸¶ÌáĞÑ3 ×¢²áÌáĞÑ 4Í£³µÈë³¡ÌáĞÑ5»î¶¯ÌáĞÑ6 ÍÆ¼öÏûÏ¢7ÊÕ¿îÌáĞÑ 8³äÖµÏûÏ¢
-	 * @param uin  ÓÃ»§/ÊÕ·ÑÔ±ÕÊºÅ
-	 * @param content ÄÚÈİ
-	 * @param title ±êÌâ
-	 * @return Ó°ÏìÊı¾İ¿â¼ÇÂ¼Êı
+	 * å†™å…¥ç³»ç»Ÿæ¶ˆæ¯è¡¨ï¼Œåœ¨å®¢æˆ·ç«¯è¯»å–
+	 * @param type 0 æ”¯ä»˜å¤±è´¥æé†’1 çº¢åŒ…æé†’2 è‡ªåŠ¨æ”¯ä»˜æé†’3 æ³¨å†Œæé†’ 4åœè½¦å…¥åœºæé†’5æ´»åŠ¨æé†’6 æ¨èæ¶ˆæ¯7æ”¶æ¬¾æé†’ 8å……å€¼æ¶ˆæ¯
+	 * @param uin  ç”¨æˆ·/æ”¶è´¹å‘˜å¸å·
+	 * @param content å†…å®¹
+	 * @param title æ ‡é¢˜
+	 * @return å½±å“æ•°æ®åº“è®°å½•æ•°
 	 */
 	public int insertUserMesg(Integer type,Long uin,String content,String title){
 		int ret =databasedao.update("insert into user_message_tb(type,ctime,uin,title,content) values(?,?,?,?,?)",
 				new Object[]{type,System.currentTimeMillis()/1000,uin,title,content} );
 		return ret;
 	}
-	
-	
+
+
 	/**
-	 * Ğ´ÈëÏµÍ³ÏûÏ¢±í£¬ÔÚ¿Í»§¶Ë¶ÁÈ¡
-	 * @param type 0 Ö§¸¶Ê§°ÜÌáĞÑ1 ºì°üÌáĞÑ2 ×Ô¶¯Ö§¸¶ÌáĞÑ3 ×¢²áÌáĞÑ 4Í£³µÈë³¡ÌáĞÑ5»î¶¯ÌáĞÑ6 ÍÆ¼öÏûÏ¢7ÊÕ¿îÌáĞÑ 8³äÖµÏûÏ¢
-	 * @param uin  ÓÃ»§/ÊÕ·ÑÔ±ÕÊºÅ
-	 * @param content ÄÚÈİ
-	 * @param title ±êÌâ
-	 * @return Ó°ÏìÊı¾İ¿â¼ÇÂ¼Êı
+	 * å†™å…¥ç³»ç»Ÿæ¶ˆæ¯è¡¨ï¼Œåœ¨å®¢æˆ·ç«¯è¯»å–
+	 * @param type 0 æ”¯ä»˜å¤±è´¥æé†’1 çº¢åŒ…æé†’2 è‡ªåŠ¨æ”¯ä»˜æé†’3 æ³¨å†Œæé†’ 4åœè½¦å…¥åœºæé†’5æ´»åŠ¨æé†’6 æ¨èæ¶ˆæ¯7æ”¶æ¬¾æé†’ 8å……å€¼æ¶ˆæ¯
+	 * @param uin  ç”¨æˆ·/æ”¶è´¹å‘˜å¸å·
+	 * @param content å†…å®¹
+	 * @param title æ ‡é¢˜
+	 * @return å½±å“æ•°æ®åº“è®°å½•æ•°
 	 */
 	public int insertParkUserMesg(Integer type,Long uin,String content,String title){
 		int ret =databasedao.update("insert into parkuser_message_tb(type,ctime,uin,title,content) values(?,?,?,?,?)",
 				new Object[]{type,System.currentTimeMillis()/1000,uin,title,content} );
 		return ret;
 	}
-	
+
 	/**
-	 * Ğ´ÓÃ»§Ö§¸¶ÕË»§ĞÅÏ¢
-	 * @param type  0:Ö§¸¶±¦£¬1:Î¢ĞÅ
-	 * @param uin  ³µÖ÷ÕËºÅ
-	 * @param account ³µÖ÷Ö§¸¶ÕËºÅ
+	 * å†™ç”¨æˆ·æ”¯ä»˜è´¦æˆ·ä¿¡æ¯
+	 * @param type  0:æ”¯ä»˜å®ï¼Œ1:å¾®ä¿¡
+	 * @param uin  è½¦ä¸»è´¦å·
+	 * @param account è½¦ä¸»æ”¯ä»˜è´¦å·
 	 * @return
 	 */
 	public int insertUserAccountMesg(Integer type,Long uin,String account){
 		int ret =databasedao.update("insert into user_payaccount_tb(type,ctime,uin,account) values(?,?,?,?)",
 				new Object[]{type,System.currentTimeMillis()/1000,uin,account} );
-		if(ret==1){//ÒÑĞ´Èë
+		if(ret==1){//å·²å†™å…¥
 			if(!publicMethods.isAuthUser(uin)){
 				List list = databasedao.getAll("select distinct uin from user_payaccount_tb where account=? ", new Object[]{account});
-				if(list!=null&&list.size()>2){//¸ÃÕË»§ÒÑÎªÈıÈËÒÔÉÏ³äÖµ£¬µ±Ç°µÄ³µÖ÷ÖÃÎªºÚÃûµ¥
-					//Ğ´ÈëºÚÃûµ¥±í
+				if(list!=null&&list.size()>2){//è¯¥è´¦æˆ·å·²ä¸ºä¸‰äººä»¥ä¸Šå……å€¼ï¼Œå½“å‰çš„è½¦ä¸»ç½®ä¸ºé»‘åå•
+					//å†™å…¥é»‘åå•è¡¨
 					Long ntime = System.currentTimeMillis()/1000;
 					try {
-						String atype = "Ö§¸¶±¦";
+						String atype = "æ”¯ä»˜å®";
 						if(type==1){
-							atype="Î¢ĞÅ";
+							atype="å¾®ä¿¡";
 						}else if(type == 2){
-							atype = "Î¢ĞÅ¹«ÖÚºÅ";
+							atype = "å¾®ä¿¡å…¬ä¼—å·";
 						}
 						List<Long> whiteUsers = memcacheUtils.doListLongCache("zld_white_users", null, null);
 						if(whiteUsers==null||!whiteUsers.contains(uin)){
 							List<Long> blackUsers = memcacheUtils.doListLongCache("zld_black_users", null, null);
 							if(!blackUsers.contains(uin)){
 								ret = databasedao.update("insert into zld_black_tb(ctime,utime,uin,state,remark) values(?,?,?,?,?)",
-										new Object[]{ntime,ntime,uin,0,"³äÖµÕË»§("+atype+")Îª¶à¸öÕË»§³äÖµ :"+account});
-								System.out.println(">>>³äÖµ¼ÓÈëºÚÃûµ¥,uin:"+uin+",account:"+account+"£¬½á¹û £º"+ret);
+										new Object[]{ntime,ntime,uin,0,"å……å€¼è´¦æˆ·("+atype+")ä¸ºå¤šä¸ªè´¦æˆ·å……å€¼ :"+account});
+								System.out.println(">>>å……å€¼åŠ å…¥é»‘åå•,uin:"+uin+",account:"+account+"ï¼Œç»“æœ ï¼š"+ret);
 							}
 							if(ret==1){
-								//·ÅÈëºÚÃûµ¥»º´æ
+								//æ”¾å…¥é»‘åå•ç¼“å­˜
 								//System.err.println(">>>zld black users :"+blackUsers);
 								if(blackUsers==null){
 									blackUsers = new ArrayList<Long>();
@@ -242,72 +242,72 @@ public class LogService {
 								}
 							}
 						}else{
-							System.out.println(">>zld_white_tb>>>>>uin:"+uin+",account:"+account+"£¬ÔÚ°×Ãûµ¥ÖĞ£¬²»´¦Àí:"+whiteUsers);
+							System.out.println(">>zld_white_tb>>>>>uin:"+uin+",account:"+account+"ï¼Œåœ¨ç™½åå•ä¸­ï¼Œä¸å¤„ç†:"+whiteUsers);
 						}
 					} catch (Exception e) {
-						System.out.println(">>>³äÖµ¼ÓÈëºÚÃûµ¥´íÎó,uin:"+uin+",account:"+account+"£¬ÒÑ¾­´æÔÚ£¡");
+						System.out.println(">>>å……å€¼åŠ å…¥é»‘åå•é”™è¯¯,uin:"+uin+",account:"+account+"ï¼Œå·²ç»å­˜åœ¨ï¼");
 						e.printStackTrace();
 					}
 				}
 			}else{
-				logger.error("LogService>>>>insertUserAccountMesg>>>µ±Ç°³äÖµ³µÖ÷ÊÇÈÏÖ¤ÓÃ»§£¬²»È¥ÅĞ¶Ï¸ÃÕË»§ÊÇ·ñÎªÈıÈËÒÔÉÏ³äÖµ");
+				logger.error("LogService>>>>insertUserAccountMesg>>>å½“å‰å……å€¼è½¦ä¸»æ˜¯è®¤è¯ç”¨æˆ·ï¼Œä¸å»åˆ¤æ–­è¯¥è´¦æˆ·æ˜¯å¦ä¸ºä¸‰äººä»¥ä¸Šå……å€¼");
 			}
 		}
 		return ret;
 	}
-	
+
 	/**
-	 * @param type ÀàĞÍ£¬1:À­À­(»ıÒ»·Ö)£¬2:NFC£¨»ı1£© 3:²îÆÀ£¨¿Û10·Ö£©,4:ÕÕÅÆ½áËã(»ı1·Ö),5ÍÆ¼ö»ı·Ö 
-	 * @param uin ÊÕ·ÑÔ±ÕÊºÅ
-	 * @param btime ¿ªÊ¼Ê±¼ä£¬Ã¿Ìì½öÉú³ÉÒ»Ìõ¼ÇÂ¼
+	 * @param type ç±»å‹ï¼Œ1:æ‹‰æ‹‰(ç§¯ä¸€åˆ†)ï¼Œ2:NFCï¼ˆç§¯1ï¼‰ 3:å·®è¯„ï¼ˆæ‰£10åˆ†ï¼‰,4:ç…§ç‰Œç»“ç®—(ç§¯1åˆ†),5æ¨èç§¯åˆ†
+	 * @param uin æ”¶è´¹å‘˜å¸å·
+	 * @param btime å¼€å§‹æ—¶é—´ï¼Œæ¯å¤©ä»…ç”Ÿæˆä¸€æ¡è®°å½•
 	 */
 	public void updateScroe(int type,Long uin,Long comId){
-		
-		/*Long endtime=1424016000L;//2ÔÂ16ÈÕÍ£Ö¹
-		Long begintime = 1425225600L;//3ÔÂ2ÈÕ¿ªÊ¼
+
+		/*Long endtime=1424016000L;//2æœˆ16æ—¥åœæ­¢
+		Long begintime = 1425225600L;//3æœˆ2æ—¥å¼€å§‹
 		Long time = System.currentTimeMillis()/1000;
-		if(time>endtime&&time<begintime){//Í£Ö¹»ı·Ö 
-			System.err.println(">>>Í£Ö¹»ı·Ö£¡");
+		if(time>endtime&&time<begintime){//åœæ­¢ç§¯åˆ†
+			System.err.println(">>>åœæ­¢ç§¯åˆ†ï¼");
 			return ;
 		}*/
 		if(uin==null)
 			return;
 		if(type<1||type>5)
 			return ;
-		//System.out.println(">>>>>>>>>>ÕÕÅÄ»ı·Ö £º"+type);
-	//	String monday = StringUtils.getMondayOfThisWeek();
+		//System.out.println(">>>>>>>>>>ç…§æ‹ç§¯åˆ† ï¼š"+type);
+		//	String monday = StringUtils.getMondayOfThisWeek();
 		Long btime = TimeTools.getToDayBeginTime();//getLongMilliSecondFrom_HHMMDD(monday)/1000;
 //		if(btime==null){
 //			btime = TimeTools.getLongMilliSecondFrom_HHMMDD(monday)/1000;
 //		}
 		Long t1 = 1419177600L;
 		Long nt = System.currentTimeMillis()/1000;
-		//System.out.println(">>>>>>>»ı·Ö:comid="+comId+",Ê±¼ä :"+nt+",¿ªÊ¼Ê±¼ä£º"+t1);
-		if(comId!=null&&comId>0){//ÍÆ¼öÊ±²»ÅĞ¶ÏÊÇ·ñÖ§¸¶µç×ÓÖ§¸¶ 
+		//System.out.println(">>>>>>>ç§¯åˆ†:comid="+comId+",æ—¶é—´ :"+nt+",å¼€å§‹æ—¶é—´ï¼š"+t1);
+		if(comId!=null&&comId>0){//æ¨èæ—¶ä¸åˆ¤æ–­æ˜¯å¦æ”¯ä»˜ç”µå­æ”¯ä»˜
 			//if(nt>t1){
 			//if(type<5){
-				Integer epay = 0;
-				Map comMap = databasedao.getPojo("select epay from com_info_tb where id=? ", new Object[]{comId});
-				if(comMap!=null&&comMap.get("epay")!=null)
-					epay= (Integer)comMap.get("epay");
-				//System.out.println(">>>>>»ı·ÖÊÇ·ñÓĞĞ§="+epay);
-				if(epay==0){
-					System.out.println(">>>>>²»Ö§³Öµç×ÓÖ§¸¶£¬²»»ı·Ö........");
-					return ;
-				}
+			Integer epay = 0;
+			Map comMap = databasedao.getPojo("select epay from com_info_tb where id=? ", new Object[]{comId});
+			if(comMap!=null&&comMap.get("epay")!=null)
+				epay= (Integer)comMap.get("epay");
+			//System.out.println(">>>>>ç§¯åˆ†æ˜¯å¦æœ‰æ•ˆ="+epay);
+			if(epay==0){
+				System.out.println(">>>>>ä¸æ”¯æŒç”µå­æ”¯ä»˜ï¼Œä¸ç§¯åˆ†........");
+				return ;
+			}
 			//}
 			//}
 		}else {
 			return ;
 		}
-		
+
 		Long count = databasedao.getLong("select count(*) from collector_scroe_tb where create_time=?" +
 				" and uin=? ", new Object[]{btime,uin});
 		String sql ="";// "insert into collector_scroe_tb (uin,lala_scroe,nfc_score,praise_scroe,create_time) values (?,?,?,?,?)";
 		Object values[]= null;
-		
-		if(count>0){//¸üĞÂ»ı·Ö
-			sql = "update collector_scroe_tb "; 
+
+		if(count>0){//æ›´æ–°ç§¯åˆ†
+			sql = "update collector_scroe_tb ";
 			if(type==1){
 				sql +=" set lala_scroe=lala_scroe+?";
 				values=new Object[]{0.1,uin,btime};
@@ -331,7 +331,7 @@ public class LogService {
 				values=new Object[]{0.01,uin,btime};
 			}
 			sql +=" where uin=? and create_time=? ";
-		}else {//ĞÂ½¨»ı·Ö
+		}else {//æ–°å»ºç§¯åˆ†
 			sql =  "insert into collector_scroe_tb (uin,lala_scroe,nfc_score,praise_scroe,create_time,pai_score,recom_scroe) values (?,?,?,?,?,?,?)";
 			if(type==1){
 				values=new Object[]{uin,0.1,0d,0,btime,0,0};
@@ -351,8 +351,8 @@ public class LogService {
 		}
 		databasedao.update(sql, values);
 	}
-	
-	//È¡ÏûÏ¢
+
+	//å–æ¶ˆæ¯
 	private String getMessage(Long uin,Map messageMap){
 		String result = "";
 		if (messageMap != null && !messageMap.isEmpty()) {
@@ -361,7 +361,7 @@ public class LogService {
 				return result;
 			}
 			Map<String, Object> infomMap = new HashMap<String, Object>();
-			if(mtype==2){//³äÖµ£¬¹ºÂò²úÆ·ÏûÏ¢
+			if(mtype==2){//å……å€¼ï¼Œè´­ä¹°äº§å“æ¶ˆæ¯
 				infomMap.put("result",  messageMap.get("state"));
 				infomMap.put("errmsg",  messageMap.get("duartion"));
 				infomMap.put("bonusid", messageMap.get("orderid"));
@@ -377,9 +377,9 @@ public class LogService {
 				infomMap.put("btime", messageMap.get("btime"));
 				infomMap.put("etime", messageMap.get("etime"));
 				infomMap.put("total", messageMap.get("order_total"));
-				infomMap.put("state", messageMap.get("state"));//0:Î´Ö§¸¶ 1£ºÒÑÖ§¸¶ 
+				infomMap.put("state", messageMap.get("state"));//0:æœªæ”¯ä»˜ 1ï¼šå·²æ”¯ä»˜
 				infomMap.put("orderid",orderId);
-				//ºì°ü
+				//çº¢åŒ…
 				Long count = getBonusId(uin, orderId);
 				if(count!=null&&count>0){
 					infomMap.put("bonusid", count);
@@ -390,11 +390,11 @@ public class LogService {
 		}
 		return result;
 	}
-	
-	
+
+
 	private Long getBonusId(Long uin,Long orderId){
 		Long count = null;
-		//ºì°ü
+		//çº¢åŒ…
 //		Map bMap  =pOnlyReadService.getMap("select id from bouns_tb where uin=? and order_id=? and ctime > ? ",
 //				new Object[]{uin,orderId,TimeTools.getToDayBeginTime()});
 		Map bMap  = null;
@@ -403,7 +403,7 @@ public class LogService {
 					new Object[]{uin,orderId,TimeTools.getToDayBeginTime(),1});
 			if(bMap!=null){
 				Long btime = (Long)bMap.get("btime");
-				if(btime!=null&&btime>10000){//ÒÑ¾­·ÖÏí¹ı£¬²»ÔÙ·ÖÏí
+				if(btime!=null&&btime>10000){//å·²ç»åˆ†äº«è¿‡ï¼Œä¸å†åˆ†äº«
 					bMap=null;
 				}
 			}
@@ -413,7 +413,7 @@ public class LogService {
 		}
 		if(bMap!=null&&bMap.get("id")!=null)
 			count = (Long)bMap.get("id");
-		
+
 		return count;
 	}
 }

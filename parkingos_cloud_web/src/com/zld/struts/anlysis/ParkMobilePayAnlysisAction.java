@@ -49,10 +49,12 @@ public class ParkMobilePayAnlysisAction extends Action {
 			return mapping.findForward("list");
 		}else if(action.equals("query")){
 			Long uid = RequestUtil.getLong(request, "uid", -1L);
-			Integer city = RequestUtil.getInteger(request, "city", -1);//-1»´≤ø 0£∫±±æ© 1£∫º√ƒœ
+			Integer city = RequestUtil.getInteger(request, "city", -1);//-1ÂÖ®ÈÉ® 0ÔºöÂåó‰∫¨ 1ÔºöÊµéÂçó
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			String nowtime= df2.format(System.currentTimeMillis());
-			String sql = "select count(1) scount,sum(total) total,comid from order_tb where total>=? and state=? and pay_type=? and c_type !=? and end_time between ? and ? ";
+			String sql = "select count(1) scount,sum(total) total,comid from order_tb where total>=? and state=? and pay_type=?" +
+					//and c_type !=?
+					" and end_time between ? and ? ";
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			List<Map<String, Object>> list1 = new ArrayList<Map<String,Object>>();
 			List<Map<String, Object>> list2 = new ArrayList<Map<String,Object>>();
@@ -68,13 +70,13 @@ public class ParkMobilePayAnlysisAction extends Action {
 			params.add(1);
 			params.add(1);
 			params.add(2);
-			params.add(4);
+			//params.add(4);
 			params.add(b);
 			params.add(e);
 			Long role = (Long)request.getSession().getAttribute("role");
-			if(role==5){// –≥°◊®‘±£¨Ωˆ≤È—Ø◊‘º∫µƒ≥µ≥° ÷ª˙÷ß∏∂«Èøˆ
+			if(role==5){//Â∏ÇÂú∫‰∏ìÂëòÔºå‰ªÖÊü•ËØ¢Ëá™Â∑±ÁöÑËΩ¶Âú∫ÊâãÊú∫ÊîØ‰ªòÊÉÖÂÜµ
 				Long loginUin = (Long)request.getSession().getAttribute("loginuin");
-				sql +=" and comid in(select id from com_info_tb where uid=?) "; 
+				sql +=" and comid in(select id from com_info_tb where uid=?) ";
 				params.add(loginUin);
 			}
 			if(city > 0){
@@ -88,9 +90,9 @@ public class ParkMobilePayAnlysisAction extends Action {
 			params.add(0);
 			params.add(b);
 			params.add(e);
-			if(role==5){// –≥°◊®‘±£¨Ωˆ≤È—Ø◊‘º∫µƒ≥µ≥°÷±∏∂«Èøˆ
+			if(role==5){//Â∏ÇÂú∫‰∏ìÂëòÔºå‰ªÖÊü•ËØ¢Ëá™Â∑±ÁöÑËΩ¶Âú∫Áõ¥‰ªòÊÉÖÂÜµ
 				Long loginUin = (Long)request.getSession().getAttribute("loginuin");
-				sql +=" and c.id in(select id from com_info_tb where uid=?) "; 
+				sql +=" and c.id in(select id from com_info_tb where uid=?) ";
 				params.add(loginUin);
 			}
 			if(city > 0){
@@ -99,9 +101,9 @@ public class ParkMobilePayAnlysisAction extends Action {
 			}
 			list2 = daService.getAllMap(sql + " group by c.id ", params);
 			setAllInfo(list1, list2);
-			if(uid == -1){//»´≤ø ˝æ›
+			if(uid == -1){//ÂÖ®ÈÉ®Êï∞ÊçÆ
 				setName(list1);
-			}else{//ƒ≥“ª∏ˆ –≥°◊®‘±œ¬µƒ≥µ≥° ˝æ›
+			}else{//Êüê‰∏Ä‰∏™Â∏ÇÂú∫‰∏ìÂëò‰∏ãÁöÑËΩ¶Âú∫Êï∞ÊçÆ
 				list1 = setNameByMarketer(list1, uid);
 			}
 			Collections.sort(list1, new ListSort());
@@ -157,7 +159,7 @@ public class ParkMobilePayAnlysisAction extends Action {
 			return mapping.findForward("trend");
 		}else if(action.equals("querytrend")){
 			String sql = "select mobilepay_count total,create_time,comid " +
-			" from mobilepay_anlysis_tb ";
+					" from mobilepay_anlysis_tb ";
 			List list = null;
 			String btime = RequestUtil.processParams(request, "btime");
 			String etime = RequestUtil.processParams(request, "etime");
@@ -186,7 +188,7 @@ public class ParkMobilePayAnlysisAction extends Action {
 			return mapping.findForward("totaltrend");
 		}else if(action.equals("querytotal")){
 			String sql = "select sum(mobilepay_count) total,create_time " +
-			" from mobilepay_anlysis_tb ";
+					" from mobilepay_anlysis_tb ";
 			List list = null;
 			String btime = RequestUtil.processParams(request, "btime");
 			String etime = RequestUtil.processParams(request, "etime");
@@ -199,7 +201,7 @@ public class ParkMobilePayAnlysisAction extends Action {
 			sql +=" where "+sqlInfo.getSql();
 			params= sqlInfo.getParams();
 			list = daService.getAllMap(sql +" order by create_time ",params);
-			//÷±∏∂Õ≥º∆
+			//Áõ¥‰ªòÁªüËÆ°
 			List<Map<String, Object>> list2 = new ArrayList<Map<String,Object>>();
 			sql = "select total dtotal,create_time from directpay_anlysis_tb where create_time between ? and ? order by create_time ";
 			list2 = daService.getAll(sql, new Object[]{b,e});
@@ -219,7 +221,7 @@ public class ParkMobilePayAnlysisAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private Map<String, Object> getTotal(HttpServletRequest request){
 		Integer city = RequestUtil.getInteger(request, "city", -1);
 		Long uid = RequestUtil.getLong(request, "uid", -1L);
@@ -235,21 +237,21 @@ public class ParkMobilePayAnlysisAction extends Action {
 		Long e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime+" 23:59:59");
 		List<Object> params = new ArrayList<Object>();
 		Long count = 0L;
-		String sql1 = "select count(o.*) from order_tb o,com_info_tb c where o.comid=c.id and o.total>=? and o.state=? and o.pay_type=? and o.end_time between ? and ? and c_type!=? ";
+		String sql1 = "select count(o.*) from order_tb o,com_info_tb c where o.comid=c.id and o.total>=? and o.state=? and o.pay_type=? and o.end_time between ? and ? ";//and c_type!=? ";
 		params.add(1);
 		params.add(1);
 		params.add(2);
 		params.add(b);
 		params.add(e);
-		params.add(4);
+		//params.add(4);
 		if(uid != -1){
 			sql1 += " and c.uid=? ";
 			params.add(uid);
 		}
 		Long role = (Long)request.getSession().getAttribute("role");
-		if(role==5){// –≥°◊®‘±£¨Ωˆ≤È—Ø◊‘º∫µƒ≥µ≥° ÷ª˙÷ß∏∂«Èøˆ
+		if(role==5){//Â∏ÇÂú∫‰∏ìÂëòÔºå‰ªÖÊü•ËØ¢Ëá™Â∑±ÁöÑËΩ¶Âú∫ÊâãÊú∫ÊîØ‰ªòÊÉÖÂÜµ
 			Long loginUin = (Long)request.getSession().getAttribute("loginuin");
-			sql1 +=" and c.id in(select id from com_info_tb where uid=?) "; 
+			sql1 +=" and c.id in(select id from com_info_tb where uid=?) ";
 			params.add(loginUin);
 		}
 		if(city > 0){
@@ -267,9 +269,9 @@ public class ParkMobilePayAnlysisAction extends Action {
 			sql2 += " and c.uid=? ";
 			params.add(uid);
 		}
-		if(role==5){// –≥°◊®‘±£¨Ωˆ≤È—Ø◊‘º∫µƒ≥µ≥° ÷ª˙÷ß∏∂«Èøˆ
+		if(role==5){//Â∏ÇÂú∫‰∏ìÂëòÔºå‰ªÖÊü•ËØ¢Ëá™Â∑±ÁöÑËΩ¶Âú∫ÊâãÊú∫ÊîØ‰ªòÊÉÖÂÜµ
 			Long loginUin = (Long)request.getSession().getAttribute("loginuin");
-			sql2 +=" and c.id in(select id from com_info_tb where uid=?) "; 
+			sql2 +=" and c.id in(select id from com_info_tb where uid=?) ";
 			params.add(loginUin);
 		}
 		if(city > 0){
@@ -282,7 +284,7 @@ public class ParkMobilePayAnlysisAction extends Action {
 		infoMap.put("count", count);
 		return infoMap;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list1,List<Map<String, Object>> list2){
 		List<Object> times = new ArrayList<Object>();
 		for(Map<String, Object> map : list1){
@@ -305,7 +307,7 @@ public class ParkMobilePayAnlysisAction extends Action {
 			}
 		}
 	}
-	
+
 	private void setAllInfo(List<Map<String,Object>> list1,List<Map<String, Object>> list2){
 		List<Object> comids = new ArrayList<Object>();
 		for(Map<String, Object> map : list1){
@@ -381,7 +383,7 @@ public class ParkMobilePayAnlysisAction extends Action {
 			}
 		}
 	}
-	
+
 	private List<Map<String,Object>> setNameByMarketer(List<Map<String, Object>> list, Long uid){
 		List<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
 		List<Object> comids = new ArrayList<Object>();
@@ -424,7 +426,7 @@ public class ParkMobilePayAnlysisAction extends Action {
 		}
 		return newList;
 	}
-	
+
 	private void setInfo(List<Map<String, Object>> list){
 		List<Object> uins = new ArrayList<Object>();
 		if(list != null && !list.isEmpty()){
@@ -456,7 +458,7 @@ public class ParkMobilePayAnlysisAction extends Action {
 			}
 		}
 	}
-	
+
 	class ListSort implements Comparator<Map<String, Object>>{
 
 		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
@@ -467,6 +469,6 @@ public class ParkMobilePayAnlysisAction extends Action {
 			if(b2 == null) b2 = 0L;
 			return b2.compareTo(b1);
 		}
-		
+
 	}
 }

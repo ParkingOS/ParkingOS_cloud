@@ -33,7 +33,7 @@ public class BerthAvgMoneyAction extends Action {
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -46,7 +46,7 @@ public class BerthAvgMoneyAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			request.setAttribute("btime", df2.format(System.currentTimeMillis()));
@@ -93,7 +93,7 @@ public class BerthAvgMoneyAction extends Action {
 				sql += " a.comid in ("+preParams+") ";
 				params.addAll(parks);
 				sql += "group  by a.comid,b.company_name,b.parking_total ";
-				
+
 				list = pgOnlyReadService.getAllMap(sql,params);
 				if(list != null && !list.isEmpty()){
 					count = list.size();
@@ -150,7 +150,7 @@ public class BerthAvgMoneyAction extends Action {
 					count = list.size();
 				}
 			}
-			
+
 			String json = StringUtils.createJson(list);
 			//AjaxUtil.ajaxOutput(response, json);
 			if(operate.equals("")){
@@ -162,10 +162,10 @@ public class BerthAvgMoneyAction extends Action {
 				AjaxUtil.ajaxOutput(response, json);
 			}
 		}
-		
+
 		return null;
 	}
-	
 
-	
+
+
 }

@@ -15,34 +15,34 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
 public class ContinueFTP {
-	
-	public enum UploadStatus {  
-		 Create_Directory_Fail,      //Ô¶³Ì·şÎñÆ÷ÏàÓ¦Ä¿Â¼´´½¨Ê§°Ü  
-		 Create_Directory_Success,   //Ô¶³Ì·şÎñÆ÷´³½«Ä¿Â¼³É¹¦  
-		 Upload_New_File_Success,    //ÉÏ´«ĞÂÎÄ¼ş³É¹¦  
-		 Upload_New_File_Failed,     //ÉÏ´«ĞÂÎÄ¼şÊ§°Ü  
-		 File_Exits,                 //ÎÄ¼şÒÑ¾­´æÔÚ  
-		 Remote_Bigger_Local,        //Ô¶³ÌÎÄ¼ş´óÓÚ±¾µØÎÄ¼ş  
-		 Upload_From_Break_Success,  //¶ÏµãĞø´«³É¹¦  
-		 Upload_From_Break_Failed,   //¶ÏµãĞø´«Ê§°Ü  
-		 Delete_Remote_Faild;        //É¾³ıÔ¶³ÌÎÄ¼şÊ§°Ü  
-	}  
 
-	
+	public enum UploadStatus {
+		Create_Directory_Fail,      //è¿œç¨‹æœåŠ¡å™¨ç›¸åº”ç›®å½•åˆ›å»ºå¤±è´¥
+		Create_Directory_Success,   //è¿œç¨‹æœåŠ¡å™¨é—¯å°†ç›®å½•æˆåŠŸ
+		Upload_New_File_Success,    //ä¸Šä¼ æ–°æ–‡ä»¶æˆåŠŸ
+		Upload_New_File_Failed,     //ä¸Šä¼ æ–°æ–‡ä»¶å¤±è´¥
+		File_Exits,                 //æ–‡ä»¶å·²ç»å­˜åœ¨
+		Remote_Bigger_Local,        //è¿œç¨‹æ–‡ä»¶å¤§äºæœ¬åœ°æ–‡ä»¶
+		Upload_From_Break_Success,  //æ–­ç‚¹ç»­ä¼ æˆåŠŸ
+		Upload_From_Break_Failed,   //æ–­ç‚¹ç»­ä¼ å¤±è´¥
+		Delete_Remote_Faild;        //åˆ é™¤è¿œç¨‹æ–‡ä»¶å¤±è´¥
+	}
+
+
 	private FTPClient ftpClient = new FTPClient();
-	
+
 	public ContinueFTP(){
-		//ÉèÖÃ½«¹ı³ÌÖĞÊ¹ÓÃµ½µÄÃüÁîÊä³öµ½¿ØÖÆÌ¨
+		//è®¾ç½®å°†è¿‡ç¨‹ä¸­ä½¿ç”¨åˆ°çš„å‘½ä»¤è¾“å‡ºåˆ°æ§åˆ¶å°
 		this.ftpClient.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
 	}
-	
+
 	/**
-	 * Á¬½Óµ½FTP·şÎñÆ÷
-	 * @param hostname Ö÷»úÃû
-	 * @param port ¶Ë¿Ú
-	 * @param username ÓÃ»§Ãû
-	 * @param password ÃÜÂë
-	 * @return ÊÇ·ñÁ¬½Ó³É¹¦
+	 * è¿æ¥åˆ°FTPæœåŠ¡å™¨
+	 * @param hostname ä¸»æœºå
+	 * @param port ç«¯å£
+	 * @param username ç”¨æˆ·å
+	 * @param password å¯†ç 
+	 * @return æ˜¯å¦è¿æ¥æˆåŠŸ
 	 * @throws IOException
 	 */
 	public boolean connect(String hostname,int port,String username,String password) throws IOException{
@@ -55,12 +55,12 @@ public class ContinueFTP {
 		disconnect();
 		return false;
 	}
-	
+
 	/**
-	 * ´ÓFTP·şÎñÆ÷ÉÏÏÂÔØÎÄ¼ş
-	 * @param remote Ô¶³ÌÎÄ¼şÂ·¾¶
-	 * @param local ±¾µØÎÄ¼şÂ·¾¶
-	 * @return ÊÇ·ñ³É¹¦
+	 * ä»FTPæœåŠ¡å™¨ä¸Šä¸‹è½½æ–‡ä»¶
+	 * @param remote è¿œç¨‹æ–‡ä»¶è·¯å¾„
+	 * @param local æœ¬åœ°æ–‡ä»¶è·¯å¾„
+	 * @return æ˜¯å¦æˆåŠŸ
 	 * @throws IOException
 	 */
 	public boolean download(String remote,String local) throws IOException{
@@ -70,15 +70,15 @@ public class ContinueFTP {
 		File f = new File(local);
 		FTPFile[] files = ftpClient.listFiles(remote);
 		if(files.length != 1){
-			System.out.println("Ô¶³ÌÎÄ¼ş²»Î¨Ò»");
+			System.out.println("è¿œç¨‹æ–‡ä»¶ä¸å”¯ä¸€");
 			return false;
 		}
 		long lRemoteSize = files[0].getSize();
 		if(f.exists()){
 			OutputStream out = new FileOutputStream(f,true);
-			System.out.println("±¾µØÎÄ¼ş´óĞ¡Îª:"+f.length());
+			System.out.println("æœ¬åœ°æ–‡ä»¶å¤§å°ä¸º:"+f.length());
 			if(f.length() >= lRemoteSize){
-				System.out.println("±¾µØÎÄ¼ş´óĞ¡´óÓÚÔ¶³ÌÎÄ¼ş´óĞ¡£¬ÏÂÔØÖĞÖ¹");
+				System.out.println("æœ¬åœ°æ–‡ä»¶å¤§å°å¤§äºè¿œç¨‹æ–‡ä»¶å¤§å°ï¼Œä¸‹è½½ä¸­æ­¢");
 				return false;
 			}
 			ftpClient.setRestartOffset(f.length());
@@ -91,27 +91,27 @@ public class ContinueFTP {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * ÉÏ´«ÎÄ¼şµ½FTP·şÎñÆ÷£¬Ö§³Ö¶ÏµãĞø´«
-	 * @param local ±¾µØÎÄ¼şÃû³Æ£¬¾ø¶ÔÂ·¾¶
-	 * @param remote Ô¶³ÌÎÄ¼şÂ·¾¶£¬Ê¹ÓÃ/home/directory1/subdirectory/file.ext °´ÕÕLinuxÉÏµÄÂ·¾¶Ö¸¶¨·½Ê½£¬Ö§³Ö¶à¼¶Ä¿Â¼Ç¶Ì×£¬Ö§³Öµİ¹é´´½¨²»´æÔÚµÄÄ¿Â¼½á¹¹
-	 * @return ÉÏ´«½á¹û
+	 * ä¸Šä¼ æ–‡ä»¶åˆ°FTPæœåŠ¡å™¨ï¼Œæ”¯æŒæ–­ç‚¹ç»­ä¼ 
+	 * @param local æœ¬åœ°æ–‡ä»¶åç§°ï¼Œç»å¯¹è·¯å¾„
+	 * @param remote è¿œç¨‹æ–‡ä»¶è·¯å¾„ï¼Œä½¿ç”¨/home/directory1/subdirectory/file.ext æŒ‰ç…§Linuxä¸Šçš„è·¯å¾„æŒ‡å®šæ–¹å¼ï¼Œæ”¯æŒå¤šçº§ç›®å½•åµŒå¥—ï¼Œæ”¯æŒé€’å½’åˆ›å»ºä¸å­˜åœ¨çš„ç›®å½•ç»“æ„
+	 * @return ä¸Šä¼ ç»“æœ
 	 * @throws IOException
 	 */
 	public UploadStatus upload(String local,String remote) throws IOException{
-		//ÉèÖÃPassiveMode´«Êä
+		//è®¾ç½®PassiveModeä¼ è¾“
 		ftpClient.enterLocalPassiveMode();
-		//ÉèÖÃÒÔ¶ş½øÖÆÁ÷µÄ·½Ê½´«Êä
+		//è®¾ç½®ä»¥äºŒè¿›åˆ¶æµçš„æ–¹å¼ä¼ è¾“
 		ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 		UploadStatus result;
-		//¶ÔÔ¶³ÌÄ¿Â¼µÄ´¦Àí
+		//å¯¹è¿œç¨‹ç›®å½•çš„å¤„ç†
 		String remoteFileName = remote;
 		if(remote.contains("/")){
 			remoteFileName = remote.substring(remote.lastIndexOf("/")+1);
 			String directory = remote.substring(0,remote.lastIndexOf("/")+1);
 			if(!directory.equalsIgnoreCase("/")&&!ftpClient.changeWorkingDirectory(directory)){
-				//Èç¹ûÔ¶³ÌÄ¿Â¼²»´æÔÚ£¬Ôòµİ¹é´´½¨Ô¶³Ì·şÎñÆ÷Ä¿Â¼
+				//å¦‚æœè¿œç¨‹ç›®å½•ä¸å­˜åœ¨ï¼Œåˆ™é€’å½’åˆ›å»ºè¿œç¨‹æœåŠ¡å™¨ç›®å½•
 				int start=0;
 				int end = 0;
 				if(directory.startsWith("/")){
@@ -126,23 +126,23 @@ public class ContinueFTP {
 						if(ftpClient.makeDirectory(subDirectory)){
 							ftpClient.changeWorkingDirectory(subDirectory);
 						}else {
-							System.out.println("´´½¨Ä¿Â¼Ê§°Ü");
+							System.out.println("åˆ›å»ºç›®å½•å¤±è´¥");
 							return UploadStatus.Create_Directory_Fail;
 						}
 					}
-					
+
 					start = end + 1;
 					end = directory.indexOf("/",start);
-					
-					//¼ì²éËùÓĞÄ¿Â¼ÊÇ·ñ´´½¨Íê±Ï
+
+					//æ£€æŸ¥æ‰€æœ‰ç›®å½•æ˜¯å¦åˆ›å»ºå®Œæ¯•
 					if(end <= start){
 						break;
 					}
 				}
 			}
 		}
-		
-		//¼ì²éÔ¶³ÌÊÇ·ñ´æÔÚÎÄ¼ş
+
+		//æ£€æŸ¥è¿œç¨‹æ˜¯å¦å­˜åœ¨æ–‡ä»¶
 		FTPFile[] files = ftpClient.listFiles(remoteFileName);
 		if(files.length == 1){
 			long remoteSize = files[0].getSize();
@@ -153,8 +153,8 @@ public class ContinueFTP {
 			}else if(remoteSize > localSize){
 				return UploadStatus.Remote_Bigger_Local;
 			}
-			
-			//³¢ÊÔÒÆ¶¯ÎÄ¼şÄÚ¶ÁÈ¡Ö¸Õë,ÊµÏÖ¶ÏµãĞø´«
+
+			//å°è¯•ç§»åŠ¨æ–‡ä»¶å†…è¯»å–æŒ‡é’ˆ,å®ç°æ–­ç‚¹ç»­ä¼ 
 			InputStream is = new FileInputStream(f);
 			if(is.skip(remoteSize)==remoteSize){
 				ftpClient.setRestartOffset(remoteSize);
@@ -162,13 +162,13 @@ public class ContinueFTP {
 					return UploadStatus.Upload_From_Break_Success;
 				}
 			}
-			
-			//Èç¹û¶ÏµãĞø´«Ã»ÓĞ³É¹¦£¬ÔòÉ¾³ı·şÎñÆ÷ÉÏÎÄ¼ş£¬ÖØĞÂÉÏ´«
+
+			//å¦‚æœæ–­ç‚¹ç»­ä¼ æ²¡æœ‰æˆåŠŸï¼Œåˆ™åˆ é™¤æœåŠ¡å™¨ä¸Šæ–‡ä»¶ï¼Œé‡æ–°ä¸Šä¼ 
 			if(!ftpClient.deleteFile(remoteFileName)){
 				return UploadStatus.Delete_Remote_Faild;
 			}
 			is = new FileInputStream(f);
-			if(ftpClient.storeFile(remote, is)){	
+			if(ftpClient.storeFile(remote, is)){
 				result = UploadStatus.Upload_New_File_Success;
 			}else{
 				result = UploadStatus.Upload_New_File_Failed;
@@ -186,7 +186,7 @@ public class ContinueFTP {
 		return result;
 	}
 	/**
-	 * ¶Ï¿ªÓëÔ¶³Ì·şÎñÆ÷µÄÁ¬½Ó
+	 * æ–­å¼€ä¸è¿œç¨‹æœåŠ¡å™¨çš„è¿æ¥
 	 * @throws IOException
 	 */
 	public void disconnect() throws IOException{
@@ -194,7 +194,7 @@ public class ContinueFTP {
 			ftpClient.disconnect();
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		ContinueFTP myFtp = new ContinueFTP();
 		try {
@@ -202,7 +202,7 @@ public class ContinueFTP {
 			System.out.println(myFtp.upload("c:\\err.txt", "/fff/aaas.txt"));
 			myFtp.disconnect();
 		} catch (IOException e) {
-			System.out.println("Á¬½ÓFTP³ö´í£º"+e.getMessage()); 
+			System.out.println("è¿æ¥FTPå‡ºé”™ï¼š"+e.getMessage());
 			e.printStackTrace();
 		}
 	}

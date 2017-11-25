@@ -2,21 +2,21 @@ package com.zld.pojo;
 
 import java.io.Serializable;
 /**
- * ³µ¼ìÆ÷Ó³Éä¶ÔÏó
+ * è½¦æ£€å™¨æ˜ å°„å¯¹è±¡
  * @author whx
  *
  */
 public class Sensor implements Serializable {
 	private Long id = -1L;//
 	private String code;//
-	private Long comid = -1L;//ËùÊô³µ³¡
-	private Integer state = 0;//-- 0¿ÕÏĞ 1Õ¼ÓÃ
-	private String serid;//-- µØ´ÅÖ÷»úID
-	private String did;//-- ´«¸ĞÆ÷ID(Î¨Ò»±àºÅ)
-	private Long operate_time;//-- ²Ù×÷Ê±¼ä
-	private Double battery;//-- µç³ØµçÑ¹
-	private Double magnetism;//-- µçÈİµçÑ¹
-	private Long beart_time;// -- ĞÄÌøÊ±¼ä
+	private Long comid = -1L;//æ‰€å±è½¦åœº
+	private Integer state = 0;//-- 0ç©ºé—² 1å ç”¨
+	private String serid;//-- åœ°ç£ä¸»æœºID
+	private String did;//-- ä¼ æ„Ÿå™¨ID(å”¯ä¸€ç¼–å·)
+	private Long operate_time;//-- æ“ä½œæ—¶é—´
+	private Double battery;//-- ç”µæ± ç”µå‹
+	private Double magnetism;//-- ç”µå®¹ç”µå‹
+	private Long beart_time;// -- å¿ƒè·³æ—¶é—´
 	public Long getId() {
 		return id;
 	}
@@ -89,5 +89,5 @@ public class Sensor implements Serializable {
 				+ ", magnetism=" + magnetism + ", beart_time=" + beart_time
 				+ "]";
 	}
-	
+
 }

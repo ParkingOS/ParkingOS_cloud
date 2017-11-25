@@ -16,7 +16,7 @@ import com.zld.service.DataBaseService;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.TimeTools;
 /**
- * ×Ü¹ÜÀíÔ±   Í£³µ³¡×¢²áĞŞ¸ÄÉ¾³ıµÈ
+ * æ€»ç®¡ç†å‘˜   åœè½¦åœºæ³¨å†Œä¿®æ”¹åˆ é™¤ç­‰
  * @author Administrator
  *
  */
@@ -26,7 +26,7 @@ public class ParkSettingManageAction extends Action {
 	private DataBaseService daService;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Integer parkId = RequestUtil.getInteger(request, "id", 0);
@@ -36,16 +36,16 @@ public class ParkSettingManageAction extends Action {
 					new Object[]{parkId});
 			String info="";
 //			Integer iscancel = (Integer)parkMap.get("iscancel");
-//			String mg = "²»È¥µô";
-//			String bmg = "È¥µôÈ¡Ïû°´Å¥";
+//			String mg = "ä¸å»æ‰";
+//			String bmg = "å»æ‰å–æ¶ˆæŒ‰é’®";
 //			if(iscancel!=null&&iscancel==1){
-//				bmg = "±£ÁôÈ¡Ïû°´Å¥";
-//				mg = "ÒÑÈ¥µô";
+//				bmg = "ä¿ç•™å–æ¶ˆæŒ‰é’®";
+//				mg = "å·²å»æ‰";
 //			}
 			if(parkMap!=null)
-				info ="Ãû³Æ£º"+parkMap.get("company_name")+"£¬µØÖ·£º"+parkMap.get("address")+"<br/>´´½¨Ê±¼ä£º"
-			+TimeTools.getTime_yyyyMMdd_HHmm((Long)parkMap.get("create_time")*1000)+"£¬³µÎ»×ÜÊı£º"+parkMap.get("parking_total")
-			+"£¬·ÖÏí³µÎ»£º"+parkMap.get("share_number")+"£¬¾­Î³¶È£º("+parkMap.get("longitude")+","+parkMap.get("latitude")+")";
+				info ="åç§°ï¼š"+parkMap.get("company_name")+"ï¼Œåœ°å€ï¼š"+parkMap.get("address")+"<br/>åˆ›å»ºæ—¶é—´ï¼š"
+						+TimeTools.getTime_yyyyMMdd_HHmm((Long)parkMap.get("create_time")*1000)+"ï¼Œè½¦ä½æ€»æ•°ï¼š"+parkMap.get("parking_total")
+						+"ï¼Œåˆ†äº«è½¦ä½ï¼š"+parkMap.get("share_number")+"ï¼Œç»çº¬åº¦ï¼š("+parkMap.get("longitude")+","+parkMap.get("latitude")+")";
 			request.setAttribute("parkinfo", info);
 			//request.setAttribute("iscancel", info);
 			return mapping.findForward("list");
@@ -58,18 +58,18 @@ public class ParkSettingManageAction extends Action {
 			Map<String, Object> parkMap = daService.getPojo("select * from com_info_tb where id=?",
 					new Object[]{parkId});
 			Integer isshowepay = (Integer)parkMap.get("isshowepay");
-			String mg = "ÏÔÊ¾";
-			String bmg = "µã»÷²»ÏÔÊ¾";
+			String mg = "æ˜¾ç¤º";
+			String bmg = "ç‚¹å‡»ä¸æ˜¾ç¤º";
 			if(isshowepay!=null&&isshowepay==0){
-				bmg = "µã»÷ÏÔÊ¾";
-				mg = "²»ÏÔÊ¾";
+				bmg = "ç‚¹å‡»æ˜¾ç¤º";
+				mg = "ä¸æ˜¾ç¤º";
 			}
 			Integer iscancel = (Integer)parkMap.get("iscancel");
-			String mg2 = "²»È¥µô";
-			String bmg2 = "È¥µôÈ¡Ïû°´Å¥";
+			String mg2 = "ä¸å»æ‰";
+			String bmg2 = "å»æ‰å–æ¶ˆæŒ‰é’®";
 			if(iscancel!=null&&iscancel==1){
-				bmg2 = "±£ÁôÈ¡Ïû°´Å¥";
-				mg2 = "ÒÑÈ¥µô";
+				bmg2 = "ä¿ç•™å–æ¶ˆæŒ‰é’®";
+				mg2 = "å·²å»æ‰";
 			}
 			request.setAttribute("mg", mg);
 			request.setAttribute("bmg", bmg);

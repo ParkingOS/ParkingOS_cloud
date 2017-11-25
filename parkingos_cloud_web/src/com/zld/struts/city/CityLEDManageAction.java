@@ -31,21 +31,21 @@ public class CityLEDManageAction extends Action {
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
-	private CommonMethods commonMethods; 
+	private CommonMethods commonMethods;
 	@Autowired
 	private MemcacheUtils memcacheUtils;
 	@Autowired
 	private PublicMethods publicMethods;
 	@Autowired
 	private MongoDbUtils mongoDbUtils;
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -53,13 +53,13 @@ public class CityLEDManageAction extends Action {
 			response.sendRedirect("login.do");
 			return null;
 		}
-		
+
 		if(cityid == null && groupid == null){
 			return null;
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("quickquery")){
@@ -88,7 +88,7 @@ public class CityLEDManageAction extends Action {
 				sql += " comid in ("+preParams+") ";
 				countSql += " comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				count = pgOnlyReadService.getCount(countSql,params);
 				if(count>0){
 					list = pgOnlyReadService.getAll(sql +" order by id desc ",params, pageNum, pageSize);
@@ -124,7 +124,7 @@ public class CityLEDManageAction extends Action {
 				sql += " comid in ("+preParams+") ";
 				countSql += " comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -148,13 +148,13 @@ public class CityLEDManageAction extends Action {
 			int r = deleteLED(request);
 			AjaxUtil.ajaxOutput(response, r + "");
 		}
-		
+
 		return null;
 	}
-	
+
 	private int deleteLED(HttpServletRequest request){
 		Long cameraid = RequestUtil.getLong(request, "selids", -1L);
-		Map<String, Object> ledMap = daService.getMap("select * from com_led_tb where id=?",  
+		Map<String, Object> ledMap = daService.getMap("select * from com_led_tb where id=?",
 				new Object[]{cameraid});
 		Long comid = -1L;
 		if(ledMap != null && ledMap.get("comid") != null){
@@ -166,11 +166,11 @@ public class CityLEDManageAction extends Action {
 			if(publicMethods.isEtcPark(comid)){
 				int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_led_tb",cameraid,System.currentTimeMillis()/1000,2});
 			}
-			mongoDbUtils.saveLogs(request, 0, 4, "É¾³ýÁË£¨comid:"+comid+"£©µÄLED£º"+ledMap);
+			mongoDbUtils.saveLogs(request, 0, 4, "åˆ é™¤äº†ï¼ˆcomid:"+comid+"ï¼‰çš„LEDï¼š"+ledMap);
 		}
 		return result;
 	}
-	
+
 	private int editLED(HttpServletRequest request){
 		Long ledid = RequestUtil.getLong(request, "id", -1L);
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
@@ -203,20 +203,20 @@ public class CityLEDManageAction extends Action {
 		if(passid == -1){
 			return -2;
 		}
-		
-		//±à¼­
+
+		//ç¼–è¾‘
 		String sql = "update com_led_tb set ledip=?,ledport=?,leduid=?,movemode=?,movespeed=?,dwelltime=?,ledcolor=?,showcolor=?,typeface=?,typesize=?,matercont=?,passid=?,width=?,height=?,type=?,rsport=?,comid=? where id=?";
 		int re = daService.update(sql, new Object[]{ledip,ledport,leduid,movemode,movespeed,dwelltime,ledcolor,showcolor,typeface,typesize,matercont,passid,width,height,type,rsport,comid,ledid});
 		if(re == 1){
 			if(publicMethods.isEtcPark(comid)){
-				int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", 
+				int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)",
 						new Object[]{comid,"com_led_tb",ledid,System.currentTimeMillis()/1000,1});
 			}
-			mongoDbUtils.saveLogs(request, 0, 3, "ÐÞ¸ÄÁË£¨comid:"+comid+"£©µÄLED£º"+ledip+":"+ledport);
+			mongoDbUtils.saveLogs(request, 0, 3, "ä¿®æ”¹äº†ï¼ˆcomid:"+comid+"ï¼‰çš„LEDï¼š"+ledip+":"+ledport);
 		}
 		return re;
 	}
-	
+
 	private int createLED(HttpServletRequest request){
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		Long passid = RequestUtil.getLong(request, "passid", -1L);
@@ -269,7 +269,7 @@ public class CityLEDManageAction extends Action {
 		Integer result = commonMethods.createLED(request, map);
 		return result;
 	}
-	
+
 	private void setWorksite(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> passList = new ArrayList<Object>();
@@ -282,8 +282,8 @@ public class CityLEDManageAction extends Action {
 					preParams += ",?";
 			}
 			List<Map<String, Object>> list2 = pgOnlyReadService.getAllMap("select worksite_id,id from com_pass_tb where id in ("+preParams+")", passList);
-			
-			
+
+
 			if(list != null && !list.isEmpty()){
 				for(Map<String, Object> map : list){
 					Long id = (Long)map.get("passid");

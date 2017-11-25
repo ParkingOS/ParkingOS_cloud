@@ -1,12 +1,14 @@
 package com.zld.struts.parkadmin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -18,6 +20,7 @@ import com.zld.AjaxUtil;
 import com.zld.impl.MongoDbUtils;
 import com.zld.service.DataBaseService;
 import com.zld.service.PgOnlyReadService;
+import com.zld.utils.Check;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 
@@ -31,7 +34,7 @@ public class ShopManageAction extends Action {
 	private Logger logger = Logger.getLogger(ShopManageAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -42,7 +45,7 @@ public class ShopManageAction extends Action {
 		}
 		if(comid==0)
 			comid = RequestUtil.getLong(request, "comid", 0L);
-		
+
 		if(action.equals("")){
 			request.setAttribute("comid", comid);
 			return mapping.findForward("list");
@@ -52,7 +55,7 @@ public class ShopManageAction extends Action {
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			List<Object> params = new ArrayList<Object>();
-			String sql = "select * from shop_tb where state=? and comid=? ";
+			String sql = "select * from shop_tb where state=? and comid=? order by create_time desc";
 			String countsql = "select count(*) from shop_tb where state=? and comid=? ";
 			params.add(0);
 			params.add(comid);
@@ -68,12 +71,76 @@ public class ShopManageAction extends Action {
 			String address = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
 			String mobile = RequestUtil.processParams(request, "mobile");
 			String phone = RequestUtil.processParams(request, "phone");
-			Integer ticket_limit = RequestUtil.getInteger(request, "ticket_limit", 0);
-			Integer ticketfree_limit = RequestUtil.getInteger(request, "ticketfree_limit", 0);
-			int r = daService.update("insert into shop_tb(name,address,mobile,phone,comid,ticket_limit,create_time,ticketfree_limit) values(?,?,?,?,?,?,?,?)",
-							new Object[] { name, address, mobile, phone, comid, ticket_limit, System.currentTimeMillis() / 1000, ticketfree_limit });
+			Integer ticket_type = RequestUtil.getInteger(request, "ticket_type",1);
+			//Integer ticket_limit = RequestUtil.getInteger(request, "ticket_limit", 0);
+			//Integer ticketfree_limit = RequestUtil.getInteger(request, "ticketfree_limit", 0);
+			String default_limit = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "default_limit"));
+			double discount_percent = RequestUtil.getDouble(request, "discount_percent",100.00);//商户折扣/%
+			double discount_money = RequestUtil.getDouble(request, "discount_money",1.00);//商户折扣---每小时/元
+			Integer validite_time = RequestUtil.getInteger(request, "validite_time", 0);//有效期/小时
+			if(0>=validite_time){
+				AjaxUtil.ajaxOutput(response, "有效期必须输入正整数");
+				return null;
+			}
+			if(!Check.isEmpty(default_limit) && default_limit.contains("，")){
+				default_limit.replaceAll("，", ",");
+			}
+			int r = daService.update("insert into shop_tb(name,address,mobile,phone,comid,ticket_type,create_time,default_limit,discount_percent,discount_money,validite_time) values(?,?,?,?,?,?,?,?,?,?,?)",
+					new Object[] { name, address, mobile, phone, comid, ticket_type,System.currentTimeMillis() / 1000, default_limit, discount_percent, discount_money,validite_time});
 			if(r==1)
-				mongoDbUtils.saveLogs( request,0, 2, "�������̻���"+name+",��ַ��"+address+",�ֻ�:"+mobile+",�绰:"+phone);
+				mongoDbUtils.saveLogs( request,0, 2, "添加了商户："+name+",地址："+address+",手机:"+mobile+",电话:"+phone);
+			AjaxUtil.ajaxOutput(response, r+"");
+			return null;
+		}else if(action.equals("addmoney")){
+			Long shoppingmarket_id = RequestUtil.getLong(request, "shop_id", -1L);
+			if(shoppingmarket_id == -1){
+				AjaxUtil.ajaxOutput(response, "-1");
+				return null;
+			}
+			Map shopMap = daService.getMap("select * from shop_tb where id=? ", new Object[]{shoppingmarket_id});
+			Integer ticket_time = RequestUtil.getInteger(request, "ticket_time", 0);
+			//Integer ticket_time_type = RequestUtil.getInteger(request, "ticket_time_type",1);
+			Integer ticket_money = RequestUtil.getInteger(request, "ticket_money", 0);
+			double addmoney = RequestUtil.getDouble(request, "addmoney",0.00);
+			//减免类型
+			Integer ticket_type = Integer.parseInt(shopMap.get("ticket_type")+"");
+			if(ticket_type == 1){
+				if(0>=ticket_time){
+					AjaxUtil.ajaxOutput(response, "减免小时必须输入正整数");
+					return null;
+				}
+			}else{
+				if(0>=ticket_money){
+					AjaxUtil.ajaxOutput(response, "减免劵必须输入正整数");
+					return null;
+				}
+			}
+			Integer ticket_limit = 0;
+			Integer ticketfree_limit = 0;
+			//减免劵(小时)
+			ticket_limit += ticket_time;
+			/*if(ticket_time_type ==1){
+
+			}else{
+				//全免劵(张)
+				ticketfree_limit += ticket_time;
+			}*/
+			int r = daService.update("update shop_tb set ticket_limit=ticket_limit+?, ticketfree_limit =ticketfree_limit+?, ticket_money=ticket_money+? where id=? ",
+					new Object[] {ticket_limit, ticketfree_limit, ticket_money, shoppingmarket_id});
+			mongoDbUtils.saveLogs( request,0,3, "商户:"+shopMap.get("name")+"续费:"+addmoney+"元");
+			//记录缴费流水
+			String username = (String)request.getSession().getAttribute("userid");
+			long userid = -1;
+			String strid = "";
+			if(Check.checkUin(username)){
+				userid = Long.parseLong(username);
+			}else{
+				strid = username;
+			}
+
+
+			int s =	daService.update("insert into shop_account_tb(shop_id,shop_name,ticket_limit,ticketfree_limit,ticket_money,add_money,operate_time,operator,park_id,strid,operate_type) values(?,?,?,?,?,?,?,?,?,?,?)",
+					new Object[] { shopMap.get("id"), shopMap.get("name"), ticket_limit, ticketfree_limit, ticket_money,addmoney,System.currentTimeMillis() / 1000, userid,comid,strid,1});
 			AjaxUtil.ajaxOutput(response, r+"");
 			return null;
 		}else if(action.equals("edit")){
@@ -86,12 +153,25 @@ public class ShopManageAction extends Action {
 			String address = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
 			String mobile = RequestUtil.processParams(request, "mobile");
 			String phone = RequestUtil.processParams(request, "phone");
-			Integer ticket_limit = RequestUtil.getInteger(request, "ticket_limit", 0);
-			Integer ticketfree_limit = RequestUtil.getInteger(request, "ticketfree_limit", 0);
-			int r = daService.update("update shop_tb set name=?,address=?,mobile=?,phone=?,ticket_limit=?,ticketfree_limit=? where id=? ",
-					new Object[] { name, address, mobile, phone, ticket_limit, ticketfree_limit, shoppingmarket_id });
+			Integer ticket_type = RequestUtil.getInteger(request, "ticket_type",1);
+			//Integer ticket_limit = RequestUtil.getInteger(request, "ticket_limit", 0);
+			//Integer ticketfree_limit = RequestUtil.getInteger(request, "ticketfree_limit", 0);
+			String default_limit = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "default_limit"));
+			double discount_percent = RequestUtil.getDouble(request, "discount_percent",100.00);//商户折扣/%
+			double discount_money = RequestUtil.getDouble(request, "discount_money",1.00);//商户折扣---每小时/元
+			Integer validite_time = RequestUtil.getInteger(request, "validite_time", 0);//有效期/小时
+			if(0>=validite_time){
+				AjaxUtil.ajaxOutput(response, "有效期必须输入正整数");
+				return null;
+			}
+			if(!Check.isEmpty(default_limit) && default_limit.contains("，")){
+				default_limit = default_limit.replaceAll("，", ",");
+			}
+			int r = daService.update("update shop_tb set name=?,address=?,mobile=?,phone=?," +
+							"default_limit=?,ticket_type=?,discount_percent=?, discount_money=?, validite_time=?  where id=? ",
+					new Object[] { name, address, mobile, phone, default_limit, ticket_type,discount_percent,discount_money,validite_time,shoppingmarket_id});
 			if(r==1)
-				mongoDbUtils.saveLogs( request,0, 3, "�޸����̻���"+name+",��ַ��"+address+",�ֻ�:"+mobile+",�绰:"+phone);
+				mongoDbUtils.saveLogs( request,0, 3, "修改了商户："+name+",地址："+address+",手机:"+mobile+",电话:"+phone);
 			AjaxUtil.ajaxOutput(response, r+"");
 		}else if(action.equals("delete")){
 			Long shoppingmarket_id = RequestUtil.getLong(request, "selids", -1L);
@@ -103,14 +183,19 @@ public class ShopManageAction extends Action {
 			int r = daService.update("update shop_tb set state=? where id=? ",
 					new Object[] { 1, shoppingmarket_id });
 			if(r==1)
-				mongoDbUtils.saveLogs( request,0, 4, "ɾ�����̻���"+shopMap);
+				mongoDbUtils.saveLogs( request,0, 4, "删除了商户："+shopMap);
 			AjaxUtil.ajaxOutput(response, r+"");
 		}else if(action.equals("setting")){
 			Long shop_id = RequestUtil.getLong(request, "id", -1L);
 			request.setAttribute("shop_id", shop_id);
 			return mapping.findForward("setlist");
+		}else if(action.equals("getShop")){
+			Long shop_id = RequestUtil.getLong(request, "shop_id", -1L);
+			Map shopMap = daService.getMap("select * from shop_tb where id=? ", new Object[]{shop_id});
+			String json = JsonUtil.createJsonforMap(shopMap);
+			AjaxUtil.ajaxOutput(response, json);
 		}
 		return null;
 	}
-	
+
 }

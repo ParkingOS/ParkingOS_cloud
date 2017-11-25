@@ -30,7 +30,7 @@ import com.zld.utils.TimeTools;
 
 
 /**
- * ³µ³¡ÔÆ²Ù×÷ÈÕÖ¾
+ * è½¦åœºäº‘æ“ä½œæ—¥å¿—
  * @author Administrator
  *
  */
@@ -40,14 +40,14 @@ public class PrakLogsAction extends Action{
 	Logger logger = Logger.getLogger(PrakLogsAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		Integer authId = RequestUtil.getInteger(request, "authid",-1);
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", authId);
 		if(uin==null){
 			response.sendRedirect("login.do");
@@ -75,5 +75,5 @@ public class PrakLogsAction extends Action{
 		}
 		return null;
 	}
-	
+
 }

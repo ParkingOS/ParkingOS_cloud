@@ -24,7 +24,7 @@ import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 
 /**
- * ºì°üÊ¹ÓÃÊ¹ÓÃÍ³¼Æ
+ * çº¢åŒ…ä½¿ç”¨ä½¿ç”¨ç»Ÿè®¡
  * @author Administrator
  *
  */
@@ -32,11 +32,11 @@ public class BonusAnlysisAction extends Action {
 
 	@Autowired
 	private DataBaseService service;
-	@Autowired 
+	@Autowired
 	private PgOnlyReadService readService;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		if(action.equals("")){
@@ -73,7 +73,7 @@ public class BonusAnlysisAction extends Action {
 			int ret = 0;
 			if(id!=-1&&(amount!=0||pv_number!=0||hit_number!=0||down_num!=0))
 				ret = service.update("update reg_anlysis_tb set amount=?,pv_number=?" +
-						",hit_number=?,down_num=? where id =?",
+								",hit_number=?,down_num=? where id =?",
 						new Object[]{amount,pv_number,hit_number,down_num,id});
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}else if(action.equals("detail")){
@@ -98,9 +98,9 @@ public class BonusAnlysisAction extends Action {
 					" from user_account_tb u left join car_info_tb c on u.uin = c.uin where u.uin in" +
 					"(select id from user_info_tb where reg_time between ? and ? and media=? )" +
 					" and u.type=? and u.create_time between ? and ? and u.remark like ? order by u.create_time ";
-			list = readService.getAll(sql, new Object[]{qdate,qdate+24*60*60,atype,1,qdate,qdate+24*60*60,"Í£³µ·Ñ%"});
-			
-			//{"page":1,"total":2,"rows": [{"id":"1","cell":["Í¨»°ÖÐ","ÒµÎñ×ÉÑ¯"]},{"id":"2","cell":["½ÓÈëÖÐ","ÊÛºó·þÎñ"]}]};
+			list = readService.getAll(sql, new Object[]{qdate,qdate+24*60*60,atype,1,qdate,qdate+24*60*60,"åœè½¦è´¹%"});
+
+			//{"page":1,"total":2,"rows": [{"id":"1","cell":["é€šè¯ä¸­","ä¸šåŠ¡å’¨è¯¢"]},{"id":"2","cell":["æŽ¥å…¥ä¸­","å”®åŽæœåŠ¡"]}]};
 			String result = "{\"page\":1,\"total\":0,\"rows\": []}";
 			if(list!=null&&list.size()>0){
 				result = "{\"page\":1,\"total\":"+list.size()+",\"rows\": [datas]}";
@@ -133,8 +133,8 @@ public class BonusAnlysisAction extends Action {
 		}
 		return null;
 	}
-	
-	
+
+
 	private String getJson(List list,String fieldsstr){
 		String json = "{\"page\":1,\"total\":0,\"rows\":[]}";
 		if(list != null && !list.isEmpty()) {
@@ -154,7 +154,7 @@ public class BonusAnlysisAction extends Action {
 		return json;
 		//atype__ctime__amount__pv_number__hit_number__bonus_num__down_num__reg_num__order_num__rp__hp__dp__tp
 	}
-	
+
 	public static String Map2Json(Map map,String[] fieldsstrArray,String id) {
 		StringBuffer json = new StringBuffer("");
 		if(map != null) {
@@ -169,7 +169,7 @@ public class BonusAnlysisAction extends Action {
 						_filedStr = TimeTools.getTime_yyyyMMdd_HHmmss(Long.valueOf(_filedStr)*1000);
 						_filedStr = _filedStr.substring(0,10);
 					}
-				}else if(fieldName.equals("rp")){//×¢²á³É±¾
+				}else if(fieldName.equals("rp")){//æ³¨å†Œæˆæœ¬
 					Object pvalue = map.get("amount");
 					Object regNum = map.get("reg_num");
 					Double pDouble = StringUtils.formatDouble(pvalue);
@@ -177,7 +177,7 @@ public class BonusAnlysisAction extends Action {
 					if(regDouble>0&&pDouble>0){
 						_filedStr= StringUtils.formatDouble(StringUtils.formatDouble(pvalue)/StringUtils.formatDouble(regNum))+"";
 					}
-				}else if(fieldName.equals("tp")){//³µÅÆ×ª»¯ÂÊ
+				}else if(fieldName.equals("tp")){//è½¦ç‰Œè½¬åŒ–çŽ‡
 					Object pvalue = map.get("reg_num");
 					Object regNum = map.get("hit_number");
 					Double pDouble = StringUtils.formatDouble(pvalue);
@@ -185,7 +185,7 @@ public class BonusAnlysisAction extends Action {
 					if(regDouble>0&&pDouble>0){
 						_filedStr= StringUtils.formatDouble(StringUtils.formatDouble(pvalue)/StringUtils.formatDouble(regNum))*100+"%";
 					}
-				}else if(fieldName.equals("hp")){//ºì°üÂÊ
+				}else if(fieldName.equals("hp")){//çº¢åŒ…çŽ‡
 					Object pvalue = map.get("bonus_num");
 					Object regNum = map.get("hit_number");
 					Double pDouble = StringUtils.formatDouble(pvalue);
@@ -193,7 +193,7 @@ public class BonusAnlysisAction extends Action {
 					if(regDouble>0&&pDouble>0){
 						_filedStr= StringUtils.formatDouble(StringUtils.formatDouble(pvalue)/StringUtils.formatDouble(regNum))*100+"%";
 					}
-				}else if(fieldName.equals("dp")){//ÏÂÔØÂÊ
+				}else if(fieldName.equals("dp")){//ä¸‹è½½çŽ‡
 					Object pvalue = map.get("down_num");
 					Object regNum = map.get("bonus_num");
 					Double pDouble = StringUtils.formatDouble(pvalue);

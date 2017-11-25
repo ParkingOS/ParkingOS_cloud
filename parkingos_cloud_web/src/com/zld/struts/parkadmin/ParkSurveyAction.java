@@ -26,23 +26,23 @@ import com.zld.utils.RequestUtil;
 import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 /**
- * Í£³µ³¡ºóÌ¨¸Å¿ö
+ * åœè½¦åœºåå°æ¦‚å†µ
  * @author Administrator
  *
  */
 public class ParkSurveyAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
-	
+
 	private Logger logger = Logger.getLogger(ParkSurveyAction.class);
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -55,8 +55,8 @@ public class ParkSurveyAction extends Action{
 		if(comid==0)
 			comid = RequestUtil.getLong(request, "comid", 0L);
 		if(action.equals("")){
-			//È¡³µ³¡½»Ò×¼°³µÎ»Êı¾İ
-			//¿ªÊ¼Ê±¼ä
+			//å–è½¦åœºäº¤æ˜“åŠè½¦ä½æ•°æ®
+			//å¼€å§‹æ—¶é—´
 			Long btime= TimeTools.getToDayBeginTime()-9*24*60*60;
 			Long etime = System.currentTimeMillis()/1000;
 			String sql1 = "select b.amount,a.end_time from order_tb a,parkuser_cash_tb b where a.end_time between" +
@@ -87,17 +87,17 @@ public class ParkSurveyAction extends Action{
 				params.add(isHd);
 			}
 			List<Map<String, Object>> eparkList = pgOnlyReadService.getAllMap(sql2, params);
-			
+
 			String sql3 = "select a.amount,o.end_time from order_tb o,parkuser_account_tb a where o.id=a.orderid and o.end_time between ? and ? " +
 					" and a.type=? and o.comid=? and a.target=? and a.remark like ? and o.uid>? ";
-			
+
 			params.clear();
 			params.add(btime);
 			params.add(etime);
 			params.add(0);
 			params.add(comid);
 			params.add(4);
-			params.add("Í£³µ·Ñ%");
+			params.add("åœè½¦è´¹%");
 			params.add(0);
 			if(isHd != null && isHd == 1){
 				sql3 += " and ishd=? ";
@@ -105,14 +105,14 @@ public class ParkSurveyAction extends Action{
 			}
 			List<Map<String, Object>> eparkerList = pgOnlyReadService.getAllMap(sql3, params);
 			Long ttime = TimeTools.getToDayBeginTime();
-			
-			logger.error("Ê®ÌìÏÖ½ğ¶©µ¥Êı£º"+cashList.size()+",µç×ÓÖ§¸¶¶©µ¥Êı:"+eparkList.size()+eparkerList.size());
+
+			logger.error("åå¤©ç°é‡‘è®¢å•æ•°ï¼š"+cashList.size()+",ç”µå­æ”¯ä»˜è®¢å•æ•°:"+eparkList.size()+eparkerList.size());
 			Map<Long, List<Double>> oMap = new HashMap<Long, List<Double>>();
 			List<Long> dList = new ArrayList<Long>();
 			setList(eparkList, 0, dList, oMap);
 			setList(eparkerList, 0, dList, oMap);
 			setList(cashList, 1, dList, oMap);
-		//	System.err.println(comid+">>>>"+oMap);
+			//	System.err.println(comid+">>>>"+oMap);
 			String times = "[";
 			String total="[";
 			String epay ="[";
@@ -126,9 +126,9 @@ public class ParkSurveyAction extends Action{
 				total +=StringUtils.formatDouble(s.get(0))+",";
 				epay +=StringUtils.formatDouble(s.get(1))+",";
 				cash +=StringUtils.formatDouble(s.get(2))+",";
-				if(ti.equals(ttime)){//½ñÈÕÊÕ·Ñ
-					totday +="½ñÈÕ¹²ÊÕ·Ñ:"+StringUtils.formatDouble(s.get(0))+"£¬ÏÖ½ğÊÕ·Ñ:"+
-							StringUtils.formatDouble(s.get(2))+"£¬µç×ÓÖ§¸¶:"+StringUtils.formatDouble(s.get(1));
+				if(ti.equals(ttime)){//ä»Šæ—¥æ”¶è´¹
+					totday +="ä»Šæ—¥å…±æ”¶è´¹:"+StringUtils.formatDouble(s.get(0))+"ï¼Œç°é‡‘æ”¶è´¹:"+
+							StringUtils.formatDouble(s.get(2))+"ï¼Œç”µå­æ”¯ä»˜:"+StringUtils.formatDouble(s.get(1));
 				}
 			}
 			if(times.endsWith(","))
@@ -143,19 +143,19 @@ public class ParkSurveyAction extends Action{
 			if(cash.endsWith(","))
 				cash = cash.substring(0,cash.length()-1);
 			cash +="]";
-			
+
 			if(times.equals("[]")){
 				times="['"+dateFormat.format(new Date(ttime*1000)).substring(5)+"']";
 				total="[0]";
 				epay="[0]";
 				cash="[0]";
 			}
-			
-		//	String times = "['12/7','12/8','12/9','12/10','12/11','12/12','12/13','12/14','12/15']";
+
+			//	String times = "['12/7','12/8','12/9','12/10','12/11','12/12','12/13','12/14','12/15']";
 			//String total="[5500.00, 4805.20, 5349.20, 5343.00, 5221.90, 5530, 5140,5322,5455]";
-		//	String epay ="[3000, 3455, 3555, 3222, 3444, 3330, 3310,4000,3220]";
-		//	String cash ="[1500, 2320, 2010, 1540, 1900, 2300, 2100,2000,3000]";
-			//È¡µ±ÌìÃ¿Ğ¡Ê±³µÎ»Õ¼ÓÃÊı
+			//	String epay ="[3000, 3455, 3555, 3222, 3444, 3330, 3310,4000,3220]";
+			//	String cash ="[1500, 2320, 2010, 1540, 1900, 2300, 2100,2000,3000]";
+			//å–å½“å¤©æ¯å°æ—¶è½¦ä½å ç”¨æ•°
 			List<Map<String,Object>> parkList =pgOnlyReadService.getAll("select * from park_anlysis_tb " +
 					"where comid=? and create_time >=? order by create_time", new Object[]{comid,ttime});
 			String ptimes = "[";
@@ -192,20 +192,20 @@ public class ParkSurveyAction extends Action{
 				month_used="[0]";
 				time_used="[0]";
 			}
-			String moneyData="{title:['×ÜÊÕ·Ñ','µç×ÓÊÕ·Ñ','ÏÖ½ğÊÕ·Ñ'],xname:'Ê±¼ä',xtime:"+times+","+
-					"yname:'½ğ¶î(Ôª)',data:[{name:'×ÜÊÕ·Ñ',data:"+total+"},{name:'µç×ÓÊÕ·Ñ',data:"+epay+"},{name:'ÏÖ½ğÊÕ·Ñ',data:"+cash+"}]}";
-			
-			String parkData="{title:['×ÜÕ¼ÓÃ³µÎ»Êı','ÔÂ¿¨³µÕ¼ÓÃ³µÎ»Êı','Ê±×â³µÕ¼ÓÃ³µÎ»Êı'],xname:'Ê±¼ä',xtime:"+ptimes+","+
-					"yname:'Õ¼ÓÃ³µÎ»Êı',data:[{name:'×ÜÕ¼ÓÃ³µÎ»Êı',data:"+park+"},{name:'ÔÂ¿¨³µÕ¼ÓÃ³µÎ»Êı',data:"+month_used+"},{name:'Ê±×â³µÕ¼ÓÃ³µÎ»Êı',data:"+time_used+"}]}";
-			
-			Map<String, Object> comMap = 
+			String moneyData="{title:['æ€»æ”¶è´¹','ç”µå­æ”¶è´¹','ç°é‡‘æ”¶è´¹'],xname:'æ—¶é—´',xtime:"+times+","+
+					"yname:'é‡‘é¢(å…ƒ)',data:[{name:'æ€»æ”¶è´¹',data:"+total+"},{name:'ç”µå­æ”¶è´¹',data:"+epay+"},{name:'ç°é‡‘æ”¶è´¹',data:"+cash+"}]}";
+
+			String parkData="{title:['æ€»å ç”¨è½¦ä½æ•°','æœˆå¡è½¦å ç”¨è½¦ä½æ•°','æ—¶ç§Ÿè½¦å ç”¨è½¦ä½æ•°'],xname:'æ—¶é—´',xtime:"+ptimes+","+
+					"yname:'å ç”¨è½¦ä½æ•°',data:[{name:'æ€»å ç”¨è½¦ä½æ•°',data:"+park+"},{name:'æœˆå¡è½¦å ç”¨è½¦ä½æ•°',data:"+month_used+"},{name:'æ—¶ç§Ÿè½¦å ç”¨è½¦ä½æ•°',data:"+time_used+"}]}";
+
+			Map<String, Object> comMap =
 					pgOnlyReadService.getMap("select empty from com_info_tb where id =?", new Object[]{comid});
-			
+
 			request.setAttribute("comid", comid);
 			request.setAttribute("moneyData", moneyData);
 			request.setAttribute("parkData", parkData);
-			request.setAttribute("today", totday.equals("")?"½ñÈÕÎŞÊÕ·Ñ":totday);
-			request.setAttribute("parktotal", "³µÎ»Êı:"+comMap.get("empty"));
+			request.setAttribute("today", totday.equals("")?"ä»Šæ—¥æ— æ”¶è´¹":totday);
+			request.setAttribute("parktotal", "è½¦ä½æ•°:"+comMap.get("empty"));
 			System.out.println(moneyData);
 			System.out.println(parkData);
 			return mapping.findForward("survey");
@@ -214,7 +214,7 @@ public class ParkSurveyAction extends Action{
 					"left join parkuser_work_record_tb pw on pw.worksite_id = cp.worksite_id "+
 					"where end_time is null and pw.worksite_id in(select id from com_worksite_tb where comid = ?) " +
 					"order by pw.start_time desc  ";
-			
+
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 50);
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
@@ -223,7 +223,7 @@ public class ParkSurveyAction extends Action{
 			Integer count = 0;
 			//System.out.println(sqlInfo);
 			List<Map<String, Object>> list = null;//daService.getPage(sql, null, 1, 20);
-				list = pgOnlyReadService.getAll(sql, params, pageNum, pageSize);
+			list = pgOnlyReadService.getAll(sql, params, pageNum, pageSize);
 			List<Map<String, Object>> oList=new ArrayList<Map<String,Object>>();
 			if(list!=null&&!list.isEmpty()){
 				Map<Long,String> nameMap = new HashMap<Long, String>();
@@ -244,29 +244,29 @@ public class ParkSurveyAction extends Action{
 					}else {
 						map.put("nickname",nameMap.get(uid));
 					}
-					//Éè±¸×´Ì¬
-					map.put("server",-1);//Ö÷»ú×´Ì¬
-					map.put("carm",-1);//ÉãÏñÍ·×´Ì¬
-					map.put("brake",-1);//µÀÕ¢×´Ì¬
-					map.put("led",-1);//LED×´Ì¬
+					//è®¾å¤‡çŠ¶æ€
+					map.put("server",-1);//ä¸»æœºçŠ¶æ€
+					map.put("carm",-1);//æ‘„åƒå¤´çŠ¶æ€
+					map.put("brake",-1);//é“é—¸çŠ¶æ€
+					map.put("led",-1);//LEDçŠ¶æ€
 					Map serverMap = pgOnlyReadService.getMap("select upload_time from com_worksite_tb where id =?",new Object[]{workSiteId});
 					if(serverMap!=null&&!serverMap.isEmpty()){
 						Long utime = (Long)serverMap.get("upload_time");
 						if(utime!=null){
 							Long ntime = System.currentTimeMillis()/1000;
-							if(ntime-utime<300){//¸üĞÂÊ±¼äĞ¡ÓÚ30ÃëÊÇ¹¤×÷×´Ì¬,Ö÷»úÊÇÕı³£×´Ì¬Ê±£¬²Å²éÆäËüÉè±¸µÄ×´Ì¬
+							if(ntime-utime<300){//æ›´æ–°æ—¶é—´å°äº30ç§’æ˜¯å·¥ä½œçŠ¶æ€,ä¸»æœºæ˜¯æ­£å¸¸çŠ¶æ€æ—¶ï¼Œæ‰æŸ¥å…¶å®ƒè®¾å¤‡çš„çŠ¶æ€
 								map.put("server",1);
-								//ÉãÏñÍ·×´Ì¬
+								//æ‘„åƒå¤´çŠ¶æ€
 								Map cameraMap = pgOnlyReadService.getMap("select state from com_camera_tb where passid =?",new Object[]{passid});
 								if(cameraMap!=null&&!cameraMap.isEmpty()){
 									map.put("carm",cameraMap.get("state"));
 								}
-								//µÀÕ¢×´Ì¬
+								//é“é—¸çŠ¶æ€
 								Map brakeMap = pgOnlyReadService.getMap("select state from com_brake_tb where passid =?",new Object[]{passid});
 								if(brakeMap!=null&&!brakeMap.isEmpty()){
 									map.put("brake",brakeMap.get("state"));
 								}
-								//LED×´Ì¬
+								//LEDçŠ¶æ€
 								Map ledMap = pgOnlyReadService.getMap("select state,upload_time from com_led_tb where passid =?",new Object[]{passid});
 								if(ledMap!=null&&!ledMap.isEmpty()){
 									Long uptime = (Long)ledMap.get("upload_time");
@@ -277,13 +277,13 @@ public class ParkSurveyAction extends Action{
 							}
 						}
 					}
-					
+
 					oList.add(map);
 				}
 				count = list.size();
 			}else {
 				/*Map<String, Object> emptyData = new HashMap<String, Object>();
-				emptyData.put("uid", "ÔİÎŞÊı¾İ...");
+				emptyData.put("uid", "æš‚æ— æ•°æ®...");
 				oList.add(emptyData);
 				count=1;*/
 			}
@@ -293,7 +293,7 @@ public class ParkSurveyAction extends Action{
 		}
 		return null;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list, Integer type, List<Long> dList, Map<Long, List<Double>> oMap){
 		Long btime= TimeTools.getToDayBeginTime()-9*24*60*60;
 		for(Map<String, Object> cMap: list){
@@ -306,7 +306,7 @@ public class ParkSurveyAction extends Action{
 				tot +=total;
 				ds.remove(0);
 				ds.add(0,tot);
-				if(type==0){//µç×ÓÖ§¸¶
+				if(type==0){//ç”µå­æ”¯ä»˜
 					Double ep = ds.get(1);
 					ep += total;
 					ds.remove(1);
@@ -320,10 +320,10 @@ public class ParkSurveyAction extends Action{
 			}else {
 				List<Double> ds = new ArrayList<Double>();
 				ds.add(total);
-				if(type == 0){//µç×Ó½áËã
+				if(type == 0){//ç”µå­ç»“ç®—
 					ds.add(total);
 					ds.add(0.0);
-				}else if(type == 1){//ÏÖ½ğÖ§¸¶
+				}else if(type == 1){//ç°é‡‘æ”¯ä»˜
 					ds.add(0.0);
 					ds.add(total);
 				}

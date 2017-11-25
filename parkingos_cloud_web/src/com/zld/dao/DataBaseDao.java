@@ -4,35 +4,35 @@ import java.util.List;
 import java.util.Map;
 
 public interface DataBaseDao {
-	
-		
-		/**
-		 * Ôö¡¢É¾¡¢¸Ä
-		 * @param sql
-		 * @param values
-		 * @return
-		 */
-		//¸üĞÂ --Ôö¡¢É¾¡¢¸Ä
-		public int update(String sql,Object[] values );
-		//ÅúÁ¿Ìí¼Ó --ÅúÁ¿Ìí¼Ó
-		public int bathInsert(String sql,List<Object[]> lists,int[] argTypes);
-		
-		/**
-		 * ²éÑ¯·½·¨
-		 * @param sql
-		 * @param values
-		 * @return
-		 */
-		//È¡ÊıÁ¿ 
-		public Long getLong(String sql,Object[] values );
-		//ËùÓĞ¼ÇÂ¼
-		public List getAll(String sql,Object[] values );
-		//²éÄ³Ò»×Ö¶Î
-		public Object getObject(String sql,Object[] values,Class type);
-		//È¡Ò»Ìõ¼ÇÂ¼
-		public Map getPojo(String sql,Object[] values);
-		
-		public <T> List<T> getPOJOList(String sql, Object[] values, Class<T> type);
-		
-		public <T> T getPOJO(String sql, Object[] values, Class<T> type);
+
+
+	/**
+	 * å¢ã€åˆ ã€æ”¹
+	 * @param sql
+	 * @param values
+	 * @return
+	 */
+	//æ›´æ–° --å¢ã€åˆ ã€æ”¹
+	public int update(String sql,Object[] values );
+	//æ‰¹é‡æ·»åŠ  --æ‰¹é‡æ·»åŠ 
+	public int bathInsert(String sql,List<Object[]> lists,int[] argTypes);
+
+	/**
+	 * æŸ¥è¯¢æ–¹æ³•
+	 * @param sql
+	 * @param values
+	 * @return
+	 */
+	//å–æ•°é‡
+	public Long getLong(String sql,Object[] values );
+	//æ‰€æœ‰è®°å½•
+	public List getAll(String sql,Object[] values );
+	//æŸ¥æŸä¸€å­—æ®µ
+	public Object getObject(String sql,Object[] values,Class type);
+	//å–ä¸€æ¡è®°å½•
+	public Map getPojo(String sql,Object[] values);
+
+	public <T> List<T> getPOJOList(String sql, Object[] values, Class<T> type);
+
+	public <T> T getPOJO(String sql, Object[] values, Class<T> type);
 }

@@ -30,31 +30,31 @@ public class ChannelParkManageAction extends Action {
 	private CommonMethods commonMethods;
 	@Autowired
 	private PublicMethods publicMethods;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long chanid = (Long)request.getSession().getAttribute("chanid");
-		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//ÊÇ·ñÊÇ³¬¼¶¹ÜÀíÔ±
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//æ˜¯å¦æ˜¯è¶…çº§ç®¡ç†å‘˜
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		if(uin==null){
 			response.sendRedirect("login.do");
 			return null;
 		}
-		if(supperadmin == 1){//À´×Ô³¬¼¶¹ÜÀíÔ±
+		if(supperadmin == 1){//æ¥è‡ªè¶…çº§ç®¡ç†å‘˜
 			chanid = RequestUtil.getLong(request, "chanid", -1L);
 		}
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("quickquery")){
 			String sql = "select c.*,g.name gname from com_info_tb c left join org_group_tb g on c.groupid=g.id where c.chanid=? and c.state<>? " ;
 			String countSql = "select count(*) from com_info_tb c left join org_group_tb g on c.groupid=g.id where c.chanid=? and c.state<>? " ;
-			
+
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			List list = null;
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
@@ -105,17 +105,17 @@ public class ChannelParkManageAction extends Action {
 					new Object[]{comid});
 			String info="";
 			if(parkMap!=null)
-				info ="Ãû³Æ£º"+parkMap.get("company_name")+"£¬µØÖ·£º"+parkMap.get("address")+"<br/>´´½¨Ê±¼ä£º"
-			+TimeTools.getTime_yyyyMMdd_HHmm((Long)parkMap.get("create_time")*1000)+"£¬³µÎ»×ÜÊı£º"+parkMap.get("parking_total")
-			+"£¬·ÖÏí³µÎ»£º"+parkMap.get("share_number")+"£¬¾­Î³¶È£º("+parkMap.get("longitude")+","+parkMap.get("latitude")+")";
+				info ="åç§°ï¼š"+parkMap.get("company_name")+"ï¼Œåœ°å€ï¼š"+parkMap.get("address")+"<br/>åˆ›å»ºæ—¶é—´ï¼š"
+						+TimeTools.getTime_yyyyMMdd_HHmm((Long)parkMap.get("create_time")*1000)+"ï¼Œè½¦ä½æ€»æ•°ï¼š"+parkMap.get("parking_total")
+						+"ï¼Œåˆ†äº«è½¦ä½ï¼š"+parkMap.get("share_number")+"ï¼Œç»çº¬åº¦ï¼š("+parkMap.get("longitude")+","+parkMap.get("latitude")+")";
 			request.setAttribute("parkinfo", info);
 			return mapping.findForward("set");
 		}
-		
+
 		return null;
 	}
-	
-	//×¢²áÍ£³µ³¡
+
+	//æ³¨å†Œåœè½¦åœº
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Integer editPark(HttpServletRequest request){
 		Long comid = RequestUtil.getLong(request, "id", -1L);
@@ -133,13 +133,13 @@ public class ChannelParkManageAction extends Action {
 		int r = daService.update(sql, new Object[]{company, address, phone, mcompany, parking_total, time, state, etc, comid});
 		if(r == 1){
 			if(publicMethods.isEtcPark(Long.valueOf(comid))){
-				r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_info_tb",comid,System.currentTimeMillis()/1000,1});
+				r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate,state) values(?,?,?,?,?,?)", new Object[]{comid,"com_info_tb",comid,System.currentTimeMillis()/1000,1,1});
 			}
 		}
 		return r;
 	}
-	
-	//×¢²áÍ£³µ³¡
+
+	//æ³¨å†Œåœè½¦åœº
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Integer createPark(HttpServletRequest request, Long chanid){
 		Long time = System.currentTimeMillis()/1000;
@@ -152,7 +152,7 @@ public class ChannelParkManageAction extends Action {
 		Integer parking_total =RequestUtil.getInteger(request, "parking_total", 0);
 		Integer etc = RequestUtil.getInteger(request, "etc", 0);
 		Long comId = daService.getLong("SELECT nextval('seq_com_info_tb'::REGCLASS) AS newid",null);
-		
+
 		List<Map> sqlsList = new ArrayList<Map>();
 		Map comMap = new HashMap();
 		String comsql = "insert into com_info_tb(id,company_name,address,phone,create_time,mcompany,parking_total,update_time,chanid,state,etc)" +
@@ -160,9 +160,9 @@ public class ChannelParkManageAction extends Action {
 		Object[] comvalues = new Object[]{comId,company,address,phone,time,mcompany,parking_total,time,chanid,0,etc};
 		comMap.put("sql", comsql);
 		comMap.put("values", comvalues);
-		
+
 		sqlsList.add(comMap);
-		
+
 		boolean r =  daService.bathUpdate(sqlsList);
 		if(r){
 			if(etc == 2){
@@ -176,7 +176,7 @@ public class ChannelParkManageAction extends Action {
 			return -1;
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	private List<Object> getChildOrg(Long chanid){
 		List<Object> orgList = new ArrayList<Object>();

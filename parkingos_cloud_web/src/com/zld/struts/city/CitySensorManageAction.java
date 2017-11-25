@@ -26,7 +26,7 @@ import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 
 public class CitySensorManageAction extends Action {
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -37,10 +37,10 @@ public class CitySensorManageAction extends Action {
 	Logger logger = Logger.getLogger(CitySensorManageAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//é§è¯²ç¶é¨å‹­æ•¤é´ç©’d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -73,11 +73,11 @@ public class CitySensorManageAction extends Action {
 			SqlInfo sqlInfo = RequestUtil.customSearch(request,"dici_tb","",new String[]{"cid", "fcount"});
 			SqlInfo sqlInfo1 = getSuperSqlInfo1(request);
 			SqlInfo sqlInfo2 = getSuperSqlInfo2(request);
-			
+
 			String sql = "select * from dici_tb where is_delete=? " ;
 			String countSql = "select count(id) from dici_tb where is_delete=? ";
 			String faultSql = "select count(id) from dici_tb where is_delete=? ";
-			String filterSql = "select id from dici_tb where ";//Ô¼Êø²éÑ¯ÀúÊ·µôÏß´ÎÊıµÄÊı¾İÁ¿
+			String filterSql = "select id from dici_tb where ";//çº¦æŸæŸ¥è¯¢å†å²æ‰çº¿æ¬¡æ•°çš„æ•°æ®é‡
 			ArrayList<Object> params = new ArrayList<Object>();
 			params.add(0);
 			List<Map<String, Object>> list = null;
@@ -102,9 +102,9 @@ public class CitySensorManageAction extends Action {
 				countSql += " and comid in ("+preParams+")";
 				filterSql += " comid in ("+preParams+")";
 				faultSql += " and comid in ("+preParams+")";
-				
+
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql += " and "+ sqlInfo.getSql();
 					sql += " and "+sqlInfo.getSql();
@@ -142,13 +142,13 @@ public class CitySensorManageAction extends Action {
 					list = pgOnlyReadService.getAll(sql +" order by operate_time desc ",params, pageNum, pageSize);
 					setList(list, b, e);
 				}
-				
+
 				if(count > 0){
 					rate = StringUtils.formatDouble(((double)falutCount/count) * 100);
 				}
-				
+
 			}
-			String json = JsonUtil.anlysisMap2Json(list, pageNum, count, fieldsstr, "id", "³µ¼ìÆ÷ÀúÊ·µôÏßÂÊ£º" + rate + "%");
+			String json = JsonUtil.anlysisMap2Json(list, pageNum, count, fieldsstr, "id", "è½¦æ£€å™¨å†å²æ‰çº¿ç‡ï¼š" + rate + "%");
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("detail")){
 			String btime = RequestUtil.processParams(request, "btime");
@@ -193,7 +193,7 @@ public class CitySensorManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo1(HttpServletRequest request){
 		String cid = RequestUtil.processParams(request, "cid");
 		SqlInfo sqlInfo1 = null;
@@ -203,41 +203,41 @@ public class CitySensorManageAction extends Action {
 		}
 		return sqlInfo1;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo2(HttpServletRequest request){
 		Integer site_state = RequestUtil.getInteger(request, "site_state_start", -1);
 		SqlInfo sqlInfo1 = null;
 		Long ntime = System.currentTimeMillis()/1000;
-		if(site_state == 0){//¹ÊÕÏÉè±¸
+		if(site_state == 0){//æ•…éšœè®¾å¤‡
 			sqlInfo1 = new SqlInfo(" ?-beart_time>=? ", new Object[]{ntime, 30 * 60});
-		}else if(site_state == 1){//Õı³£Éè±¸
+		}else if(site_state == 1){//æ­£å¸¸è®¾å¤‡
 			sqlInfo1 = new SqlInfo(" ?-beart_time<? ", new Object[]{ntime, 30 * 60});
 		}
 		return sqlInfo1;
 	}
-	
-	private SqlInfo getSuperSqlInfo3(HttpServletRequest request, String filterSql, 
-			List<Object> params, Long bTime, Long eTime){
+
+	private SqlInfo getSuperSqlInfo3(HttpServletRequest request, String filterSql,
+									 List<Object> params, Long bTime, Long eTime){
 		Integer fcount = RequestUtil.getInteger(request, "fcount", -1);
 		if(fcount == 0){
 			return getFaultSqlInfo(filterSql, params, bTime, eTime);
 		}
 		return null;
 	}
-	
+
 	private SqlInfo getFaultSqlInfo(String filterSql, List<Object> params, Long bTime, Long eTime){
 		List<Object> params2 = new ArrayList<Object>();
 		params2.addAll(params);
 		params2.add(bTime);
 		params2.add(eTime);
 		params2.add(0);
-		//´Ë´¦sensorSqlÎªÁË·ÀÖ¹²éÑ¯Êı¾İÌ«¶à¶ø×öµÄÔ¼Êø
+		//æ­¤å¤„sensorSqlä¸ºäº†é˜²æ­¢æŸ¥è¯¢æ•°æ®å¤ªå¤šè€Œåšçš„çº¦æŸ
 		SqlInfo sqlInfo1 = new SqlInfo(" id in (select sensor_id from device_fault_tb where sensor_id " +
 				" in ("+filterSql+") and create_time between ? and ? group by sensor_id " +
 				" having count(id)>?) ", params2);
 		return sqlInfo1;
 	}
-	
+
 	private void setDetailList(List<Map<String, Object>> list){
 		try {
 			if(list != null && !list.isEmpty()){
@@ -258,7 +258,7 @@ public class CitySensorManageAction extends Action {
 			logger.equals(e);
 		}
 	}
-	
+
 	private void setList(List<Map<String, Object>> list, Long bTime, Long eTime){
 		Long ntime = System.currentTimeMillis()/1000;
 		if(list != null && !list.isEmpty()){
@@ -301,8 +301,8 @@ public class CitySensorManageAction extends Action {
 			params2.add(eTime);
 			List<Map<String, Object>> list2 = pgOnlyReadService.getAllMap(
 					"select count(id) fcount,sensor_id from device_fault_tb " +
-					"where sensor_id in ("+preParams+") and create_time " +
-					" between ? and ? group by sensor_id ", params2);
+							"where sensor_id in ("+preParams+") and create_time " +
+							" between ? and ? group by sensor_id ", params2);
 			if(list2 != null && !list2.isEmpty()){
 				for(Map<String, Object> map : list){
 					Long id = (Long)map.get("id");

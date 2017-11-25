@@ -11,19 +11,19 @@ import java.util.TreeMap;
 
 
 /**
- * 
-*    
-* ÏîÄ¿Ãû³Æ£ºvip   
-* ÀàÃû³Æ£ºGetPhonePlace   
-* ´´½¨ÈË£ºlaoyao 
-* ´´½¨Ê±¼ä£ºApr 29, 2010 3:45:33 PM   
-* ĞŞ¸ÄÊ±¼ä£ºApr 29, 2010 3:45:33 PM   
-* ĞŞ¸Ä±¸×¢£º   Í¨¹ıµØÇø±à¼­µÃµ½¹éÊôµØ£¬ÔİÊ±²éÑ¯Õû¸öÎÄ¼ş¡£
-* @version    
-*
+ *
+ *
+ * é¡¹ç›®åç§°ï¼švip
+ * ç±»åç§°ï¼šGetPhonePlace
+ * åˆ›å»ºäººï¼šlaoyao
+ * åˆ›å»ºæ—¶é—´ï¼šApr 29, 2010 3:45:33 PM
+ * ä¿®æ”¹æ—¶é—´ï¼šApr 29, 2010 3:45:33 PM
+ * ä¿®æ”¹å¤‡æ³¨ï¼š   é€šè¿‡åœ°åŒºç¼–è¾‘å¾—åˆ°å½’å±åœ°ï¼Œæš‚æ—¶æŸ¥è¯¢æ•´ä¸ªæ–‡ä»¶ã€‚
+ * @version
+ *
  */
 public class GetLocalCode {
-	
+
 	public static Map<Integer , String> localDataMap=null;
 	public static void Init(){
 		String path = GetLocalCode.class.getClassLoader().getResource("").toString().substring(5);
@@ -59,16 +59,16 @@ public class GetLocalCode {
 			Init();
 		}
 		StringBuffer localdata = new StringBuffer();
-		localdata.append("{\"root_0\":{\"id\":\"0\",\"name\":\"µØÇøÁĞ±í\"},");
+		localdata.append("{\"root_0\":{\"id\":\"0\",\"name\":\"åœ°åŒºåˆ—è¡¨\"},");
 		for(Integer code : localDataMap.keySet()){
 			String local =localDataMap.get(code);
 			try {
-				if (code%10000==0) {//Ê¡¡¢×ÔÖÎÇø
+				if (code%10000==0) {//çœã€è‡ªæ²»åŒº
 					localdata.append("\"0_"+code+"\":{\"id\":\""+code+"\",\"name\":\""+local+"\"},");
-				} else if (code%100==0) {//ÊĞ
+				} else if (code%100==0) {//å¸‚
 					String pid = code/10000+"0000";
 					localdata.append("\""+pid+"_"+code+"\":{\"id\":\""+code+"\",\"name\":\""+local+"\"},");
-				} else {//ÇøÏØ
+				} else {//åŒºå¿
 					String pid = code/100+"00";
 					localdata.append("\""+pid+"_"+code+"\":{\"id\":\""+code+"\",\"name\":\""+local+"\"},");
 				}

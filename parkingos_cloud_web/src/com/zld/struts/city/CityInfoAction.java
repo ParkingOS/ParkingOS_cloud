@@ -22,7 +22,7 @@ public class CityInfoAction extends Action {
 	@SuppressWarnings("unchecked")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
@@ -36,7 +36,7 @@ public class CityInfoAction extends Action {
 		if(action.equals("")){
 			Map<String, Object> cityMap = daService.getPojo("select * from org_city_merchants where id=?",
 					new Object[]{cityid});
-			
+
 			Map<String, Object> userMap = daService.getMap("select nickname,mobile,phone from user_info_tb where id=? ", new Object[]{uin});
 			StringBuffer buffer = new StringBuffer("[");
 			for (String  key : cityMap.keySet()) {
@@ -56,7 +56,7 @@ public class CityInfoAction extends Action {
 		}else if(action.equals("edit")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
-			
+
 			String mobile = RequestUtil.processParams(request, "mobile");
 			String phone = RequestUtil.processParams(request, "phone");
 			String nickname = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "nickname"));
@@ -73,15 +73,15 @@ public class CityInfoAction extends Action {
 					return null;
 				}
 			}
-			int r = daService.update("update org_city_merchants set name=?,gps=?,address=?,is_group_pursue=?,is_inpark_incity=? where id=? ", 
+			int r = daService.update("update org_city_merchants set name=?,gps=?,address=?,is_group_pursue=?,is_inpark_incity=? where id=? ",
 					new Object[]{name,gps,address, is_group_pursue,is_inpark_incity, id});
-			r = daService.update("update user_info_tb set mobile=?,phone=?,nickname=? where id=? ", 
+			r = daService.update("update user_info_tb set mobile=?,phone=?,nickname=? where id=? ",
 					new Object[]{mobile, phone, nickname, uin});
 			AjaxUtil.ajaxOutput(response, r + "");
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes" })
 	private int editPass(Long uin, String newPass, String confirmPass){
 		String sql = "update user_info_tb set password =? ,md5pass=? where id =?";

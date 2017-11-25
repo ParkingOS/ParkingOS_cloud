@@ -39,15 +39,15 @@ public class MidPreAnlysisAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	private Logger logger = Logger.getLogger(MidPreAnlysisAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
-		Long loginuin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long loginuin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
@@ -130,8 +130,8 @@ public class MidPreAnlysisAction extends Action {
 			}
 			int count = rList!=null?rList.size():0;
 			String json = JsonUtil.Map2Json(rList, 1, count, fieldsstr, "id");
-				AjaxUtil.ajaxOutput(response, json);
-			}else if(action.equals("detail")){
+			AjaxUtil.ajaxOutput(response, json);
+		}else if(action.equals("detail")){
 			request.setAttribute("uin", RequestUtil.processParams(request, "uin"));
 			request.setAttribute("type", RequestUtil.processParams(request, "type"));
 			request.setAttribute("btime", RequestUtil.processParams(request, "btime"));
@@ -213,7 +213,7 @@ public class MidPreAnlysisAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void setWorkList(List<Map<String, Object>> list){
 		for(Map<String, Object> map : list){
 			Long uid = (Long)map.get("uid");
@@ -248,13 +248,13 @@ public class MidPreAnlysisAction extends Action {
 				for(Map<String, Object> map2 : rList){
 					Long id = (Long)map2.get("id");
 					if(uin.intValue() == id.intValue()){
-						if(pay_type == 4){//ÏÖ½ğÔ¤Ö§¸¶
+						if(pay_type == 4){//ç°é‡‘é¢„æ”¯ä»˜
 							map2.put("cashcount", map.get("pcount"));
 							map2.put("cashamount", map.get("pamount"));
-						}else if(pay_type == 5){//ÒøÁª¿¨Ô¤Ö§¸¶
+						}else if(pay_type == 5){//é“¶è”å¡é¢„æ”¯ä»˜
 							map2.put("upaycount", map.get("pcount"));
 							map2.put("upayamount", map.get("pamount"));
-						}else if(pay_type == 6){//ÉÌ¼Ò¿¨Ô¤Ö§¸¶
+						}else if(pay_type == 6){//å•†å®¶å¡é¢„æ”¯ä»˜
 							map2.put("cardcount", map.get("pcount"));
 							map2.put("cardamount", map.get("pamount"));
 						}
@@ -263,23 +263,23 @@ public class MidPreAnlysisAction extends Action {
 				}
 			}else{
 				uins.add(uin);
-				if(pay_type == 4){//ÏÖ½ğÔ¤Ö§¸¶
+				if(pay_type == 4){//ç°é‡‘é¢„æ”¯ä»˜
 					map.put("cashcount", map.get("pcount"));
 					map.put("cashamount", map.get("pamount"));
-				}else if(pay_type == 5){//ÒøÁª¿¨Ô¤Ö§¸¶
+				}else if(pay_type == 5){//é“¶è”å¡é¢„æ”¯ä»˜
 					map.put("upaycount", map.get("pcount"));
 					map.put("upayamount", map.get("pamount"));
-				}else if(pay_type == 6){//ÉÌ¼Ò¿¨Ô¤Ö§¸¶
+				}else if(pay_type == 6){//å•†å®¶å¡é¢„æ”¯ä»˜
 					map.put("cardcount", map.get("pcount"));
 					map.put("cardamount", map.get("pamount"));
 				}
 				rList.add(map);
 			}
 		}
-		
+
 		return rList;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			for(Map<String, Object> map : list){
@@ -302,7 +302,7 @@ public class MidPreAnlysisAction extends Action {
 			}
 		}
 	}
-	
+
 	private void downloadticketPics (Long ticketid,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		logger.error("download ticketPics from mongodb....");
 		System.err.println("downloadticketPics from mongodb file:ticketid="+ticketid);
@@ -312,7 +312,7 @@ public class MidPreAnlysisAction extends Action {
 			BasicDBObject document = new BasicDBObject();
 			BasicDBObject condation = new BasicDBObject();
 			document.put("ticketid", ticketid);
-			//°´Éú³ÉÊ±¼ä²é×î½üµÄÊı¾İ
+			//æŒ‰ç”Ÿæˆæ—¶é—´æŸ¥æœ€è¿‘çš„æ•°æ®
 			condation.put("ctime", -1);
 			DBCursor objs = collection.find(document).sort(condation).limit(1);
 			DBObject obj = null;
@@ -332,18 +332,18 @@ public class MidPreAnlysisAction extends Action {
 			response.setHeader("Last-Modified", c.getTime().toString());
 			response.setContentLength(content.length);
 			response.setContentType("image/jpeg");
-		    OutputStream o = response.getOutputStream();
-		    o.write(content);
-		    o.flush();
-		    o.close();
-		    response.flushBuffer();
-		    //response.reset();
-		    System.out.println("mongdb over.....");
+			OutputStream o = response.getOutputStream();
+			o.write(content);
+			o.flush();
+			o.close();
+			response.flushBuffer();
+			//response.reset();
+			System.out.println("mongdb over.....");
 		}else {
 			AjaxUtil.ajaxOutput(response, "-1");
 		}
 	}
-	
+
 	private Long getComid(Long comid, Long cityid, Long groupid){
 		List<Object> parks = null;
 		if(groupid != null && groupid > 0){
@@ -361,7 +361,7 @@ public class MidPreAnlysisAction extends Action {
 				comid = -999L;
 			}
 		}
-		
+
 		return comid;
 	}
 }

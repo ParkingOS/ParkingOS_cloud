@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.List;
 
 public class StatsReq implements Serializable {
-	private long startTime = -1;//²éÑ¯ÆğÊ¼Ê±¼ä
-	private long endTime = -1;//²éÑ¯½áÊøÊ±¼ä
+	private long startTime = -1;//æŸ¥è¯¢èµ·å§‹æ—¶é—´
+	private long endTime = -1;//æŸ¥è¯¢ç»“æŸæ—¶é—´
 	private List<Object> idList;
-	private int type;//0£º°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ 1£º°´³µ³¡±àºÅÍ³¼Æ 2£º°´²´Î»¶Î±àºÅ²éÑ¯ 3£º°´²´Î»²éÑ¯
-	
+	private int type;//0ï¼šæŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡ 1ï¼šæŒ‰è½¦åœºç¼–å·ç»Ÿè®¡ 2ï¼šæŒ‰æ³Šä½æ®µç¼–å·æŸ¥è¯¢ 3ï¼šæŒ‰æ³Šä½æŸ¥è¯¢
+
 	public List<Object> getIdList() {
 		return idList;
 	}
@@ -38,5 +38,5 @@ public class StatsReq implements Serializable {
 		return "StatsReq [startTime=" + startTime + ", endTime=" + endTime
 				+ ", idList=" + idList + ", type=" + type + "]";
 	}
-	
+
 }

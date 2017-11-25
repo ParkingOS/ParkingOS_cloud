@@ -13,30 +13,30 @@ public class ApnsSend
     public static void main(String[] args) throws Exception
     {
         String deviceToken = "b9ae03f915a1f74d2281bd81109b4e3fbd417a6cfbd4f579f892b37b0f25ed69";
-        String alert = "ÎÒµÄpush²âÊÔ";//pushµÄÄÚÈİ
-        int badge = 1;//Í¼±êĞ¡ºìÈ¦µÄÊıÖµ
-        String sound = "default";//ÁåÒô
+        String alert = "æˆ‘çš„pushæµ‹è¯•";//pushçš„å†…å®¹
+        int badge = 1;//å›¾æ ‡å°çº¢åœˆçš„æ•°å€¼
+        String sound = "default";//é“ƒéŸ³
 
         List<String> tokens = new ArrayList<String>();
         tokens.add(deviceToken);
         String certificatePath = "C:\\Users\\Administrator\\Desktop\\apns-dev-cert.p12";
-        String certificatePassword = "tingchebao";//´Ë´¦×¢Òâµ¼³öµÄÖ¤ÊéÃÜÂë²»ÄÜÎª¿ÕÒòÎª¿ÕÃÜÂë»á±¨´í
+        String certificatePassword = "tingchebao";//æ­¤å¤„æ³¨æ„å¯¼å‡ºçš„è¯ä¹¦å¯†ç ä¸èƒ½ä¸ºç©ºå› ä¸ºç©ºå¯†ç ä¼šæŠ¥é”™
         boolean sendCount = true;
 
         try
         {
             PushNotificationPayload payLoad = new PushNotificationPayload();
-            payLoad.addAlert(alert); // ÏûÏ¢ÄÚÈİ
-            payLoad.addBadge(badge); // iphoneÓ¦ÓÃÍ¼±êÉÏĞ¡ºìÈ¦ÉÏµÄÊıÖµ
+            payLoad.addAlert(alert); // æ¶ˆæ¯å†…å®¹
+            payLoad.addBadge(badge); // iphoneåº”ç”¨å›¾æ ‡ä¸Šå°çº¢åœˆä¸Šçš„æ•°å€¼
             if (!StringUtils.isBlank(sound))
             {
-                payLoad.addSound(sound);//ÁåÒô
+                payLoad.addSound(sound);//é“ƒéŸ³
             }
             PushNotificationManager pushManager = new PushNotificationManager();
-            //true£º±íÊ¾µÄÊÇ²úÆ··¢²¼ÍÆËÍ·şÎñ false£º±íÊ¾µÄÊÇ²úÆ·²âÊÔÍÆËÍ·şÎñ
+            //trueï¼šè¡¨ç¤ºçš„æ˜¯äº§å“å‘å¸ƒæ¨é€æœåŠ¡ falseï¼šè¡¨ç¤ºçš„æ˜¯äº§å“æµ‹è¯•æ¨é€æœåŠ¡
             pushManager.initializeConnection(new AppleNotificationServerBasicImpl(certificatePath, certificatePassword, true));
             List<PushedNotification> notifications = new ArrayList<PushedNotification>();
-            // ·¢ËÍpushÏûÏ¢
+            // å‘é€pushæ¶ˆæ¯
             if (sendCount)
             {
                 Device device = new BasicDevice();
@@ -66,44 +66,44 @@ public class ApnsSend
         }
     }
     */
-    
+
     public static void main(String[] args) throws Exception
     {
-       /* String deviceToken = "b9ae03f915a1f74d2281bd81109b4e3fbd417a6cfbd4f579f892b37b0f25ed69";//iphoneÊÖ»ú»ñÈ¡µÄtoken
-        String alert = "ÎÒµÄpush²âÊÔ";//pushµÄÄÚÈİ
-        int badge = 100;//Í¼±êĞ¡ºìÈ¦µÄÊıÖµ
-        String sound = "default";//ÁåÒô
+       /* String deviceToken = "b9ae03f915a1f74d2281bd81109b4e3fbd417a6cfbd4f579f892b37b0f25ed69";//iphoneæ‰‹æœºè·å–çš„token
+        String alert = "æˆ‘çš„pushæµ‹è¯•";//pushçš„å†…å®¹
+        int badge = 100;//å›¾æ ‡å°çº¢åœˆçš„æ•°å€¼
+        String sound = "default";//é“ƒéŸ³
         sendTiangouAPNS(deviceToken, alert, badge, sound, "10001");*/
         try {
             String deviceToken = "b9ae03f915a1f74d2281bd81109b4e3fbd417a6cfbd4f579f892b37b0f25ed69";
-            //±»ÍÆËÍµÄiphoneÓ¦ÓÃ³ÌĞò±êÊ¾·û      
-           // PropertyConfigurator.configure("bin/log4j.properties");
-          //  Logger console = Logger.getLogger(ApnsSend.class);
-           // String mesgString = "{\"mtype\":\"0\",\"msgid\":\"1\",\"info\":{\"total\":\"0.0\",\"parkname\":\"¼ÓÃÜ³µ³¡\",\"address\":\"±±¾©ÊĞº£µíÇøÉÏµØÈı½Ö9ºÅ-d×ù\",\"etime\":\"1414218585\",\"state\":\"0\",\"btime\":\"1414218585\",\"parkid\":\"1475\",\"orderid\":\"176729\"}}";
-    		
+            //è¢«æ¨é€çš„iphoneåº”ç”¨ç¨‹åºæ ‡ç¤ºç¬¦
+            // PropertyConfigurator.configure("bin/log4j.properties");
+            //  Logger console = Logger.getLogger(ApnsSend.class);
+            // String mesgString = "{\"mtype\":\"0\",\"msgid\":\"1\",\"info\":{\"total\":\"0.0\",\"parkname\":\"åŠ å¯†è½¦åœº\",\"address\":\"åŒ—äº¬å¸‚æµ·æ·€åŒºä¸Šåœ°ä¸‰è¡—9å·-dåº§\",\"etime\":\"1414218585\",\"state\":\"0\",\"btime\":\"1414218585\",\"parkid\":\"1475\",\"orderid\":\"176729\"}}";
+
             PayLoad payLoad = new PayLoad();
-            payLoad.addAlert("²âÊÔÏûÏ¢");
+            payLoad.addAlert("æµ‹è¯•æ¶ˆæ¯");
             payLoad.addBadge(1);
             payLoad.addSound("default");
             payLoad.addCustomDictionary("payload", "3339900");
-            
+
             PushNotificationManager pushManager = PushNotificationManager.getInstance();
             String device = ""+System.currentTimeMillis();
-			pushManager.addDevice(device, deviceToken);
+            pushManager.addDevice(device, deviceToken);
 
-            String host= "gateway.push.apple.com";  //Æ»¹ûÍÆËÍ·şÎñÆ÷
-           // String host= "gateway.sandbox.push.apple.com";  //²âÊÔÓÃµÄÆ»¹ûÍÆËÍ·şÎñÆ÷
+            String host= "gateway.push.apple.com";  //è‹¹æœæ¨é€æœåŠ¡å™¨
+            // String host= "gateway.sandbox.push.apple.com";  //æµ‹è¯•ç”¨çš„è‹¹æœæ¨é€æœåŠ¡å™¨
             int port = 2195;
-            
-            String certificatePath = "C:\\Users\\Administrator\\Desktop\\apns-dev-cert.p12"; //¸Õ²ÅÔÚmacÏµÍ³ÏÂµ¼³öµÄÖ¤Êé
-              
+
+            String certificatePath = "C:\\Users\\Administrator\\Desktop\\apns-dev-cert.p12"; //åˆšæ‰åœ¨macç³»ç»Ÿä¸‹å¯¼å‡ºçš„è¯ä¹¦
+
             String certificatePassword= "tingchebao";
-            
+
             pushManager.initializeConnection(host, port, certificatePath,certificatePassword, SSLConnectionHelper.KEYSTORE_TYPE_PKCS12);
-              
+
             //Send Push
             Device client = pushManager.getDevice(device);
-            pushManager.sendNotification(client, payLoad); 
+            pushManager.sendNotification(client, payLoad);
             pushManager.stopConnection();
             pushManager.removeDevice(device);
             System.out.println("push succeed!");
@@ -112,48 +112,48 @@ public class ApnsSend
             e.printStackTrace();
             System.out.println("e.getMessage() = " + e.getMessage());
         }
-           
+
     }
     public static void sendTiangouAPNS(String deviceToken, String message, int badge, String sound, String ab)
     {
         List<String> tokens = new ArrayList<String>();
         tokens.add(deviceToken);
-       // String certificatePath = "";
+        // String certificatePath = "";
         String certificatePath = "C:\\Users\\Administrator\\Desktop\\apns-dev-cert.p12";
-        String certificatePassword = "tingchebao";//´Ë´¦×¢Òâµ¼³öµÄÖ¤ÊéÃÜÂë²»ÄÜÎª¿ÕÒòÎª¿ÕÃÜÂë»á±¨´í
-      //  String certificatePassword = "123456";//´Ë´¦×¢Òâµ¼³öµÄÖ¤ÊéÃÜÂë²»ÄÜÎª¿ÕÒòÎª¿ÕÃÜÂë»á±¨´í
-       // new ApnsSend().sendpush(tokens, message, badge, sound, certificatePath, certificatePassword, true);
+        String certificatePassword = "tingchebao";//æ­¤å¤„æ³¨æ„å¯¼å‡ºçš„è¯ä¹¦å¯†ç ä¸èƒ½ä¸ºç©ºå› ä¸ºç©ºå¯†ç ä¼šæŠ¥é”™
+        //  String certificatePassword = "123456";//æ­¤å¤„æ³¨æ„å¯¼å‡ºçš„è¯ä¹¦å¯†ç ä¸èƒ½ä¸ºç©ºå› ä¸ºç©ºå¯†ç ä¼šæŠ¥é”™
+        // new ApnsSend().sendpush(tokens, message, badge, sound, certificatePath, certificatePassword, true);
     }
     /**
-     * appleµÄÍÆËÍ·½·¨
-     * @param tokens iphoneÊÖ»ú»ñÈ¡µÄtoken
-     * @param message ÍÆËÍÏûÏ¢µÄÄÚÈİ
-     * @param count Ó¦ÓÃÍ¼±êÉÏĞ¡ºìÈ¦ÉÏµÄÊıÖµ
-     * @param sound ÉùÒô
-     * @param ab ÏµÍ³
-     * @param certificatePath Ö¤ÊéÂ·¾¶
-     * @param certificatePassword Ö¤ÊéÃÜÂë
-     * @param sendCount µ¥·¢»¹ÊÇÈº·¢ true£ºµ¥·¢ false£ºÈº·¢
+     * appleçš„æ¨é€æ–¹æ³•
+     * @param tokens iphoneæ‰‹æœºè·å–çš„token
+     * @param message æ¨é€æ¶ˆæ¯çš„å†…å®¹
+     * @param count åº”ç”¨å›¾æ ‡ä¸Šå°çº¢åœˆä¸Šçš„æ•°å€¼
+     * @param sound å£°éŸ³
+     * @param ab ç³»ç»Ÿ
+     * @param certificatePath è¯ä¹¦è·¯å¾„
+     * @param certificatePassword è¯ä¹¦å¯†ç 
+     * @param sendCount å•å‘è¿˜æ˜¯ç¾¤å‘ trueï¼šå•å‘ falseï¼šç¾¤å‘
      */
    /* private void sendpush(List<String> tokens, String message, int badge, String sound, String certificatePath, String certificatePassword, boolean sendCount)
     {
         try
         {
             PushNotificationPayload payLoad = new PushNotificationPayload();
-            payLoad.addAlert(message); // ÏûÏ¢ÄÚÈİ
-            payLoad.addBadge(badge); // iphoneÓ¦ÓÃÍ¼±êÉÏĞ¡ºìÈ¦ÉÏµÄÊıÖµ
+            payLoad.addAlert(message); // æ¶ˆæ¯å†…å®¹
+            payLoad.addBadge(badge); // iphoneåº”ç”¨å›¾æ ‡ä¸Šå°çº¢åœˆä¸Šçš„æ•°å€¼
             if (!StringUtils.isBlank(sound))
             {
-                payLoad.addSound(sound);//ÁåÒô
+                payLoad.addSound(sound);//é“ƒéŸ³
             }
             PushNotificationManager pushManager = new PushNotificationManager();
-            //true£º±íÊ¾µÄÊÇ²úÆ··¢²¼ÍÆËÍ·şÎñ false£º±íÊ¾µÄÊÇ²úÆ·²âÊÔÍÆËÍ·şÎñ
+            //trueï¼šè¡¨ç¤ºçš„æ˜¯äº§å“å‘å¸ƒæ¨é€æœåŠ¡ falseï¼šè¡¨ç¤ºçš„æ˜¯äº§å“æµ‹è¯•æ¨é€æœåŠ¡
             pushManager.initializeConnection(new AppleNotificationServerBasicImpl(certificatePath, certificatePassword, false));
             List<PushedNotification> notifications = new ArrayList<PushedNotification>();
-            // ·¢ËÍpushÏûÏ¢
+            // å‘é€pushæ¶ˆæ¯
             if (sendCount)
             {
-               // log.debug("--------------------------apple ÍÆËÍ µ¥-------");
+               // log.debug("--------------------------apple æ¨é€ å•-------");
                 Device device = new BasicDevice();
                 device.setToken(tokens.get(0));
                 PushedNotification notification = pushManager.sendNotification(device, payLoad, true);
@@ -161,7 +161,7 @@ public class ApnsSend
             }
             else
             {
-               // log.debug("--------------------------apple ÍÆËÍ Èº-------");
+               // log.debug("--------------------------apple æ¨é€ ç¾¤-------");
                 List<Device> device = new ArrayList<Device>();
                 for (String token : tokens)
                 {

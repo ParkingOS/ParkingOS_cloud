@@ -21,7 +21,7 @@ import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 
 /**
- * Õ£≥µ≥°≥µŒª∑÷œÌ π”√Õ≥º∆
+ * ÂÅúËΩ¶Âú∫ËΩ¶‰ΩçÂàÜ‰∫´‰ΩøÁî®ÁªüËÆ°
  * @author Administrator
  *
  */
@@ -31,7 +31,7 @@ public class ParkLaLaAnlysisAction extends Action {
 	private DataBaseService daService;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -41,7 +41,7 @@ public class ParkLaLaAnlysisAction extends Action {
 		}
 		if(action.equals("")){
 			List<Map<String, Object>>  list = daService.getAll("select distinct p.comid,c.company_name from park_anlysis_tb p," +
-					"com_info_tb c where p.comid = c.id", null);	
+					"com_info_tb c where p.comid = c.id", null);
 			String json = "[";
 			if(list!=null){
 				for(Map<String, Object> map :list){
@@ -53,7 +53,7 @@ public class ParkLaLaAnlysisAction extends Action {
 			json +="]";
 			request.setAttribute("comlist", json);
 			return mapping.findForward("success");
-		}else if(action.equals("parkidle")){//æﬂÃÂÕ£≥µ≥°µƒø’œ–«˜ ∆
+		}else if(action.equals("parkidle")){//ÂÖ∑‰ΩìÂÅúËΩ¶Âú∫ÁöÑÁ©∫Èó≤Ë∂ãÂäø
 			Long cidLong=RequestUtil.getLong(request, "comid", -1L);
 			String pname = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "pname"));
 			request.setAttribute("_comid", cidLong);
@@ -79,8 +79,8 @@ public class ParkLaLaAnlysisAction extends Action {
 			Long b = TimeTools.getToDayBeginTime();
 			Long e =System.currentTimeMillis()/1000;
 			if(!btime.equals("")&&!etime.equals("")){
-				 b =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(qdate+" "+btime);
-				 e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(qdate+" "+etime);
+				b =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(qdate+" "+btime);
+				e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(qdate+" "+etime);
 			}
 			sqlInfo =new SqlInfo(" create_time between ? and ?  and comid=? ",
 					new Object[]{b,e,_comid});//c_type 0:NFC,1:IBeacon
@@ -94,8 +94,8 @@ public class ParkLaLaAnlysisAction extends Action {
 		}
 		return null;
 	}
-	
-	
+
+
 	private String getJson(List list,Long count){
 		//create_time,comid,share_count,used_count
 		/*

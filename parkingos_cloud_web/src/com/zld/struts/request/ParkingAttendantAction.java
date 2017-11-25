@@ -19,23 +19,23 @@ import com.zld.utils.RequestUtil;
 
 
 public class ParkingAttendantAction extends Action{
-	
+
 	@Autowired
 	private MongoDbUtils mongoDbUtils;
 	private Logger logger = Logger.getLogger(ParkingAttendantAction.class);
-	
-	
+
+
 	/**
-	 *泊车
+	 *娉婅溅
 	 */
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
 		logger.error(">>>ParkingAttendantAction action:"+action);
-		if(action.equals("getpic")){//取泊车点照片
+		if(action.equals("getpic")){//鍙栨硦杞︾偣鐓х墖
 			String fname = RequestUtil.getString(request, "id");
 			String dbName = RequestUtil.getString(request, "db");
 			if(dbName.equals(""))
@@ -59,7 +59,7 @@ public class ParkingAttendantAction extends Action{
 				response.sendRedirect("images/nopic.jpg");
 			}
 		}
-		/////////============车主请求=======================////////////////////	
+		/////////============杞︿富璇锋眰=======================////////////////////
 		return null;
 	}
 

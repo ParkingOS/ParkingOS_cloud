@@ -1,42 +1,35 @@
 package com.zld.utils;
 
+import jxl.CellView;
+import jxl.Workbook;
+import jxl.format.Alignment;
+import jxl.format.Border;
+import jxl.format.BorderLineStyle;
+import jxl.format.Colour;
+import jxl.format.*;
+import jxl.write.*;
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
-import jxl.CellView;
-import jxl.Workbook;
-import jxl.biff.DisplayFormat;
-import jxl.format.Alignment;
-import jxl.format.Border;
-import jxl.format.BorderLineStyle;
-import jxl.write.Label;
-import jxl.write.NumberFormats;
-import jxl.write.WritableCellFormat;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
-import jxl.write.WritableFont; 
-import jxl.format.UnderlineStyle;
-import jxl.format.Colour; 
-
-import org.apache.log4j.Logger;
-
 public class ExportExcelUtil {
 
-static Logger logger = Logger.getLogger(ExportExcelUtil.class);
-	
-	public  String excelName="±¨±í";
+	static Logger logger = Logger.getLogger(ExportExcelUtil.class);
+
+	public  String excelName="æŠ¥è¡¨";
 	public  String[] headBody = null;
 	public  List<List<String>> bodyList = null;
 	public  List<Map<String,String>> mulitHeadList =null;
 	public Map<String,String> headInfo=null;
 	/**
-	 * 
-	 * @param excelName ÎÄ¼şÃû
-	 * @param headBody ±íÍ·
-	 * @param bodyList ÄÚÈİ
-	 * @param isEncrypt µç»°ÊÇ·ñ¼ÓÃÜ
+	 *
+	 * @param excelName æ–‡ä»¶å
+	 * @param headBody è¡¨å¤´
+	 * @param bodyList å†…å®¹
+	 * @param isEncrypt ç”µè¯æ˜¯å¦åŠ å¯†
 	 */
 	public ExportExcelUtil(String excelName,String[] headBody,List<List<String>> bodyList){
 		this.excelName=excelName;
@@ -44,102 +37,102 @@ static Logger logger = Logger.getLogger(ExportExcelUtil.class);
 		this.bodyList = bodyList;
 	}
 	public void createExcelFile(OutputStream os) throws IOException {
-	    try {
-            //´´½¨Ò»¸öÎÄ¼ş
+		try {
+			//åˆ›å»ºä¸€ä¸ªæ–‡ä»¶
 			WritableWorkbook workbook = Workbook.createWorkbook(os);
-	        //Ê¹ÓÃµÚÒ»ÕÅ¹¤×÷±í
-	        WritableSheet sheet = workbook.createSheet(excelName, 0); 
-	        CellView cellView = new CellView();  
-	        //cellView.setAutosize(true); //ÉèÖÃ×Ô¶¯´óĞ¡
-	        cellView.setSize(4050);
-	       
-	        //´´½¨¶à±íÍ·
+			//ä½¿ç”¨ç¬¬ä¸€å¼ å·¥ä½œè¡¨
+			WritableSheet sheet = workbook.createSheet(excelName, 0);
+			CellView cellView = new CellView();
+			//cellView.setAutosize(true); //è®¾ç½®è‡ªåŠ¨å¤§å°
+			cellView.setSize(4050);
+
+			//åˆ›å»ºå¤šè¡¨å¤´
 	        /*
-	         *  Í¨¹ıwritablesheet.mergeCells(int x,int y,int m,int n);À´ÊµÏÖµÄ¡£
- 				±íÊ¾½«´ÓµÚx+1ÁĞ£¬y+1ĞĞµ½m+1ÁĞ£¬n+1ĞĞºÏ²¢ (ËÄ¸öµã¶¨ÒåÁËÁ½¸ö×ø±ê£¬×óÉÏ½ÇºÍÓÒÏÂ½Ç)
- 				½á¹ûÊÇºÏ²¢ÁËm-x+1ĞĞ£¬n-y+1ÁĞ£¬Á½Õß³Ë»ı¾ÍÊÇºÏ²¢µÄµ¥Ôª¸ñÊıÁ¿¡£
+	         *  é€šè¿‡writablesheet.mergeCells(int x,int y,int m,int n);æ¥å®ç°çš„ã€‚
+ 				è¡¨ç¤ºå°†ä»ç¬¬x+1åˆ—ï¼Œy+1è¡Œåˆ°m+1åˆ—ï¼Œn+1è¡Œåˆå¹¶ (å››ä¸ªç‚¹å®šä¹‰äº†ä¸¤ä¸ªåæ ‡ï¼Œå·¦ä¸Šè§’å’Œå³ä¸‹è§’)
+ 				ç»“æœæ˜¯åˆå¹¶äº†m-x+1è¡Œï¼Œn-y+1åˆ—ï¼Œä¸¤è€…ä¹˜ç§¯å°±æ˜¯åˆå¹¶çš„å•å…ƒæ ¼æ•°é‡ã€‚
 	         */
-	        Integer start =0;
-	        if(headInfo!=null&&!headInfo.isEmpty()){
-	        	start++;
-	        	Integer length  = Integer.valueOf(headInfo.get("length"));
-        		sheet.mergeCells(0, 0, length, 0);
-        	    WritableFont font = new WritableFont(WritableFont.ARIAL,14,WritableFont.BOLD,false,UnderlineStyle.NO_UNDERLINE,Colour.BLACK);  
-        		  
-        		WritableCellFormat wc = new WritableCellFormat(font); 
-        	        // ÉèÖÃ¾ÓÖĞ 
-        	    wc.setAlignment(Alignment.CENTRE); 
-        	        // ÉèÖÃ±ß¿òÏß 
-        	    wc.setBorder(Border.ALL, BorderLineStyle.THIN); 
-        	    
-        	        // ÉèÖÃµ¥Ôª¸ñµÄ±³¾°ÑÕÉ« 
-        	  //  wc.setBackground(jxl.format.Colour.YELLOW); 
-        		Label cell= new Label(0, 0,headInfo.get("content"),wc);
-        		
-        		sheet.addCell(cell);
-	        }
-	        if(mulitHeadList!=null){
-	        	Integer preKey =0;
-	        	for(Map<String,String> map :mulitHeadList){
-	        		Integer length  = Integer.valueOf(map.get("length"));
-	        		sheet.mergeCells(preKey, start, preKey+length,start);
-	        		WritableCellFormat wc = new WritableCellFormat(); 
-	        	        // ÉèÖÃ¾ÓÖĞ 
-	        	    wc.setAlignment(Alignment.CENTRE); 
-	        	        // ÉèÖÃ±ß¿òÏß 
-	        	    wc.setBorder(Border.ALL, BorderLineStyle.THIN); 
-	        	        // ÉèÖÃµ¥Ôª¸ñµÄ±³¾°ÑÕÉ« 
-	        	    wc.setBackground(jxl.format.Colour.YELLOW); 
-	        		Label cell= new Label(preKey,start,map.get("content"),wc);
-	        		
-	        		sheet.addCell(cell);
-	        		preKey += length+1;
-	        	}
-	        	start++;
-	        }
-	        //´´½¨±íÍ·
-	        for (int i=0;i<headBody.length;i++) {
-	        	//Èı¸ö²ÎÊı·Ö±ğ±íÊ¾col+1ÁĞ£¬row+1ĞĞ£¬±êÌâÄÚÈİÊÇtitle¡£
-	        	WritableCellFormat wc = new WritableCellFormat(); 
-    	        // ÉèÖÃ¾ÓÖĞ 
-	        	wc.setAlignment(Alignment.CENTRE); 
-    	        // ÉèÖÃ±ß¿òÏß 
-	        	wc.setBorder(Border.ALL, BorderLineStyle.THIN);
-	        	wc.setBackground(jxl.format.Colour.GRAY_25); 
-	        	wc.isShrinkToFit();
-	        	Label cell= new Label(i, start, headBody[i],wc);
-	        	//cellView.setSize(headBody[i].length()*600);
-	        	sheet.setColumnView(i, cellView);//¸ù¾İÄÚÈİ×Ô¶¯ÉèÖÃÁĞ¿í  
-		        sheet.addCell(cell);
+			Integer start =0;
+			if(headInfo!=null&&!headInfo.isEmpty()){
+				start++;
+				Integer length  = Integer.valueOf(headInfo.get("length"));
+				sheet.mergeCells(0, 0, length, 0);
+				WritableFont font = new WritableFont(WritableFont.ARIAL,14,WritableFont.BOLD,false,UnderlineStyle.NO_UNDERLINE,Colour.BLACK);
+
+				WritableCellFormat wc = new WritableCellFormat(font);
+				// è®¾ç½®å±…ä¸­
+				wc.setAlignment(Alignment.CENTRE);
+				// è®¾ç½®è¾¹æ¡†çº¿
+				wc.setBorder(Border.ALL, BorderLineStyle.THIN);
+
+				// è®¾ç½®å•å…ƒæ ¼çš„èƒŒæ™¯é¢œè‰²
+				//  wc.setBackground(jxl.format.Colour.YELLOW);
+				Label cell= new Label(0, 0,headInfo.get("content"),wc);
+
+				sheet.addCell(cell);
 			}
-	        //²åÈëÊı¾İ
-	        if(bodyList != null) {     
-	        	logger.info("¿ªÊ¼´´½¨ÎÄ¼ş");
-	        	//WritableFont wf = new WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD, false);
-	        	//DisplayFormat displayFormat = NumberFormats.TEXT;
-	        	//WritableCellFormat format = new WritableCellFormat(wf,displayFormat);
-	        	for(int i = 0,j=start+1; i < bodyList.size(); i++,j++) {
-	        		//»ñÈ¡Ğ´ÈëÊı¾İ
-	        		List<String > dateList=bodyList.get(i);	              				        	
-	        		//Ğ´ÈëÊı¾İ
-	        		for(int k=0 ;k<dateList.size();k++){
-	        			String value = dateList.get(k);//´¦Àíµ¼³ö¿Í»§µç»°ºóÓĞÌØÊâ×Ö·ûµÄÎÊÌâ
-	        			value = (value==null||value.equals("null"))?"":value;
+			if(mulitHeadList!=null){
+				Integer preKey =0;
+				for(Map<String,String> map :mulitHeadList){
+					Integer length  = Integer.valueOf(map.get("length"));
+					sheet.mergeCells(preKey, start, preKey+length,start);
+					WritableCellFormat wc = new WritableCellFormat();
+					// è®¾ç½®å±…ä¸­
+					wc.setAlignment(Alignment.CENTRE);
+					// è®¾ç½®è¾¹æ¡†çº¿
+					wc.setBorder(Border.ALL, BorderLineStyle.THIN);
+					// è®¾ç½®å•å…ƒæ ¼çš„èƒŒæ™¯é¢œè‰²
+					wc.setBackground(jxl.format.Colour.YELLOW);
+					Label cell= new Label(preKey,start,map.get("content"),wc);
+
+					sheet.addCell(cell);
+					preKey += length+1;
+				}
+				start++;
+			}
+			//åˆ›å»ºè¡¨å¤´
+			for (int i=0;i<headBody.length;i++) {
+				//ä¸‰ä¸ªå‚æ•°åˆ†åˆ«è¡¨ç¤ºcol+1åˆ—ï¼Œrow+1è¡Œï¼Œæ ‡é¢˜å†…å®¹æ˜¯titleã€‚
+				WritableCellFormat wc = new WritableCellFormat();
+				// è®¾ç½®å±…ä¸­
+				wc.setAlignment(Alignment.CENTRE);
+				// è®¾ç½®è¾¹æ¡†çº¿
+				wc.setBorder(Border.ALL, BorderLineStyle.THIN);
+				wc.setBackground(jxl.format.Colour.GRAY_25);
+				wc.isShrinkToFit();
+				Label cell= new Label(i, start, headBody[i],wc);
+				//cellView.setSize(headBody[i].length()*600);
+				sheet.setColumnView(i, cellView);//æ ¹æ®å†…å®¹è‡ªåŠ¨è®¾ç½®åˆ—å®½
+				sheet.addCell(cell);
+			}
+			//æ’å…¥æ•°æ®
+			if(bodyList != null) {
+				logger.info("å¼€å§‹åˆ›å»ºæ–‡ä»¶");
+				//WritableFont wf = new WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD, false);
+				//DisplayFormat displayFormat = NumberFormats.TEXT;
+				//WritableCellFormat format = new WritableCellFormat(wf,displayFormat);
+				for(int i = 0,j=start+1; i < bodyList.size(); i++,j++) {
+					//è·å–å†™å…¥æ•°æ®
+					List<String > dateList=bodyList.get(i);
+					//å†™å…¥æ•°æ®
+					for(int k=0 ;k<dateList.size();k++){
+						String value = dateList.get(k);//å¤„ç†å¯¼å‡ºå®¢æˆ·ç”µè¯åæœ‰ç‰¹æ®Šå­—ç¬¦çš„é—®é¢˜
+						value = (value==null||value.equals("null"))?"":value;
 //	        			if(Check.isNumber(value)||Check.isDouble(value)){
 //	        				jxl.write.Number number = new jxl.write.Number(k,j, Double.parseDouble(value),format);
 //	        				sheet.addCell(number);
 //	        			}else {
-	        				Label label = new Label(k,j,value);
-	        				sheet.addCell(label);
+						Label label = new Label(k,j,value);
+						sheet.addCell(label);
 //						}
-	        		}
-	        	}
-	        }
-	        logger.info("´´½¨ÎÄ¼ş½áÊø");
-	        //¹Ø±Õ¶ÔÏó£¬ÊÍ·Å×ÊÔ´
-	        workbook.write();
-	        workbook.close();
-	        os.close();
+					}
+				}
+			}
+			logger.info("åˆ›å»ºæ–‡ä»¶ç»“æŸ");
+			//å…³é—­å¯¹è±¡ï¼Œé‡Šæ”¾èµ„æº
+			workbook.write();
+			workbook.close();
+			os.close();
 		} catch (Exception e) {
 			os.close();
 			logger.error(e);

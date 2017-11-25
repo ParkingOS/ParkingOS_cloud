@@ -5,9 +5,9 @@ import java.io.Serializable;
 public class CardCarNumber implements Serializable {
 	private Long id = -1L;
 	private String car_number;
-	private Long card_id = -1L;//¿¨Æ¬±àºÅ
-	private int is_delete = 0;//×´Ì¬
-	private Long create_time;//¼ÇÂ¼Ê±¼ä
+	private Long card_id = -1L;//å¡ç‰‡ç¼–å·
+	private int is_delete = 0;//çŠ¶æ€
+	private Long create_time;//è®°å½•æ—¶é—´
 	public Long getId() {
 		return id;
 	}

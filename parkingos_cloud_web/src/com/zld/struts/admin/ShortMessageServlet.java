@@ -20,7 +20,7 @@ import com.zld.utils.RequestUtil;
 public class ShortMessageServlet extends HttpServlet {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1844412464330025572L;
 
@@ -28,7 +28,7 @@ public class ShortMessageServlet extends HttpServlet {
 	 * The doGet method of the servlet. <br>
 	 *
 	 * This method is called when a form has its tag value method equals to get.
-	 * 
+	 *
 	 * @param request the request send by the client to the server
 	 * @param response the response send by the server to the client
 	 * @throws ServletException if an error occurred
@@ -44,7 +44,7 @@ public class ShortMessageServlet extends HttpServlet {
 	 * The doPost method of the servlet. <br>
 	 *
 	 * This method is called when a form has its tag value method equals to post.
-	 * 
+	 *
 	 * @param request the request send by the client to the server
 	 * @param response the response send by the server to the client
 	 * @throws ServletException if an error occurred
@@ -53,7 +53,7 @@ public class ShortMessageServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String arg = RequestUtil.getString(request, "args");
-		System.err.println("=========================>>>>>>>>>>>¶ÌĞÅ»Øµ÷£ºargs:"+arg);
+		System.err.println("=========================>>>>>>>>>>>çŸ­ä¿¡å›è°ƒï¼šargs:"+arg);
 		String args[]  = arg.split(",");
 		String mobile = "";//RequestUtil.getString(request, "mobile");
 		Integer code =0;// RequestUtil.getInteger(request, "code",0);
@@ -66,22 +66,22 @@ public class ShortMessageServlet extends HttpServlet {
 				code = Integer.valueOf(content.substring(0,6));
 			if(content.length()>7)
 				flag = content.substring(6,8);
-				
+
 		}
 		ApplicationContext ctx = WebApplicationContextUtils
 				.getWebApplicationContext(getServletContext());
 		DataBaseService daService = (DataBaseService) ctx.getBean("dataBaseService");
 		CommonMethods methods = (CommonMethods)ctx.getBean("commonMethods");
 		Map userMap = null;
-		if(flag.equals("00")){//ÊÕ·ÑÔ±
+		if(flag.equals("00")){//æ”¶è´¹å‘˜
 			userMap = daService.getPojo("select * from user_info_tb where mobile=? and auth_flag = ?", new Object[]{mobile,2});
-		}else {//³µÖ÷
+		}else {//è½¦ä¸»
 			userMap = daService.getPojo("select * from user_info_tb where mobile=? and auth_flag=?", new Object[]{mobile,4});
 		}
 		int result = 0;
-		System.err.println("=========================>>>>>>>>>>>¶ÌĞÅ»Øµ÷£ºmobile:"+mobile+",code:"+code);
-		if(userMap!=null&&!userMap.isEmpty()){//ÓÃ»§ĞÅÏ¢´æÔÚ 
-			System.err.println(mobile+">>>>>>>>>>>¶ÌĞÅ»Øµ÷£º¿Í»§´æÔÚ");
+		System.err.println("=========================>>>>>>>>>>>çŸ­ä¿¡å›è°ƒï¼šmobile:"+mobile+",code:"+code);
+		if(userMap!=null&&!userMap.isEmpty()){//ç”¨æˆ·ä¿¡æ¯å­˜åœ¨
+			System.err.println(mobile+">>>>>>>>>>>çŸ­ä¿¡å›è°ƒï¼šå®¢æˆ·å­˜åœ¨");
 			Long uin = (Long)userMap.get("id");
 			Map cMap = daService.getMap("select uin from verification_code_tb " +
 					"where verification_code=?", new Object[]{code});
@@ -89,15 +89,15 @@ public class ShortMessageServlet extends HttpServlet {
 			if(cMap!=null&&cMap.get("uin")!=null){
 				codeuin = (Long)cMap.get("uin");
 			}
-			if(uin.equals(codeuin)){//ÑéÖ¤ÂëÕıÈ·£¬½øĞĞÏÂÒ»²½²Ù×÷
-				System.err.println(mobile+"=========================>>>>>>>>>>>¶ÌĞÅ»Øµ÷£ºÑéÖ¤ÂëÕıÈ·£¬auth_flag=1 ");
+			if(uin.equals(codeuin)){//éªŒè¯ç æ­£ç¡®ï¼Œè¿›è¡Œä¸‹ä¸€æ­¥æ“ä½œ
+				System.err.println(mobile+"=========================>>>>>>>>>>>çŸ­ä¿¡å›è°ƒï¼šéªŒè¯ç æ­£ç¡®ï¼Œauth_flag=1 ");
 				result= daService.update("delete from verification_code_tb where uin =?",new Object[]{userMap.get("id")});
-				//¸üĞÂ³µÖ÷×´Ì¬ £¬ÔÚÏß£¬±£´æµÇÂ¼Ê±¼ä
+				//æ›´æ–°è½¦ä¸»çŠ¶æ€ ï¼Œåœ¨çº¿ï¼Œä¿å­˜ç™»å½•æ—¶é—´
 				result= daService.update("update user_info_tb set online_flag=? ,logon_time=? where id=?", new Object[]{1,System.currentTimeMillis()/1000,userMap.get("id")});
-				System.out.println(">>>>>>>>>>>¶ÌĞÅ»Øµ÷£º¿Í»§´æÔÚ>>>>Ğ´ÈëÍ£³µÈ¯:"+methods.checkBonus(mobile, (Long)userMap.get("id")));
+				System.out.println(">>>>>>>>>>>çŸ­ä¿¡å›è°ƒï¼šå®¢æˆ·å­˜åœ¨>>>>å†™å…¥åœè½¦åˆ¸:"+methods.checkBonus(mobile, (Long)userMap.get("id")));
 			}else {
-				//¸üĞÂ³µÖ÷×´Ì¬ £¬ÑéÖ¤Âë´íÎó£¬±£´æµÇÂ¼Ê±¼ä
-				System.err.println(mobile+"=========================>>>>>>>>>>>¶ÌĞÅ»Øµ÷£ºÑéÖ¤Âë´íÎó ,auth_flag=-1");
+				//æ›´æ–°è½¦ä¸»çŠ¶æ€ ï¼ŒéªŒè¯ç é”™è¯¯ï¼Œä¿å­˜ç™»å½•æ—¶é—´
+				System.err.println(mobile+"=========================>>>>>>>>>>>çŸ­ä¿¡å›è°ƒï¼šéªŒè¯ç é”™è¯¯ ,auth_flag=-1");
 				result= daService.update("update user_info_tb set online_flag=? ,logon_time=? where id=?", new Object[]{-1,System.currentTimeMillis()/1000,codeuin});
 			}
 		}

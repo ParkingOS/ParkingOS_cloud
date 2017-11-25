@@ -24,10 +24,10 @@ public class FunctionManageAction extends Action {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		if(uin == null){
 			response.sendRedirect("login.do");
 			return null;
@@ -60,7 +60,7 @@ public class FunctionManageAction extends Action {
 		}else if(action.equals("functree")){
 			Long oid = RequestUtil.getLong(request, "oid", -1L);
 			request.setAttribute("treeurl", "getdata.do?action=functree&oid="+oid);
-			request.setAttribute("title", "功能列表");
+			request.setAttribute("title", "鍔熻兘鍒楄〃");
 			return mapping.findForward("tree");
 		}else if(action.equals("create")){
 			Long oid = RequestUtil.getLong(request, "oid", -1L);
@@ -71,7 +71,7 @@ public class FunctionManageAction extends Action {
 			String sub_auth = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "sub_auth"));
 			String actions = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "actions"));
 			if(oid > -1 && pid > -1){
-				int r = daService.update("insert into auth_tb(nname,state,pid,url,oid,sub_auth,actions) values(?,?,?,?,?,?,?)", 
+				int r = daService.update("insert into auth_tb(nname,state,pid,url,oid,sub_auth,actions) values(?,?,?,?,?,?,?)",
 						new Object[]{nname, state, pid, url, oid, sub_auth, actions});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -85,7 +85,7 @@ public class FunctionManageAction extends Action {
 			String actions = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "actions"));
 			Integer state = RequestUtil.getInteger(request, "state", 0);
 			if(id > 0){
-				int r = daService.update("update auth_tb set nname=?,state=?,url=?,sub_auth=?,actions=? where id=? ", 
+				int r = daService.update("update auth_tb set nname=?,state=?,url=?,sub_auth=?,actions=? where id=? ",
 						new Object[]{nname, state, url, sub_auth, actions, id});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -94,7 +94,7 @@ public class FunctionManageAction extends Action {
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			if(id > 0){
-				int r = daService.update("update auth_tb set state=?,delete_time=?,deletor_id=? where id=? ", 
+				int r = daService.update("update auth_tb set state=?,delete_time=?,deletor_id=? where id=? ",
 						new Object[]{1, System.currentTimeMillis()/1000, uin, id});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;

@@ -35,16 +35,16 @@ public class SensorManageAction extends Action {
 	private CommonMethods commonMethods;
 	@Autowired
 	private MemcacheUtils memcacheUtils;
-	
+
 	Logger logger = Logger.getLogger(SensorManageAction.class);
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		if(uin == null){
 			response.sendRedirect("login.do");
@@ -118,7 +118,7 @@ public class SensorManageAction extends Action {
 			if(params.size()>1){
 				r = daService.update(sql, params);
 			}
-			logger.error("bind sensor ids:"+ids+",comid:"+comid+",¸üĞÂÁË"+r+"ÌõÊı¾İ");
+			logger.error("bind sensor ids:"+ids+",comid:"+comid+",æ›´æ–°äº†"+r+"æ¡æ•°æ®");
 			if(r>0)
 				r=1;
 			AjaxUtil.ajaxOutput(response, r+"");
@@ -163,7 +163,7 @@ public class SensorManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void setxyz(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			Gson gson = new Gson();
@@ -183,7 +183,7 @@ public class SensorManageAction extends Action {
 			}
 		}
 	}
-	
+
 	private int initxyz(HttpServletRequest request){
 		try {
 			Gson gson = new Gson();
@@ -192,7 +192,7 @@ public class SensorManageAction extends Action {
 					" where id=? ", new Object[]{id});
 			String did = (String)map.get("did");
 			if(!did.startsWith("TB")){
-				return -2;//·ÇÌì²´¹«Ë¾µÄ³µ¼ìÆ÷£¬²»ÄÜÉèÖÃ³õÊ¼Öµ
+				return -2;//éå¤©æ³Šå…¬å¸çš„è½¦æ£€å™¨ï¼Œä¸èƒ½è®¾ç½®åˆå§‹å€¼
 			}
 			did = Constants.SNESOR_SIGN + did;
 			String json = memcacheUtils.get(did);
@@ -204,7 +204,7 @@ public class SensorManageAction extends Action {
 			sensorInfo.setX0(sensorInfo.getX());
 			sensorInfo.setY0(sensorInfo.getY());
 			sensorInfo.setZ0(sensorInfo.getZ());
-			sensorInfo.setStatus(0);//ÖÃÎªÎŞ³µ
+			sensorInfo.setStatus(0);//ç½®ä¸ºæ— è½¦
 			boolean b = memcacheUtils.set(did, gson.toJson(sensorInfo));
 			if(b){
 				int r = daService.update("update dici_tb set state=? where id=? ",
@@ -216,7 +216,7 @@ public class SensorManageAction extends Action {
 		}
 		return -1;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		Integer state = RequestUtil.getInteger(request, "state_start", -1);
 		SqlInfo sqlInfo1 = null;

@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.rpc.holders.LongHolder;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
@@ -24,12 +23,12 @@ import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
 /**
- * Í£³µ³¡ºóÌ¨¹ÜÀíÔ±µÇÂ¼ºó£¬¹ÜÀíÔ±¹¤£¬Ô±¹¤·ÖÎªÊÕ·ÑÔ±ºÍ²ÆÎñ
+ * åœè½¦åœºåå°ç®¡ç†å‘˜ç™»å½•åï¼Œç®¡ç†å‘˜å·¥ï¼Œå‘˜å·¥åˆ†ä¸ºæ”¶è´¹å‘˜å’Œè´¢åŠ¡
  * @author Administrator
  *
  */
 public class ComParkAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -38,7 +37,7 @@ public class ComParkAction extends Action{
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -121,7 +120,7 @@ public class ComParkAction extends Action{
 					}else{
 						preParams += ",?";
 					}
-					
+
 					String cid = pre+(start+i);
 					String en = pre+end;
 					int d = cs[1].length()-cid.length();
@@ -141,7 +140,7 @@ public class ComParkAction extends Action{
 					return null;
 				}
 				daService.bathInsert(sql, values, new int[]{4,12,4,4,4});
-				if(ret>0){//¼Ó¶şÎ¬Âë
+				if(ret>0){//åŠ äºŒç»´ç 
 					sql = "insert into qr_code_tb(id,comid,ctime,type,code) values(?,?,?,?,?)";
 					values.clear();
 					for(int i=0;i<codes.length;i++){
@@ -149,7 +148,7 @@ public class ComParkAction extends Action{
 					}
 					result=daService.bathInsert(sql, values, new int[]{4,4,4,4,12});
 				}
-				
+
 			}else if(cids.indexOf(",")!=-1){
 				String []cs = cids.split(",");
 				int count =cs.length;
@@ -174,7 +173,7 @@ public class ComParkAction extends Action{
 					values.add(new Object[]{comid,cs[j],0,ids[j]});
 				}
 				daService.bathInsert(sql, values, new int[]{4,12,4,4});
-				if(ret>0){//¼Ó¶şÎ¬Âë
+				if(ret>0){//åŠ äºŒç»´ç 
 					sql = "insert into qr_code_tb(id,comid,ctime,type,code) values(?,?,?,?,?)";
 					values.clear();
 					for(int i=0;i<codes.length;i++){
@@ -182,7 +181,7 @@ public class ComParkAction extends Action{
 					}
 					result=daService.bathInsert(sql, values, new int[]{4,4,4,4,12});
 				}
-				
+
 			}else {
 				String []codes=null;
 				Long newId = daService.getkey("seq_qr_code_tb");
@@ -193,14 +192,14 @@ public class ComParkAction extends Action{
 				int ret =1;
 				values.add(new Object[]{comid,cids,0,newId});
 				daService.bathInsert(sql, values, new int[]{4,12,4,4});
-				if(ret>0){//¼Ó¶şÎ¬Âë
+				if(ret>0){//åŠ äºŒç»´ç 
 					sql = "insert into qr_code_tb(id,comid,ctime,type,code) values(?,?,?,?,?)";
 					values.clear();
 					values.add(new Object[]{newId,comid,ntime,2,codes[0]});
 					result=daService.bathInsert(sql, values, new int[]{4,4,4,4,12});
 				}
 			}
-			mongoDbUtils.saveLogs( request,0, 2, "Ìí¼ÓÁË³µÎ»£º"+cids);
+			mongoDbUtils.saveLogs( request,0, 2, "æ·»åŠ äº†è½¦ä½ï¼š"+cids);
 			AjaxUtil.ajaxOutput(response, result+"");
 			return null;
 		}else if(action.equals("delete")){
@@ -209,7 +208,7 @@ public class ComParkAction extends Action{
 			int ret = 0;
 			if(id>0){
 				ret = daService.update("delete from com_park_tb where id =? ", new Object[]{id});
-				mongoDbUtils.saveLogs( request,0, 4, "É¾³ıÁË³µÎ»£º"+tempMap);
+				mongoDbUtils.saveLogs( request,0, 4, "åˆ é™¤äº†è½¦ä½ï¼š"+tempMap);
 			}
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}
@@ -221,34 +220,34 @@ public class ComParkAction extends Action{
 			Long id =RequestUtil.getLong(request, "id", -1L);
 			int ret = 0;
 			if(id>0){
-				ret = daService.update("update com_park_tb set cid=?,qid=?,dici_id=?,state=? where id =? ", 
+				ret = daService.update("update com_park_tb set cid=?,qid=?,dici_id=?,state=? where id =? ",
 						new Object[]{cid,qid,dici_id,state,id});
-				mongoDbUtils.saveLogs( request,0, 3, "ĞŞ¸ÄÁË³µÎ»£º"+cid+",±àºÅ£º"+id);
+				//mongoDbUtils.saveLogs( request,0, 3, "ä¿®æ”¹äº†è½¦ä½ï¼š"+cid+",ç¼–å·ï¼š"+id);
 			}
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}
 		return null;
 	}
-	
+
 	private int getNumberStart(String v){
 		for(int i=0;i<v.length();i++){
 			char c = v.charAt(i);
 			if(Check.isNumber(c+"")){
-					return i;
+				return i;
 			}
 		}
 		return 0;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
 
 }

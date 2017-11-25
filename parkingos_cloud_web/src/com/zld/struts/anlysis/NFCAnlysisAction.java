@@ -26,7 +26,7 @@ import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 
 /**
- * NFC¿¨Ê¹ÓÃÍ³¼Æ
+ * NFCå¡ä½¿ç”¨ç»Ÿè®¡
  * @author Administrator
  *
  */
@@ -36,7 +36,7 @@ public class NFCAnlysisAction extends Action {
 	private DataBaseService daService;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -69,25 +69,25 @@ public class NFCAnlysisAction extends Action {
 				Long b = TimeTools.getLongMilliSecondFrom_HHMMDD(btime)/1000;
 				Long e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime+" 23:59:59");
 				sqlInfo =new SqlInfo(" create_time between ? and ?  ",
-						new Object[]{b,e});//c_type 0:NFC,1:IBeacon 2:ÕÕÅÆ
+						new Object[]{b,e});//c_type 0:NFC,1:IBeacon 2:ç…§ç‰Œ
 			}
-			
+
 			sql +=" where "+sqlInfo.getSql();
 			params= sqlInfo.getParams();
 			Long role = (Long)request.getSession().getAttribute("role");
-			if(role==5){//ÊĞ³¡×¨Ô±£¬½ö²éÑ¯×Ô¼ºµÄ³µ³¡NFCË¢¿¨Çé¿ö
+			if(role==5){//å¸‚åœºä¸“å‘˜ï¼Œä»…æŸ¥è¯¢è‡ªå·±çš„è½¦åœºNFCåˆ·å¡æƒ…å†µ
 				Long loginUin = (Long)request.getSession().getAttribute("loginuin");
-				sql +=" and comid in(select id from com_info_tb where uid=?) "; 
+				sql +=" and comid in(select id from com_info_tb where uid=?) ";
 				params.add(loginUin);
 			}
-			
+
 			list = daService.getAllMap(sql +" group by comid,state,c_type,type order by state desc ",params);
 			setName(list);
 			if(list!=null)
 				list = setList(list);
 			int count = list!=null?list.size():0;
 			Collections.sort(list, new ListSort2());
-			//ÅÅĞò,°´½ğ¶îÓÉ´óµ½Ğ¡
+			//æ’åº,æŒ‰é‡‘é¢ç”±å¤§åˆ°å°
 			String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"comid");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
@@ -105,9 +105,9 @@ public class NFCAnlysisAction extends Action {
 			String btime = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "btime"));
 			String etime = RequestUtil.processParams(request, "etime");
 			String otype = RequestUtil.processParams(request, "otype");
-			Long state = 1L;//ÒÑÖ§¸¶
+			Long state = 1L;//å·²æ”¯ä»˜
 			Integer c_type = 0;//NFC
-			Integer type = 0;//0:ÆÕÍ¨¶©µ¥ 1£º¼«ËÙÍ¨¶©µ¥
+			Integer type = 0;//0:æ™®é€šè®¢å• 1ï¼šæé€Ÿé€šè®¢å•
 			if(otype.equals("cn")){
 				state = 0L;
 			}else if(otype.equals("hz")){
@@ -139,11 +139,11 @@ public class NFCAnlysisAction extends Action {
 			if(parkid!=-1){
 				if(!otype.equals("e")){
 					list = daService.getAll("select c.company_name cname,o.total,o.create_time,o.end_time,o.nfc_uuid,o.car_number carnumber from order_tb o,com_info_tb c where o.comid=c.id " +
-							"and o.comid=?  and o.create_time between ? and ? and o.c_type=? and o.state=? and o.type=? order by o.id desc ",
+									"and o.comid=?  and o.create_time between ? and ? and o.c_type=? and o.state=? and o.type=? order by o.id desc ",
 							new Object[]{parkid,b,e,c_type,state,type} );
 				}else{
 					list = daService.getAll("select c.company_name cname,o.total,o.create_time,o.end_time,o.nfc_uuid,o.car_number carnumber from order_tb o,com_info_tb c where o.comid=c.id " +
-							"and o.comid=?  and o.create_time between ? and ? and o.state=? order by o.id desc ",
+									"and o.comid=?  and o.create_time between ? and ? and o.state=? order by o.id desc ",
 							new Object[]{parkid,b,e,state} );
 				}
 				int count = list!=null?list.size():0;
@@ -156,7 +156,7 @@ public class NFCAnlysisAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void setName(List list){
 		List<Object> uins = new ArrayList<Object>();
 		if(list!=null&&list.size()>0){
@@ -192,22 +192,22 @@ public class NFCAnlysisAction extends Action {
 			}
 		}
 	}
-	
+
 	private List<Map<String, Object>> setList(List<Map<String, Object>> lists){
 		List<Map<String, Object>> result = new ArrayList<Map<String,Object>>();
 		List<Long> comidList = new ArrayList<Long>();
 		for(Map<String, Object> map :lists){
 			Long comId = (Long)map.get("comid");
 			Integer state = (Integer)map.get("state");
-			Integer ctype = (Integer)map.get("c_type");
+			Integer ctype =3;// (Integer)map.get("c_type");
 			Integer type = (Integer)map.get("type");
-			if(state == 2){//ÌÓµ¥
+			if(state == 2){//é€ƒå•
 				if(comidList.contains(comId)){
 					for(Map<String, Object> eMap : result){
 						Long cid = (Long)eMap.get("comid");
 						if(cid.intValue() == comId.intValue()){
 							Long eorder = (Long)eMap.get("eorder");
-							eorder += (Long)map.get("scount");//ÌÓµ¥ÊıÁ¿²»Çø·Öc_type
+							eorder += (Long)map.get("scount");//é€ƒå•æ•°é‡ä¸åŒºåˆ†c_type
 							eMap.put("eorder", eorder);
 						}
 					}
@@ -216,34 +216,34 @@ public class NFCAnlysisAction extends Action {
 					map.put("eorder", map.get("scount"));
 					result.add(map);
 				}
-			}else if(state==1){//ÀúÊ·¶©µ¥
+			}else if(state==1){//å†å²è®¢å•
 				if(comidList.contains(comId)){
 					for(Map<String, Object> hMap : result){
 						Long cid = (Long)hMap.get("comid");
 						if(cid.intValue() == comId.intValue()){
 							if(ctype.equals(0)){//NFC
-								hMap.put("hncount", map.get("scount"));//NFCÀúÊ·¶©µ¥ÊıÁ¿
-								hMap.put("ntotal", map.get("total"));//NFC½áËã½ğ¶î
+								hMap.put("hncount", map.get("scount"));//NFCå†å²è®¢å•æ•°é‡
+								hMap.put("ntotal", map.get("total"));//NFCç»“ç®—é‡‘é¢
 							}else if(ctype == 2){
 								if(type == 0){
-									hMap.put("hmzcount", map.get("scount"));//ÊÖ»úÕÕÅÆÀúÊ·¶©µ¥ÊıÁ¿
-									hMap.put("zmtotal", map.get("total"));//ÊÖ»úÕÕÅÆ½áËã½ğ¶î
+									hMap.put("hmzcount", map.get("scount"));//æ‰‹æœºç…§ç‰Œå†å²è®¢å•æ•°é‡
+									hMap.put("zmtotal", map.get("total"));//æ‰‹æœºç…§ç‰Œç»“ç®—é‡‘é¢
 								}
 							}else if(ctype == 3){
 								if(type == 0){
-									hMap.put("hzcount", map.get("scount"));//Í¨µÀÕÕÅÆÀúÊ·¶©µ¥ÊıÁ¿
-									hMap.put("ztotal", map.get("total"));//Í¨µÀÕÕÅÆ½áËã½ğ¶î
+									hMap.put("hzcount", map.get("scount"));//é€šé“ç…§ç‰Œå†å²è®¢å•æ•°é‡
+									hMap.put("ztotal", map.get("total"));//é€šé“ç…§ç‰Œç»“ç®—é‡‘é¢
 								}else if(type == 1){
-									hMap.put("hjcount", map.get("scount"));//¼«ËÙÍ¨ÕÕÅÆÀúÊ·¶©µ¥ÊıÁ¿
-									hMap.put("jtotal", map.get("total"));//¼«ËÙÍ¨ÕÕÅÆ½áËã½ğ¶î
+									hMap.put("hjcount", map.get("scount"));//æé€Ÿé€šç…§ç‰Œå†å²è®¢å•æ•°é‡
+									hMap.put("jtotal", map.get("total"));//æé€Ÿé€šç…§ç‰Œç»“ç®—é‡‘é¢
 								}
 							}else if(ctype == 4){
-								hMap.put("hdcount", map.get("scount"));//Ö±¸¶ÀúÊ·¶©µ¥ÊıÁ¿
-								hMap.put("dtotal", map.get("total"));//Ö±¸¶½áËã½ğ¶î
+								hMap.put("hdcount", map.get("scount"));//ç›´ä»˜å†å²è®¢å•æ•°é‡
+								hMap.put("dtotal", map.get("total"));//ç›´ä»˜ç»“ç®—é‡‘é¢
 							}
-							
+
 							if(ctype == 0 || (ctype == 2 && type == 0) || (ctype == 3 && (type == 0 || type == 1)) || ctype == 4){
-								
+
 								if(hMap.get("ctotal") != null){
 									Long ctotal = (Long)hMap.get("ctotal");
 									Long scount = (Long)map.get("scount");
@@ -258,47 +258,47 @@ public class NFCAnlysisAction extends Action {
 				}else{
 					comidList.add(comId);
 					if(ctype.equals(0)){//NFC
-						map.put("hncount", map.get("scount"));//NFCÀúÊ·¶©µ¥ÊıÁ¿
-						map.put("ntotal", map.get("total"));//NFC½áËã½ğ¶î
+						map.put("hncount", map.get("scount"));//NFCå†å²è®¢å•æ•°é‡
+						map.put("ntotal", map.get("total"));//NFCç»“ç®—é‡‘é¢
 					}else if(ctype == 2){
 						if(type == 0){
-							map.put("hmzcount", map.get("scount"));//ÕÕÅÆÀúÊ·¶©µ¥ÊıÁ¿
-							map.put("zmtotal", map.get("total"));//ÕÕÅÆ½áËã½ğ¶î
+							map.put("hmzcount", map.get("scount"));//ç…§ç‰Œå†å²è®¢å•æ•°é‡
+							map.put("zmtotal", map.get("total"));//ç…§ç‰Œç»“ç®—é‡‘é¢
 						}
 					}else if(ctype == 3){
 						if(type == 0){
-							map.put("hzcount", map.get("scount"));//ÕÕÅÆÀúÊ·¶©µ¥ÊıÁ¿
-							map.put("ztotal", map.get("total"));//ÕÕÅÆ½áËã½ğ¶î
+							map.put("hzcount", map.get("scount"));//ç…§ç‰Œå†å²è®¢å•æ•°é‡
+							map.put("ztotal", map.get("total"));//ç…§ç‰Œç»“ç®—é‡‘é¢
 						}else if(type == 1){
-							map.put("hjcount", map.get("scount"));//¼«ËÙÍ¨ÕÕÅÆÀúÊ·¶©µ¥ÊıÁ¿
-							map.put("jtotal", map.get("total"));//¼«ËÙÍ¨ÕÕÅÆ½áËã½ğ¶î
+							map.put("hjcount", map.get("scount"));//æé€Ÿé€šç…§ç‰Œå†å²è®¢å•æ•°é‡
+							map.put("jtotal", map.get("total"));//æé€Ÿé€šç…§ç‰Œç»“ç®—é‡‘é¢
 						}
 					}else if(ctype == 4){
-						map.put("hdcount", map.get("scount"));//Ö±¸¶ÀúÊ·¶©µ¥ÊıÁ¿
-						map.put("dtotal", map.get("total"));//Ö±¸¶½áËã½ğ¶î
+						map.put("hdcount", map.get("scount"));//ç›´ä»˜å†å²è®¢å•æ•°é‡
+						map.put("dtotal", map.get("total"));//ç›´ä»˜ç»“ç®—é‡‘é¢
 					}
 					if(ctype == 0 || (ctype == 2 && type == 0) || (ctype == 3 && (type == 0 || type == 1)) || ctype == 4){
-						map.put("ctotal", map.get("scount"));//ÓÃÓÚ±È½Ï´óĞ¡ÅÅĞòµÄÊıÖµ
+						map.put("ctotal", map.get("scount"));//ç”¨äºæ¯”è¾ƒå¤§å°æ’åºçš„æ•°å€¼
 					}
 					map.put("eorder", null);
 					result.add(map);
 				}
-			}else {//µ±Ç°¶©µ¥£¬Î´½áËãµÄ
+			}else {//å½“å‰è®¢å•ï¼Œæœªç»“ç®—çš„
 				if(comidList.contains(comId)){
 					for(Map<String, Object> dMap : result){
 						Long cid = (Long)dMap.get("comid");
 						if(cid.intValue()==comId.intValue()){
 							if(ctype.equals(0)){//NFC
-								dMap.put("cncount", map.get("scount"));//NFCµ±Ç°¶©µ¥ÊıÁ¿
+								dMap.put("cncount", map.get("scount"));//NFCå½“å‰è®¢å•æ•°é‡
 							}else if(ctype == 2){
 								if(type == 0){
-									map.put("czmcount", map.get("scount"));//ÊÖ»úÕÕÅÆµ±Ç°¶©µ¥ÊıÁ¿
+									map.put("czmcount", map.get("scount"));//æ‰‹æœºç…§ç‰Œå½“å‰è®¢å•æ•°é‡
 								}
 							}else if(ctype == 3){
 								if(type == 0){
-									map.put("czcount", map.get("scount"));//Í¨µÀÕÕÅÆµ±Ç°¶©µ¥ÊıÁ¿
+									map.put("czcount", map.get("scount"));//é€šé“ç…§ç‰Œå½“å‰è®¢å•æ•°é‡
 								}else if(type == 1){
-									map.put("cjcount", map.get("scount"));//¼«ËÙÍ¨ÕÕÅÆµ±Ç°¶©µ¥ÊıÁ¿
+									map.put("cjcount", map.get("scount"));//æé€Ÿé€šç…§ç‰Œå½“å‰è®¢å•æ•°é‡
 								}
 							}
 							break;
@@ -307,19 +307,19 @@ public class NFCAnlysisAction extends Action {
 				}else {
 					map.put("corder", map.get("scount"));
 					if(ctype.equals(0)){//NFC
-						map.put("cncount", map.get("scount"));//NFCµ±Ç°¶©µ¥ÊıÁ¿
+						map.put("cncount", map.get("scount"));//NFCå½“å‰è®¢å•æ•°é‡
 					}else if(ctype == 2){
 						if(type == 0){
-							map.put("czmcount", map.get("scount"));//ÊÖ»úÕÕÅÆµ±Ç°¶©µ¥ÊıÁ¿
+							map.put("czmcount", map.get("scount"));//æ‰‹æœºç…§ç‰Œå½“å‰è®¢å•æ•°é‡
 						}
 					}else if(ctype == 3){
 						if(type == 0){
-							map.put("czcount", map.get("scount"));//ÕÕÅÆµ±Ç°¶©µ¥ÊıÁ¿
+							map.put("czcount", map.get("scount"));//ç…§ç‰Œå½“å‰è®¢å•æ•°é‡
 						}else if(type == 1){
-							map.put("cjcount", map.get("scount"));//¼«ËÙÍ¨ÕÕÅÆµ±Ç°¶©µ¥ÊıÁ¿
+							map.put("cjcount", map.get("scount"));//æé€Ÿé€šç…§ç‰Œå½“å‰è®¢å•æ•°é‡
 						}
 					}else if(ctype == 4){
-						map.put("hdcount", map.get("scount"));//Ö±¸¶ÀúÊ·¶©µ¥ÊıÁ¿
+						map.put("hdcount", map.get("scount"));//ç›´ä»˜å†å²è®¢å•æ•°é‡
 					}
 					map.put("eorder", null);
 					map.put("hncount", null);
@@ -332,7 +332,7 @@ public class NFCAnlysisAction extends Action {
 		}
 		return result ;
 	}
-	
+
 	class ListSort implements Comparator<Map<String, Object>>{
 
 		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
@@ -357,10 +357,10 @@ public class NFCAnlysisAction extends Action {
 			}
 			return b2.compareTo(b1);
 		}
-		
+
 	}
-	
-	
+
+
 	class ListSort2 implements Comparator<Map<String, Object>>{
 
 		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
@@ -371,6 +371,6 @@ public class NFCAnlysisAction extends Action {
 			if(b2 == null) b2 = 0L;
 			return b2.compareTo(b1);
 		}
-		
+
 	}
 }

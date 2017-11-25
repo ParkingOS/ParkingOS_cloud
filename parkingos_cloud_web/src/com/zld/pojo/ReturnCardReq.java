@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 public class ReturnCardReq implements Serializable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private Long cardId = -1L;
-	private Long unBinder = -1L;//×¢Ïú²Ù×÷ÈË
-	private Long groupId = -1L;//²Ù×÷ÈËËùÔÚµÄÔËÓª¼¯ÍÅ
+	private Long unBinder = -1L;//æ³¨é”€æ“ä½œäºº
+	private Long groupId = -1L;//æ“ä½œäººæ‰€åœ¨çš„è¿è¥é›†å›¢
 	private Long curTime = System.currentTimeMillis()/1000;
 	public Long getCardId() {
 		return cardId;

@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-	http://www.springframework.org/schema/tx 
-	http://www.springframework.org/schema/tx/spring-tx-2.5.xsd  
+
+
 	http://www.springframework.org/schema/context    
-	http://www.springframework.org/schema/context/spring-context-2.5.xsd  
-	http://www.springframework.org/schema/aop 
-	http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+	http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
     <import resource="classpath:dbconfig.xml" />
 	
@@ -121,6 +118,8 @@
 	<bean name="/shop"  class="com.zld.struts.parkadmin.ShopManageAction"></bean>
 	<!-- 商户人员管理 -->
 	<bean name="/shopmember"  class="com.zld.struts.parkadmin.ShopMemberManageAction"></bean>
+	<!-- 商户充值流水管理 -->
+	<bean name="/shopaccount"  class="com.zld.struts.parkadmin.ShopAccountManageAction"></bean>
 	<!-- 商户减免券统计 -->
 	<bean name="/shopticketanlysis"  class="com.zld.struts.anlysis.ShopTicketAnlysisAction"></bean>
 	<!-- 停车位月卡收费账台统计 -->
@@ -264,6 +263,7 @@
 	<bean name="/planmember" class="com.zld.struts.parkadmin.PlanMemberAction "></bean>
 	<bean name="/reserveorder" class="com.zld.struts.parkadmin.ReserveOrderAction "></bean>
 	<bean name="/cartype" class="com.zld.struts.admin.CarTypeSetAction"></bean>
+	<bean name="/zldblack" class="com.zld.struts.parkadmin.BlackManageAction"></bean>
 	<bean name="/freereasons" class="com.zld.struts.admin.FreeReasonsAction"></bean>
 	<bean name="/orgtype" class="com.zld.struts.auth.AuthOrgTypeAction"></bean>
 	<bean name="/organize" class="com.zld.struts.auth.AuthOrganizAction"></bean>
@@ -291,6 +291,7 @@
 	<bean name="/cityanlysis" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
 	<bean name="/cardanlysis" class="com.zld.struts.anlysis.CardAnlysisAction"></bean>
 	<bean name="/statsberth" class="com.zld.struts.anlysis.StatsBerthAccountAction"></bean>
+	<bean name="/shopmenu" class="com.zld.struts.admin.menuforword.MenuForwordAction"></bean>
 	<!-- 菜单跳转 -->
 	<bean name="/survey" class="com.zld.struts.parkadmin.ParkSurveyAction"></bean>
 	<bean name="/carpicsup" class="com.zld.struts.request.CarPicsUploadAction"></bean>
@@ -300,6 +301,7 @@
 	<bean name="/liftrod" class="com.zld.struts.parkadmin.LiftRodAction"></bean>
 	<!-- 车场云系统日志 -->
 	<bean name="/parklogs" class="com.zld.struts.parkadmin.PrakLogsAction"></bean>
+	<bean name="/parklogsmongo" class="com.zld.struts.parkadmin.PrakLogsMongoAction"></bean>
 	<bean name="/sensorlog" class="com.zld.struts.parkadmin.SensorLogsAction"></bean>
 	<bean name="/sensorcarinout" class="com.zld.struts.parkadmin.SensorLogCarInOutAction"></bean>
 	<!-- 新功能管理 -->
@@ -319,5 +321,7 @@
 	<bean name="/cheatsensor" class="com.zld.struts.request.CheatSensorAction"></bean>
 	<!-- 月卡续费记录 -->
 	<bean name="/buycardrecord" class="com.zld.struts.parkadmin.BuyCardRecordAction"></bean>
+	<bean name="/workrecord" class="com.zld.struts.parkadmin.WorkRecordAction"></bean>
+	<bean name="/shopticket"  class="com.zld.struts.parkadmin.ShopTicketManageAction"></bean>
 	<context:component-scan base-package="com.zld" />
 	</beans>

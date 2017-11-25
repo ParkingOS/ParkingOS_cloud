@@ -19,19 +19,19 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 /**
- * 泊车点管理，在总管理员后台
+ * 娉婅溅鐐圭鐞嗭紝鍦ㄦ�荤鐞嗗憳鍚庡彴
  * @author Administrator
  *
  */
 public class IbeaconManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(IbeaconManageAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -63,7 +63,7 @@ public class IbeaconManageAction extends Action{
 				sql +=" where "+sqlInfo.getSql();
 				params= sqlInfo.getParams();
 			}
-			
+
 			Long count= daService.getCount(countSql, params);
 			List list = null;//daService.getPage(sql, null, 1, 20);
 			if(count>0){
@@ -95,7 +95,7 @@ public class IbeaconManageAction extends Action{
 			Integer minor = RequestUtil.getInteger(request, "minor", -1);
 			Long ntime = System.currentTimeMillis()/1000;
 			int ret = daService.update("insert into area_ibeacon_tb (ibcid,lng,lat,comid,major," +
-					"minor,reg_time,state,pass) values(?,?,?,?,?,?,?,?,?)",
+							"minor,reg_time,state,pass) values(?,?,?,?,?,?,?,?,?)",
 					new Object[]{ibcid,lng,lat,_comid,major,minor,ntime,1,pass});
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}else if(action.equals("delete")){

@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 public class Car implements Serializable {
 	private Long id;
-	private Long uin = -1L;//ËùÊô³µÖ÷ÕËºÅ
-	private String car_number;//³µÅÆºÅÂë
-	private Integer is_comuse = 0;//-- ÊÇ·ñÊÇ³£ÓÃ³µÅÆ£¬0 ²»ÊÇ£¬1ÊÇ
-	private String remark;//ËµÃ÷
-	private Integer is_auth = 0;//-- ÊÇ·ñÒÑÈÏÖ¤ 0Î´ÈÏÖ¤£¬1ÒÑÈÏÖ¤ 2ÈÏÖ¤ÖĞ
-	private Long create_time;//¼ÇÂ¼Ê±¼ä
+	private Long uin = -1L;//æ‰€å±è½¦ä¸»è´¦å·
+	private String car_number;//è½¦ç‰Œå·ç 
+	private Integer is_comuse = 0;//-- æ˜¯å¦æ˜¯å¸¸ç”¨è½¦ç‰Œï¼Œ0 ä¸æ˜¯ï¼Œ1æ˜¯
+	private String remark;//è¯´æ˜
+	private Integer is_auth = 0;//-- æ˜¯å¦å·²è®¤è¯ 0æœªè®¤è¯ï¼Œ1å·²è®¤è¯ 2è®¤è¯ä¸­
+	private Long create_time;//è®°å½•æ—¶é—´
 	public Long getId() {
 		return id;
 	}

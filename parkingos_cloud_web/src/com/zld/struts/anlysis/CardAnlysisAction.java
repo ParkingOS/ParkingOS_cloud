@@ -27,10 +27,10 @@ public class CardAnlysisAction extends Action {
 	private PgOnlyReadService readService;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		if(uin == null){
@@ -40,7 +40,7 @@ public class CardAnlysisAction extends Action {
 		if(groupid == null){
 			return null;
 		}
-		if(groupid == null) 
+		if(groupid == null)
 			groupid = -1L;
 		if(action.equals("")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -60,10 +60,10 @@ public class CardAnlysisAction extends Action {
 					"sum(slot_act_balance) slot_act_balance from card_anlysis_tb where create_time " +
 					" between ? and ? and groupid=? ", new Object[]{b, e, groupid});
 			Map<String, Object> firstMap = readService.getMap("select all_count,all_balance from card_anlysis_tb" +
-					" where create_time=? and groupid=? limit ?", 
+							" where create_time=? and groupid=? limit ?",
 					new Object[]{b - 24 * 60 *60, groupid, 1});
 			Map<String, Object> lastMap = readService.getMap("select all_count,all_balance from card_anlysis_tb" +
-					" where create_time=? and groupid=? limit ?", 
+							" where create_time=? and groupid=? limit ?",
 					new Object[]{e - 24 * 60 *60 + 1, groupid, 1});
 			if(slotMap != null){
 				slotMap.put("groupid", groupid);

@@ -26,8 +26,8 @@ import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 @Repository
 public class CommonMethods {
-	
-	
+
+
 	private Logger logger = Logger.getLogger(CommonMethods.class);
 	@Autowired
 	private MemcacheUtils memcacheUtils;
@@ -40,10 +40,10 @@ public class CommonMethods {
 	@Autowired
 	private MongoDbUtils mongoDbUtils;
 	/**
-	 * ¼ì²éÇ©ÈëÇ©ÍËÊÇ·ñÔÚÕı³£ÉÏ°àÊ±¼äÄÚ
-	 * @param role_id ½ÇÉ«
-	 * @param time	Ç©ÈëÇ©ÍËÊ±¼ä
-	 * @param type	0£ºÇ©Èë 1£ºÇ©ÍË
+	 * æ£€æŸ¥ç­¾å…¥ç­¾é€€æ˜¯å¦åœ¨æ­£å¸¸ä¸Šç­æ—¶é—´å†…
+	 * @param role_id è§’è‰²
+	 * @param time	ç­¾å…¥ç­¾é€€æ—¶é—´
+	 * @param type	0ï¼šç­¾å…¥ 1ï¼šç­¾é€€
 	 * @return
 	 */
 	public boolean checkWorkTime(Long uin, long time){
@@ -65,7 +65,7 @@ public class CommonMethods {
 							int e_minute = workTime.getE_minute();
 							int start = b_hour * 60 * 60 + b_minute * 60;
 							int end = e_hour * 60 * 60 + e_minute * 60;
-							if(offsetTime > start && offsetTime < end){//ÉÏ°àÆÚ¼äÇ©ÈëÇ©³ö¶¼ËãÒì³£
+							if(offsetTime > start && offsetTime < end){//ä¸Šç­æœŸé—´ç­¾å…¥ç­¾å‡ºéƒ½ç®—å¼‚å¸¸
 								return false;
 							}
 						}
@@ -73,12 +73,12 @@ public class CommonMethods {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("¼ì²éÉÏ°à×´Ì¬Òì³£", e);
+			logger.error("æ£€æŸ¥ä¸Šç­çŠ¶æ€å¼‚å¸¸", e);
 		}
 		return true;
 	}
 	/**
-	 * Ö÷Ò³¿ØÖÆÌ¨Ìø×ªµ½ÆäËûÒ³Ãæ£¬·µ»ØÊ±ĞèÒªÖ÷Ò³µÄÊÚÈ¨±àºÅ
+	 * ä¸»é¡µæ§åˆ¶å°è·³è½¬åˆ°å…¶ä»–é¡µé¢ï¼Œè¿”å›æ—¶éœ€è¦ä¸»é¡µçš„æˆæƒç¼–å·
 	 * @return
 	 */
 	public void setIndexAuthId(HttpServletRequest request){
@@ -108,17 +108,17 @@ public class CommonMethods {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * »ñÈ¡ËøÃû³Æ
+	 * è·å–é”åç§°
 	 * @param key
 	 * @return
 	 */
 	public String getLock(Object key){
 		String lock = null;
 		try {
-			String className = Thread.currentThread().getStackTrace()[2].getClassName();//»ñÈ¡µ±Ç°·½·¨µÄÉÏÒ»¼¶µ÷ÓÃÕßµÄÀàÃû
-			String methodName = Thread.currentThread() .getStackTrace()[2].getMethodName();//»ñÈ¡µ±Ç°·½·¨µÄÉÏÒ»¼¶µ÷ÓÃÕßµÄ·½·¨Ãû
+			String className = Thread.currentThread().getStackTrace()[2].getClassName();//è·å–å½“å‰æ–¹æ³•çš„ä¸Šä¸€çº§è°ƒç”¨è€…çš„ç±»å
+			String methodName = Thread.currentThread() .getStackTrace()[2].getMethodName();//è·å–å½“å‰æ–¹æ³•çš„ä¸Šä¸€çº§è°ƒç”¨è€…çš„æ–¹æ³•å
 			lock = className + "-" + methodName + "-" + key;
 			return lock;
 		} catch (Exception e) {
@@ -126,16 +126,16 @@ public class CommonMethods {
 		}
 		return lock;
 	}
-	
+
 	/**
-	 * »ñÈ¡ÊÕ·ÑÔ±µ±Ç°Ç©µ½µÄ¹¤×÷¼ÇÂ¼
+	 * è·å–æ”¶è´¹å‘˜å½“å‰ç­¾åˆ°çš„å·¥ä½œè®°å½•
 	 * @param parkUserId
 	 * @return
 	 */
 	public WorkRecord getWorkRecord(Long parkUserId){
 		try {
 			WorkRecord workRecord = pgOnlyReadService.getPOJO("select * from parkuser_work_record_tb where " +
-					" uid=? and state=? order by id desc limit ? ", 
+							" uid=? and state=? order by id desc limit ? ",
 					new Object[]{parkUserId, 0,  1}, WorkRecord.class);
 			return workRecord;
 		} catch (Exception e) {
@@ -143,9 +143,9 @@ public class CommonMethods {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * ²éÑ¯ËùÓĞÊÕ·ÑÔ±µÄÊÕÈë»ã×Ü
+	 * æŸ¥è¯¢æ‰€æœ‰æ”¶è´¹å‘˜çš„æ”¶å…¥æ±‡æ€»
 	 * @param idList
 	 * @param beginTime
 	 * @param endTime
@@ -185,9 +185,9 @@ public class CommonMethods {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * ²éÑ¯ËùÓĞÊÕ·ÑÔ±µÄÊÕÈë»ã×Ü
+	 * æŸ¥è¯¢æ‰€æœ‰æ”¶è´¹å‘˜çš„æ”¶å…¥æ±‡æ€»
 	 * @param idList
 	 * @param beginTime
 	 * @param endTime
@@ -227,9 +227,9 @@ public class CommonMethods {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * ²éÑ¯Ã¿¸öÊÕ·ÑÔ±µÄÊÕ·ÑÇé¿ö
+	 * æŸ¥è¯¢æ¯ä¸ªæ”¶è´¹å‘˜çš„æ”¶è´¹æƒ…å†µ
 	 * @param idList
 	 * @param beginTime
 	 * @param endTime
@@ -268,7 +268,7 @@ public class CommonMethods {
 		}
 		return null;
 	}
-	
+
 	public List<Map<String, Object>> getIncome(Long startTime, Long endTime, List<Object> comidList, List<Object> uinList, Map<String, Object> otherMap){
 		try {
 			List<Object> params = new ArrayList<Object>();
@@ -298,29 +298,29 @@ public class CommonMethods {
 			}
 			List<Object> params1 = new ArrayList<Object>();
 			params1.addAll(params);
-			params1.add(0);//Í£³µ·Ñ£¨·ÇÔ¤¸¶
-			params1.add(1);//Ô¤¸¶Í£³µ·Ñ
-			params1.add(2);//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
-			params1.add(3);//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-			params1.add(4);//×·½ÉÍ£³µ·Ñ
+			params1.add(0);//åœè½¦è´¹ï¼ˆéé¢„ä»˜
+			params1.add(1);//é¢„ä»˜åœè½¦è´¹
+			params1.add(2);//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
+			params1.add(3);//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+			params1.add(4);//è¿½ç¼´åœè½¦è´¹
 			SqlInfo sqlInfo1 = new SqlInfo(sql + " and a.target in (?,?,?,?,?)", params1);
 			List<Map<String, Object>> list1 = anlysisMoney(1, startTime, endTime, new String[]{"a.target" + groupSql}, sqlInfo1, null);
 			params1.clear();
 			params1.addAll(params);
-			params1.add(4);//³µÖ÷¸¶Í£³µ·Ñ£¨·ÇÔ¤¸¶£©»òÕß´òÉÍÊÕ·ÑÔ±
-			params1.add(5);//×·½ÉÍ£³µ·Ñ
-			params1.add(6);//³µÖ÷Ô¤¸¶Í£³µ·Ñ
-			params1.add(7);//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
-			params1.add(8);//Ô¤¸¶²¹½É£¨Ô¤¸¶½ğ¶î²»×ã£©
+			params1.add(4);//è½¦ä¸»ä»˜åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰æˆ–è€…æ‰“èµæ”¶è´¹å‘˜
+			params1.add(5);//è¿½ç¼´åœè½¦è´¹
+			params1.add(6);//è½¦ä¸»é¢„ä»˜åœè½¦è´¹
+			params1.add(7);//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
+			params1.add(8);//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜é‡‘é¢ä¸è¶³ï¼‰
 			SqlInfo sqlInfo2 = new SqlInfo(sql + " and a.target in (?,?,?,?,?)", params1);
 			List<Map<String, Object>> list2 = anlysisMoney(2, startTime, endTime, new String[]{"a.target" + groupSql}, sqlInfo2, null);
 			params1.clear();
 			params1.addAll(params);
-			params1.add(0);//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-			params1.add(7);//×·½ÉÍ£³µ·Ñ
-			params1.add(8);//³µÖ÷Ô¤¸¶Í£³µ·Ñ
-			params1.add(9);//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
-			params1.add(10);//Ô¤¸¶²¹½É£¨Ô¤¸¶½ğ¶î²»×ã£©
+			params1.add(0);//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+			params1.add(7);//è¿½ç¼´åœè½¦è´¹
+			params1.add(8);//è½¦ä¸»é¢„ä»˜åœè½¦è´¹
+			params1.add(9);//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
+			params1.add(10);//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜é‡‘é¢ä¸è¶³ï¼‰
 			String sql2 = sql;
 			String groupSql2 = groupSql;
 			if(sql.contains("a.uin")){
@@ -333,20 +333,20 @@ public class CommonMethods {
 			List<Map<String, Object>> list3 = anlysisMoney(3, startTime, endTime, new String[]{"a.source" + groupSql2}, sqlInfo3, null);
 			params1.clear();
 			params1.addAll(params);
-			params1.add(0);//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-			params1.add(2);//×·½ÉÍ£³µ·Ñ
-			params1.add(3);//Ô¤¸¶Í£³µ·Ñ
-			params1.add(4);//Ô¤¸¶ÍË¿î£¨Ô¤¸¶£©
-			params1.add(5);//Ô¤¸¶²¹½É£¨Ô¤¸¶½ğ¶î²»×ã£©
+			params1.add(0);//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+			params1.add(2);//è¿½ç¼´åœè½¦è´¹
+			params1.add(3);//é¢„ä»˜åœè½¦è´¹
+			params1.add(4);//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜ï¼‰
+			params1.add(5);//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜é‡‘é¢ä¸è¶³ï¼‰
 			SqlInfo sqlInfo4 = new SqlInfo(sql2 + " and a.source in (?,?,?,?,?)", params1);
 			List<Map<String, Object>> list4 = anlysisMoney(4, startTime, endTime, new String[]{"a.source" + groupSql2}, sqlInfo4, null);
 			params1.clear();
 			params1.addAll(params);
-			params1.add(0);//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-			params1.add(2);//×·½ÉÍ£³µ·Ñ
-			params1.add(3);//Ô¤¸¶Í£³µ·Ñ
-			params1.add(4);//Ô¤¸¶ÍË¿î£¨Ô¤¸¶£©
-			params1.add(5);//Ô¤¸¶²¹½É£¨Ô¤¸¶½ğ¶î²»×ã£©
+			params1.add(0);//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+			params1.add(2);//è¿½ç¼´åœè½¦è´¹
+			params1.add(3);//é¢„ä»˜åœè½¦è´¹
+			params1.add(4);//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜ï¼‰
+			params1.add(5);//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜é‡‘é¢ä¸è¶³ï¼‰
 			SqlInfo sqlInfo5 = new SqlInfo(sql2 + " and a.source in (?,?,?,?,?)", params1);
 			List<Map<String, Object>> list5 = anlysisMoney(5, startTime, endTime, new String[]{"a.source" + groupSql2}, sqlInfo5, null);
 			params1.clear();
@@ -409,15 +409,15 @@ public class CommonMethods {
 			List<Map<String, Object>> list14 = anlysisMoney(14, startTime, endTime, new String[]{groupSql5}, sqlInfo8, null);
 			params1.clear();
 			params1.addAll(params);
-			params1.add(4);//charge_type -- ³äÖµ·½Ê½£º4£ºÔ¤Ö§¸¶ÍË¿î
-			params1.add(0);//consume_type --Ïû·Ñ·½Ê½ 0£ºÖ§¸¶Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-			params1.add(1);//consume_type --Ïû·Ñ·½Ê½ 1£ºÔ¤¸¶Í£³µ·Ñ
-			params1.add(2);//consume_type --Ïû·Ñ·½Ê½ 2£º²¹½ÉÍ£³µ·Ñ
-			params1.add(3);//consume_type --Ïû·Ñ·½Ê½3£º×·½ÉÍ£³µ·Ñ
+			params1.add(4);//charge_type -- å……å€¼æ–¹å¼ï¼š4ï¼šé¢„æ”¯ä»˜é€€æ¬¾
+			params1.add(0);//consume_type --æ¶ˆè´¹æ–¹å¼ 0ï¼šæ”¯ä»˜åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+			params1.add(1);//consume_type --æ¶ˆè´¹æ–¹å¼ 1ï¼šé¢„ä»˜åœè½¦è´¹
+			params1.add(2);//consume_type --æ¶ˆè´¹æ–¹å¼ 2ï¼šè¡¥ç¼´åœè½¦è´¹
+			params1.add(3);//consume_type --æ¶ˆè´¹æ–¹å¼3ï¼šè¿½ç¼´åœè½¦è´¹
 			SqlInfo sqlInfo9 = new SqlInfo(sql2 + " and (a.charge_type in (?) or a.consume_type in (?,?,?,?))", params1);
-			List<Map<String, Object>> list13 = anlysisMoney(13, startTime, endTime, 
+			List<Map<String, Object>> list13 = anlysisMoney(13, startTime, endTime,
 					new String[]{"a.charge_type,a.consume_type" + groupSql2}, sqlInfo9, null);
-			
+
 			List<Map<String, Object>> infoList = new ArrayList<Map<String,Object>>();
 			List<Object> idList = new ArrayList<Object>();
 			mergeIncome(1, list1, infoList, idList);
@@ -440,7 +440,7 @@ public class CommonMethods {
 		}
 		return null;
 	}
-	
+
 	private List<Map<String, Object>> mergeIncome(int type, List<Map<String, Object>> list, List<Map<String, Object>> infoList, List<Object> idList){
 		try {
 			if(list != null && !list.isEmpty()){
@@ -469,107 +469,107 @@ public class CommonMethods {
 						for(Map<String, Object> infoMap : infoList){
 							Long infoId = (Long)infoMap.get("id");
 							if(id.intValue() == infoId.intValue()){
-								Double prepay_cash = Double.valueOf(infoMap.get("prepay_cash") + "");//ÏÖ½ğÔ¤Ö§¸¶
-								Double add_cash = Double.valueOf(infoMap.get("add_cash") + "");//ÏÖ½ğ²¹½É
-								Double refund_cash = Double.valueOf(infoMap.get("refund_cash") + "");//ÏÖ½ğÍË¿î
-								Double pursue_cash = Double.valueOf(infoMap.get("pursue_cash") + "");//ÏÖ½ğ×·½É
-								Double pfee_cash = Double.valueOf(infoMap.get("pfee_cash") + "");//ÏÖ½ğÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
-								Double prepay_epay = Double.valueOf(infoMap.get("prepay_epay") + "");//µç×ÓÔ¤Ö§¸¶
-								Double add_epay = Double.valueOf(infoMap.get("add_epay") + "");//µç×Ó²¹½É
-								Double refund_epay = Double.valueOf(infoMap.get("refund_epay") + "");//µç×ÓÍË¿î
-								Double pursue_epay = Double.valueOf(infoMap.get("pursue_epay") + "");//µç×Ó×·½É
-								Double pfee_epay = Double.valueOf(infoMap.get("pfee_epay") + "");//µç×ÓÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
-								Double escape = Double.valueOf(infoMap.get("escape") + "");//ÌÓµ¥Î´×·½ÉµÄÍ£³µ·Ñ
-								Double prepay_escape = Double.valueOf(infoMap.get("prepay_escape") + "");//ÌÓµ¥Î´×·½ÉµÄ¶©µ¥ÒÑÔ¤½ÉµÄ½ğ¶î
-								Double sensor_fee = Double.valueOf(infoMap.get("sensor_fee") + "");//³µ¼ìÆ÷Í£³µ·Ñ
-								Double prepay_card = Double.valueOf(infoMap.get("prepay_card") + "");//Ë¢¿¨Ô¤Ö§¸¶
-								Double add_card = Double.valueOf(infoMap.get("add_card") + "");//Ë¢¿¨²¹½É
-								Double refund_card = Double.valueOf(infoMap.get("refund_card") + "");//Ë¢¿¨ÍË¿î
-								Double pursue_card = Double.valueOf(infoMap.get("pursue_card") + "");//Ë¢¿¨×·½É
-								Double pfee_card = Double.valueOf(infoMap.get("pfee_card") + "");//Ë¢¿¨Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
+								Double prepay_cash = Double.valueOf(infoMap.get("prepay_cash") + "");//ç°é‡‘é¢„æ”¯ä»˜
+								Double add_cash = Double.valueOf(infoMap.get("add_cash") + "");//ç°é‡‘è¡¥ç¼´
+								Double refund_cash = Double.valueOf(infoMap.get("refund_cash") + "");//ç°é‡‘é€€æ¬¾
+								Double pursue_cash = Double.valueOf(infoMap.get("pursue_cash") + "");//ç°é‡‘è¿½ç¼´
+								Double pfee_cash = Double.valueOf(infoMap.get("pfee_cash") + "");//ç°é‡‘åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+								Double prepay_epay = Double.valueOf(infoMap.get("prepay_epay") + "");//ç”µå­é¢„æ”¯ä»˜
+								Double add_epay = Double.valueOf(infoMap.get("add_epay") + "");//ç”µå­è¡¥ç¼´
+								Double refund_epay = Double.valueOf(infoMap.get("refund_epay") + "");//ç”µå­é€€æ¬¾
+								Double pursue_epay = Double.valueOf(infoMap.get("pursue_epay") + "");//ç”µå­è¿½ç¼´
+								Double pfee_epay = Double.valueOf(infoMap.get("pfee_epay") + "");//ç”µå­åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+								Double escape = Double.valueOf(infoMap.get("escape") + "");//é€ƒå•æœªè¿½ç¼´çš„åœè½¦è´¹
+								Double prepay_escape = Double.valueOf(infoMap.get("prepay_escape") + "");//é€ƒå•æœªè¿½ç¼´çš„è®¢å•å·²é¢„ç¼´çš„é‡‘é¢
+								Double sensor_fee = Double.valueOf(infoMap.get("sensor_fee") + "");//è½¦æ£€å™¨åœè½¦è´¹
+								Double prepay_card = Double.valueOf(infoMap.get("prepay_card") + "");//åˆ·å¡é¢„æ”¯ä»˜
+								Double add_card = Double.valueOf(infoMap.get("add_card") + "");//åˆ·å¡è¡¥ç¼´
+								Double refund_card = Double.valueOf(infoMap.get("refund_card") + "");//åˆ·å¡é€€æ¬¾
+								Double pursue_card = Double.valueOf(infoMap.get("pursue_card") + "");//åˆ·å¡è¿½ç¼´
+								Double pfee_card = Double.valueOf(infoMap.get("pfee_card") + "");//åˆ·å¡åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 								if(type == 1){
-									if(target == 0){//ÏÖ½ğÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
+									if(target == 0){//ç°é‡‘åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 										pfee_cash += summoney;
-									}else if(target == 1){//Ô¤¸¶Í£³µ·Ñ
+									}else if(target == 1){//é¢„ä»˜åœè½¦è´¹
 										prepay_cash += summoney;
-									}else if(target == 2){//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
+									}else if(target == 2){//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
 										refund_cash += summoney;
-									}else if(target == 3){//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-										add_cash += summoney; 
-									}else if(target == 4){//×·½ÉÍ£³µ·Ñ
+									}else if(target == 3){//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+										add_cash += summoney;
+									}else if(target == 4){//è¿½ç¼´åœè½¦è´¹
 										pursue_cash += summoney;
 									}
 								}else if(type == 2){
-									if(target == 4){//³µÖ÷¸¶Í£³µ·Ñ£¨·ÇÔ¤¸¶£©»òÕß´òÉÍÊÕ·ÑÔ±
+									if(target == 4){//è½¦ä¸»ä»˜åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰æˆ–è€…æ‰“èµæ”¶è´¹å‘˜
 										pfee_epay += summoney;
-									}else if(target == 5){//×·½ÉÍ£³µ·Ñ
+									}else if(target == 5){//è¿½ç¼´åœè½¦è´¹
 										pursue_epay += summoney;
-									}else if(target == 6){//Ô¤¸¶Í£³µ·Ñ
+									}else if(target == 6){//é¢„ä»˜åœè½¦è´¹
 										prepay_epay += summoney;
-									}else if(target == 7){//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
+									}else if(target == 7){//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
 										refund_epay += summoney;
-									}else if(target == 8){//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-										add_epay += summoney; 
+									}else if(target == 8){//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+										add_epay += summoney;
 									}
 								}else if(type == 3){
-									if(target == 0){//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
+									if(target == 0){//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 										pfee_epay += summoney;
-									}else if(target == 7){//×·½ÉÍ£³µ·Ñ
+									}else if(target == 7){//è¿½ç¼´åœè½¦è´¹
 										pursue_epay += summoney;
-									}else if(target == 8){//Ô¤¸¶Í£³µ·Ñ
+									}else if(target == 8){//é¢„ä»˜åœè½¦è´¹
 										prepay_epay += summoney;
-									}else if(target == 9){//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
+									}else if(target == 9){//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
 										refund_epay += summoney;
-									}else if(target == 10){//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-										add_epay += summoney; 
+									}else if(target == 10){//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+										add_epay += summoney;
 									}
 								}else if(type == 4){
-									if(target == 0){//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
+									if(target == 0){//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 										pfee_epay += summoney;
-									}else if(target == 2){//×·½ÉÍ£³µ·Ñ
+									}else if(target == 2){//è¿½ç¼´åœè½¦è´¹
 										pursue_epay += summoney;
-									}else if(target == 3){//Ô¤¸¶Í£³µ·Ñ
+									}else if(target == 3){//é¢„ä»˜åœè½¦è´¹
 										prepay_epay += summoney;
-									}else if(target == 4){//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
+									}else if(target == 4){//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
 										refund_epay += summoney;
-									}else if(target == 5){//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-										add_epay += summoney; 
+									}else if(target == 5){//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+										add_epay += summoney;
 									}
 								}else if(type == 5){
-									if(target == 0){//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
+									if(target == 0){//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 										pfee_epay += summoney;
-									}else if(target == 2){//×·½ÉÍ£³µ·Ñ
+									}else if(target == 2){//è¿½ç¼´åœè½¦è´¹
 										pursue_epay += summoney;
-									}else if(target == 3){//Ô¤¸¶Í£³µ·Ñ
+									}else if(target == 3){//é¢„ä»˜åœè½¦è´¹
 										prepay_epay += summoney;
-									}else if(target == 4){//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
+									}else if(target == 4){//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
 										refund_epay += summoney;
-									}else if(target == 5){//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-										add_epay += summoney; 
+									}else if(target == 5){//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+										add_epay += summoney;
 									}
 								}else if(type == 6){
 									escape += summoney;
 								}else if(type == 7){
 									sensor_fee += summoney;
-								}else if(type == 8 
-										|| type == 9 
-										|| type == 10 
-										|| type == 11 
-										|| type == 12 
+								}else if(type == 8
+										|| type == 9
+										|| type == 10
+										|| type == 11
+										|| type == 12
 										|| type == 14){
 									prepay_escape += summoney;
 								}else if(type == 13){
 									Integer charge_type = (Integer)map.get("charge_type");
 									Integer consume_type = (Integer)map.get("consume_type");
-									if(charge_type == 4){//4£ºÔ¤Ö§¸¶ÍË¿î
+									if(charge_type == 4){//4ï¼šé¢„æ”¯ä»˜é€€æ¬¾
 										refund_card += summoney;
-									}else if(consume_type == 0){//0£ºÖ§¸¶Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
+									}else if(consume_type == 0){//0ï¼šæ”¯ä»˜åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 										pfee_card += summoney;
-									}else if(consume_type == 1){//1£ºÔ¤¸¶Í£³µ·Ñ
+									}else if(consume_type == 1){//1ï¼šé¢„ä»˜åœè½¦è´¹
 										prepay_card += summoney;
-									}else if(consume_type == 2){//2£º²¹½ÉÍ£³µ·Ñ
+									}else if(consume_type == 2){//2ï¼šè¡¥ç¼´åœè½¦è´¹
 										add_card += summoney;
-									}else if(consume_type == 3){//3£º×·½ÉÍ£³µ·Ñ
+									}else if(consume_type == 3){//3ï¼šè¿½ç¼´åœè½¦è´¹
 										pursue_card += summoney;
 									}
 								}
@@ -614,88 +614,88 @@ public class CommonMethods {
 						Double pursue_card = 0d;
 						Double pfee_card = 0d;
 						if(type == 1){
-							if(target == 0){//ÏÖ½ğÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
+							if(target == 0){//ç°é‡‘åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 								pfee_cash += summoney;
-							}else if(target == 1){//Ô¤¸¶Í£³µ·Ñ
+							}else if(target == 1){//é¢„ä»˜åœè½¦è´¹
 								prepay_cash += summoney;
-							}else if(target == 2){//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
+							}else if(target == 2){//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
 								refund_cash += summoney;
-							}else if(target == 3){//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-								add_cash += summoney; 
-							}else if(target == 4){//×·½ÉÍ£³µ·Ñ
+							}else if(target == 3){//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+								add_cash += summoney;
+							}else if(target == 4){//è¿½ç¼´åœè½¦è´¹
 								pursue_cash += summoney;
 							}
 						}else if(type == 2){
-							if(target == 4){//³µÖ÷¸¶Í£³µ·Ñ£¨·ÇÔ¤¸¶£©»òÕß´òÉÍÊÕ·ÑÔ±
+							if(target == 4){//è½¦ä¸»ä»˜åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰æˆ–è€…æ‰“èµæ”¶è´¹å‘˜
 								pfee_epay += summoney;
-							}else if(target == 5){//×·½ÉÍ£³µ·Ñ
+							}else if(target == 5){//è¿½ç¼´åœè½¦è´¹
 								pursue_epay += summoney;
-							}else if(target == 6){//Ô¤¸¶Í£³µ·Ñ
+							}else if(target == 6){//é¢„ä»˜åœè½¦è´¹
 								prepay_epay += summoney;
-							}else if(target == 7){//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
+							}else if(target == 7){//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
 								refund_epay += summoney;
-							}else if(target == 8){//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-								add_epay += summoney; 
+							}else if(target == 8){//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+								add_epay += summoney;
 							}
 						}else if(type == 3){
-							if(target == 0){//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
+							if(target == 0){//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 								pfee_epay += summoney;
-							}else if(target == 7){//×·½ÉÍ£³µ·Ñ
+							}else if(target == 7){//è¿½ç¼´åœè½¦è´¹
 								pursue_epay += summoney;
-							}else if(target == 8){//Ô¤¸¶Í£³µ·Ñ
+							}else if(target == 8){//é¢„ä»˜åœè½¦è´¹
 								prepay_epay += summoney;
-							}else if(target == 9){//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
+							}else if(target == 9){//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
 								refund_epay += summoney;
-							}else if(target == 10){//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-								add_epay += summoney; 
+							}else if(target == 10){//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+								add_epay += summoney;
 							}
 						}else if(type == 4){
-							if(target == 0){//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
+							if(target == 0){//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 								pfee_epay += summoney;
-							}else if(target == 2){//×·½ÉÍ£³µ·Ñ
+							}else if(target == 2){//è¿½ç¼´åœè½¦è´¹
 								pursue_epay += summoney;
-							}else if(target == 3){//Ô¤¸¶Í£³µ·Ñ
+							}else if(target == 3){//é¢„ä»˜åœè½¦è´¹
 								prepay_epay += summoney;
-							}else if(target == 4){//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
+							}else if(target == 4){//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
 								refund_epay += summoney;
-							}else if(target == 5){//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-								add_epay += summoney; 
+							}else if(target == 5){//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+								add_epay += summoney;
 							}
 						}else if(type == 5){
-							if(target == 0){//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
+							if(target == 0){//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 								pfee_epay += summoney;
-							}else if(target == 2){//×·½ÉÍ£³µ·Ñ
+							}else if(target == 2){//è¿½ç¼´åœè½¦è´¹
 								pursue_epay += summoney;
-							}else if(target == 3){//Ô¤¸¶Í£³µ·Ñ
+							}else if(target == 3){//é¢„ä»˜åœè½¦è´¹
 								prepay_epay += summoney;
-							}else if(target == 4){//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
+							}else if(target == 4){//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
 								refund_epay += summoney;
-							}else if(target == 5){//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-								add_epay += summoney; 
+							}else if(target == 5){//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+								add_epay += summoney;
 							}
 						}else if(type == 6){
 							escape += summoney;
 						}else if(type == 7){
 							sensor_fee += summoney;
-						}else if(type == 8 
-								|| type == 9 
-								|| type == 10 
-								|| type == 11 
-								|| type == 12 
+						}else if(type == 8
+								|| type == 9
+								|| type == 10
+								|| type == 11
+								|| type == 12
 								|| type ==14){
 							prepay_escape += summoney;
 						}else if(type == 13){
 							Integer charge_type = (Integer)map.get("charge_type");
 							Integer consume_type = (Integer)map.get("consume_type");
-							if(charge_type == 4){//4£ºÔ¤Ö§¸¶ÍË¿î
+							if(charge_type == 4){//4ï¼šé¢„æ”¯ä»˜é€€æ¬¾
 								refund_card += summoney;
-							}else if(consume_type == 0){//0£ºÖ§¸¶Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
+							}else if(consume_type == 0){//0ï¼šæ”¯ä»˜åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 								pfee_card += summoney;
-							}else if(consume_type == 1){//1£ºÔ¤¸¶Í£³µ·Ñ
+							}else if(consume_type == 1){//1ï¼šé¢„ä»˜åœè½¦è´¹
 								prepay_card += summoney;
-							}else if(consume_type == 2){//2£º²¹½ÉÍ£³µ·Ñ
+							}else if(consume_type == 2){//2ï¼šè¡¥ç¼´åœè½¦è´¹
 								add_card += summoney;
-							}else if(consume_type == 3){//3£º×·½ÉÍ£³µ·Ñ
+							}else if(consume_type == 3){//3ï¼šè¿½ç¼´åœè½¦è´¹
 								pursue_card += summoney;
 							}
 						}
@@ -729,19 +729,19 @@ public class CommonMethods {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Í³Ò»½Ó¿Ú,Í³¼ÆÍ£³µ·Ñ
-	 * @param type	1£ºÏÖ½ğ£¬2£ºÊÕ·ÑÔ±ÕË»§µç×ÓÊÕ·Ñ£¬3£º³µ³¡ÕË»§µç×ÓÊÕ·Ñ£¬4£ºÔËÓª¼¯ÍÅÕË»§µç×ÓÊÕ·Ñ£¬5£ºÉÌ»§ÕË»§µç×ÓÊÕ·Ñ£¬6£º²éÎ´×·½É¶©µ¥½ğ¶î£¬7£º²é³µ¼ìÆ÷¶©µ¥½ğ¶î
-	 * @param startTime	¿ªÊ¼Ê±¼ä
-	 * @param endTime	½áÊøÊ±¼ä
-	 * @param groupby	·Ö×é²éÑ¯µÄ×Ö¶Î
-	 * @param sqlInfo	ÆäËûµÄÏŞÖÆÌõ¼ş
-	 * @param otherMap	·Ç»ù´¡ÏŞÖÆÌõ¼ş¶¼Ğ´ÔÚÕâÀï
+	 * ç»Ÿä¸€æ¥å£,ç»Ÿè®¡åœè½¦è´¹
+	 * @param type	1ï¼šç°é‡‘ï¼Œ2ï¼šæ”¶è´¹å‘˜è´¦æˆ·ç”µå­æ”¶è´¹ï¼Œ3ï¼šè½¦åœºè´¦æˆ·ç”µå­æ”¶è´¹ï¼Œ4ï¼šè¿è¥é›†å›¢è´¦æˆ·ç”µå­æ”¶è´¹ï¼Œ5ï¼šå•†æˆ·è´¦æˆ·ç”µå­æ”¶è´¹ï¼Œ6ï¼šæŸ¥æœªè¿½ç¼´è®¢å•é‡‘é¢ï¼Œ7ï¼šæŸ¥è½¦æ£€å™¨è®¢å•é‡‘é¢
+	 * @param startTime	å¼€å§‹æ—¶é—´
+	 * @param endTime	ç»“æŸæ—¶é—´
+	 * @param groupby	åˆ†ç»„æŸ¥è¯¢çš„å­—æ®µ
+	 * @param sqlInfo	å…¶ä»–çš„é™åˆ¶æ¡ä»¶
+	 * @param otherMap	éåŸºç¡€é™åˆ¶æ¡ä»¶éƒ½å†™åœ¨è¿™é‡Œ
 	 * @return
 	 */
-	public List<Map<String, Object>> anlysisMoney(int type, Long startTime, Long endTime, 
-			String[] groupby, SqlInfo sqlInfo, Map<String, Object> otherMap){
+	public List<Map<String, Object>> anlysisMoney(int type, Long startTime, Long endTime,
+												  String[] groupby, SqlInfo sqlInfo, Map<String, Object> otherMap){
 		List<Map<String, Object>> result= null;
 		try {
 			List<Object> params = new ArrayList<Object>();
@@ -749,95 +749,95 @@ public class CommonMethods {
 			String condSql = "";
 			params.add(startTime);
 			params.add(endTime);
-			String ogroupSql = groupSql(groupby);//²éÑ¯·Ö×é×Ö¶Î
+			String ogroupSql = groupSql(groupby);//æŸ¥è¯¢åˆ†ç»„å­—æ®µ
 			String groupSql = "";
 			if(!"".equals(ogroupSql)){
 				groupSql = " group by " + ogroupSql.substring(1);
 			}
-			if(sqlInfo!=null){//ÆäËûÏŞÖÆÌõ¼ş
+			if(sqlInfo!=null){//å…¶ä»–é™åˆ¶æ¡ä»¶
 				condSql +=" and "+sqlInfo.getSql();
 				params.addAll(sqlInfo.getParams());
 			}
 			switch (type) {
-			case 1://²éÏÖ½ğ
-				sql = "select sum(a.amount) summoney "+ogroupSql+" from parkuser_cash_tb a,order_tb o " +
-						" where a.orderid=o.id and a.create_time between ? and ? "+condSql + groupSql;
-				break;
-			case 2://²éÊÕ·ÑÔ±ÕË»§µç×ÓÊÕ·Ñ
-				sql = "select sum(a.amount) summoney "+ogroupSql+" from parkuser_account_tb a,order_tb o " +
-						" where a.orderid=o.id and a.create_time between ? and ? " + condSql +
-						" and a.remark like ? "+ groupSql;
-				params.add("Í£³µ·Ñ%");
-				break;
-			case 3://²é³µ³¡ÕË»§µç×ÓÊÕ·Ñ
-				sql = "select sum(a.amount) summoney "+ogroupSql+" from park_account_tb a,order_tb o " +
-						" where a.orderid=o.id and a.create_time between ? and ? "+condSql + groupSql;
-				break;
-			case 4://²éÔËÓª¼¯ÍÅÕË»§µç×ÓÊÕ·Ñ
-				sql = "select sum(a.amount) summoney "+ogroupSql+" from group_account_tb a,order_tb o " +
-						" where a.orderid=o.id and a.create_time between ? and ? "+condSql + groupSql;
-				break;
-			case 5://²éÉÌ»§ÕË»§µç×ÓÊÕ·Ñ
-				sql = "select sum(a.amount) summoney "+ogroupSql+" from city_account_tb a,order_tb o " +
-						" where a.orderid=o.id and a.create_time between ? and ? "+condSql + groupSql;
-				break;
-			case 6://²éÎ´×·½É½ğ¶î
-				sql = "select sum(total) summoney "+ogroupSql+" from no_payment_tb where end_time " +
-						" between ? and ? "+condSql+" and state=? "+groupSql;
-				params.add(0);
-				break;
-			case 7://²é³µ¼ìÆ÷¶©µ¥½ğ¶î
-				sql = "select sum(total) summoney "+ogroupSql+" from berth_order_tb where out_time" +
-						" between ? and ? "+condSql + " " + groupSql;
-				break;
-			case 8://²éÌÓµ¥µ«Î´×·½ÉµÄ¶©µ¥ÏÖ½ğÔ¤¸¶µÄ½ğ¶î
-				sql = "select sum(a.amount) summoney "+ogroupSql+" from no_payment_tb o,parkuser_cash_tb a" +
-						" where o.order_id=a.orderid and o.end_time between ? and ? " + condSql + 
-						" and o.state=? and a.target=? " + groupSql;
-				params.add(0);//Î´×·½É
-				params.add(1);//Ô¤¸¶Í£³µ·Ñ
-				break;
-			case 9://²éÌÓµ¥µ«Î´×·½ÉµÄ¶©µ¥µç×ÓÔ¤¸¶µÄ½ğ¶î
-				sql = "select sum(a.amount) summoney "+ogroupSql+" from no_payment_tb o,parkuser_account_tb a" +
-						" where o.order_id=a.orderid and o.end_time between ? and ? " + condSql + 
-						" and o.state=? and a.target=? " + groupSql;
-				params.add(0);//Î´×·½É
-				params.add(6);//Ô¤¸¶Í£³µ·Ñ
-				break;
-			case 10://²éÌÓµ¥µ«Î´×·½ÉµÄ¶©µ¥µç×ÓÔ¤¸¶µÄ½ğ¶î
-				sql = "select sum(a.amount) summoney "+ogroupSql+" from no_payment_tb o,park_account_tb a" +
-						" where o.order_id=a.orderid and o.end_time between ? and ? " + condSql +
-						" and o.state=? and a.source=? " + groupSql;
-				params.add(0);//Î´×·½É
-				params.add(8);//Ô¤¸¶Í£³µ·Ñ
-				break;
-			case 11://²éÌÓµ¥µ«Î´×·½ÉµÄ¶©µ¥µç×ÓÔ¤¸¶µÄ½ğ¶î
-				sql = "select sum(a.amount) summoney "+ogroupSql+" from no_payment_tb o,group_account_tb a" +
-						" where o.order_id=a.orderid and o.end_time between ? and ? " + condSql +
-						" and o.state=? and a.source=? " + groupSql;
-				params.add(0);//Î´×·½É
-				params.add(3);//Ô¤¸¶Í£³µ·Ñ
-				break;
-			case 12://²éÌÓµ¥µ«Î´×·½ÉµÄ¶©µ¥µç×ÓÔ¤¸¶µÄ½ğ¶î
-				sql = "select sum(a.amount) summoney "+ogroupSql+" from no_payment_tb o,city_account_tb a" +
-						" where o.order_id=a.orderid and o.end_time between ? and ? " + condSql +
-						" and o.state=? and a.source=? " + groupSql;
-				params.add(0);//Î´×·½É
-				params.add(3);//Ô¤¸¶Í£³µ·Ñ
-				break;
-			case 13://²éÑ¯Ë¢¿¨½ğ¶î
-				sql = "select sum(a.amount) summoney "+ogroupSql+" from card_account_tb a,order_tb o " +
-						" where a.orderid=o.id and a.create_time between ? and ? "+condSql + groupSql;
-				break;
-			case 14://²éÌÓµ¥µ«Î´×·½ÉµÄË¢¿¨Ô¤¸¶µÄ½ğ¶î
-				sql = "select sum(a.amount) summoney "+ogroupSql+" from no_payment_tb o,card_account_tb a" +
-						" where o.order_id=a.orderid and o.end_time between ? and ? " + condSql + 
-						" and o.state=? and a.consume_type=? " + groupSql;
-				params.add(0);//Î´×·½É
-				params.add(1);//Ô¤¸¶Í£³µ·Ñ
-				break;
-			default:
-				break;
+				case 1://æŸ¥ç°é‡‘
+					sql = "select sum(a.amount) summoney "+ogroupSql+" from parkuser_cash_tb a,order_tb o " +
+							" where a.orderid=o.id and a.create_time between ? and ? "+condSql + groupSql;
+					break;
+				case 2://æŸ¥æ”¶è´¹å‘˜è´¦æˆ·ç”µå­æ”¶è´¹
+					sql = "select sum(a.amount) summoney "+ogroupSql+" from parkuser_account_tb a,order_tb o " +
+							" where a.orderid=o.id and a.create_time between ? and ? " + condSql +
+							" and a.remark like ? "+ groupSql;
+					params.add("åœè½¦è´¹%");
+					break;
+				case 3://æŸ¥è½¦åœºè´¦æˆ·ç”µå­æ”¶è´¹
+					sql = "select sum(a.amount) summoney "+ogroupSql+" from park_account_tb a,order_tb o " +
+							" where a.orderid=o.id and a.create_time between ? and ? "+condSql + groupSql;
+					break;
+				case 4://æŸ¥è¿è¥é›†å›¢è´¦æˆ·ç”µå­æ”¶è´¹
+					sql = "select sum(a.amount) summoney "+ogroupSql+" from group_account_tb a,order_tb o " +
+							" where a.orderid=o.id and a.create_time between ? and ? "+condSql + groupSql;
+					break;
+				case 5://æŸ¥å•†æˆ·è´¦æˆ·ç”µå­æ”¶è´¹
+					sql = "select sum(a.amount) summoney "+ogroupSql+" from city_account_tb a,order_tb o " +
+							" where a.orderid=o.id and a.create_time between ? and ? "+condSql + groupSql;
+					break;
+				case 6://æŸ¥æœªè¿½ç¼´é‡‘é¢
+					sql = "select sum(total) summoney "+ogroupSql+" from no_payment_tb where end_time " +
+							" between ? and ? "+condSql+" and state=? "+groupSql;
+					params.add(0);
+					break;
+				case 7://æŸ¥è½¦æ£€å™¨è®¢å•é‡‘é¢
+					sql = "select sum(total) summoney "+ogroupSql+" from berth_order_tb where out_time" +
+							" between ? and ? "+condSql + " " + groupSql;
+					break;
+				case 8://æŸ¥é€ƒå•ä½†æœªè¿½ç¼´çš„è®¢å•ç°é‡‘é¢„ä»˜çš„é‡‘é¢
+					sql = "select sum(a.amount) summoney "+ogroupSql+" from no_payment_tb o,parkuser_cash_tb a" +
+							" where o.order_id=a.orderid and o.end_time between ? and ? " + condSql +
+							" and o.state=? and a.target=? " + groupSql;
+					params.add(0);//æœªè¿½ç¼´
+					params.add(1);//é¢„ä»˜åœè½¦è´¹
+					break;
+				case 9://æŸ¥é€ƒå•ä½†æœªè¿½ç¼´çš„è®¢å•ç”µå­é¢„ä»˜çš„é‡‘é¢
+					sql = "select sum(a.amount) summoney "+ogroupSql+" from no_payment_tb o,parkuser_account_tb a" +
+							" where o.order_id=a.orderid and o.end_time between ? and ? " + condSql +
+							" and o.state=? and a.target=? " + groupSql;
+					params.add(0);//æœªè¿½ç¼´
+					params.add(6);//é¢„ä»˜åœè½¦è´¹
+					break;
+				case 10://æŸ¥é€ƒå•ä½†æœªè¿½ç¼´çš„è®¢å•ç”µå­é¢„ä»˜çš„é‡‘é¢
+					sql = "select sum(a.amount) summoney "+ogroupSql+" from no_payment_tb o,park_account_tb a" +
+							" where o.order_id=a.orderid and o.end_time between ? and ? " + condSql +
+							" and o.state=? and a.source=? " + groupSql;
+					params.add(0);//æœªè¿½ç¼´
+					params.add(8);//é¢„ä»˜åœè½¦è´¹
+					break;
+				case 11://æŸ¥é€ƒå•ä½†æœªè¿½ç¼´çš„è®¢å•ç”µå­é¢„ä»˜çš„é‡‘é¢
+					sql = "select sum(a.amount) summoney "+ogroupSql+" from no_payment_tb o,group_account_tb a" +
+							" where o.order_id=a.orderid and o.end_time between ? and ? " + condSql +
+							" and o.state=? and a.source=? " + groupSql;
+					params.add(0);//æœªè¿½ç¼´
+					params.add(3);//é¢„ä»˜åœè½¦è´¹
+					break;
+				case 12://æŸ¥é€ƒå•ä½†æœªè¿½ç¼´çš„è®¢å•ç”µå­é¢„ä»˜çš„é‡‘é¢
+					sql = "select sum(a.amount) summoney "+ogroupSql+" from no_payment_tb o,city_account_tb a" +
+							" where o.order_id=a.orderid and o.end_time between ? and ? " + condSql +
+							" and o.state=? and a.source=? " + groupSql;
+					params.add(0);//æœªè¿½ç¼´
+					params.add(3);//é¢„ä»˜åœè½¦è´¹
+					break;
+				case 13://æŸ¥è¯¢åˆ·å¡é‡‘é¢
+					sql = "select sum(a.amount) summoney "+ogroupSql+" from card_account_tb a,order_tb o " +
+							" where a.orderid=o.id and a.create_time between ? and ? "+condSql + groupSql;
+					break;
+				case 14://æŸ¥é€ƒå•ä½†æœªè¿½ç¼´çš„åˆ·å¡é¢„ä»˜çš„é‡‘é¢
+					sql = "select sum(a.amount) summoney "+ogroupSql+" from no_payment_tb o,card_account_tb a" +
+							" where o.order_id=a.orderid and o.end_time between ? and ? " + condSql +
+							" and o.state=? and a.consume_type=? " + groupSql;
+					params.add(0);//æœªè¿½ç¼´
+					params.add(1);//é¢„ä»˜åœè½¦è´¹
+					break;
+				default:
+					break;
 			}
 			if(sql != null){
 				result = pgOnlyReadService.getAllMap(sql, params);
@@ -847,14 +847,14 @@ public class CommonMethods {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Æ´½Ó·Ö×é×Ö¶Îsql
+	 * æ‹¼æ¥åˆ†ç»„å­—æ®µsql
 	 * @param groupMap
 	 * @return
 	 */
 	private String groupSql(String[] groupby){
-		String groupSql = "";//·Ö×é×Ö¶Î
+		String groupSql = "";//åˆ†ç»„å­—æ®µ
 		try {
 			if(groupby != null && groupby.length > 0){
 				for(int i = 0; i < groupby.length; i++){
@@ -866,7 +866,7 @@ public class CommonMethods {
 		}
 		return groupSql;
 	}
-	
+
 	public Map<String, Object> getBerthCount(Long groupid, Long cityid){
 		String sql = "select sum(share_count) asum,sum(used_count) usum from park_anlysis_tb where ";
 		List<Object> params = new ArrayList<Object>();
@@ -891,9 +891,9 @@ public class CommonMethods {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * »ñÈ¡ÓÕµ¼ÆÁĞÄÌø×´Ì¬
+	 * è·å–è¯±å¯¼å±å¿ƒè·³çŠ¶æ€
 	 * @param list
 	 */
 	public void getState(List<Map<String, Object>> list){
@@ -913,14 +913,14 @@ public class CommonMethods {
 			}
 		}
 	}
-	
+
 	/**
-	 * ¸ù¾İÕËºÅ»ñÈ¡³µÅÆºÅ
+	 * æ ¹æ®è´¦å·è·å–è½¦ç‰Œå·
 	 * @param uin
 	 * @return
 	 */
 	public String getcar(Long uin){
-		String cars = "ÎŞ";
+		String cars = "æ— ";
 		if(uin!=-1){
 			List<Map<String, Object>> carList = daService.getAll("select car_number " +
 					" from car_info_tb where uin =? ", new Object[]{uin});
@@ -930,14 +930,14 @@ public class CommonMethods {
 					cars += map.get("car_number")+",";
 				}
 				if(cars.endsWith(","))
-					cars =cars.substring(0,cars.length()-1); 
+					cars =cars.substring(0,cars.length()-1);
 			}
 		}
 		return cars;
 	}
-	
+
 	/**
-	 * ¼ì²é¸Ã³µÎ»ÊÇ·ñ±»Õ¼ÓÃ
+	 * æ£€æŸ¥è¯¥è½¦ä½æ˜¯å¦è¢«å ç”¨
 	 * @param comid
 	 * @param plot
 	 * @param btime
@@ -949,23 +949,23 @@ public class CommonMethods {
 		logger.error("check plots>>>comid:"+comid+",plot:"+plot+",btime:"+btime+",etime:"+etime);
 		String r = null;
 		if(plot != null && !plot.equals("")){
-			Long count = daService.getLong("select count(id) from com_park_tb where cid=? and comid=? ", 
+			Long count = daService.getLong("select count(id) from com_park_tb where cid=? and comid=? ",
 					new Object[]{plot, comid});
 			logger.error("check plots>>>count:"+count);
 			if(count == 0){
-				r = "³µÎ»"+plot+"²»´æÔÚ";
+				r = "è½¦ä½"+plot+"ä¸å­˜åœ¨";
 			}
-			count = pgOnlyReadService.getLong("select count(cp.id) from carower_product cp,product_package_tb p where cp.pid=p.id and ((cp.b_time<=? and cp.e_time>?) or (cp.b_time<? and cp.b_time>=?)) and cp.p_lot=? and p.comid=? and cp.id!=? ", 
-					new Object[]{btime, btime, etime, btime, plot, comid, cid});
+			count = pgOnlyReadService.getLong("select count(cp.id) from carower_product cp,product_package_tb p where cp.pid=p.id and ((cp.b_time<=? and cp.e_time>?) or (cp.b_time<? and cp.b_time>=?)) and cp.p_lot=? and p.comid=? and cp.id!=? and cp.is_delete=?",
+					new Object[]{btime, btime, etime, btime, plot, comid, cid,0});
 			logger.error("check plots>>>count:"+count);
 			if(count > 0){
-				r = "µ±Ç°Ê±¼ä¶ÎÄÚ£¬³µÎ»"+plot+"ÒÑ±»Õ¼ÓÃ£¬ÍÆ¼ö³µÎ»±àºÅ£º";
+				r = "å½“å‰æ—¶é—´æ®µå†…ï¼Œè½¦ä½"+plot+"å·²è¢«å ç”¨ï¼Œæ¨èè½¦ä½ç¼–å·ï¼š";
 			}
 			if(r != null){
-				List<Map<String, Object>> list = pgOnlyReadService.getAll("select cid from com_park_tb where comid=? ", 
+				List<Map<String, Object>> list = pgOnlyReadService.getAll("select cid from com_park_tb where comid=? ",
 						new Object[]{comid});
-				List<Map<String, Object>> list2 = pgOnlyReadService.getAll("select cp.p_lot from carower_product cp,product_package_tb p where cp.pid=p.id and ((cp.b_time<=? and cp.e_time>?) or (cp.b_time<? and cp.b_time>=?)) and p.comid=? and cp.id!=? and cp.p_lot is not null ", 
-						new Object[]{btime, btime, etime, btime, comid, cid});
+				List<Map<String, Object>> list2 = pgOnlyReadService.getAll("select cp.p_lot from carower_product cp,product_package_tb p where cp.pid=p.id and ((cp.b_time<=? and cp.e_time>?) or (cp.b_time<? and cp.b_time>=?)) and p.comid=? and cp.id!=? and cp.is_delete=? and cp.p_lot is not null ",
+						new Object[]{btime, btime, etime, btime, comid, cid,0});
 				List<String> allplots = new ArrayList<String>();
 				List<String> usedplots = new ArrayList<String>();
 				for(Map<String, Object> map : list){
@@ -997,7 +997,7 @@ public class CommonMethods {
 		return r;
 	}
 	/**
-	 * »ñÈ¡ÔËÓª¼¯ÍÅÏ½ÏÂµÄ³µ³¡»òÕßÔËÓª¼¯ÍÅÏ½ÏÂµÄÇøÓòµØÏÂµÄ³µ³¡
+	 * è·å–è¿è¥é›†å›¢è¾–ä¸‹çš„è½¦åœºæˆ–è€…è¿è¥é›†å›¢è¾–ä¸‹çš„åŒºåŸŸåœ°ä¸‹çš„è½¦åœº
 	 * @param groupid
 	 * @return
 	 */
@@ -1020,14 +1020,14 @@ public class CommonMethods {
 		return parks;
 	}
 	/**
-	 * »ñÈ¡³ÇÊĞµ×ÏÂµÄÔËÓª¼¯ÍÅ±àºÅ
+	 * è·å–åŸå¸‚åº•ä¸‹çš„è¿è¥é›†å›¢ç¼–å·
 	 * @param cityid
 	 * @return
 	 */
-	public List<Object> getGroups(Long cityid){//²éÑ¯³ÇÊĞËùÏ½µÄÔËÓª¼¯ÍÅ
+	public List<Object> getGroups(Long cityid){//æŸ¥è¯¢åŸå¸‚æ‰€è¾–çš„è¿è¥é›†å›¢
 		List<Object> groups = new ArrayList<Object>();
 		List<Map<String, Object>> list = pgOnlyReadService.getAll("select id from org_group_tb" +
-				" where cityid=? and state=? ", 
+						" where cityid=? and state=? ",
 				new Object[]{cityid, 0});
 		if(list != null && !list.isEmpty()){
 			for(Map<String, Object> map : list){
@@ -1036,13 +1036,13 @@ public class CommonMethods {
 		}
 		return groups;
 	}
-	
+
 	/**
-	 * »ñÈ¡ÔËÓª¼¯ÍÅµ×ÏÂµÄÇøÓò
+	 * è·å–è¿è¥é›†å›¢åº•ä¸‹çš„åŒºåŸŸ
 	 * @param groups
 	 * @return
 	 */
-	public List<Object> getAreas(List<Object> groups){//²éÑ¯³ÇÊĞÖ±ÊôÇøÓòºÍ³ÇÊĞËùÏ½¼¯ÍÅÊôÏÂµÄÇøÓò
+	public List<Object> getAreas(List<Object> groups){//æŸ¥è¯¢åŸå¸‚ç›´å±åŒºåŸŸå’ŒåŸå¸‚æ‰€è¾–é›†å›¢å±ä¸‹çš„åŒºåŸŸ
 		List<Object> areas = new ArrayList<Object>();
 		List<Object> params = new ArrayList<Object>();
 		String sql = "select id from org_area_tb where state=? ";
@@ -1066,9 +1066,9 @@ public class CommonMethods {
 		}
 		return areas;
 	}
-	
+
 	/**
-	 * »ñÈ¡³ÇÊĞµ×ÏÂµÄ³µ³¡
+	 * è·å–åŸå¸‚åº•ä¸‹çš„è½¦åœº
 	 * @param cityid
 	 * @return
 	 */
@@ -1078,7 +1078,7 @@ public class CommonMethods {
 			List<Object> params = new ArrayList<Object>();
 			String sql = "select id from com_info_tb where state<>? " ;
 			params.add(1);
-			List<Object> groups = getGroups(cityid);//²éÑ¯¸Ã³ÇÊĞËùÏ½µÄÔËÓª¼¯ÍÅ
+			List<Object> groups = getGroups(cityid);//æŸ¥è¯¢è¯¥åŸå¸‚æ‰€è¾–çš„è¿è¥é›†å›¢
 			if(groups != null && !groups.isEmpty()){
 				String preParams  ="";
 				for(Object grouid : groups){
@@ -1101,9 +1101,9 @@ public class CommonMethods {
 		}
 		return parks;
 	}
-	
+
 	/**
-	 * »ñÈ¡ÔËÓª¼¯ÍÅµÄÊÕ·ÑÔ±
+	 * è·å–è¿è¥é›†å›¢çš„æ”¶è´¹å‘˜
 	 */
 	public List<Object> getCollctors(Long groupid){
 		List<Object> collectors = new ArrayList<Object>();
@@ -1116,7 +1116,7 @@ public class CommonMethods {
 			String sql = "select id from user_info_tb where state<>? and (auth_flag=? or auth_flag=?)" +
 					" and groupid=? " ;
 			List<Map<String, Object>> list = pgOnlyReadService.getAllMap(sql, params);
-			
+
 			if(list != null && !list.isEmpty()){
 				for(Map<String, Object> map : list){
 					collectors.add(map.get("id"));
@@ -1127,7 +1127,7 @@ public class CommonMethods {
 		}
 		return collectors;
 	}
-	
+
 	public List<Object> getcollctors(Long cityid){
 		List<Object> collectors = new ArrayList<Object>();
 		try {
@@ -1138,7 +1138,7 @@ public class CommonMethods {
 			params.add(1);
 			params.add(2);
 			params.add(cityid);
-			List<Object> groups = getGroups(cityid);//²éÑ¯¸Ã³ÇÊĞËùÏ½µÄÔËÓª¼¯ÍÅ
+			List<Object> groups = getGroups(cityid);//æŸ¥è¯¢è¯¥åŸå¸‚æ‰€è¾–çš„è¿è¥é›†å›¢
 			if(groups != null && !groups.isEmpty()){
 				String preParams  ="";
 				for(Object grouid : groups){
@@ -1162,9 +1162,9 @@ public class CommonMethods {
 		}
 		return collectors;
 	}
-	
+
 	/**
-	 * »ñÈ¡³µ³¡µÄ²´Î»¶Î±àºÅ
+	 * è·å–è½¦åœºçš„æ³Šä½æ®µç¼–å·
 	 * @param parks
 	 * @return
 	 */
@@ -1183,7 +1183,7 @@ public class CommonMethods {
 			}
 			sql += " and comid in ("+preParams+") ";
 			params.addAll(parks);
-			
+
 			List<Map<String, Object>> list = pgOnlyReadService.getAllMap(sql,params);
 			if(list != null && !list.isEmpty()){
 				for(Map<String, Object> map : list){
@@ -1193,17 +1193,17 @@ public class CommonMethods {
 		}
 		return berthseg;
 	}
-	
-	//¸üĞÂ³µÎ»ĞÅÏ¢£¬¸üĞÂÒÑ½áËã¶©µ¥µÄÕ¼ÓÃ³µÎ»
+
+	//æ›´æ–°è½¦ä½ä¿¡æ¯ï¼Œæ›´æ–°å·²ç»“ç®—è®¢å•çš„å ç”¨è½¦ä½
 	public void updateParkInfo(Long comId) {
 		int r =daService.update("update com_park_tb set state =?,order_id=? where order_id in " +
-				"(select id from order_tb where state in(?,?) and id in(select order_id from com_park_tb where comid=?)) ",
+						"(select id from order_tb where state in(?,?) and id in(select order_id from com_park_tb where comid=?)) ",
 				new Object[]{0,null,1,2,comId});
-		logger.error(comId+"£¬¸üĞÂÁË"+r+"Ìõ³µÎ»ĞÅÏ¢");
+		logger.error(comId+"ï¼Œæ›´æ–°äº†"+r+"æ¡è½¦ä½ä¿¡æ¯");
 	}
-	
-	
-	//²éÑ¯Àñ°ü
+
+
+	//æŸ¥è¯¢ç¤¼åŒ…
 	public boolean checkBonus(String mobile,Long uin){
 		List bList = pgOnlyReadService.getAll("select * from bonus_record_tb where mobile=? and state=? ",new Object[]{mobile,0});
 		String tsql = "insert into ticket_tb (create_time,limit_day,money,state,uin,type) values(?,?,?,?,?,?) ";
@@ -1216,15 +1216,15 @@ public class CommonMethods {
 				if(_bid!=null&&_bid>0)
 					bid = _bid;
 				Integer money = (Integer)map.get("amount");
-				
+
 				Integer type = (Integer)map.get("type");
 				Long ctime = TimeTools.getToDayBeginTime();//(Long)map.get("ctime");
 				Long etime = ctime+6*24*60*60-1;
-				
-				if(type==1){//Î¢ĞÅ´òÕÛÈ¯
+
+				if(type==1){//å¾®ä¿¡æ‰“æŠ˜åˆ¸
 					values.add(new Object[]{ctime,etime,money,0,uin,2});
-				}else {//ÆÕÍ¨Í£³µÈ¯
-					if(money==30||money==100){//3ÕÅ10ÔªÈ¯
+				}else {//æ™®é€šåœè½¦åˆ¸
+					if(money==30||money==100){//3å¼ 10å…ƒåˆ¸
 						if(money==30){
 							values.add(new Object[]{ctime,etime,4,0,uin,0});
 							values.add(new Object[]{ctime,etime,4,0,uin,0});
@@ -1244,7 +1244,7 @@ public class CommonMethods {
 								values.add(new Object[]{ctime,etime,10,0,uin,0});
 							}
 						}
-					}else if(money==10){//1ÕÅ10ÔªÈ¯
+					}else if(money==10){//1å¼ 10å…ƒåˆ¸
 						values.add(new Object[]{ctime,etime,4,0,uin,0});
 						values.add(new Object[]{ctime,etime,1,0,uin,0});
 						values.add(new Object[]{ctime,etime,3,0,uin,0});
@@ -1257,18 +1257,18 @@ public class CommonMethods {
 			}
 			if(values.size()>0){
 				int ret= daService.bathInsert(tsql, values, new int[]{4,4,4,4,4,4});
-				logger.error("ÕË»§:"+uin+",ÊÖ»ú£º"+mobile+",ÓÃ»§µÇÂ¼ £¬Ğ´Èëºì°üÍ£³µÈ¯"+ret+"Ìõ");
-				logger.error(">>>>ÓÃ»§ÒÑÁìÍêÈ¯£¬¸üĞÂºì°ü¼ÇÂ¼£º"+daService.update("update bonus_record_tb set state=? where mobile=?", new Object[]{1,mobile}));
+				logger.error("è´¦æˆ·:"+uin+",æ‰‹æœºï¼š"+mobile+",ç”¨æˆ·ç™»å½• ï¼Œå†™å…¥çº¢åŒ…åœè½¦åˆ¸"+ret+"æ¡");
+				logger.error(">>>>ç”¨æˆ·å·²é¢†å®Œåˆ¸ï¼Œæ›´æ–°çº¢åŒ…è®°å½•ï¼š"+daService.update("update bonus_record_tb set state=? where mobile=?", new Object[]{1,mobile}));
 				if(ret>0){
-					//¸üĞÂ³µÖ÷×¢²áÃ½ÌåÀ´Ô´ 0£º³µÖ÷×¢²á£¬1-997ÊÇ¶©ÖÆºì°ü£¨1½ñÈÕÍ·Ìõºì°ü£¨±±¾©£©£¬2´«µ¥ºì°ü,3½ÚÈÕºì°ü.4.½ñÈÕÍ·Ìõ£¨ÍâµØ£©£©£¬998Ö±¸¶ºì°ü,999ÊÇÊÕ·ÑÔ±ÍÆ¼ö£¬1000ÒÔÉÏÊÇ³µÖ÷·ÖÏí¶©µ¥ºì°ü
+					//æ›´æ–°è½¦ä¸»æ³¨å†Œåª’ä½“æ¥æº 0ï¼šè½¦ä¸»æ³¨å†Œï¼Œ1-997æ˜¯è®¢åˆ¶çº¢åŒ…ï¼ˆ1ä»Šæ—¥å¤´æ¡çº¢åŒ…ï¼ˆåŒ—äº¬ï¼‰ï¼Œ2ä¼ å•çº¢åŒ…,3èŠ‚æ—¥çº¢åŒ….4.ä»Šæ—¥å¤´æ¡ï¼ˆå¤–åœ°ï¼‰ï¼‰ï¼Œ998ç›´ä»˜çº¢åŒ…,999æ˜¯æ”¶è´¹å‘˜æ¨èï¼Œ1000ä»¥ä¸Šæ˜¯è½¦ä¸»åˆ†äº«è®¢å•çº¢åŒ…
 					if(bid!=null&&bid>0){
 						Integer media = 0;
-						if(bid>999){//1000ÒÔÉÏµÄ±àºÅÊÇ³µÖ÷·ÖÏí¶©µ¥ºì°ü£¬ÆäËüÎª¶©ÖÆºì°ü£¬ÏÈĞ´ÈëÓÃ»§±í
+						if(bid>999){//1000ä»¥ä¸Šçš„ç¼–å·æ˜¯è½¦ä¸»åˆ†äº«è®¢å•çº¢åŒ…ï¼Œå…¶å®ƒä¸ºè®¢åˆ¶çº¢åŒ…ï¼Œå…ˆå†™å…¥ç”¨æˆ·è¡¨
 							media=1000;
 						}else {
 							media = bid.intValue();
 						}
-						if(media>0){//¸üĞÂÃ½ÌåÀ´Ô´
+						if(media>0){//æ›´æ–°åª’ä½“æ¥æº
 							daService.update("update user_info_tb set media=? where id=? ", new Object[]{media,uin});
 						}
 					}
@@ -1276,21 +1276,21 @@ public class CommonMethods {
 				}
 			}
 		}else {
-			logger.error("ÕË»§:"+uin+",ÊÖ»ú£º"+mobile+",Ã»ÓĞºì°ü....");
+			logger.error("è´¦æˆ·:"+uin+",æ‰‹æœºï¼š"+mobile+",æ²¡æœ‰çº¢åŒ…....");
 		}
 		return false;
 	}
 	/**
-	 * È¡¿ÉÓÃÍ£³µÈ¯£¬Î´ÈÏÖ¤³µÖ÷×î¶àÊ¹ÓÃ3ÔªÈ¯¡£
-	 * 	 * 9ÔªµÄÍ£³µ·Ñ£º Ò²¿ÉÒÔÊ¹ÓÃ18ÔªµÄÍ£³µÈ¯£¬µ«Ö»ÄÜµÖ¿Û8Ôª¡£  
-		Õâ¸ö8×îºÃÊÇ¶¯Ì¬µÄ·şÎñÆ÷»ñÈ¡£¬ÒòÎªÓĞ¿ÉÄÜÑ¹Ëõ²¹Ìù£¬±ÈÈçÓÅ»İÈ¯Ö»ÄÜµÖ¿Û£¨Í£³µ·Ñ-2£©£¬8¾Í±äÎª7ÁË¡£
+	 * å–å¯ç”¨åœè½¦åˆ¸ï¼Œæœªè®¤è¯è½¦ä¸»æœ€å¤šä½¿ç”¨3å…ƒåˆ¸ã€‚
+	 * 	 * 9å…ƒçš„åœè½¦è´¹ï¼š ä¹Ÿå¯ä»¥ä½¿ç”¨18å…ƒçš„åœè½¦åˆ¸ï¼Œä½†åªèƒ½æŠµæ‰£8å…ƒã€‚
+	 è¿™ä¸ª8æœ€å¥½æ˜¯åŠ¨æ€çš„æœåŠ¡å™¨è·å–ï¼Œå› ä¸ºæœ‰å¯èƒ½å‹ç¼©è¡¥è´´ï¼Œæ¯”å¦‚ä¼˜æƒ åˆ¸åªèƒ½æŠµæ‰£ï¼ˆåœè½¦è´¹-2ï¼‰ï¼Œ8å°±å˜ä¸º7äº†ã€‚
 	 * @param uin
 	 * @param fee
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getTickets(Long uin,Double fee,Long comId,Long uid){
-		//²é³öËùÓĞ¿ÉÓÃµÄÈ¯
+		//æŸ¥å‡ºæ‰€æœ‰å¯ç”¨çš„åˆ¸
 		//Long ntime = System.currentTimeMillis()/1000;
 		Integer limit = CustomDefind.getUseMoney(fee,0);
 		Double splimit = StringUtils.formatDouble(CustomDefind.getValue("TICKET_LIMIT"));
@@ -1302,15 +1302,15 @@ public class CommonMethods {
 		if(!isauth){
 			if(blackuser||blackparkuser){
 				if(blackuser){
-					logger.error("³µÖ÷ÔÚºÚÃûµ¥ÄÚuin:"+uin+",fee:"+fee+",comid:"+comId);
+					logger.error("è½¦ä¸»åœ¨é»‘åå•å†…uin:"+uin+",fee:"+fee+",comid:"+comId);
 				}
 				if(blackparkuser){
-					logger.error("³µ³¡ÔÚºÚÃûµ¥ÄÚuin:"+uin+",fee:"+fee+",comid:"+comId);
+					logger.error("è½¦åœºåœ¨é»‘åå•å†…uin:"+uin+",fee:"+fee+",comid:"+comId);
 				}
 				return null;
 			}
 		}else{
-			logger.error("³µÖ÷uin:"+uin+"ÊÇÈÏÖ¤³µÖ÷£¬ÓÃÈ¯²»ÅĞ¶ÏÊÇ·ñÊÇºÚÃûµ¥£¬³µ³¡ÊÇ·ñºÚÃûµ¥¡£");
+			logger.error("è½¦ä¸»uin:"+uin+"æ˜¯è®¤è¯è½¦ä¸»ï¼Œç”¨åˆ¸ä¸åˆ¤æ–­æ˜¯å¦æ˜¯é»‘åå•ï¼Œè½¦åœºæ˜¯å¦é»‘åå•ã€‚");
 		}
 		List<Map<String, Object>> list = null;
 		double ticketquota=-1;
@@ -1320,21 +1320,21 @@ public class CommonMethods {
 				ticketquota = Double.parseDouble(usrMap.get("ticketquota")+"");
 			}
 		}
-		logger.error("¸ÃÊÕ·ÑÔ±:"+uid+"µÄÓÃÈ¯¶î¶ÈÊÇ£º"+ticketquota+"£¬(-1´ú±íÃ»ÏŞÖÆ)");
-		if(!isauth){//Î´ÈÏÖ¤³µÖ÷×î¶àÊ¹ÓÃ2ÔªÈ¯¡£
-			double noAuth = 1;//Î´ÈÏÖ¤³µÖ÷×î¸ßÊÔÓÃnoAuth(2)ÔªÈ¯,ÒÔºó¸Ä¶¯Õâ¸öÖµ¾Íok
+		logger.error("è¯¥æ”¶è´¹å‘˜:"+uid+"çš„ç”¨åˆ¸é¢åº¦æ˜¯ï¼š"+ticketquota+"ï¼Œ(-1ä»£è¡¨æ²¡é™åˆ¶)");
+		if(!isauth){//æœªè®¤è¯è½¦ä¸»æœ€å¤šä½¿ç”¨2å…ƒåˆ¸ã€‚
+			double noAuth = 1;//æœªè®¤è¯è½¦ä¸»æœ€é«˜è¯•ç”¨noAuth(2)å…ƒåˆ¸,ä»¥åæ”¹åŠ¨è¿™ä¸ªå€¼å°±ok
 			if(ticketquota>=0&&ticketquota<=noAuth){
 //				ticketquota = ticketquota+1;
 			}else{
 				ticketquota=noAuth;
 			}
 			list=	pgOnlyReadService.getAll("select * from ticket_tb where uin = ? " +
-					"and state=? and limit_day>=? and type<? and money<?  order by limit_day",
+							"and state=? and limit_day>=? and type<? and money<?  order by limit_day",
 					new Object[]{uin,0,TimeTools.getToDayBeginTime(),2,ticketquota+1});
 
 		}else {
 			list  = pgOnlyReadService.getAll("select * from ticket_tb where uin = ? " +
-					"and state=? and limit_day>=? and type<=?  order by limit_day",
+							"and state=? and limit_day>=? and type<=?  order by limit_day",
 					new Object[]{uin,0,TimeTools.getToDayBeginTime(),2});
 		}
 		logger.error("uin:"+uin+",fee:"+fee+",comid:"+comId+",today:"+TimeTools.getToDayBeginTime());
@@ -1349,14 +1349,14 @@ public class CommonMethods {
 //				logger.error("ticket>>>uin:"+uin+",comId:"+comId+",tcomid:"+tcomid+",type:"+type+",ticketid:"+map.get("id"));
 				if(comId!=null&&comId!=-1&&tcomid!=null&&type == 1){
 					if(comId.intValue()!=tcomid.intValue()){
-						logger.error(">>>>get ticket:²»ÊÇÕâ¸ö³µ³¡µÄÍ£³µÈ¯£¬²»ÄÜÓÃ....comId:"+comId+",tcomid:"+tcomid+",uin:"+uin);
+						logger.error(">>>>get ticket:ä¸æ˜¯è¿™ä¸ªè½¦åœºçš„åœè½¦åˆ¸ï¼Œä¸èƒ½ç”¨....comId:"+comId+",tcomid:"+tcomid+",uin:"+uin);
 						i++;
 						continue;
 					}
 				}
 				Integer res = (Integer)map.get("resources");
-				if(limit==0&&res==0&&type==0){//Ö§¸¶½ğ¶îĞ¡ÓÚ3Ôª£¬²»ÏÈÆÕÍ¨È¯
-					i++;					
+				if(limit==0&&res==0&&type==0){//æ”¯ä»˜é‡‘é¢å°äº3å…ƒï¼Œä¸å…ˆæ™®é€šåˆ¸
+					i++;
 					continue;
 				}
 				if(type==1||res==1){
@@ -1365,19 +1365,19 @@ public class CommonMethods {
 					limit= CustomDefind.getUseMoney(fee,0);
 				}
 				map.put("isbuy", res);
-				if(money==limit){//È¯Öµ+1Ôª µÈÓÚ Ö§¸¶½ğ¶îÊ±Ö±½Ó·µ»Ø
+				if(money==limit){//åˆ¸å€¼+1å…ƒ ç­‰äº æ”¯ä»˜é‡‘é¢æ—¶ç›´æ¥è¿”å›
 					return map;
 				}
-				//ÅĞ¶Ï ÊÇ·ñ ÓĞ ²»ÊÇ¸Ã³µ³¡µÄ×¨ÓÃÈ¯
-				
+				//åˆ¤æ–­ æ˜¯å¦ æœ‰ ä¸æ˜¯è¯¥è½¦åœºçš„ä¸“ç”¨åˆ¸
+
 				map.remove("comid");
 //				map.remove("limit_day");
 				_over3day_moneys.add(i+"_"+Math.abs(limit-money));
 				i++;
 			}
-			if(_over3day_moneys.size()>0){//Í£³µÈ¯ÓëÍ£³µ·ÑµÄ¾ø¶ÔÖµ·ÖÎö £¬È¡¾ø¶ÔÖµ×îĞ¡µÄ
-				int sk = 0;//±£´æindex
-				double sv=0;//±£´æ×îĞ¡Öµ
+			if(_over3day_moneys.size()>0){//åœè½¦åˆ¸ä¸åœè½¦è´¹çš„ç»å¯¹å€¼åˆ†æ ï¼Œå–ç»å¯¹å€¼æœ€å°çš„
+				int sk = 0;//ä¿å­˜index
+				double sv=0;//ä¿å­˜æœ€å°å€¼
 				int index = 0;
 				for(String s : _over3day_moneys){
 					int k = Integer.valueOf(s.split("_")[0]);
@@ -1397,13 +1397,13 @@ public class CommonMethods {
 				return list.get(sk);
 			}
 		}else{
-			logger.error("Î´Ñ¡µ½È¯uin:"+uin+",comid:"+comId+",fee:"+fee);
+			logger.error("æœªé€‰åˆ°åˆ¸uin:"+uin+",comid:"+comId+",fee:"+fee);
 		}
 		return null;
 	}
-	
+
 	/**
-	 * ¼ì²éÕÊºÅÊÇ·ñÒÑ×¢²á
+	 * æ£€æŸ¥å¸å·æ˜¯å¦å·²æ³¨å†Œ
 	 * @param strid
 	 * @return
 	 */
@@ -1415,7 +1415,7 @@ public class CommonMethods {
 		}
 		return true;
 	}
-	
+
 	public boolean checkStrid(String strid, Long uin){
 		String sql = "select count(*) from user_info_tb where strid =? and id<>? ";
 		Long result = daService.getLong(sql, new Object[]{strid, uin});
@@ -1424,38 +1424,38 @@ public class CommonMethods {
 		}
 		return true;
 	}
-	
+
 	/**
-	 * ¼ÆËã°üÔÂ²úÆ··ÑÓÃ
-	 * @param prodId °üÔÂ²úÆ·±àºÅ
-	 * @param months ¹ºÂòÔÂÊı
+	 * è®¡ç®—åŒ…æœˆäº§å“è´¹ç”¨
+	 * @param prodId åŒ…æœˆäº§å“ç¼–å·
+	 * @param months è´­ä¹°æœˆæ•°
 	 * @return
 	 */
 	public Double getProdSum(Long prodId, Integer months){
 		Double total = 0d;
 		if(prodId != null && prodId > 0 && months != null && months > 0){
 			Double price = 0d;
-			Map<String, Object> pMap = daService.getMap("select limitday,price from product_package_tb where id=? ", 
+			Map<String, Object> pMap = daService.getMap("select limitday,price from product_package_tb where id=? ",
 					new Object[]{prodId});
-			if(pMap!=null&&pMap.get("limitday")!=null){
+			if(pMap!=null){
 				price = Double.valueOf(pMap.get("price")+"");
 			}
 			total = months*price;
 		}
 		return total;
 	}
-	
-	/**ÊÇ·ñÔÚºÚÃûµ¥*/
+
+	/**æ˜¯å¦åœ¨é»‘åå•*/
 	public boolean isBlackUser(Long uin){
 		List<Long> blackUserList = memcacheUtils.doListLongCache("zld_black_users", null, null);
 		boolean isBlack = true;
-		if(blackUserList==null||!blackUserList.contains(uin))//²»ÔÚºÚÃûµ¥ÖĞ¿ÉÒÔ´¦ÀíÍÆ¼ö·µÏÖ
+		if(blackUserList==null||!blackUserList.contains(uin))//ä¸åœ¨é»‘åå•ä¸­å¯ä»¥å¤„ç†æ¨èè¿”ç°
 			isBlack=false;
 		return isBlack;
 	}
-	
+
 	/**
-	 * ¸ù¾İopenid»ñÈ¡ÓÃ»§ĞÅÏ¢
+	 * æ ¹æ®openidè·å–ç”¨æˆ·ä¿¡æ¯
 	 * @param openid
 	 * @return
 	 */
@@ -1464,9 +1464,9 @@ public class CommonMethods {
 				new Object[] { openid, 1 });
 		return userMap;
 	}
-	
+
 	/**
-	 * ¸ù¾İopenid»ñÈ¡ÓÃ»§µÄĞÅÏ¢
+	 * æ ¹æ®openidè·å–ç”¨æˆ·çš„ä¿¡æ¯
 	 * @param openid
 	 * @return
 	 */
@@ -1489,8 +1489,8 @@ public class CommonMethods {
 			if(userMap == null){
 				uin = daService.getLong("SELECT nextval('seq_user_info_tb'::REGCLASS) AS newid",null);
 				int r = daService.update("insert into wxp_user_tb(openid,create_time,uin) values(?,?,?) ",
-								new Object[] { openid, System.currentTimeMillis() / 1000, uin});
-				logger.error("Ã»ÓĞÁÙÊ±ÕË»§£¬´´½¨Ò»¸öuin:"+uin+",openid:"+openid+",r:"+r);
+						new Object[] { openid, System.currentTimeMillis() / 1000, uin});
+				logger.error("æ²¡æœ‰ä¸´æ—¶è´¦æˆ·ï¼Œåˆ›å»ºä¸€ä¸ªuin:"+uin+",openid:"+openid+",r:"+r);
 			}else{
 				uin = (Long)userMap.get("uin");
 				balance = Double.valueOf(userMap.get("balance") + "");
@@ -1502,31 +1502,31 @@ public class CommonMethods {
 		map.put("balance", balance);
 		return map;
 	}
-	
+
 	/**
-	 * É¨¼õÃâÈ¯£¬»ñÈ¡¼õÃâÇ°ºóµÄÍ£³µ·Ñ½ğ¶î
+	 * æ‰«å‡å…åˆ¸ï¼Œè·å–å‡å…å‰åçš„åœè½¦è´¹é‡‘é¢
 	 * @param orderMap
 	 * @param shopTicketMap
-	 * @param delaytime Ô¤Ö§¸¶ÑÓÊ±Ê±¼ä
+	 * @param delaytime é¢„æ”¯ä»˜å»¶æ—¶æ—¶é—´
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getPrice(Long orderId, Long end_time){
-		Map<String, Object> orderMap = daService.getMap("select * from order_tb where id=? ", 
+		Map<String, Object> orderMap = daService.getMap("select * from order_tb where id=? ",
 				new Object[]{orderId});
-		
+
 		Map<String, Object> map = new HashMap<String, Object>();
 		Long comid = (Long)orderMap.get("comid");
 		Double beforetotal = 0d;
 		Double aftertotal = 0d;
-		Integer car_type = (Integer)orderMap.get("car_type");//0£ºÍ¨ÓÃ£¬1£ºĞ¡³µ£¬2£º´ó³µ
+		Integer car_type = (Integer)orderMap.get("car_type");//0ï¼šé€šç”¨ï¼Œ1ï¼šå°è½¦ï¼Œ2ï¼šå¤§è½¦
 		Integer pid = (Integer)orderMap.get("pid");
 		Long create_time = (Long)orderMap.get("create_time");
-		Integer distime = 0;//µÖ¿ÛµÄÊ±³¤
-		
+		Integer distime = 0;//æŠµæ‰£çš„æ—¶é•¿
+
 		beforetotal = getPrice(car_type, pid, comid, create_time, end_time);
-		
-		Map<String, Object> shopTicketMap = daService.getMap("select * from ticket_tb where orderid=? and (type=? or type=?) ", 
+
+		Map<String, Object> shopTicketMap = daService.getMap("select * from ticket_tb where orderid=? and (type=? or type=?) ",
 				new Object[]{orderId, 3, 4});
 		if(shopTicketMap != null){
 			Integer type = (Integer)shopTicketMap.get("type");
@@ -1546,20 +1546,20 @@ public class CommonMethods {
 		}else{
 			aftertotal = beforetotal;
 		}
-		
+
 		Double distotal = beforetotal - aftertotal >0 ? (beforetotal - aftertotal) : 0d;
-		
+
 		if(shopTicketMap != null && beforetotal > aftertotal){
-			int r = daService.update("update ticket_tb set umoney=?,bmoney=? where id=? ", 
+			int r = daService.update("update ticket_tb set umoney=?,bmoney=? where id=? ",
 					new Object[]{StringUtils.formatDouble(distotal), Double.valueOf(distime)/(60*60), shopTicketMap.get("id")});
 		}
 		map.put("beforetotal", beforetotal);
 		map.put("aftertotal", aftertotal);
 		return map;
 	}
-	
+
 	/**
-	 * ¸ù¾İ¶©µ¥ĞÅÏ¢»ñÈ¡³µ·Ñ½ğ¶î
+	 * æ ¹æ®è®¢å•ä¿¡æ¯è·å–è½¦è´¹é‡‘é¢
 	 * @param car_type
 	 * @param pid
 	 * @param comid
@@ -1576,29 +1576,29 @@ public class CommonMethods {
 		}
 		return total;
 	}
-	
+
 	/**
-	 * »ñÈ¡¶©µ¥µÄĞÅÏ¢
+	 * è·å–è®¢å•çš„ä¿¡æ¯
 	 * @param orderId
-	 * @param shopTicketId ¼õÃâÈ¯ID
-	 * @param uin ÓÃ»§ID
-	 * @param delaytime Ô¤Ö§¸¶µÄÑÓ³ÙÊ±¼ä
+	 * @param shopTicketId å‡å…åˆ¸ID
+	 * @param uin ç”¨æˆ·ID
+	 * @param delaytime é¢„æ”¯ä»˜çš„å»¶è¿Ÿæ—¶é—´
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getOrderInfo(Long orderId, Long shopTicketId, Long end_time){
-		Double pretotal = 0d;//ÒÑ¾­Ô¤Ö§¸¶µÄ½ğ¶î
-		Map<String, Object> orderMap = daService.getMap("select * from order_tb where id=? ", 
+		Double pretotal = 0d;//å·²ç»é¢„æ”¯ä»˜çš„é‡‘é¢
+		Map<String, Object> orderMap = daService.getMap("select * from order_tb where id=? ",
 				new Object[]{orderId});
 		if(orderMap == null){
 			return null;
 		}
 		if(orderMap.get("total") != null){
-			pretotal = Double.valueOf(orderMap.get("total") + "");//Ô¤Ö§¸¶µÄ½ğ¶î
+			pretotal = Double.valueOf(orderMap.get("total") + "");//é¢„æ”¯ä»˜çš„é‡‘é¢
 		}
 		Long create_time = (Long)orderMap.get("create_time");
 		Map<String, Object> map = getComOrderInfo(orderId, shopTicketId, create_time, end_time);
-		
+
 		map.put("createtime", create_time);
 		map.put("starttime", TimeTools.getTime_yyyyMMdd_HHmm(create_time * 1000));
 		map.put("parktime", StringUtils.getTimeString(create_time, System.currentTimeMillis()/1000));
@@ -1609,16 +1609,16 @@ public class CommonMethods {
 		map.put("carnumber", orderMap.get("car_number"));
 		return map;
 	}
-	
+
 	/**
-	 * »ñÈ¡ÒÑ½áËã¶©µ¥µÄĞÅÏ¢
+	 * è·å–å·²ç»“ç®—è®¢å•çš„ä¿¡æ¯
 	 * @param orderid
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getOrderInfoPayed(Long orderid, Long shopTicketId){
 		Map<String, Object> map = new HashMap<String, Object>();
-		Map<String, Object> orderMap = daService.getMap("select * from order_tb where id=? and state=? ", 
+		Map<String, Object> orderMap = daService.getMap("select * from order_tb where id=? and state=? ",
 				new Object[]{orderid, 1});
 		if(orderMap == null){
 			return null;
@@ -1627,7 +1627,7 @@ public class CommonMethods {
 		Long end_time = (Long)orderMap.get("end_time");
 		Double total = Double.valueOf(orderMap.get("total") + "");
 		map = getComOrderInfo(orderid, shopTicketId, create_time, end_time);
-		
+
 		map.put("createtime", create_time);
 		map.put("starttime", TimeTools.getTime_yyyyMMdd_HHmm(create_time * 1000));
 		map.put("parktime", StringUtils.getTimeString(create_time, end_time));
@@ -1639,21 +1639,21 @@ public class CommonMethods {
 		map.put("paytype", orderMap.get("pay_type"));
 		return map;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getComOrderInfo(Long orderid, Long shopTicketId, Long create_time, Long end_time){
 		Map<String, Object> map = new HashMap<String, Object>();
-		Double beforetotal = 0d;//¼õÃâÖ®Ç°µÄÍ£³µ·Ñ½ğ¶î
-		Double aftertotal = 0d;//¼õÃâÖ®ºóµÄÍ£³µ·Ñ½ğ¶î
-		
-		Integer tickettype = 3;//¼õÃâÈ¯ÀàĞÍ£¬Ä¬ÈÏ¼õÊ±È¯
-		Integer tickettime = 0;//¼õÊ±È¯µÄÊ±³¤
-		Integer ticketstate = 0;//¼õÃâÈ¯µÄ×´Ì¬£¬0£º²»¿ÉÓÃ 1:¿ÉÓÃ
-		Map<String, Object> shopTicketMap = daService.getMap("select * from ticket_tb where orderid=? and (type=? or type=?) ", 
+		Double beforetotal = 0d;//å‡å…ä¹‹å‰çš„åœè½¦è´¹é‡‘é¢
+		Double aftertotal = 0d;//å‡å…ä¹‹åçš„åœè½¦è´¹é‡‘é¢
+
+		Integer tickettype = 3;//å‡å…åˆ¸ç±»å‹ï¼Œé»˜è®¤å‡æ—¶åˆ¸
+		Integer tickettime = 0;//å‡æ—¶åˆ¸çš„æ—¶é•¿
+		Integer ticketstate = 0;//å‡å…åˆ¸çš„çŠ¶æ€ï¼Œ0ï¼šä¸å¯ç”¨ 1:å¯ç”¨
+		Map<String, Object> shopTicketMap = daService.getMap("select * from ticket_tb where orderid=? and (type=? or type=?) ",
 				new Object[]{orderid, 3, 4});
 		if(shopTicketMap == null){
 			if(shopTicketId != null && shopTicketId > 0){
-				shopTicketMap = daService.getMap("select * from ticket_tb where id=? and (orderid=? or orderid=?) and state=? and (type=? or type=?) and limit_day>? ", 
+				shopTicketMap = daService.getMap("select * from ticket_tb where id=? and (orderid=? or orderid=?) and state=? and (type=? or type=?) and limit_day>? ",
 						new Object[]{shopTicketId, -1, orderid, 0, 3, 4, end_time});
 			}
 		}else{
@@ -1663,7 +1663,7 @@ public class CommonMethods {
 			int r = daService.update("update ticket_tb set orderid=? where id=? ", new Object[]{orderid, shopTicketId});
 			tickettype = (Integer)shopTicketMap.get("type");
 			tickettime = (Integer)shopTicketMap.get("money");
-			ticketstate = 1;//¸Ã¼õÃâÈ¯¿ÉÓÃ
+			ticketstate = 1;//è¯¥å‡å…åˆ¸å¯ç”¨
 		}
 		Map<String, Object> map2 = getPrice(orderid, end_time);
 		beforetotal = Double.valueOf(map2.get("beforetotal") + "");
@@ -1675,9 +1675,9 @@ public class CommonMethods {
 		map.put("tickettime", tickettime);
 		return map;
 	}
-	
+
 	/**
-	 * ¸ù¾İÓÃ»§ID»ñÈ¡ÊÇÁÙÊ±ÕË»§»¹ÊÇÕıÊ½ÕË»§
+	 * æ ¹æ®ç”¨æˆ·IDè·å–æ˜¯ä¸´æ—¶è´¦æˆ·è¿˜æ˜¯æ­£å¼è´¦æˆ·
 	 * @param uin
 	 * @return
 	 */
@@ -1685,34 +1685,34 @@ public class CommonMethods {
 		Long count = daService.getLong("select count(1) from user_info_tb where id=? ", new Object[]{uin});
 		return count.intValue();
 	}
-	
+
 	public Integer addCarnumber(Long uin, String carnumber){
 		Long cutTime = System.currentTimeMillis()/1000;
 		Integer bindflag = getBindflag(uin);
 		if(bindflag == 1){
 			Long count = daService.getLong("select count(*) from car_info_tb where uin!=? and car_number=? and state=? ",
 					new Object[] { uin, carnumber, 1 });
-			if(count > 0){//¸Ã³µÅÆºÅÒÑ±»±ğÈË×¢²á
+			if(count > 0){//è¯¥è½¦ç‰Œå·å·²è¢«åˆ«äººæ³¨å†Œ
 				return -1;
 			}
 			count = daService.getLong("select count(*) from car_info_tb where uin=? and car_number=? ",
 					new Object[] { uin, carnumber});
-			if(count > 0){//¸Ã³µÖ÷ÒÑ¾­×¢²á¹ı¸Ã³µÅÆºÅ
+			if(count > 0){//è¯¥è½¦ä¸»å·²ç»æ³¨å†Œè¿‡è¯¥è½¦ç‰Œå·
 				return -2;
 			}else{
 				count = daService.getLong("select count(*) from car_info_tb where uin=? ",
 						new Object[] { uin });
-				if(count >= 3){//¸Ã³µÖ÷×¢²áµÄ³µÅÆºÅµÄ¸öÊı
+				if(count >= 3){//è¯¥è½¦ä¸»æ³¨å†Œçš„è½¦ç‰Œå·çš„ä¸ªæ•°
 					return -3;
 				}
-				int r=daService.update("insert into car_info_Tb (uin,car_number,create_time) values(?,?,?)", 
+				int r=daService.update("insert into car_info_Tb (uin,car_number,create_time) values(?,?,?)",
 						new Object[]{uin, carnumber, cutTime});
 				if(r > 0){
 					return 1;
 				}
 			}
 		}else if(bindflag == 0){
-			int r = daService.update("update wxp_user_tb set car_number=? where uin=? ", 
+			int r = daService.update("update wxp_user_tb set car_number=? where uin=? ",
 					new Object[]{carnumber, uin});
 			if(r > 0){
 				return 1;
@@ -1720,9 +1720,9 @@ public class CommonMethods {
 		}
 		return -4;
 	}
-	
+
 	/**
-	 * ´´½¨¹¤×÷Õ¾£¬ÒòÎªĞèÒª´´½¨³µ³¡µÄÊ±ºò´´½¨Ä¬ÈÏ¹¤×÷Õ¾£¬ËùÒÔ³éÏó³ÉÒ»¸ö·½·¨ÁË
+	 * åˆ›å»ºå·¥ä½œç«™ï¼Œå› ä¸ºéœ€è¦åˆ›å»ºè½¦åœºçš„æ—¶å€™åˆ›å»ºé»˜è®¤å·¥ä½œç«™ï¼Œæ‰€ä»¥æŠ½è±¡æˆä¸€ä¸ªæ–¹æ³•äº†
 	 * @param request
 	 * @param comid
 	 * @param cname
@@ -1738,11 +1738,13 @@ public class CommonMethods {
 			int r = daService.update(sql, new Object[]{nextid,comid,map.get("worksite_name"),map.get("description"),map.get("net_type")});
 			logger.error("parkadmin or admin:"+operater+" add comid:"+map.get("comid")+" worksite");
 			if(r == 1){
-				if(publicMethods.isEtcPark(comid)){
+				/*
+				 * å·¥ä½œç«™å‘ä¸‹åŒæ­¥çš„æ¥å£æš‚ä¸å¼€æ”¾  2017-07-11
+				 * if(publicMethods.isEtcPark(comid)){
 					int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_worksite_tb",nextid,System.currentTimeMillis()/1000,0});
 					logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" worksite ,add sync ret:"+re);
-				}
-				mongoDbUtils.saveLogs( request,0, 2, "Ìí¼ÓÁË¹¤×÷Õ¾£º"+map.get("worksite_name"));
+				}*/
+				mongoDbUtils.saveLogs( request,0, 2, "æ·»åŠ äº†å·¥ä½œç«™ï¼š"+map.get("worksite_name"));
 				return nextid;
 			}
 		} catch (Exception e) {
@@ -1750,9 +1752,9 @@ public class CommonMethods {
 		}
 		return 0L;
 	}
-	
+
 	/**
-	 * ´´½¨Í¨µÀ£¬ÒòÎªĞèÒª´´½¨³µ³¡µÄÊ±ºò´´½¨Ä¬ÈÏÍ¨µÀ£¬ËùÒÔ³éÏó³ÉÒ»¸ö·½·¨ÁË
+	 * åˆ›å»ºé€šé“ï¼Œå› ä¸ºéœ€è¦åˆ›å»ºè½¦åœºçš„æ—¶å€™åˆ›å»ºé»˜è®¤é€šé“ï¼Œæ‰€ä»¥æŠ½è±¡æˆä¸€ä¸ªæ–¹æ³•äº†
 	 * @param request
 	 * @param map
 	 * @return
@@ -1767,11 +1769,13 @@ public class CommonMethods {
 			int r = daService.update(sql, new Object[]{nextid,map.get("worksite_id"),comid,map.get("passname"),map.get("passtype"),map.get("description"),map.get("month_set"),map.get("month2_set"),map.get("channel_id")});
 			logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" pass ");
 			if(r == 1){
-				if(publicMethods.isEtcPark(comid)){
+				/*
+				 * æ·»åŠ çš„é€šé“ä¿¡æ¯å‘ä¸‹åŒæ­¥çš„æ¥å£æš‚ä¸å¼€æ”¾
+				 * if(publicMethods.isEtcPark(comid)){
 					int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_pass_tb",nextid,System.currentTimeMillis()/1000,0});
 					logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" pass ,add sync ret:"+re);
-				}
-				mongoDbUtils.saveLogs( request,0, 2, "Ìí¼ÓÁËÍ¨µÀ:"+map.get("passname"));
+				}*/
+				mongoDbUtils.saveLogs( request,0, 2, "æ·»åŠ äº†é€šé“:"+map.get("passname"));
 				return nextid;
 			}
 		} catch (Exception e) {
@@ -1779,9 +1783,9 @@ public class CommonMethods {
 		}
 		return 0L;
 	}
-	
+
 	/**
-	 * ´´½¨ÉãÏñÍ·£¬ÒòÎªĞèÒª´´½¨³µ³¡µÄÊ±ºò´´½¨Ä¬ÈÏÉãÏñÍ·£¬ËùÒÔ³éÏó³ÉÒ»¸ö·½·¨ÁË
+	 * åˆ›å»ºæ‘„åƒå¤´ï¼Œå› ä¸ºéœ€è¦åˆ›å»ºè½¦åœºçš„æ—¶å€™åˆ›å»ºé»˜è®¤æ‘„åƒå¤´ï¼Œæ‰€ä»¥æŠ½è±¡æˆä¸€ä¸ªæ–¹æ³•äº†
 	 * @param request
 	 * @param map
 	 * @return
@@ -1790,19 +1794,21 @@ public class CommonMethods {
 		try {
 			Long nickname = (Long)request.getSession().getAttribute("loginuin");
 			Long comid = (Long)map.get("comid");
-			//Ìí¼Ó
+			//æ·»åŠ 
 			Long nextid = daService.getLong(
 					"SELECT nextval('seq_com_camera_tb'::REGCLASS) AS newid", null);
 			String sql = "insert into com_camera_tb(id,passid,camera_name,ip,port,cusername,manufacturer,comid) values(?,?,?,?,?,?,?,?)";
 			int re = daService.update(sql, new Object[]{nextid,map.get("passid"),map.get("camera_name"),map.get("ip"),map.get("port"),map.get("cusername"),map.get("manufacturer"),comid});
 			if(re == 1){
-				if(publicMethods.isEtcPark(comid)){
+				/*
+				 * æ·»åŠ çš„æ‘„åƒå¤´ä¿¡æ¯åŒæ­¥ä¸‹ä¼ çš„æ¥å£æš‚ä¸æ”¯æŒ
+				 * if(publicMethods.isEtcPark(comid)){
 					int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_camera_tb",nextid,System.currentTimeMillis()/1000,0});
 					logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" camera ,add sync ret:"+r);
 				}else{
 					logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" camera ");
-				}
-				mongoDbUtils.saveLogs( request,0, 2, "Ìí¼ÓÁËÉãÏñÍ·:"+map.get("camera_name"));
+				}*/
+				mongoDbUtils.saveLogs( request,0, 2, "æ·»åŠ äº†æ‘„åƒå¤´:"+map.get("camera_name"));
 				return 1;
 			}
 		} catch (Exception e) {
@@ -1810,25 +1816,27 @@ public class CommonMethods {
 		}
 		return 0;
 	}
-	
+
 	public Integer createLED(HttpServletRequest request, Map<String, Object> map){
 		try {
 			Long nickname = (Long)request.getSession().getAttribute("loginuin");
 			Long comid = (Long)map.get("comid");
-			//Ìí¼Ó
+			//æ·»åŠ 
 			Long nextid = daService.getLong(
 					"SELECT nextval('seq_com_led_tb'::REGCLASS) AS newid", null);
 			String sql = "insert into com_led_tb(id,passid,ledip,ledport,leduid,movemode,movespeed,dwelltime,ledcolor,showcolor,typeface,typesize,matercont,width,height,type,rsport,comid) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			int re = daService.update(sql, new Object[]{nextid,map.get("passid"),map.get("ledip"),map.get("ledport"),map.get("leduid"),map.get("movemode"),map.get("movespeed"),map.get("dwelltime"),map.get("ledcolor"),map.get("showcolor"),map.get("typeface"),map.get("typesize"),map.get("matercont"),map.get("width"),map.get("height"),map.get("type"),map.get("rsport"),comid});
-			
+
 			if(re == 1){
-				if(publicMethods.isEtcPark(comid)){
+				/*
+				 * æ·»åŠ çš„LEDä¿¡æ¯åŒæ­¥ä¸‹ä¼ çš„æ¥å£æš‚ä¸å¼€æ”¾
+				 * if(publicMethods.isEtcPark(comid)){
 					int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_led_tb",nextid,System.currentTimeMillis()/1000,0});
 					logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" led ,add sync ret:"+r);
 				}else{
 					logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" led");
-				}
-				mongoDbUtils.saveLogs(request, 0, 2, "Ìí¼ÓÁË£¨comid:"+comid+"£©µÄLED£º"+map.get("ledip")+":"+map.get("ledport"));
+				}*/
+				mongoDbUtils.saveLogs(request, 0, 2, "æ·»åŠ äº†ï¼ˆcomid:"+comid+"ï¼‰çš„LEDï¼š"+map.get("ledip")+":"+map.get("ledport"));
 				return 1;
 			}
 		} catch (Exception e) {
@@ -1836,9 +1844,9 @@ public class CommonMethods {
 		}
 		return 0;
 	}
-	
+
 	/**
-	 * ´´½¨ĞÂ³µ³¡Ê±£¬ÉèÖÃÄ¬ÈÏµÄ¹¤×÷Õ¾µÈĞÅÏ¢
+	 * åˆ›å»ºæ–°è½¦åœºæ—¶ï¼Œè®¾ç½®é»˜è®¤çš„å·¥ä½œç«™ç­‰ä¿¡æ¯
 	 * @param request
 	 * @param map
 	 */
@@ -1857,34 +1865,34 @@ public class CommonMethods {
 				params.clear();
 				params.put("comid", comid);
 				params.put("worksite_id", worksiteid);
-				params.put("passname", cname + "Èë¿Ú");
+				params.put("passname", cname + "å…¥å£");
 				params.put("passtype", 0);
 				params.put("month_set", -1);
 				params.put("month2_set", -1);
 				Long inpassId = createPass(request, params);
 				logger.info("create default inpass successed>>>comid:"+comid+",worksiteid:"+worksiteid+",inpassId:"+inpassId);
-				
+
 				params.clear();
 				params.put("comid", comid);
 				params.put("worksite_id", worksiteid);
-				params.put("passname", cname + "³ö¿Ú");
+				params.put("passname", cname + "å‡ºå£");
 				params.put("passtype", 1);
 				params.put("month_set", -1);
 				params.put("month2_set", -1);
 				Long outpassId = createPass(request, params);
 				logger.info("create default outpass successed>>>comid:"+comid+",worksiteid:"+worksiteid+",outpassId:"+outpassId);
-				
+
 				if(inpassId != null && inpassId > 0){
 					params.clear();
 					params.put("comid", comid);
-					params.put("camera_name", cname + "Èë¿Ú");
+					params.put("camera_name", cname + "å…¥å£");
 					params.put("ip", "192.168.1.201");
 					params.put("port", "554");
-					params.put("manufacturer", "Í£³µ±¦");
+					params.put("manufacturer", "åœè½¦å®");
 					params.put("passid", inpassId);
 					Integer result = createCamera(request, params);
 					logger.info("create default incamera successed>>>comid:"+comid+",inpassId:"+inpassId+",result:"+result);
-					
+
 					params.clear();
 					params.put("comid", comid);
 					params.put("ledip", "192.168.1.203");
@@ -1897,7 +1905,7 @@ public class CommonMethods {
 					params.put("showcolor", 0);
 					params.put("typeface", 1);
 					params.put("typesize", 1);
-					params.put("matercont", "Í£³µ±¦");
+					params.put("matercont", "åœè½¦å®");
 					params.put("passid", inpassId);
 					params.put("width", 64);
 					params.put("height", 32);
@@ -1905,18 +1913,18 @@ public class CommonMethods {
 					result = createLED(request, params);
 					logger.info("create default inled successed>>>comid:"+comid+",inpassId:"+inpassId+",result:"+result);
 				}
-				
+
 				if(outpassId != null && outpassId > 0){
 					params.clear();
 					params.put("comid", comid);
-					params.put("camera_name", cname + "³ö¿Ú");
+					params.put("camera_name", cname + "å‡ºå£");
 					params.put("ip", "192.168.1.202");
 					params.put("port", "554");
-					params.put("manufacturer", "Í£³µ±¦");
+					params.put("manufacturer", "åœè½¦å®");
 					params.put("passid", outpassId);
 					Integer result = createCamera(request, params);
 					logger.info("create default incamera successed>>>comid:"+comid+",inpassId:"+inpassId+",result:"+result);
-					
+
 					params.clear();
 					params.put("comid", comid);
 					params.put("ledip", "192.168.1.204");
@@ -1929,7 +1937,7 @@ public class CommonMethods {
 					params.put("showcolor", 0);
 					params.put("typeface", 1);
 					params.put("typesize", 1);
-					params.put("matercont", "Í£³µ±¦");
+					params.put("matercont", "åœè½¦å®");
 					params.put("passid", outpassId);
 					params.put("width", 64);
 					params.put("height", 32);
@@ -1938,40 +1946,40 @@ public class CommonMethods {
 					logger.info("create default inled successed>>>comid:"+comid+",inpassId:"+inpassId+",result:"+result);
 				}
 			}
-			
+
 		} catch (Exception e) {
 			logger.error(e);
 		}
 	}
-	
+
 	/**
-	 * @param uin          ³µÖ÷ÕË»§
-	 * @param total        ¶©µ¥½ğ¶î
-	 * @return             ¿ÉÓÃÍ£³µÈ¯ÁĞ±í
+	 * @param uin          è½¦ä¸»è´¦æˆ·
+	 * @param total        è®¢å•é‡‘é¢
+	 * @return             å¯ç”¨åœè½¦åˆ¸åˆ—è¡¨
 	 */
 	public List<Map<String,Object>> getUseTickets(Long uin,Double total){
 		Long time = System.currentTimeMillis()/1000;
 		List<Map<String,Object>> ticketList=pgOnlyReadService.getAll("select id,limit_day as limitday,money,resources," +
-				"comid,type from ticket_tb where uin = ?" +
-				" and limit_day >= ? and state=? and type<?  order by type desc,money,limit_day ",
+						"comid,type from ticket_tb where uin = ?" +
+						" and limit_day >= ? and state=? and type<?  order by type desc,money,limit_day ",
 				new Object[]{uin,time,0,2});
-		
-		Integer limit = CustomDefind.getUseMoney(total, 0);//ÆÕÍ¨È¯µÖ¿Û½ğ¶î
-		Integer sysLimit = Integer.valueOf(CustomDefind.getValue("TICKET_LIMIT"));//×¨ÓÃÈ¯£¬¹ºÂòÈ¯½ğ¶îÓë¶©µ¥µÄ²î¶î
+
+		Integer limit = CustomDefind.getUseMoney(total, 0);//æ™®é€šåˆ¸æŠµæ‰£é‡‘é¢
+		Integer sysLimit = Integer.valueOf(CustomDefind.getValue("TICKET_LIMIT"));//ä¸“ç”¨åˆ¸ï¼Œè´­ä¹°åˆ¸é‡‘é¢ä¸è®¢å•çš„å·®é¢
 		if(ticketList!=null&&!ticketList.isEmpty()){
 			for(Map<String,Object> map:ticketList){
 				Integer money = (Integer)map.get("money");
 				Integer res = (Integer)map.get("resources");
 				Integer topMoney = CustomDefind.getUseMoney(money.doubleValue(), 1);
 				Integer type=(Integer)map.get("type");
-				if(res==1||type==1){//³µ³¡×¨ÓÃÈ¯»ò¹ºÂòÈ¯
+				if(res==1||type==1){//è½¦åœºä¸“ç”¨åˆ¸æˆ–è´­ä¹°åˆ¸
 					topMoney = money+sysLimit;
 					limit = total.intValue()-sysLimit;
 				}else {
 					limit = CustomDefind.getUseMoney(total, 0);
-					
+
 				}
-				if(topMoney<total){//×î¸ßÏŞ¶îĞ¡ÓÚÖ§¸¶½ğ¶î
+				if(topMoney<total){//æœ€é«˜é™é¢å°äºæ”¯ä»˜é‡‘é¢
 					limit=money;
 				}
 				map.put("limit", limit);
@@ -1980,14 +1988,14 @@ public class CommonMethods {
 		//logger.error(ticketList);
 		return ticketList;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param comid
 	 * @param btime
 	 * @param etime
 	 * @return
-	 * @time 2017Äê ÏÂÎç4:48:20
+	 * @time 2017å¹´ ä¸‹åˆ4:48:20
 	 * @author QuanHao
 	 */
 	public String getParkTotalStatistic(Long comid, Long btime, Long etime){
@@ -2002,13 +2010,13 @@ public class CommonMethods {
 			Integer payType = (Integer) map.get("pay_type");
 			double totalmoney = StringUtils.formatDouble(map.get("total"));
 			total += totalmoney;
-			
+
 			double cash_pay = StringUtils.formatDouble(map.get("cash_pay"));
 			double electronic_pay = StringUtils.formatDouble(map.get("electronic_pay"));
 			double reduce_pay = StringUtils.formatDouble(map.get("reduce_pay"));
-			//ÏêÏ¸½ğ¶îĞÅÏ¢¶¼²»¼ÇÂ¼£¬Í³¼Ætotal(³©Ó¯³¤É³)
+			//è¯¦ç»†é‡‘é¢ä¿¡æ¯éƒ½ä¸è®°å½•ï¼Œç»Ÿè®¡total(ç•…ç›ˆé•¿æ²™)
 			if((Check.isEmpty(cash_pay+"") || cash_pay == 0)
-					&& (Check.isEmpty(electronic_pay+"") || electronic_pay == 0) 
+					&& (Check.isEmpty(electronic_pay+"") || electronic_pay == 0)
 					&&  (Check.isEmpty(reduce_pay+"") || reduce_pay == 0)){
 				if(payType == 1){
 					cash += totalmoney;
@@ -2025,9 +2033,9 @@ public class CommonMethods {
 		}
 		return cash+"_"+month+"_"+wallet+"_"+total;
 	}
-	
+
 	/**
-	 * »ñÈ¡Ä³¸öÊÕ·ÑÔ±µÄ¼õÃâÈ¯£¬ÖĞÑëÔ¤Ö§¸¶¡¢ÏÖ½ğ½ğ¶î
+	 * è·å–æŸä¸ªæ”¶è´¹å‘˜çš„å‡å…åˆ¸ï¼Œä¸­å¤®é¢„æ”¯ä»˜ã€ç°é‡‘é‡‘é¢
 	 * @param uid
 	 * @param comid
 	 * @param btime
@@ -2045,7 +2053,7 @@ public class CommonMethods {
 		String sql1 = "select sum(c.amount)money from (select distinct(orderid,amount),orderid,amount from order_tb a," +
 				"parkuser_cash_tb b where a.comid=? and  a.end_time between ? and ? and a.state=? and a.out_uid=?  " +
 				"and a.id=b.orderid and b.type=?  ";
-		
+
 		Object [] v1 = new Object[]{comid,btime,etime,1,uid,0};
 		if(ishd!=null&&ishd==1){
 			sql1 += " and ishd=? ";
@@ -2056,7 +2064,7 @@ public class CommonMethods {
 		if(cashmap!=null&&cashmap.get("money")!=null){
 			cash = Double.valueOf(cashmap.get("money")+"");
 		}
-		
+
 		String sql2 = "select sum(b.amount)money from order_tb a,parkuser_cash_tb b where a.comid=? and  a.end_time between" +
 				" ? and ? and a.state=? and a.out_uid=? and a.id=b.orderid and b.type=? ";
 		Object [] v2 = new Object[]{comid,btime,etime,1,uid,1};
@@ -2064,12 +2072,12 @@ public class CommonMethods {
 			sql2 += " and ishd=? ";
 			v2 = new Object[]{comid,btime,etime,1,uid,1,0};
 		}
-		
+
 		Map centermap = pgOnlyReadService.getMap(sql2,v2);
 		if(centermap!=null&&centermap.get("money")!=null){
 			Center = Double.valueOf(centermap.get("money")+"");
 		}
-		
+
 		String sql3 = "select sum(b.umoney)money from order_tb a,ticket_tb b where a.comid=? and  a.end_time between" +
 				" ? and ? and a.state=? and a.out_uid=? and a.id=b.orderid and (b.type=3 or b.type=4)";
 		Object [] v3 =new Object[]{comid,btime,etime,1,uid};
@@ -2077,44 +2085,44 @@ public class CommonMethods {
 			sql3 += " and ishd=? ";
 			v3 = new Object[]{comid,btime,etime,1,uid,0};
 		}
-		
+
 		Map tickethmap = pgOnlyReadService.getMap(sql3,v3);
 		if(tickethmap!=null&&tickethmap.get("money")!=null){
 			ticket = Double.valueOf(tickethmap.get("money")+"");
 		}
-		
+
 		Map park = pgOnlyReadService.getMap( "select sum(a.amount) total from order_tb o,park_account_tb a where o.id=a.orderid and o.end_time between ? and ? " +
 				" and a.type= ? and a.source=? and a.uid=? ",new Object[]{btime,etime,0,0,uid});
 		if(park!=null&&park.get("total")!=null)
 			pmoney += Double.valueOf(park.get("total")+"");
-	
+
 		Map parkuser = pgOnlyReadService.getMap( "select sum(a.amount) total from order_tb o,parkuser_account_tb a where o.id=a.orderid and o.comid=? and o.end_time between ? and ? " +
-				" and a.type= ? and a.uin = ? and a.target =? and a.remark like ? ",new Object[]{comid,btime,etime,0,uid,4,"Í£³µ·Ñ%"});//target=4°üÀ¨Í£³µ·ÑºÍ´òÉÍ
+				" and a.type= ? and a.uin = ? and a.target =? and a.remark like ? ",new Object[]{comid,btime,etime,0,uid,4,"åœè½¦è´¹%"});//target=4åŒ…æ‹¬åœè½¦è´¹å’Œæ‰“èµ
 		if(parkuser!=null&&parkuser.get("total")!=null)
 			pmoney += Double.valueOf(parkuser.get("total")+"");
-		
+
 		return ticket+"_"+Center+"_"+cash+"_"+pmoney;
 	}
-	//----------------´òÕÛÈ¯Ñ¡È¯Âß¼­begin--------------------//
+	//----------------æ‰“æŠ˜åˆ¸é€‰åˆ¸é€»è¾‘begin--------------------//
 	/**
-	 * Ñ¡Ôñ´òÕÛÈ¯
+	 * é€‰æ‹©æ‰“æŠ˜åˆ¸
 	 * @param uin
 	 * @param uid
 	 * @param total
 	 * @return
 	 */
 	public Map<String, Object> chooseDistotalTicket(Long uin, Long uid, Double total){
-		double firstorderquota = 8.0;//Ä¬ÈÏ¶î¶È
-		double ditotal = 0d;//´òÕÛ¶î¶È
-		double disquota = StringUtils.formatDouble(firstorderquota * ditotal);//´òÎåÕÛºóµÄµÖ¿Û½ğ¶î
-		
-		logger.error("Ñ¡ÕÛ¿ÛÈ¯uin:"+uin+",uid:"+uid+",disquota:"+disquota+",firstorderquota:"+firstorderquota+",total:"+total);
+		double firstorderquota = 8.0;//é»˜è®¤é¢åº¦
+		double ditotal = 0d;//æ‰“æŠ˜é¢åº¦
+		double disquota = StringUtils.formatDouble(firstorderquota * ditotal);//æ‰“äº”æŠ˜åçš„æŠµæ‰£é‡‘é¢
+
+		logger.error("é€‰æŠ˜æ‰£åˆ¸uin:"+uin+",uid:"+uid+",disquota:"+disquota+",firstorderquota:"+firstorderquota+",total:"+total);
 		Map<String, Object> userMap2 = daService.getMap("select comid,firstorderquota from user_info_tb where id = ? ", new Object[]{uid});
 		if(userMap2!=null){
 			firstorderquota = Double.valueOf(userMap2.get("firstorderquota") + "");
 			disquota = StringUtils.formatDouble(firstorderquota * ditotal);
 		}
-		logger.error("Ñ¡ÕÛ¿ÛÈ¯uin:"+uin+",uid:"+uid+",firstorderquota:"+firstorderquota+",disquota:"+disquota);
+		logger.error("é€‰æŠ˜æ‰£åˆ¸uin:"+uin+",uid:"+uid+",firstorderquota:"+firstorderquota+",disquota:"+disquota);
 		Map<String, Object> ticketMap = new HashMap<String, Object>();
 		ticketMap.put("id", -100);
 		Double ticket_money = Double.valueOf(StringUtils.formatDouble(total*ditotal));
@@ -2125,39 +2133,39 @@ public class CommonMethods {
 		logger.error("uin:"+uin+",total:"+total+",ticketMap:"+ticketMap);
 		return ticketMap;
 	}
-	//----------------´òÕÛÈ¯Ñ¡È¯Âß¼­end--------------------//
-	
-	//----------------´ú½ğÈ¯Ñ¡È¯Âß¼­begin--------------------//
+	//----------------æ‰“æŠ˜åˆ¸é€‰åˆ¸é€»è¾‘end--------------------//
+
+	//----------------ä»£é‡‘åˆ¸é€‰åˆ¸é€»è¾‘begin--------------------//
 	/**
-	 * 
+	 *
 	 * @param uin
 	 * @param total
-	 * @param utype 0ÆÕÍ¨Ñ¡È¯£¨Ä¬ÈÏ£©1¿ÉÓÃ´óÓÚ×î´óµÖ¿Û½ğ¶îµÄÍ£³µÈ¯
+	 * @param utype 0æ™®é€šé€‰åˆ¸ï¼ˆé»˜è®¤ï¼‰1å¯ç”¨å¤§äºæœ€å¤§æŠµæ‰£é‡‘é¢çš„åœè½¦åˆ¸
 	 * @param uid
 	 * @param isAuth
-	 * @param ptype 0ÕË»§³äÖµ£»1°üÔÂ²úÆ·£»2Í£³µ·Ñ½áËã£»3Ö±¸¶;4´òÉÍ 5¹ºÂòÍ£³µÈ¯
+	 * @param ptype 0è´¦æˆ·å……å€¼ï¼›1åŒ…æœˆäº§å“ï¼›2åœè½¦è´¹ç»“ç®—ï¼›3ç›´ä»˜;4æ‰“èµ 5è´­ä¹°åœè½¦åˆ¸
 	 * @param parkId
-	 * @param source 0:À´×Ô¿Í»§¶ËÑ¡È¯ 1£ºÀ´×Ô¹«ÖÚºÅÑ¡È¯
+	 * @param source 0:æ¥è‡ªå®¢æˆ·ç«¯é€‰åˆ¸ 1ï¼šæ¥è‡ªå…¬ä¼—å·é€‰åˆ¸
 	 * @return
 	 */
 	public List<Map<String, Object>> chooseTicket(Long uin, Double total, Integer utype, Long uid, boolean isAuth, Integer ptype, Long parkId, Long orderId, Integer source){
 		List<Map<String, Object>> list = null;
-		if(ptype == 4){//´òÉÍÑ¡È¯
+		if(ptype == 4){//æ‰“èµé€‰åˆ¸
 			list = chooseRewardTicket(uin, total, isAuth, uid, utype, ptype, parkId, orderId, source);
 		}else if(ptype == -1 || ptype == 2 || ptype == 3){
 			list = chooseParkingTicket(uin, total, utype, uid, isAuth, ptype, parkId, orderId, source);
 		}
 		return list;
 	}
-	
+
 	/**
-	 * Í£³µÏû·ÑÑ¡È¯
+	 * åœè½¦æ¶ˆè´¹é€‰åˆ¸
 	 * @param uin
-	 * @param total Í£³µ·Ñ½ğ¶î
-	 * @param utype 0ÆÕÍ¨Ñ¡È¯£¨Ä¬ÈÏ£©1¿ÉÓÃ´óÓÚ×î´óµÖ¿Û½ğ¶îµÄÍ£³µÈ¯
+	 * @param total åœè½¦è´¹é‡‘é¢
+	 * @param utype 0æ™®é€šé€‰åˆ¸ï¼ˆé»˜è®¤ï¼‰1å¯ç”¨å¤§äºæœ€å¤§æŠµæ‰£é‡‘é¢çš„åœè½¦åˆ¸
 	 * @param uid
 	 * @param isAuth
-	 * @param source 0:À´×Ô¿Í»§¶ËÑ¡È¯ 1£ºÀ´×Ô¹«ÖÚºÅÑ¡È¯
+	 * @param source 0:æ¥è‡ªå®¢æˆ·ç«¯é€‰åˆ¸ 1ï¼šæ¥è‡ªå…¬ä¼—å·é€‰åˆ¸
 	 * @return
 	 */
 	public List<Map<String, Object>> chooseParkingTicket(Long uin, Double total, Integer utype, Long uid, boolean isAuth, Integer ptype, Long parkId, Long orderId, Integer source){
@@ -2165,13 +2173,13 @@ public class CommonMethods {
 		boolean isCanUserTicket = memcacheUtils.readUseTicketCache(uin);
 		logger.error("choose parking pay ticket>>>uin:"+uin+",total:"+total+",utype:"+utype+",uid:"+uid+",isAuth:"+isAuth+",isCanUserTicket:"+isCanUserTicket);
 		if(isCanUserTicket){
-			Double moneylimit = 9999d;//Ñ¡È¯ÎŞÏŞÖÆ
+			Double moneylimit = 9999d;//é€‰åˆ¸æ— é™åˆ¶
 			Map<String, Object> uidMap =daService.getMap("select ticketquota from user_info_Tb where id =? and ticketquota<>?", new Object[]{uid,-1});
 			if(uidMap != null){
 				moneylimit = Double.parseDouble(uidMap.get("ticketquota")+"");
 			}
 			logger.error("uin:"+uin+",uid:"+uid+",moneylimit:"+moneylimit+",isAuth:"+isAuth);
-			Integer tickettype = 2;//Ñ¡È¯ÀàĞÍ
+			Integer tickettype = 2;//é€‰åˆ¸ç±»å‹
 			if(!isAuth){
 				if(source == 0){
 					moneylimit = 0d;
@@ -2184,16 +2192,16 @@ public class CommonMethods {
 		}
 		return list;
 	}
-	
+
 	/**
-	 * Ñ¡´òÉÍÈ¯
+	 * é€‰æ‰“èµåˆ¸
 	 * @param uin
 	 * @param total
 	 * @param isAuth
 	 * @param uid
-	 * @param utype 0ÆÕÍ¨Ñ¡È¯£¨Ä¬ÈÏ£©1¿ÉÓÃ´óÓÚ×î´óµÖ¿Û½ğ¶îµÄÍ£³µÈ¯
-	 * @param ptype 0ÕË»§³äÖµ£»1°üÔÂ²úÆ·£»2Í£³µ·Ñ½áËã£»3Ö±¸¶;4´òÉÍ 5¹ºÂòÍ£³µÈ¯
-	 * @param source 0:À´×Ô¿Í»§¶ËÑ¡È¯ 1£ºÀ´×Ô¹«ÖÚºÅÑ¡È¯
+	 * @param utype 0æ™®é€šé€‰åˆ¸ï¼ˆé»˜è®¤ï¼‰1å¯ç”¨å¤§äºæœ€å¤§æŠµæ‰£é‡‘é¢çš„åœè½¦åˆ¸
+	 * @param ptype 0è´¦æˆ·å……å€¼ï¼›1åŒ…æœˆäº§å“ï¼›2åœè½¦è´¹ç»“ç®—ï¼›3ç›´ä»˜;4æ‰“èµ 5è´­ä¹°åœè½¦åˆ¸
+	 * @param source 0:æ¥è‡ªå®¢æˆ·ç«¯é€‰åˆ¸ 1ï¼šæ¥è‡ªå…¬ä¼—å·é€‰åˆ¸
 	 * @return
 	 */
 	public List<Map<String, Object>> chooseRewardTicket(Long uin, Double total, boolean isAuth, Long uid, Integer utype, Integer ptype, Long parkId, Long orderId, Integer source){
@@ -2208,10 +2216,10 @@ public class CommonMethods {
 			logger.error("today reward cache:"+tcacheMap.size()+",uin:"+uin+",uid:"+uid+",time:"+time+",todaybegintime:"+TimeTools.getToDayBeginTime());
 		}
 		logger.error("choose reward ticket:uin:"+uin+",uid:"+uid+",isCanUserTicket:"+isCanUserTicket+",isAuth:"+isAuth+",total:"+total);
-		
+
 		if(isCanUserTicket){
-			Double moneylimit = 9999d;//Ñ¡È¯ÎŞÏŞÖÆ
-			Integer tickettype = 1;//Ñ¡È¯ÀàĞÍ
+			Double moneylimit = 9999d;//é€‰åˆ¸æ— é™åˆ¶
+			Integer tickettype = 1;//é€‰åˆ¸ç±»å‹
 			if(!isAuth){
 				if(source == 0){
 					moneylimit = 0d;
@@ -2223,20 +2231,20 @@ public class CommonMethods {
 		}
 		return list;
 	}
-	
+
 	/**
-	 * °´ÕÕÍ£³µÈ¯ÀàĞÍÏŞÖÆºÍÍ£³µÈ¯½ğ¶îÉÏÏŞÈ¡Í£³µÈ¯ÁĞ±í
-	 * @param moneylimit Í£³µÈ¯½ğ¶îÉÏÏŞ
-	 * @param tickettype Í£³µÈ¯ÀàĞÍÏŞÖÆ
+	 * æŒ‰ç…§åœè½¦åˆ¸ç±»å‹é™åˆ¶å’Œåœè½¦åˆ¸é‡‘é¢ä¸Šé™å–åœè½¦åˆ¸åˆ—è¡¨
+	 * @param moneylimit åœè½¦åˆ¸é‡‘é¢ä¸Šé™
+	 * @param tickettype åœè½¦åˆ¸ç±»å‹é™åˆ¶
 	 * @param uin
-	 * @param utype 0ÆÕÍ¨Ñ¡È¯£¨Ä¬ÈÏ£©1¿ÉÓÃ´óÓÚ×î´óµÖ¿Û½ğ¶îµÄÍ£³µÈ¯
-	 * @param ptype 0ÕË»§³äÖµ£»1°üÔÂ²úÆ·£»2Í£³µ·Ñ½áËã£»3Ö±¸¶;4´òÉÍ 5¹ºÂòÍ£³µÈ¯
+	 * @param utype 0æ™®é€šé€‰åˆ¸ï¼ˆé»˜è®¤ï¼‰1å¯ç”¨å¤§äºæœ€å¤§æŠµæ‰£é‡‘é¢çš„åœè½¦åˆ¸
+	 * @param ptype 0è´¦æˆ·å……å€¼ï¼›1åŒ…æœˆäº§å“ï¼›2åœè½¦è´¹ç»“ç®—ï¼›3ç›´ä»˜;4æ‰“èµ 5è´­ä¹°åœè½¦åˆ¸
 	 * @param uid
-	 * @param total ½ğ¶î
+	 * @param total é‡‘é¢
 	 * @return
 	 */
 	private List<Map<String, Object>> getLimitTickets(Double moneylimit, Integer tickettype, Long uin, Integer utype, Integer ptype, Long uid, Double total, Long parkId, Long orderId){
-		Integer resource = 1;//Ö»ÄÜÓÃ¹ºÂòÈ¯
+		Integer resource = 1;//åªèƒ½ç”¨è´­ä¹°åˆ¸
 		if(readAllowCache(parkId)){
 			logger.error("already uplimit of allowance everyday>>>uin:"+uin+",orderid:"+orderId);
 			resource = 1;
@@ -2246,11 +2254,11 @@ public class CommonMethods {
 		list = chooseTicketByLevel(list, ptype, uid, total, utype, parkId, orderId);
 		return list;
 	}
-	
+
 	private boolean readAllowCache(Long comid){
 		Double limit = memcacheUtils.readAllowLimitCacheByPark(comid);
 		logger.error("comid:"+comid+",limit:"+limit);
-		if(limit != null){//ÓĞ»º´æ
+		if(limit != null){//æœ‰ç¼“å­˜
 			Double allowmoney = memcacheUtils.readAllowCacheByPark(comid);
 			logger.error("comid:"+comid+",allowmoney:"+allowmoney);
 			Map<String, Object> comMap = pgOnlyReadService.getMap(
@@ -2265,31 +2273,31 @@ public class CommonMethods {
 					}
 				}
 			}
-			if(allowmoney >= limit){//²é¿´ÊÇ·ñ³¬¹ıÃ¿ÈÕ²¹ÌùÉÏÏŞ
+			if(allowmoney >= limit){//æŸ¥çœ‹æ˜¯å¦è¶…è¿‡æ¯æ—¥è¡¥è´´ä¸Šé™
 				return true;
 			}
-		}else{//Ã»ÓĞ°´³µ³¡³öµ¥·ÖÅäµÄ²¹Ìù,ÕâÊ±ºò°´ÕÕ×Üµ¥Á¿À´ÏŞÖÆ
+		}else{//æ²¡æœ‰æŒ‰è½¦åœºå‡ºå•åˆ†é…çš„è¡¥è´´,è¿™æ—¶å€™æŒ‰ç…§æ€»å•é‡æ¥é™åˆ¶
 			Double allallowmoney = memcacheUtils.readAllowanceCache();
 			if(CustomDefind.getValue("ALLOWANCE") != null){
 				Double uplimit = Double.valueOf(CustomDefind.getValue("ALLOWANCE") + "");
 				Double toDaylimit = getAllowance(TimeTools.getToDayBeginTime(), uplimit);
 //				if(toDaylimit<1000||toDaylimit>uplimit)
 //					toDaylimit=1000d;
-				logger.error("½ñÈÕ²¹Ìù×Ü¶î £ºallallowmoney:"+allallowmoney+",uplimit:"+uplimit+",toDaylimit:"+toDaylimit);
-				if(allallowmoney >= toDaylimit){//½ñÈÕ²¹Ìù×Ü¶îÒÑ¾­³¬¹ıÁËÉÏÏŞ
+				logger.error("ä»Šæ—¥è¡¥è´´æ€»é¢ ï¼šallallowmoney:"+allallowmoney+",uplimit:"+uplimit+",toDaylimit:"+toDaylimit);
+				if(allallowmoney >= toDaylimit){//ä»Šæ—¥è¡¥è´´æ€»é¢å·²ç»è¶…è¿‡äº†ä¸Šé™
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
-	//2015-11-05 ¿ªÊ¼£¬Ã¿Ìì¼õ100,µ½0Í£Ö¹
+
+	//2015-11-05 å¼€å§‹ï¼Œæ¯å¤©å‡100,åˆ°0åœæ­¢
 	private Double getAllowance(Long time,Double limit) {
 		Long baseTime = 1446652800L;//2015-11-05
 		Long abs = time-baseTime;
 		Long t  = abs/(24*60*60);
-		logger.error(">>>>>£¨2015-11-03¿ªÊ¼£©²¹Ìùµİ¼õ100µÄ±¶Êı£º"+t);
+		logger.error(">>>>>ï¼ˆ2015-11-03å¼€å§‹ï¼‰è¡¥è´´é€’å‡100çš„å€æ•°ï¼š"+t);
 		if(t>0){
 			Double retDouble= limit-t*100;
 			if(retDouble<0d)
@@ -2298,13 +2306,13 @@ public class CommonMethods {
 		}
 		return limit;
 	}
-	
+
 	/**
-	 * @param ptype 0ÕË»§³äÖµ£»1°üÔÂ²úÆ·£»2Í£³µ·Ñ½áËã£»3Ö±¸¶;4´òÉÍ 5¹ºÂòÍ£³µÈ¯
-	 * @param uid   ÊÕ·ÑÔ±±àºÅ
-	 * @param total Ïû·Ñ½ğ¶î
-	 * @param type  0£º¸ù¾İ½ğ¶î¼ÆËãÈ¯µÖ¿Û½ğ¶î 1£º¸ù¾İÈ¯½ğ¶î¼ÆËãÂú¶àÉÙÏû·Ñ½ğ¶î¿ÉÈ«¶îµÖ¿Û
-	 * @param utype 0ÆÕÍ¨Ñ¡È¯£¨Ä¬ÈÏ£©1¿ÉÓÃ´óÓÚ×î´óµÖ¿Û½ğ¶îµÄÍ£³µÈ¯
+	 * @param ptype 0è´¦æˆ·å……å€¼ï¼›1åŒ…æœˆäº§å“ï¼›2åœè½¦è´¹ç»“ç®—ï¼›3ç›´ä»˜;4æ‰“èµ 5è´­ä¹°åœè½¦åˆ¸
+	 * @param uid   æ”¶è´¹å‘˜ç¼–å·
+	 * @param total æ¶ˆè´¹é‡‘é¢
+	 * @param type  0ï¼šæ ¹æ®é‡‘é¢è®¡ç®—åˆ¸æŠµæ‰£é‡‘é¢ 1ï¼šæ ¹æ®åˆ¸é‡‘é¢è®¡ç®—æ»¡å¤šå°‘æ¶ˆè´¹é‡‘é¢å¯å…¨é¢æŠµæ‰£
+	 * @param utype 0æ™®é€šé€‰åˆ¸ï¼ˆé»˜è®¤ï¼‰1å¯ç”¨å¤§äºæœ€å¤§æŠµæ‰£é‡‘é¢çš„åœè½¦åˆ¸
 	 * @return
 	 */
 	private Map<String, Object> getDistotalLimit(Integer ptype,Long uid, Double total, Integer type, Integer utype, Long orderId){
@@ -2313,8 +2321,8 @@ public class CommonMethods {
 		Double climit = 0d;
 		Double blimit = 0d;
 		Double slimit = 0d;
-		if(ptype == 4){//´òÉÍÑ¡È¯
-			Double rewardquota = 3.0;//µÖ¿ÛÉÏÏŞ
+		if(ptype == 4){//æ‰“èµé€‰åˆ¸
+			Double rewardquota = 3.0;//æŠµæ‰£ä¸Šé™
 			Map<String, Object> userMap = daService.getMap("select rewardquota from user_info_tb where id = ?", new Object[]{uid});
 			if(userMap != null && userMap.get("rewardquota") != null){
 				rewardquota =StringUtils.formatDouble(userMap.get("rewardquota"));
@@ -2323,10 +2331,10 @@ public class CommonMethods {
 				if(orderId != null && orderId > 0){
 					Map<String, Object> orderMap = daService.getMap("select total from order_tb where id=? ", new Object[]{orderId});
 					if(orderMap != null && orderMap.get("total") != null){
-						Double fee = Double.valueOf(orderMap.get("total") + "");//Í£³µ·Ñ½ğ¶î
-						
-						//ÆÕÍ¨È¯  X£ºÖ§¸¶³µ·Ñ½ğ¶îÂú (fee) Y£º¿ÉÓÃÈ¯µÖ¿Û½ğ¶î (climit) Ëã·¨£ºX=6Y-2 ÉÏÏŞÊÇrewardquota
-						climit = Math.floor((fee+2)*(1.0/6));//ÏòÉÏÈ¡Õû
+						Double fee = Double.valueOf(orderMap.get("total") + "");//åœè½¦è´¹é‡‘é¢
+
+						//æ™®é€šåˆ¸  Xï¼šæ”¯ä»˜è½¦è´¹é‡‘é¢æ»¡ (fee) Yï¼šå¯ç”¨åˆ¸æŠµæ‰£é‡‘é¢ (climit) ç®—æ³•ï¼šX=6Y-2 ä¸Šé™æ˜¯rewardquota
+						climit = Math.floor((fee+2)*(1.0/6));//å‘ä¸Šå–æ•´
 						if(climit < 0){
 							climit = 0d;
 						}
@@ -2336,8 +2344,8 @@ public class CommonMethods {
 						if(climit > rewardquota){
 							climit = rewardquota;
 						}
-						//¹ºÂòÈ¯   X£ºÖ§¸¶³µ·Ñ½ğ¶îÂú (fee) Y£º¿ÉÓÃÈ¯µÖ¿Û½ğ¶î (blimit) Ëã·¨£ºX=YÉÏÏŞÊÇrewardquota
-						blimit = Math.floor(fee);//ÏòÉÏÈ¡Õû
+						//è´­ä¹°åˆ¸   Xï¼šæ”¯ä»˜è½¦è´¹é‡‘é¢æ»¡ (fee) Yï¼šå¯ç”¨åˆ¸æŠµæ‰£é‡‘é¢ (blimit) ç®—æ³•ï¼šX=Yä¸Šé™æ˜¯rewardquota
+						blimit = Math.floor(fee);//å‘ä¸Šå–æ•´
 						if(blimit < 0){
 							blimit = 0d;
 						}
@@ -2347,8 +2355,8 @@ public class CommonMethods {
 						if(blimit > rewardquota){
 							blimit = rewardquota;
 						}
-						//×¨ÓÃÈ¯   X£ºÖ§¸¶³µ·Ñ½ğ¶îÂú (fee) Y£º¿ÉÓÃÈ¯µÖ¿Û½ğ¶î (slimit) Ëã·¨£ºX=6Y-2 ÉÏÏŞÊÇrewardquota
-						slimit = Math.floor((fee+2)*(1.0/6));//ÏòÉÏÈ¡Õû
+						//ä¸“ç”¨åˆ¸   Xï¼šæ”¯ä»˜è½¦è´¹é‡‘é¢æ»¡ (fee) Yï¼šå¯ç”¨åˆ¸æŠµæ‰£é‡‘é¢ (slimit) ç®—æ³•ï¼šX=6Y-2 ä¸Šé™æ˜¯rewardquota
+						slimit = Math.floor((fee+2)*(1.0/6));//å‘ä¸Šå–æ•´
 						if(slimit < 0){
 							slimit = 0d;
 						}
@@ -2361,43 +2369,43 @@ public class CommonMethods {
 					}
 				}
 				logger.error("getDistotalLimit>>>uid:"+uid+",climit:"+climit+",blimit:"+blimit+",slimit:"+slimit+",total:"+total+",ptype:"+ptype+",utype:"+utype+",type:"+type);
-				
+
 			}else if(type == 1){
 				if(total > rewardquota){
 					total = rewardquota;
 				}
-				//ÆÕÍ¨È¯  X£ºÖ§¸¶³µ·Ñ½ğ¶îÂú (climit) Y£º¿ÉÓÃÈ¯µÖ¿Û½ğ¶î (total) Ëã·¨£ºX=6Y-2 ÉÏÏŞÊÇrewardquota
+				//æ™®é€šåˆ¸  Xï¼šæ”¯ä»˜è½¦è´¹é‡‘é¢æ»¡ (climit) Yï¼šå¯ç”¨åˆ¸æŠµæ‰£é‡‘é¢ (total) ç®—æ³•ï¼šX=6Y-2 ä¸Šé™æ˜¯rewardquota
 				climit = Math.ceil(total*6 - 2);
-				//¹ºÂòÈ¯  X£ºÖ§¸¶³µ·Ñ½ğ¶îÂú (blimit) Y£º¿ÉÓÃÈ¯µÖ¿Û½ğ¶î (total) Ëã·¨£ºX=Y ÉÏÏŞÊÇrewardquota
+				//è´­ä¹°åˆ¸  Xï¼šæ”¯ä»˜è½¦è´¹é‡‘é¢æ»¡ (blimit) Yï¼šå¯ç”¨åˆ¸æŠµæ‰£é‡‘é¢ (total) ç®—æ³•ï¼šX=Y ä¸Šé™æ˜¯rewardquota
 				blimit = Math.ceil(total);
-				//×¨ÓÃÈ¯  X£ºÖ§¸¶³µ·Ñ½ğ¶îÂú (slimit) Y£º¿ÉÓÃÈ¯µÖ¿Û½ğ¶î (total) Ëã·¨£ºX=6Y-2 ÉÏÏŞÊÇrewardquota
+				//ä¸“ç”¨åˆ¸  Xï¼šæ”¯ä»˜è½¦è´¹é‡‘é¢æ»¡ (slimit) Yï¼šå¯ç”¨åˆ¸æŠµæ‰£é‡‘é¢ (total) ç®—æ³•ï¼šX=6Y-2 ä¸Šé™æ˜¯rewardquota
 				slimit = Math.ceil(total*6 - 2);
-				
-				map.put("distotal", total);//Êµ¼Ê×î¸ßµÖ¿Û½ğ¶î
+
+				map.put("distotal", total);//å®é™…æœ€é«˜æŠµæ‰£é‡‘é¢
 //					logger.error("getDistotalLimit>>>uid:"+uid+",climit:"+climit+",blimit:"+blimit+",slimit:"+slimit+",rewardquota:"+rewardquota+",total:"+total+",ptype:"+ptype+",utype:"+utype+",type:"+type+",distotal:"+total);
 			}
-			
+
 		}else if(ptype == -1 || ptype == 2 || ptype == 3){
-			Double uplimit = 9999d;//µÖ¿ÛÉÏÏŞ
+			Double uplimit = 9999d;//æŠµæ‰£ä¸Šé™
 			if(type == 0){
-				//ÆÕÍ¨È¯  X£º³µ·Ñ½ğ¶îÂú (total) Y£º¿ÉÓÃÈ¯µÖ¿Û½ğ¶î (climit) Ëã·¨£ºX=6Y - 2 ÉÏÏŞÊÇuplimit
-				climit = Math.floor((total + 2)*(1.0/6));//ÏòÉÏÈ¡Õû
+				//æ™®é€šåˆ¸  Xï¼šè½¦è´¹é‡‘é¢æ»¡ (total) Yï¼šå¯ç”¨åˆ¸æŠµæ‰£é‡‘é¢ (climit) ç®—æ³•ï¼šX=6Y - 2 ä¸Šé™æ˜¯uplimit
+				climit = Math.floor((total + 2)*(1.0/6));//å‘ä¸Šå–æ•´
 				if(climit < 0){
 					climit = 0d;
 				}
 				if(climit > uplimit){
 					climit = uplimit;
 				}
-				//¹ºÂòÈ¯  X£º³µ·Ñ½ğ¶îÂú (total) Y£º¿ÉÓÃÈ¯µÖ¿Û½ğ¶î (climit) Ëã·¨£ºX=Y ÉÏÏŞÊÇuplimit
-				blimit = Math.floor(total);//ÏòÉÏÈ¡Õû
+				//è´­ä¹°åˆ¸  Xï¼šè½¦è´¹é‡‘é¢æ»¡ (total) Yï¼šå¯ç”¨åˆ¸æŠµæ‰£é‡‘é¢ (climit) ç®—æ³•ï¼šX=Y ä¸Šé™æ˜¯uplimit
+				blimit = Math.floor(total);//å‘ä¸Šå–æ•´
 				if(blimit < 0){
 					blimit = 0d;
 				}
 				if(blimit > uplimit){
 					blimit = uplimit;
 				}
-				//×¨ÓÃÈ¯  X£º³µ·Ñ½ğ¶îÂú (total) Y£º¿ÉÓÃÈ¯µÖ¿Û½ğ¶î (climit) Ëã·¨£ºX=3Y+1 ÉÏÏŞÊÇuplimit
-				slimit = Math.floor((total - 1)*(1.0/3));//ÏòÉÏÈ¡Õû
+				//ä¸“ç”¨åˆ¸  Xï¼šè½¦è´¹é‡‘é¢æ»¡ (total) Yï¼šå¯ç”¨åˆ¸æŠµæ‰£é‡‘é¢ (climit) ç®—æ³•ï¼šX=3Y+1 ä¸Šé™æ˜¯uplimit
+				slimit = Math.floor((total - 1)*(1.0/3));//å‘ä¸Šå–æ•´
 				if(slimit < 0){
 					slimit = 0d;
 				}
@@ -2409,16 +2417,16 @@ public class CommonMethods {
 				if(total > uplimit){
 					total = uplimit;
 				}
-				//ÆÕÍ¨È¯  X£ºÖ§¸¶½ğ¶îÂú (climit) Y£º¿ÉÓÃÈ¯µÖ¿Û½ğ¶î (total) Ëã·¨£ºX=Y+1+Y/1 ÉÏÏŞÊÇuplimit
+				//æ™®é€šåˆ¸  Xï¼šæ”¯ä»˜é‡‘é¢æ»¡ (climit) Yï¼šå¯ç”¨åˆ¸æŠµæ‰£é‡‘é¢ (total) ç®—æ³•ï¼šX=Y+1+Y/1 ä¸Šé™æ˜¯uplimit
 				climit = Math.ceil(total*6 - 2);
-				//¹ºÂòÈ¯  X£ºÖ§¸¶½ğ¶îÂú (blimit) Y£º¿ÉÓÃÈ¯µÖ¿Û½ğ¶î (total) Ëã·¨£ºX=Y ÉÏÏŞÊÇuplimit
+				//è´­ä¹°åˆ¸  Xï¼šæ”¯ä»˜é‡‘é¢æ»¡ (blimit) Yï¼šå¯ç”¨åˆ¸æŠµæ‰£é‡‘é¢ (total) ç®—æ³•ï¼šX=Y ä¸Šé™æ˜¯uplimit
 				blimit = Math.ceil(total);
-				//×¨ÓÃÈ¯  X£ºÖ§¸¶½ğ¶îÂú (slimit) Y£º¿ÉÓÃÈ¯µÖ¿Û½ğ¶î (total) Ëã·¨£ºX=Y+1 ÉÏÏŞÊÇuplimit
+				//ä¸“ç”¨åˆ¸  Xï¼šæ”¯ä»˜é‡‘é¢æ»¡ (slimit) Yï¼šå¯ç”¨åˆ¸æŠµæ‰£é‡‘é¢ (total) ç®—æ³•ï¼šX=Y+1 ä¸Šé™æ˜¯uplimit
 				slimit = Math.ceil(total*3 + 1);
-				map.put("distotal", total);//Êµ¼Ê×î¸ßµÖ¿Û½ğ¶î
+				map.put("distotal", total);//å®é™…æœ€é«˜æŠµæ‰£é‡‘é¢
 //				logger.error("getDistotalLimit>>>uid:"+uid+",climit:"+climit+",blimit:"+blimit+",slimit:"+slimit+",uplimit:"+uplimit+",total:"+total+",ptype:"+ptype+",utype:"+utype+",type:"+type+",distotal:"+total);
 			}
-			
+
 		}
 		map.put("climit", climit);
 		map.put("blimit", blimit);
@@ -2427,12 +2435,12 @@ public class CommonMethods {
 		setDistotalByUtype(map, utype, type);
 		return map;
 	}
-	
+
 	/**
-	 * Ö÷Òª´¦ÀíÀÏ¿Í»§¶Ëutype=1µÄÇé¿öÏÂ£¬È¡¼¸ÖÖµÖ¿ÛËã·¨ÖĞµÖ¿Û×îĞ¡µÄÒ»¸ö×÷ÎªµÖ¿Û£¬ÀÏ¿Í»§¶ËÊÇÑ¡Ôñ²»Í¬µÄÈ¯ÓÃÍ¬Ò»¸ölimit£¬ÕâÑù¿ÉÒÔ·ÀÖ¹ÓÃ»§ÊÖ¶¯Ñ¡È¯Ê±µÖ¿Û´íÎó
+	 * ä¸»è¦å¤„ç†è€å®¢æˆ·ç«¯utype=1çš„æƒ…å†µä¸‹ï¼Œå–å‡ ç§æŠµæ‰£ç®—æ³•ä¸­æŠµæ‰£æœ€å°çš„ä¸€ä¸ªä½œä¸ºæŠµæ‰£ï¼Œè€å®¢æˆ·ç«¯æ˜¯é€‰æ‹©ä¸åŒçš„åˆ¸ç”¨åŒä¸€ä¸ªlimitï¼Œè¿™æ ·å¯ä»¥é˜²æ­¢ç”¨æˆ·æ‰‹åŠ¨é€‰åˆ¸æ—¶æŠµæ‰£é”™è¯¯
 	 * @param map
-	 * @param utype 0ÆÕÍ¨Ñ¡È¯£¨Ä¬ÈÏ£©1¿ÉÓÃ´óÓÚ×î´óµÖ¿Û½ğ¶îµÄÍ£³µÈ¯
-	 * @param type 0£º¸ù¾İ½ğ¶î¼ÆËãÈ¯µÖ¿Û½ğ¶î 1£º¸ù¾İÈ¯½ğ¶î¼ÆËãÂú¶àÉÙÏû·Ñ½ğ¶î¿ÉÈ«¶îµÖ¿Û
+	 * @param utype 0æ™®é€šé€‰åˆ¸ï¼ˆé»˜è®¤ï¼‰1å¯ç”¨å¤§äºæœ€å¤§æŠµæ‰£é‡‘é¢çš„åœè½¦åˆ¸
+	 * @param type 0ï¼šæ ¹æ®é‡‘é¢è®¡ç®—åˆ¸æŠµæ‰£é‡‘é¢ 1ï¼šæ ¹æ®åˆ¸é‡‘é¢è®¡ç®—æ»¡å¤šå°‘æ¶ˆè´¹é‡‘é¢å¯å…¨é¢æŠµæ‰£
 	 * @return
 	 */
 	private Map<String, Object> setDistotalByUtype(Map<String, Object> map, Integer utype, Integer type){
@@ -2444,7 +2452,7 @@ public class CommonMethods {
 				dMap.put("dlimit", map.get(key));
 				list.add(dMap);
 			}
-			//°´ÕÕ´ÓĞ¡µ½´óÅÅĞò
+			//æŒ‰ç…§ä»å°åˆ°å¤§æ’åº
 			Collections.sort(list, new ListSort6());
 			Double dlimit = Double.valueOf(list.get(0).get("dlimit") + "");
 //			logger.error("setDistotalByUtype>>>list:"+list+",utype:"+utype+",type:"+type);
@@ -2455,7 +2463,7 @@ public class CommonMethods {
 		}
 		return map;
 	}
-	
+
 	public List<Map<String, Object>> getTicketInfo(List<Map<String, Object>> list, Integer ptype,Long uid, Integer utype){
 		if(list != null && !list.isEmpty()){
 			for(Map<String, Object> map : list){
@@ -2465,7 +2473,7 @@ public class CommonMethods {
 				Long limitDay = (Long)map.get("limit_day");
 				Double backmoney = StringUtils.formatDouble(map.get("pmoney"));
 				Long btime =TimeTools.getToDayBeginTime();
-				//==========»ñÈ¡Âú¶àÉÙÔª¿ÉÈ«¶îµÖ¿Ûbegin=============//
+				//==========è·å–æ»¡å¤šå°‘å…ƒå¯å…¨é¢æŠµæ‰£begin=============//
 				Map<String, Object> fullMap = getDistotalLimit(2, uid, Double.valueOf(money + ""), 1, utype, -1L);
 				Double climit = Double.valueOf(fullMap.get("climit") + "");
 				Double blimit = Double.valueOf(fullMap.get("blimit") + "");
@@ -2481,17 +2489,17 @@ public class CommonMethods {
 				if(type == 0 && resources == 1){
 					map.put("full", blimit);
 				}
-				//==========»ñÈ¡Âú¶àÉÙÔª¿ÉÈ«¶îµÖ¿Ûend=============//
+				//==========è·å–æ»¡å¤šå°‘å…ƒå¯å…¨é¢æŠµæ‰£end=============//
 				if(btime >limitDay)
 					map.put("exp", 0);
 				else {
 					map.put("exp", 1);
 				}
 				map.put("isbuy",resources);
-				if(resources == 1){//¹ºÂòµÄÈ¯
-					map.put("desc", "Âú"+map.get("full")+"Ôª¿ÉÒÔµÖ¿ÛÈ«¶î,¹ıÆÚºóÍË»¹"+backmoney+"ÔªÖÁÄúµÄÕË»§");
+				if(resources == 1){//è´­ä¹°çš„åˆ¸
+					map.put("desc", "æ»¡"+map.get("full")+"å…ƒå¯ä»¥æŠµæ‰£å…¨é¢,è¿‡æœŸåé€€è¿˜"+backmoney+"å…ƒè‡³æ‚¨çš„è´¦æˆ·");
 				}else{
-					map.put("desc", "Âú"+map.get("full")+"Ôª¿ÉÒÔµÖ¿ÛÈ«¶î");
+					map.put("desc", "æ»¡"+map.get("full")+"å…ƒå¯ä»¥æŠµæ‰£å…¨é¢");
 				}
 				map.put("cname", "");
 				if(type == 1 && map.get("comid") != null){
@@ -2502,9 +2510,9 @@ public class CommonMethods {
 		}
 		return list;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param comid
 	 * @return
 	 */
@@ -2513,19 +2521,19 @@ public class CommonMethods {
 		if(comMap!=null){
 			return (String)comMap.get("company_name");
 		}
-		return "";		
+		return "";
 	}
-	
+
 	/**
-	 * @param list È¯ÁĞ±í
-	 * @param ptype 0ÕË»§³äÖµ£»1°üÔÂ²úÆ·£»2Í£³µ·Ñ½áËã£»3Ö±¸¶;4´òÉÍ 5¹ºÂòÍ£³µÈ¯
-	 * @param uid 
-	 * @param total Ïû·Ñ½ğ¶î
-	 * @param utype  0ÆÕÍ¨Ñ¡È¯£¨Ä¬ÈÏ£©1¿ÉÓÃ´óÓÚ×î´óµÖ¿Û½ğ¶îµÄÍ£³µÈ¯
+	 * @param list åˆ¸åˆ—è¡¨
+	 * @param ptype 0è´¦æˆ·å……å€¼ï¼›1åŒ…æœˆäº§å“ï¼›2åœè½¦è´¹ç»“ç®—ï¼›3ç›´ä»˜;4æ‰“èµ 5è´­ä¹°åœè½¦åˆ¸
+	 * @param uid
+	 * @param total æ¶ˆè´¹é‡‘é¢
+	 * @param utype  0æ™®é€šé€‰åˆ¸ï¼ˆé»˜è®¤ï¼‰1å¯ç”¨å¤§äºæœ€å¤§æŠµæ‰£é‡‘é¢çš„åœè½¦åˆ¸
 	 * @return
 	 */
 	public List<Map<String, Object>> chooseTicketByLevel(List<Map<String, Object>> list, Integer ptype,Long uid, Double total, Integer utype, Long parkId, Long orderId){
-		//µÖ¿ÛËã·¨
+		//æŠµæ‰£ç®—æ³•
 		Map<String, Object> distotalMap = getDistotalLimit(ptype, uid, total, 0, utype, orderId);
 		Double climit = Double.valueOf(distotalMap.get("climit") + "");
 		Double blimit = Double.valueOf(distotalMap.get("blimit") + "");
@@ -2534,91 +2542,91 @@ public class CommonMethods {
 		if(list != null && !list.isEmpty()){
 			for(int i=0; i<list.size();i++){
 				Map<String, Object> map = list.get(i);
-				Integer iscanuse = 1;//0:²»¿ÉÓÃ 1£º¿ÉÓÃ
-				Double limit = 0d;//¸ÃÍ£³µÈ¯¿ÉµÖ¿Û½ğ¶î
+				Integer iscanuse = 1;//0:ä¸å¯ç”¨ 1ï¼šå¯ç”¨
+				Double limit = 0d;//è¯¥åœè½¦åˆ¸å¯æŠµæ‰£é‡‘é¢
 				Integer type=(Integer)map.get("type");
 				Integer money = (Integer)map.get("money");
 				Integer resources = (Integer)map.get("resources");
-				if(type == 1){//×¨ÓÃÍ£³µÈ¯
+				if(type == 1){//ä¸“ç”¨åœè½¦åˆ¸
 					if(map.get("comid") != null){
 						Long comid = (Long)map.get("comid");
-						if(comid.intValue() != parkId.intValue()){//²»ÊÇ¸Ã³µ³¡×¨ÓÃÈ¯²»¿ÉÓÃ
+						if(comid.intValue() != parkId.intValue()){//ä¸æ˜¯è¯¥è½¦åœºä¸“ç”¨åˆ¸ä¸å¯ç”¨
 							iscanuse = 0;
 						}
 					}else{
 						iscanuse = 0;
 					}
-					
+
 					if(slimit >= money){
 						limit = Double.valueOf(money + "");
 					}else{
 						limit = slimit;
-						if(utype == 0){//²»Ñ¡Ôñ´óÓÚ×î´óµÖ¿Û½ğ¶îµÄÈ¯
+						if(utype == 0){//ä¸é€‰æ‹©å¤§äºæœ€å¤§æŠµæ‰£é‡‘é¢çš„åˆ¸
 							iscanuse = 0;
 						}
 					}
-					map.put("limit", limit);//µÖ¿Û½ğ¶î
-					map.put("level", 3);//×¨ÓÃÈ¯ÓÅÏÈ¼¶×î¸ß
+					map.put("limit", limit);//æŠµæ‰£é‡‘é¢
+					map.put("level", 3);//ä¸“ç”¨åˆ¸ä¼˜å…ˆçº§æœ€é«˜
 				}
-				if(type == 0 && resources == 0){//·Ç¹ºÂòÍ£³µÈ¯
+				if(type == 0 && resources == 0){//éè´­ä¹°åœè½¦åˆ¸
 					if(climit >= money){
 						limit = Double.valueOf(money + "");
 					}else{
 						limit = climit;
-						if(utype == 0){//²»Ñ¡Ôñ´óÓÚ×î´óµÖ¿Û½ğ¶îµÄÈ¯
+						if(utype == 0){//ä¸é€‰æ‹©å¤§äºæœ€å¤§æŠµæ‰£é‡‘é¢çš„åˆ¸
 							iscanuse = 0;
 						}
 					}
-					map.put("limit", limit);//µÖ¿Û½ğ¶î
-					map.put("level", 2);//ÆÕÍ¨·Ç¹ºÂòÈ¯ÓÅÏÈÈ¨Æä´Î
+					map.put("limit", limit);//æŠµæ‰£é‡‘é¢
+					map.put("level", 2);//æ™®é€šéè´­ä¹°åˆ¸ä¼˜å…ˆæƒå…¶æ¬¡
 				}
-				if(type == 0 && resources == 1){//¹ºÂòÍ£³µÈ¯
+				if(type == 0 && resources == 1){//è´­ä¹°åœè½¦åˆ¸
 					if(blimit >= money){
 						limit = Double.valueOf(money + "");
 					}else{
-						iscanuse = 0;//Ğ¡»ÔËµ¹ºÂòÈ¯²»¿ÉÑ¡ 
+						iscanuse = 0;//å°è¾‰è¯´è´­ä¹°åˆ¸ä¸å¯é€‰
 					}
-					map.put("limit", limit);//µÖ¿Û½ğ¶î
-					map.put("level", 1);//¹ºÂòÈ¯ÓÅÏÈ¼¶×îµÍ
+					map.put("limit", limit);//æŠµæ‰£é‡‘é¢
+					map.put("level", 1);//è´­ä¹°åˆ¸ä¼˜å…ˆçº§æœ€ä½
 				}
-				if(limit == 0){//µÖ¿Û0²»¿ÉÓÃ
+				if(limit == 0){//æŠµæ‰£0ä¸å¯ç”¨
 					iscanuse = 0;
 				}
-				map.put("offset",  Math.abs(limit-money));//²îÖµ¾ø¶ÔÖµ
-				map.put("iscanuse", iscanuse);//ÊÇ·ñ¿ÉÓÃ´óÓÚ×î´óµÖ¿Û
+				map.put("offset",  Math.abs(limit-money));//å·®å€¼ç»å¯¹å€¼
+				map.put("iscanuse", iscanuse);//æ˜¯å¦å¯ç”¨å¤§äºæœ€å¤§æŠµæ‰£
 			}
-			Collections.sort(list, new ListSort());//°´ÕÕiscanuseÓÉ´óµ½Ğ¡ÅÅĞò
-			Collections.sort(list, new ListSort1());//ÏàÍ¬µÄiscanuse°´ÕÕµÖ¿Û½ğ¶îlimitÓÉ´óµ½Ğ¡ÅÅĞò
-			Collections.sort(list, new ListSort2());//ÏàÍ¬µÄiscanuse¡¢limit°´ÕÕoffsetÓÉĞ¡µ½´óÅÅĞò
-			Collections.sort(list, new ListSort3());//ÏàÍ¬µÄiscanuse¡¢limitºÍoffset°´ÕÕmoneyÓÉĞ¡µ½´óÅÅĞò
-			Collections.sort(list, new ListSort4());//ÏàÍ¬iscanuse¡¢limit¡¢offsetºÍmoney°´ÕÕlevelÓÉ´óµ½Ğ¡ÅÅĞò
-			Collections.sort(list, new ListSort5());//ÏàÍ¬iscanuse¡¢limit¡¢offset¡¢moneyºÍlevelÏàÍ¬°´ÕÕlimit_dayÓÉĞ¡µ½´óÅÅĞò
-			
-			getTicketInfo(list, ptype, uid, utype);//¼ÆËãÍ£³µÈ¯Âú¶àÉÙÔª¿É´ï×î´óµÖ¿Û¶î
-			
+			Collections.sort(list, new ListSort());//æŒ‰ç…§iscanuseç”±å¤§åˆ°å°æ’åº
+			Collections.sort(list, new ListSort1());//ç›¸åŒçš„iscanuseæŒ‰ç…§æŠµæ‰£é‡‘é¢limitç”±å¤§åˆ°å°æ’åº
+			Collections.sort(list, new ListSort2());//ç›¸åŒçš„iscanuseã€limitæŒ‰ç…§offsetç”±å°åˆ°å¤§æ’åº
+			Collections.sort(list, new ListSort3());//ç›¸åŒçš„iscanuseã€limitå’ŒoffsetæŒ‰ç…§moneyç”±å°åˆ°å¤§æ’åº
+			Collections.sort(list, new ListSort4());//ç›¸åŒiscanuseã€limitã€offsetå’ŒmoneyæŒ‰ç…§levelç”±å¤§åˆ°å°æ’åº
+			Collections.sort(list, new ListSort5());//ç›¸åŒiscanuseã€limitã€offsetã€moneyå’Œlevelç›¸åŒæŒ‰ç…§limit_dayç”±å°åˆ°å¤§æ’åº
+
+			getTicketInfo(list, ptype, uid, utype);//è®¡ç®—åœè½¦åˆ¸æ»¡å¤šå°‘å…ƒå¯è¾¾æœ€å¤§æŠµæ‰£é¢
+
 		}
 		return list;
 	}
-	
+
 	class ListSort implements Comparator<Map<String, Object>>{
 		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
 			// TODO Auto-generated method stub
 			Map map = getParams(o1, o2);
 			Integer c1 = (Integer)map.get("c1");
 			Integer c2 = (Integer)map.get("c2");
-			
+
 			return c2.compareTo(c1);
 		}
-		
+
 	}
-	
+
 	class ListSort1 implements Comparator<Map<String, Object>>{
 		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
 			// TODO Auto-generated method stub
 			Map map = getParams(o1, o2);
 			Integer c1 = (Integer)map.get("c1");
 			Integer c2 = (Integer)map.get("c2");
-			
+
 			BigDecimal b1 = (BigDecimal)map.get("b1");
 			BigDecimal b2 = (BigDecimal)map.get("b2");
 			if(c2.compareTo(c1) == 0){
@@ -2627,19 +2635,19 @@ public class CommonMethods {
 				return 0;
 			}
 		}
-		
+
 	}
-	
+
 	class ListSort2 implements Comparator<Map<String, Object>>{
 		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
 			// TODO Auto-generated method stub
 			Map map = getParams(o1, o2);
 			Integer c1 = (Integer)map.get("c1");
 			Integer c2 = (Integer)map.get("c2");
-			
+
 			BigDecimal b1 = (BigDecimal)map.get("b1");
 			BigDecimal b2 = (BigDecimal)map.get("b2");
-			
+
 			BigDecimal l1 = (BigDecimal)map.get("l1");
 			BigDecimal l2 = (BigDecimal)map.get("l2");
 			if(c2.compareTo(c1) == 0 && b2.compareTo(b1) == 0){
@@ -2648,9 +2656,9 @@ public class CommonMethods {
 				return 0;
 			}
 		}
-		
+
 	}
-	
+
 	class ListSort3 implements Comparator<Map<String, Object>>{
 
 		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
@@ -2658,25 +2666,25 @@ public class CommonMethods {
 			Map map = getParams(o1, o2);
 			Integer c1 = (Integer)map.get("c1");
 			Integer c2 = (Integer)map.get("c2");
-			
+
 			BigDecimal b1 = (BigDecimal)map.get("b1");
 			BigDecimal b2 = (BigDecimal)map.get("b2");
-			
+
 			BigDecimal l1 = (BigDecimal)map.get("l1");
 			BigDecimal l2 = (BigDecimal)map.get("l2");
-			
+
 			Integer m1 = (Integer)map.get("m1");
 			Integer m2 = (Integer)map.get("m2");
-			
+
 			if(c2.compareTo(c1) == 0 && b2.compareTo(b1) == 0 && l2.compareTo(l1) == 0){
 				return m1.compareTo(m2);
 			}else{
 				return 0;
 			}
 		}
-		
+
 	}
-	
+
 	class ListSort4 implements Comparator<Map<String, Object>>{
 
 		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
@@ -2684,28 +2692,28 @@ public class CommonMethods {
 			Map map = getParams(o1, o2);
 			Integer c1 = (Integer)map.get("c1");
 			Integer c2 = (Integer)map.get("c2");
-			
+
 			BigDecimal b1 = (BigDecimal)map.get("b1");
 			BigDecimal b2 = (BigDecimal)map.get("b2");
-			
+
 			BigDecimal l1 = (BigDecimal)map.get("l1");
 			BigDecimal l2 = (BigDecimal)map.get("l2");
-			
+
 			Integer m1 = (Integer)map.get("m1");
 			Integer m2 = (Integer)map.get("m2");
-			
+
 			Integer e1 = (Integer)map.get("e1");
 			Integer e2 = (Integer)map.get("e2");
-			
+
 			if(c2.compareTo(c1) == 0 && b2.compareTo(b1) == 0 && l2.compareTo(l1) == 0 && m2.compareTo(m1) == 0){
 				return e2.compareTo(e1);
 			}else{
 				return 0;
 			}
 		}
-		
+
 	}
-	
+
 	class ListSort5 implements Comparator<Map<String, Object>>{
 
 		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
@@ -2713,31 +2721,31 @@ public class CommonMethods {
 			Map map = getParams(o1, o2);
 			Integer c1 = (Integer)map.get("c1");
 			Integer c2 = (Integer)map.get("c2");
-			
+
 			BigDecimal b1 = (BigDecimal)map.get("b1");
 			BigDecimal b2 = (BigDecimal)map.get("b2");
-			
+
 			BigDecimal l1 = (BigDecimal)map.get("l1");
 			BigDecimal l2 = (BigDecimal)map.get("l2");
-			
+
 			Integer m1 = (Integer)map.get("m1");
 			Integer m2 = (Integer)map.get("m2");
-			
+
 			Integer e1 = (Integer)map.get("e1");
 			Integer e2 = (Integer)map.get("e2");
-			
+
 			Long d1 = (Long)map.get("d1");
 			Long d2 = (Long)map.get("d2");
-			
+
 			if(c2.compareTo(c1) == 0 && b2.compareTo(b1) == 0 && l2.compareTo(l1) == 0 && m2.compareTo(m1) == 0 && e2.compareTo(e1) == 0){
 				return d1.compareTo(d2);
 			}else{
 				return 0;
 			}
 		}
-		
+
 	}
-	
+
 	class ListSort6 implements Comparator<Map<String, Object>>{
 		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
 			// TODO Auto-generated method stub
@@ -2761,13 +2769,13 @@ public class CommonMethods {
 			}
 			return b1.compareTo(b2);
 		}
-		
+
 	}
-	
+
 	public List<Map<String, Object>> getCarType(Long comid){
 		Map<String, Object> map = daService.getMap("select car_type from com_info_tb where id=? ", new Object[]{comid});
 		List<Map<String, Object>> result = new ArrayList<Map<String,Object>>();
-		
+
 		if(map != null){
 			Integer car_type = (Integer)map.get("car_type");
 			if(car_type != 0){
@@ -2776,17 +2784,17 @@ public class CommonMethods {
 					result.addAll(list);
 				}else {
 					Map<String, Object> bigMap = new HashMap<String, Object>();
-					bigMap.put("value_name","Ğ¡³µ");
+					bigMap.put("value_name","å°è½¦");
 					bigMap.put("value_no", 1);
 					Map<String, Object> smallMap = new HashMap<String, Object>();
-					smallMap.put("value_name","´ó³µ");
+					smallMap.put("value_name","å¤§è½¦");
 					smallMap.put("value_no", 2);
 					result.add(bigMap);
 					result.add(smallMap);
 				}
 			}else {
 				Map<String, Object> firtstMap = new HashMap<String, Object>();
-				firtstMap.put("value_name","Í¨ÓÃ");
+				firtstMap.put("value_name","é€šç”¨");
 				firtstMap.put("value_no", 0);
 				result.add(firtstMap);
 			}
@@ -2801,7 +2809,7 @@ public class CommonMethods {
 		if(c2 == null) c2 = 0;
 		map.put("c1", c1);
 		map.put("c2", c2);
-		
+
 		BigDecimal b1 = new BigDecimal(0);
 		BigDecimal b2 = new BigDecimal(0);
 		if(o1.get("limit") != null){
@@ -2843,29 +2851,29 @@ public class CommonMethods {
 		}
 		map.put("l1", l1);
 		map.put("l2", l2);
-		
+
 		Integer m1 = (Integer)o1.get("money");
 		if(m1 == null) m1 = 0;
 		Integer m2 = (Integer)o2.get("money");
 		if(m2 == null) m2 = 0;
 		map.put("m1", m1);
 		map.put("m2", m2);
-		
+
 		Integer e1 = (Integer)o1.get("level");
 		if(e1 == null) e1 = 0;
 		Integer e2 = (Integer)o2.get("level");
 		if(e2 == null) e2 = 0;
 		map.put("e1", e1);
 		map.put("e2", e2);
-		
+
 		Long d1 = (Long)o1.get("limit_day");
 		if(d1 == null) d1 = 0L;
 		Long d2 = (Long)o2.get("limit_day");
 		if(d2 == null) d2 = 0L;
 		map.put("d1", d1);
 		map.put("d2", d2);
-		
+
 		return map;
 	}
-	//----------------Ñ¡È¯Âß¼­end--------------------//
+	//----------------é€‰åˆ¸é€»è¾‘end--------------------//
 }

@@ -25,10 +25,10 @@ public class OrgManageAction extends Action {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		if(uin == null){
 			response.sendRedirect("login.do");
 			return null;
@@ -56,15 +56,15 @@ public class OrgManageAction extends Action {
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("orgtree")){
 			request.setAttribute("treeurl", "getdata.do?action=orgtree");
-			request.setAttribute("title", "×éÖ¯ÀàĞÍ");
+			request.setAttribute("title", "ç»„ç»‡ç±»å‹");
 			return mapping.findForward("tree");
 		}else if(action.equals("orgmanage")){
 			request.setAttribute("treeurl", "getdata.do?action=orgmanage");
-			request.setAttribute("title", "×éÖ¯ÀàĞÍ");
+			request.setAttribute("title", "ç»„ç»‡ç±»å‹");
 			return mapping.findForward("tree");
 		}else if(action.equals("orgrole")){
 			request.setAttribute("treeurl", "getdata.do?action=orgrole");
-			request.setAttribute("title", "×éÖ¯ÀàĞÍ");
+			request.setAttribute("title", "ç»„ç»‡ç±»å‹");
 			return mapping.findForward("tree");
 		}else if(action.equals("create")){
 			Long pid = RequestUtil.getLong(request, "pid", -1L);
@@ -73,15 +73,15 @@ public class OrgManageAction extends Action {
 			if(pid > -1){
 				Long orgid = daService.getkey("seq_zld_orgtype_tb");
 				List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-				//×éÖ¯ÀàĞÍ
+				//ç»„ç»‡ç±»å‹
 				Map<String, Object> orgtypeSqlMap = new HashMap<String, Object>();
-				//×éÖ¯¹ÜÀíÔ±
+				//ç»„ç»‡ç®¡ç†å‘˜
 				Map<String, Object> roleSqlMap = new HashMap<String, Object>();
 				orgtypeSqlMap.put("sql", "insert into zld_orgtype_tb(id, name,state,pid,create_time,creator_id) values(?,?,?,?,?,?) ");
 				orgtypeSqlMap.put("values", new Object[]{orgid, name, state, pid, System.currentTimeMillis()/1000, uin});
 				bathSql.add(orgtypeSqlMap);
 				roleSqlMap.put("sql", "insert into user_role_tb(role_name,state,oid,create_time,adminid,type) values(?,?,?,?,?,?) ");
-				roleSqlMap.put("values", new Object[]{name + "¹ÜÀíÔ±", state, orgid, System.currentTimeMillis()/1000, uin, 0});
+				roleSqlMap.put("values", new Object[]{name + "ç®¡ç†å‘˜", state, orgid, System.currentTimeMillis()/1000, uin, 0});
 				bathSql.add(roleSqlMap);
 				boolean b = daService.bathUpdate(bathSql);
 				if(b){
@@ -98,15 +98,15 @@ public class OrgManageAction extends Action {
 			Integer state = RequestUtil.getInteger(request, "state", 0);
 			if(id > 0){
 				List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-				//×éÖ¯ÀàĞÍ
+				//ç»„ç»‡ç±»å‹
 				Map<String, Object> orgtypeSqlMap = new HashMap<String, Object>();
-				//×éÖ¯¹ÜÀíÔ±
+				//ç»„ç»‡ç®¡ç†å‘˜
 				Map<String, Object> roleSqlMap = new HashMap<String, Object>();
 				orgtypeSqlMap.put("sql", "update zld_orgtype_tb set name=?,state=?,update_time=? where id=? ");
 				orgtypeSqlMap.put("values", new Object[]{name, state, System.currentTimeMillis()/1000, id});
 				bathSql.add(orgtypeSqlMap);
 				roleSqlMap.put("sql", "update user_role_tb set role_name=? where oid=? and type=? ");
-				roleSqlMap.put("values", new Object[]{name + "¹ÜÀíÔ±", id, 0});
+				roleSqlMap.put("values", new Object[]{name + "ç®¡ç†å‘˜", id, 0});
 				bathSql.add(roleSqlMap);
 				boolean b = daService.bathUpdate(bathSql);
 				if(b){
@@ -120,7 +120,7 @@ public class OrgManageAction extends Action {
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			if(id > 0){
-				int r = daService.update("update zld_orgtype_tb set state=? where id=? ", 
+				int r = daService.update("update zld_orgtype_tb set state=? where id=? ",
 						new Object[]{1, id});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;

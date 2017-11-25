@@ -22,7 +22,7 @@ import com.zld.service.DataBaseService;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.ZLDType;
 /**
- * Í£³µ³¡ĞŞ¸Ä
+ * åœè½¦åœºä¿®æ”¹
  * @author Administrator
  *
  */
@@ -37,7 +37,7 @@ public class ParkInfoAction extends Action {
 	private Logger logger = Logger.getLogger(ParkInfoAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 //		Long id = RequestUtil.getLong(request, "id", -1L);
@@ -56,7 +56,7 @@ public class ParkInfoAction extends Action {
 			result =result.replace("null", "");
 			request.setAttribute("cominfo", result);
 			String type =  RequestUtil.getString(request, "type");
-			if(type.equals("set")){//³µ³¡ÉèÖÃ
+			if(type.equals("set")){//è½¦åœºè®¾ç½®
 				return mapping.findForward("parkset");
 			}else {
 				return mapping.findForward("success");
@@ -78,7 +78,7 @@ public class ParkInfoAction extends Action {
 			Integer navi = RequestUtil.getInteger(request, "navi", 0);
 			Integer monthlypay = RequestUtil.getInteger(request, "monthlypay", 0);
 			Integer epay = RequestUtil.getInteger(request, "epay", 0);
-			Integer isnight = RequestUtil.getInteger(request, "isnight", 0);//Ò¹ÍíÍ£³µ£¬0:Ö§³Ö£¬1²»Ö§³Ö
+			Integer isnight = RequestUtil.getInteger(request, "isnight", 0);//å¤œæ™šåœè½¦ï¼Œ0:æ”¯æŒï¼Œ1ä¸æ”¯æŒ
 			Long invalid_order = RequestUtil.getLong(request, "invalid_order", 0L);
 			String sql = "update com_info_tb set company_name=?,address=?,phone=?,mobile=?,property=?," +
 					"parking_total=?,share_number=?,parking_type=?,type=?,update_time=?,nfc=?,etc=?,book=?,navi=?,monthlypay=?" +
@@ -95,21 +95,21 @@ public class ParkInfoAction extends Action {
 				}else{
 					logger.error("parkadmin or admin:"+operater+" edit comid:"+comid+" com_info_tb");
 				}
-				mongoDbUtils.saveLogs(request, 0, 3, "ĞŞ¸ÄÁË³µ³¡£¨±àºÅ£º"+id+"£©");
+				mongoDbUtils.saveLogs(request, 0, 3, "ä¿®æ”¹äº†è½¦åœºï¼ˆç¼–å·ï¼š"+id+"ï¼‰");
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("parkset")){
 			String id =RequestUtil.processParams(request, "id");
-			Integer car_type = RequestUtil.getInteger(request, "car_type", 0);//ÊÇ·ñÇø·Ö´óĞ¡³µ£¬0:²»Çø·Ö£¬1£ºÇø·Ö
-			Integer passfree = RequestUtil.getInteger(request, "passfree", 0);//Ãâ·Ñ½áËã¶©µ¥
-			Integer isautopay = RequestUtil.getInteger(request, "isautopay", 0);//ÊÇ·ñ×Ô¶¯½áËã
-			Integer full_set = RequestUtil.getInteger(request, "full_set", 0);//ÊÇ·ñ×Ô¶¯½áËã
-			Integer leave_set = RequestUtil.getInteger(request, "leave_set", 0);//ÊÇ·ñ×Ô¶¯½áËã
+			Integer car_type = RequestUtil.getInteger(request, "car_type", 0);//æ˜¯å¦åŒºåˆ†å¤§å°è½¦ï¼Œ0:ä¸åŒºåˆ†ï¼Œ1ï¼šåŒºåˆ†
+			Integer passfree = RequestUtil.getInteger(request, "passfree", 0);//å…è´¹ç»“ç®—è®¢å•
+			Integer isautopay = RequestUtil.getInteger(request, "isautopay", 0);//æ˜¯å¦è‡ªåŠ¨ç»“ç®—
+			Integer full_set = RequestUtil.getInteger(request, "full_set", 0);//æ˜¯å¦è‡ªåŠ¨ç»“ç®—
+			Integer leave_set = RequestUtil.getInteger(request, "leave_set", 0);//æ˜¯å¦è‡ªåŠ¨ç»“ç®—
 			Integer ishidehdbutton = RequestUtil.getInteger(request, "ishidehdbutton", 1);
 			String firstprovince =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "firstprovince"));
 			Integer entry_set = RequestUtil.getInteger(request, "entry_set", 0);
 			Integer ishdmoney = RequestUtil.getInteger(request, "ishdmoney", 0);
-		     Integer entry_month2_set = RequestUtil.getInteger(request, "entry_month2_set", 0);
+			Integer entry_month2_set = RequestUtil.getInteger(request, "entry_month2_set", 0);
 			String sql = "update com_info_tb set car_type=?,passfree=?,ishidehdbutton=?,isautopay=?,full_set=?,leave_set=?,firstprovince=?,entry_set=?,entry_month2_set=?,ishdmoney=? where id=?";
 			Object [] values = new Object[]{car_type,passfree,ishidehdbutton,isautopay,full_set,leave_set,firstprovince, entry_set, entry_month2_set,ishdmoney,Long.valueOf(id)};
 			int result = daService.update(sql, values);
@@ -122,7 +122,7 @@ public class ParkInfoAction extends Action {
 				}else{
 					logger.error("parkadmin or admin:"+operater+" edit comid:"+comid+" com_info_tb");
 				}
-				mongoDbUtils.saveLogs(request, 0, 3, "ÉèÖÃÁË³µ³¡²ÎÊı£¨±àºÅ£º"+id+"£©£¬car_type£º"+car_type+",passfree:"+passfree+",isautopay:"+isautopay+",full_set:"+full_set+",leave_set:"+leave_set+",firstprovince:"+firstprovince+
+				mongoDbUtils.saveLogs(request, 0, 3, "è®¾ç½®äº†è½¦åœºå‚æ•°ï¼ˆç¼–å·ï¼š"+id+"ï¼‰ï¼Œcar_typeï¼š"+car_type+",passfree:"+passfree+",isautopay:"+isautopay+",full_set:"+full_set+",leave_set:"+leave_set+",firstprovince:"+firstprovince+
 						",entry_set:"+entry_set+",entry_month2_set:"+entry_month2_set+",ishdmoney:"+ishdmoney);
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
@@ -144,7 +144,7 @@ public class ParkInfoAction extends Action {
 		}else if(action.equals("withdraw")){
 			Double money = RequestUtil.getDouble(request, "money", 0d);
 			Long ntime = System.currentTimeMillis()/1000;
-			//¼ì²éÕÊ»§ÊÇ·ñÒÑ°ó¶¨
+			//æ£€æŸ¥å¸æˆ·æ˜¯å¦å·²ç»‘å®š
 			List<Map<String, Object>> accList = daService.getAll("select id,type from com_account_tb where comid =? and type in(?,?) and state =? order by id desc",
 					new Object[]{comid, 0, 2, 0});
 			Long accId = null;
@@ -154,7 +154,7 @@ public class ParkInfoAction extends Action {
 				for(Map<String, Object> m: accList){
 					type = (Integer)m.get("type");
 					if(type!=null&&type==2){
-						accId =  (Long)m.get("id");	
+						accId =  (Long)m.get("id");
 						break;
 					}
 				}
@@ -168,8 +168,8 @@ public class ParkInfoAction extends Action {
 					Double balance = Double.valueOf(comMap.get("money")+"");
 					String name = (String)comMap.get("company_name");
 					Long uin = (Long)request.getSession().getAttribute("loginuin");
-					if(money<=balance){//ÌáÏÖ½ğ¶î²»´óÓÚÓà¶î
-						//¿Û³ıÕÊºÅÓà¶î//Ğ´ÌáÏÖÉêÇë±í
+					if(money<=balance){//æç°é‡‘é¢ä¸å¤§äºä½™é¢
+						//æ‰£é™¤å¸å·ä½™é¢//å†™æç°ç”³è¯·è¡¨
 						List<Map<String, Object>> sqlList = new ArrayList<Map<String,Object>>();
 						Map<String, Object> comSqlMap = new HashMap<String, Object>();
 						comSqlMap.put("sql", "update com_info_tb set money = money-? where id= ?");
@@ -180,15 +180,15 @@ public class ParkInfoAction extends Action {
 						withdrawSqlMap.put("values", new Object[]{withdraw_id,comid,money,ntime,accId,uin,type});
 						Map<String, Object> moneySqlMap = new HashMap<String, Object>();
 						moneySqlMap.put("sql", "insert into money_record_tb (comid,amount,create_time,type,remark) values(?,?,?,?,?)");
-						moneySqlMap.put("values", new Object[]{comid,money,ntime,2,name+"ÌáÏÖÉêÇë"});
-						
+						moneySqlMap.put("values", new Object[]{comid,money,ntime,2,name+"æç°ç”³è¯·"});
+
 						Map<String, Object> parkAccountSqlMap = new HashMap<String, Object>();
 						parkAccountSqlMap.put("sql", "insert into park_account_tb (comid,amount,create_time,type,remark,uid,source,withdraw_id) values(?,?,?,?,?,?,?,?)");
-						parkAccountSqlMap.put("values", new Object[]{comid,money,ntime,1,"ÌáÏÖÉêÇë",uin,5, withdraw_id});
-						
+						parkAccountSqlMap.put("values", new Object[]{comid,money,ntime,1,"æç°ç”³è¯·",uin,5, withdraw_id});
+
 						Map<String, Object> cityAccountSqlMap = new HashMap<String, Object>();
 						cityAccountSqlMap.put("sql", "insert into tingchebao_account_tb (amount,create_time,type,remark,withdraw_id,utype,uin) values(?,?,?,?,?,?,?)");
-						cityAccountSqlMap.put("values", new Object[]{money, ntime, 1, name+"ÌáÏÖÉêÇë", withdraw_id, 8, uin});
+						cityAccountSqlMap.put("values", new Object[]{money, ntime, 1, name+"æç°ç”³è¯·", withdraw_id, 8, uin});
 						sqlList.add(comSqlMap);
 						sqlList.add(withdrawSqlMap);
 						sqlList.add(moneySqlMap);
@@ -198,7 +198,7 @@ public class ParkInfoAction extends Action {
 					}
 					if(result){
 						AjaxUtil.ajaxOutput(response, "1");
-						mongoDbUtils.saveLogs(request, 0, 3, "ÌáÏÖ£º½ğ¶î£º"+money);
+						mongoDbUtils.saveLogs(request, 0, 3, "æç°ï¼šé‡‘é¢ï¼š"+money);
 					}else {
 						AjaxUtil.ajaxOutput(response, "0");
 					}
@@ -208,5 +208,5 @@ public class ParkInfoAction extends Action {
 			}
 		}
 		return null;
-	}	
+	}
 }

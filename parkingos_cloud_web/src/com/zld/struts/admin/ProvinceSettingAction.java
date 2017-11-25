@@ -19,11 +19,11 @@ import com.zld.utils.RequestUtil;
 public class ProvinceSettingAction extends Action {
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(ProvinceSettingAction.class);
-	
+
 	/*
-	 * ¹¤×÷Õ¾ÉèÖÃ
+	 * å·¥ä½œç«™è®¾ç½®
 	 */
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{

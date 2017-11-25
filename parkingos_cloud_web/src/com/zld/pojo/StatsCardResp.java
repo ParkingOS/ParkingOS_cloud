@@ -18,6 +18,6 @@ public class StatsCardResp extends BaseResp implements Serializable {
 	public String toString() {
 		return "StatsCardResp [cards=" + cards + "]";
 	}
-	
-	
+
+
 }

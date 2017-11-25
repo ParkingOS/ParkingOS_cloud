@@ -24,13 +24,13 @@ public class CityGroupManageAction extends Action {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long chanid = (Long)request.getSession().getAttribute("chanid");
-		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//是否是超级管理员
+		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//鏄惁鏄秴绾х鐞嗗憳
 		request.setAttribute("authid", request.getParameter("authid"));
 		if(uin == null){
 			response.sendRedirect("login.do");
@@ -41,7 +41,7 @@ public class CityGroupManageAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(chanid == null) chanid = -1L;
-		
+
 		if(supperadmin == 1){
 			cityid = RequestUtil.getLong(request, "cityid", -1L);
 			chanid = RequestUtil.getLong(request, "chanid", -1L);
@@ -79,7 +79,7 @@ public class CityGroupManageAction extends Action {
 			int r = createGroup(request, cityid, chanid);
 			AjaxUtil.ajaxOutput(response, r + "");
 		}else if(action.equals("edit")){
-			int r = editGroup(request);
+			int r = editGroup(request, cityid);
 			AjaxUtil.ajaxOutput(response, "" + r);
 			return null;
 		}else if(action.equals("delete")){
@@ -90,14 +90,14 @@ public class CityGroupManageAction extends Action {
 		}else if(action.equals("set")){
 			Long groupid = RequestUtil.getLong(request, "id", -1L);
 			request.setAttribute("treeurl", "getdata.do?action=groupsetting&groupid="+groupid);
-			request.setAttribute("title", "运营集团设置");
+			request.setAttribute("title", "杩愯惀闆嗗洟璁剧疆");
 			return mapping.findForward("tree");
 		}
-		
+
 		return null;
 	}
-	
-	private int editGroup(HttpServletRequest request){
+
+	private int editGroup(HttpServletRequest request, Long cityid){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		Integer state = RequestUtil.getInteger(request, "state", 0);
 		String name = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "name"));
@@ -105,14 +105,15 @@ public class CityGroupManageAction extends Action {
 		String address = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
 		Double longitude = RequestUtil.getDouble(request, "longitude", 0d);
 		Double latitude = RequestUtil.getDouble(request, "latitude", 0d);
+		String serverid = RequestUtil.getString(request, "serverid");
 		if(address.equals("")) address = null;
 		if(longitude == 0) longitude = null;
 		if(latitude == 0) latitude = null;
-		String sql = "update org_group_tb set name=?,state=?,type=?,address=?,longitude=?,latitude=? where id=? ";
-		int	r = daService.update(sql, new Object[]{name, state, type, address, longitude, latitude, id});
+		String sql = "update org_group_tb set name=?,state=?,type=?,address=?,longitude=?,latitude=?,cityid=?, serverid=? where id=? ";
+		int	r = daService.update(sql, new Object[]{name, state, type, address, longitude, latitude, cityid, serverid, id});
 		return r;
 	}
-	
+
 	private int createGroup(HttpServletRequest request, Long cityid, Long chanid){
 		String name = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "name"));
 		Integer type = RequestUtil.getInteger(request, "type", 0);
@@ -120,12 +121,13 @@ public class CityGroupManageAction extends Action {
 		String address = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
 		Double longitude = RequestUtil.getDouble(request, "longitude", 0d);
 		Double latitude = RequestUtil.getDouble(request, "latitude", 0d);
+		String serverid = RequestUtil.getString(request, "serverid");
 		if(address.equals("")) address = null;
 		if(longitude == 0) longitude = null;
 		if(latitude == 0) latitude = null;
-		int r  = daService.update("insert into org_group_tb (name,state,create_time,cityid,type,chanid,address,longitude,latitude) " +
-				" values(?,?,?,?,?,?,?,?,?) ", 
-				new Object[]{name, state, System.currentTimeMillis()/1000, cityid, type, chanid, address, longitude, latitude});
+		int r  = daService.update("insert into org_group_tb (name,state,create_time,cityid,type,chanid,address,longitude,latitude,serverid) " +
+						" values(?,?,?,?,?,?,?,?,?,?) ",
+				new Object[]{name, state, System.currentTimeMillis()/1000, cityid, type, chanid, address, longitude, latitude, serverid});
 		return r;
 	}
 }

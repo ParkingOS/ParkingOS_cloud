@@ -4,25 +4,25 @@ import java.io.Serializable;
 
 public class CollectorSetting implements Serializable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 6355702540911862018L;
 	private Long id;
 	private Long role_id;
-	private String photoset;//ÅÄÕÕÉèÖÃ¡¾num1,num2,num3¡¿·Ö±ğÊÇÈë³¡¿ÉÅÄÕÕÆ¬Êı£¬³ö³¡¿ÉÅÄÕÕÆ¬Êı£¬Î´½É¿ÉÅÄÕÕÆ¬Êı
-	private Integer change_prepay;//ÊÇ·ñ¿É¸ü¸ÄÔ¤ÊÕ½ğ¶î 0²»¿É£¬1¿ÉÒÔ
-	private Integer view_plot;//0ÁĞ±í£¬1ÏÔÊ¾²´Î»
-	private String print_sign;//´òÓ¡Ğ¡Æ±ĞÅÏ¢¡¾Èë³¡£¬³ö³¡¡¿
-	private String prepayset;//Ô¤ÊÕÉèÖÃ ¡¾num1,num2,num3...¡¿Ô¤ÊÕ½ğ¶îÑ¡Ïî
-	private Integer isprepay;//0²»¿ÉÔ¤ÊÕ,1¿ÉÔ¤ÊÕ
-	private Integer hidedetail;//1Òş²Ø 0²»Òş²ØÊ×Ò³ÊÕ·Ñ»ã×Ü
-	private Integer is_sensortime;//0£ºÈ¡³µ¼ìÆ÷Ê±¼ä×÷ÎªÂ¼Èë¶©µ¥Ê±¼ä 1£ºÈ¡µ±Ç°Ê±¼ä×÷ÎªÂ¼Èë¶©µ¥Ê±¼ä
-	private String password;//²é¿´»ã×ÜµÄÈ¨ÏŞÃÜÂë
-	private String signout_password;//Ç©ÍËÃÜÂë
-	private Integer signout_valid;//¿Í»§¶ËÇ©ÍËÊÇ·ñĞèÒªÃÜÂëÑéÖ¤ 0£º²»ĞèÒª 1£ºĞèÒª
-	private Integer is_show_card;//ÊÇ·ñÔÚÊÕ·Ñ»ã×ÜºÍ´òÓ¡Ğ¡Æ±´¦ÏÔÊ¾³öÀ´¿¨Æ¬µÄÊı¾İ£¨ÓĞĞ©ÔËÓª¼¯ÍÅÃ»ÓĞ¿¨Æ¬£© 0£ºÏÔÊ¾ 1£º²»ÏÔÊ¾
-	private Integer print_order_place2;//¹ğÁÖÌá³öÒªÔÚµã»÷½áËã¶©µ¥µÄÊ±ºò¾Í´òÓ¡Ğ¡Æ±£¨ÒÑ¾­ÓĞÒ»¸ö´òÓ¡¶©µ¥Ğ¡Æ±µÄµØ·½£¬´Ë´¦ÎªµÚ¶ş¸öµØ·½£©0£º²»´òÓ¡ 1£º´òÓ¡
-	
+	private String photoset;//æ‹ç…§è®¾ç½®ã€num1,num2,num3ã€‘åˆ†åˆ«æ˜¯å…¥åœºå¯æ‹ç…§ç‰‡æ•°ï¼Œå‡ºåœºå¯æ‹ç…§ç‰‡æ•°ï¼Œæœªç¼´å¯æ‹ç…§ç‰‡æ•°
+	private Integer change_prepay;//æ˜¯å¦å¯æ›´æ”¹é¢„æ”¶é‡‘é¢ 0ä¸å¯ï¼Œ1å¯ä»¥
+	private Integer view_plot;//0åˆ—è¡¨ï¼Œ1æ˜¾ç¤ºæ³Šä½
+	private String print_sign;//æ‰“å°å°ç¥¨ä¿¡æ¯ã€å…¥åœºï¼Œå‡ºåœºã€‘
+	private String prepayset;//é¢„æ”¶è®¾ç½® ã€num1,num2,num3...ã€‘é¢„æ”¶é‡‘é¢é€‰é¡¹
+	private Integer isprepay;//0ä¸å¯é¢„æ”¶,1å¯é¢„æ”¶
+	private Integer hidedetail;//1éšè— 0ä¸éšè—é¦–é¡µæ”¶è´¹æ±‡æ€»
+	private Integer is_sensortime;//0ï¼šå–è½¦æ£€å™¨æ—¶é—´ä½œä¸ºå½•å…¥è®¢å•æ—¶é—´ 1ï¼šå–å½“å‰æ—¶é—´ä½œä¸ºå½•å…¥è®¢å•æ—¶é—´
+	private String password;//æŸ¥çœ‹æ±‡æ€»çš„æƒé™å¯†ç 
+	private String signout_password;//ç­¾é€€å¯†ç 
+	private Integer signout_valid;//å®¢æˆ·ç«¯ç­¾é€€æ˜¯å¦éœ€è¦å¯†ç éªŒè¯ 0ï¼šä¸éœ€è¦ 1ï¼šéœ€è¦
+	private Integer is_show_card;//æ˜¯å¦åœ¨æ”¶è´¹æ±‡æ€»å’Œæ‰“å°å°ç¥¨å¤„æ˜¾ç¤ºå‡ºæ¥å¡ç‰‡çš„æ•°æ®ï¼ˆæœ‰äº›è¿è¥é›†å›¢æ²¡æœ‰å¡ç‰‡ï¼‰ 0ï¼šæ˜¾ç¤º 1ï¼šä¸æ˜¾ç¤º
+	private Integer print_order_place2;//æ¡‚æ—æå‡ºè¦åœ¨ç‚¹å‡»ç»“ç®—è®¢å•çš„æ—¶å€™å°±æ‰“å°å°ç¥¨ï¼ˆå·²ç»æœ‰ä¸€ä¸ªæ‰“å°è®¢å•å°ç¥¨çš„åœ°æ–¹ï¼Œæ­¤å¤„ä¸ºç¬¬äºŒä¸ªåœ°æ–¹ï¼‰0ï¼šä¸æ‰“å° 1ï¼šæ‰“å°
+
 	public Long getId() {
 		return id;
 	}

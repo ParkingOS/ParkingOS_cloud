@@ -11,13 +11,13 @@ import java.util.TimeZone;
 import com.zld.CustomDefind;
 
 public class CountPrice {
-	
-	
+
+
 	/**
-	 * ¿ª·â»ğ³µÕ¾¼Æ¼Û
-	 * 3-7  5Ôª
-	 * 7-22 5Ôª
-	 * 22-3   10Ôª
+	 * å¼€å°ç«è½¦ç«™è®¡ä»·
+	 * 3-7  5å…ƒ
+	 * 7-22 5å…ƒ
+	 * 22-3   10å…ƒ
 	 */
 	public static Map<String, Object> getPrice(Long start,Long end){
 		Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -28,24 +28,24 @@ public class CountPrice {
 		calendar.setTimeInMillis(start*1000);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
-		Integer sh = calendar.get(Calendar.HOUR_OF_DAY);//¶©µ¥¿ªÊ¼Ğ¡Ê±
-		
+		Integer sh = calendar.get(Calendar.HOUR_OF_DAY);//è®¢å•å¼€å§‹å°æ—¶
+
 		Double price =0.0;
-		
+
 		Long t1 = 4*60*60L; //3-7  5
 		Long t2 = 15*60*60L; //7-22 5
 		Long t3 = 5*60*60L; //22-3 10
 
 		Long day = (end-start)/(24*60*60);
-		if(day>0){//ÕûÌìÊı£¬Ã¿Ìì20Ôª
+		if(day>0){//æ•´å¤©æ•°ï¼Œæ¯å¤©20å…ƒ
 			price = day*20.0;
 			end = end - day*24*60*60;
 		}
-		if(sh<3){//0-2¿ªÊ¼
+		if(sh<3){//0-2å¼€å§‹
 			calendar.set(Calendar.HOUR_OF_DAY, 3);
 			Long tb = calendar.getTimeInMillis()/1000;
 			price +=10.0;
-			if(end>tb){//½áÊøÊ±¼ä´óÓÚ7µã
+			if(end>tb){//ç»“æŸæ—¶é—´å¤§äº7ç‚¹
 				start=tb;
 				price+=5.0;
 				if(end-start>t1){
@@ -56,12 +56,12 @@ public class CountPrice {
 					}
 				}
 			}
-		}else if(sh>=22){//22¿ªÊ¼
+		}else if(sh>=22){//22å¼€å§‹
 			calendar.set(Calendar.HOUR_OF_DAY, 3);
 			calendar.add(Calendar.DAY_OF_YEAR, 1);
 			Long tb = calendar.getTimeInMillis()/1000;
 			price +=10.0;
-			if(end>tb){//½áÊøÊ±¼ä´óÓÚ7µã
+			if(end>tb){//ç»“æŸæ—¶é—´å¤§äº7ç‚¹
 				start=tb;
 				price+=5.0;
 				if(end-start>t1){
@@ -72,7 +72,7 @@ public class CountPrice {
 					}
 				}
 			}
-		}else if(sh>=3&&sh<7){//ÔÚ3-7µãÖ®¼ä
+		}else if(sh>=3&&sh<7){//åœ¨3-7ç‚¹ä¹‹é—´
 			calendar.set(Calendar.HOUR_OF_DAY,7);
 			Long tb = calendar.getTimeInMillis()/1000;
 			price +=5.0;
@@ -86,7 +86,7 @@ public class CountPrice {
 						price +=5.0;
 				}
 			}
-			
+
 		}else {//7-22
 			calendar.set(Calendar.HOUR_OF_DAY, 22);
 			Long tb = calendar.getTimeInMillis()/1000;
@@ -102,9 +102,9 @@ public class CountPrice {
 				}
 			}
 		}
-		
+
 		resultMap.put("total", StringUtils.formatDouble((price)));
-		resultMap.put("discount",0);//ÕÛ¿Û
+		resultMap.put("discount",0);//æŠ˜æ‰£
 		resultMap.put("duration", StringUtils.getTimeString(dur));
 		resultMap.put("btime", TimeTools.getTime_MMdd_HHmm(s*1000).substring(6));
 		resultMap.put("etime", TimeTools.getTime_MMdd_HHmm(e*1000).substring(6));
@@ -112,14 +112,14 @@ public class CountPrice {
 		System.err.println("three>>>"+TimeTools.getTime_yyyyMMdd_HHmmss(s*1000)+"  ,end:"+TimeTools.getTime_yyyyMMdd_HHmmss(e*1000)+" ,result:"+resultMap);
 		return resultMap;
 	}
-	
+
 
 	/**
-	 * ¼ÆËãÍ£³µ½ğ¶î
-	 * @param start ¿ªÊ¼utcÊ±¼ä
-	 * @param end ½áÊøutcÊ±¼ä
-	 * @param priceMap Ê±¶Î¼Æ·Ñ1
-	 * @param priceMap2 Ê±¶Î¼Æ·Ñ2 //·Ö¶Î¼Æ·ÑÊ±±ØĞëÓĞ£¬Ã»ÓĞÊ±£¬¼Æ·Ñ1±äÎªÈ«ÌìµÄ
+	 * è®¡ç®—åœè½¦é‡‘é¢
+	 * @param start å¼€å§‹utcæ—¶é—´
+	 * @param end ç»“æŸutcæ—¶é—´
+	 * @param priceMap æ—¶æ®µè®¡è´¹1
+	 * @param priceMap2 æ—¶æ®µè®¡è´¹2 //åˆ†æ®µè®¡è´¹æ—¶å¿…é¡»æœ‰ï¼Œæ²¡æœ‰æ—¶ï¼Œè®¡è´¹1å˜ä¸ºå…¨å¤©çš„
 	 * @return
 	 */
 	public static Map<String, Object> getAccount(Long start,Long end,Map dayMap,Map nightMap,double minPriceUnit,Map assistPrice){
@@ -147,7 +147,7 @@ public class CountPrice {
 				long end1 =start+24*3600;
 				Double d = Double.parseDouble(getAccount24(start, end1, dayMap, nightMap, 0.0, assistPrice).get("collect")+"");
 				start = end1;
-				if(d>total24){//µÚÒ»¸ö24£¨°üº¬Ê×ÓÅ»İ£©>·â¶¥¼Û ÄÇÃ´ºóÃæµÄÃ¿¸ö24¶¼Ö»ÊÕ·â¶¥¼Û
+				if(d>total24){//ç¬¬ä¸€ä¸ª24ï¼ˆåŒ…å«é¦–ä¼˜æƒ ï¼‰>å°é¡¶ä»· é‚£ä¹ˆåé¢çš„æ¯ä¸ª24éƒ½åªæ”¶å°é¡¶ä»·
 					total+=total24;
 					Long e = (end - start)/(24*3600);
 					total+=(e*total24);
@@ -191,7 +191,7 @@ public class CountPrice {
 		}
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("total", StringUtils.formatDouble((total)));
-		resultMap.put("discount",0);//ÕÛ¿Û
+		resultMap.put("discount",0);//æŠ˜æ‰£
 		resultMap.put("duration", StringUtils.getTimeString(dur));
 		resultMap.put("btime", TimeTools.getTime_MMdd_HHmm(start*1000).substring(6));
 		resultMap.put("etime", TimeTools.getTime_MMdd_HHmm(end*1000).substring(6));
@@ -200,39 +200,39 @@ public class CountPrice {
 	}
 	public static Map<String, Object> getAccount24(Long start,Long end,Map dayMap,Map nightMap,double minPriceUnit,Map assistPrice){
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		Double price = 0D;//·µ»ØµÄ×Ü¼Û
-		Double price1 = null;//¸¨Öú×Ü¼Û£¬²»ÎªnullÔòÕâ¸ö¼Û¸ñÊÇ×îÖÕ¼Û¸ñ
-		Double price2 = 0D;//³¬¹ı¸¨Öú¼Û¸ñÊ±³¤µÄ¼Û¸ñ£¬×îºó¼ÓÉÏ
-		Double  dayPirce = Double.valueOf(dayMap.get("price")+"");//ÈÕ¼ä¼Û¸ñ
-		Integer dayUnit = (Integer) dayMap.get("unit");//ÈÕ¼ä¼Æ·Ñµ¥Î»
-		Integer dftime = (Integer) dayMap.get("first_times");//ÈÕ¼äÊ×ÓÅ»İÊ±³¤
-		Double  dfprice = Double.valueOf(dayMap.get("fprice")+"");//ÈÕ¼äÊ×ÓÅ»İÊ±³¤¼Û¸ñ
-		Integer dft = (Integer)dayMap.get("free_time"); // ÈÕ¼äÃâ·ÑÊ±³¤
-		Integer dfpt = (Integer)dayMap.get("fpay_type");//³¬¹ıÃâ·ÑÊ±³¤ 1Ãâ·Ñ 0ÊÕ·Ñ
-		Integer isFullDayTime =(Integer)dayMap.get("is_fulldaytime");// ÊÇ·ñ²¹×ãÈÕ¼äÊ±³¤ 0²¹È«£¨Ä¬ÈÏ£©1²»²¹È«
-		
-		//¿ª·â»ğ³µÕ¾¼Æ¼Û
+		Double price = 0D;//è¿”å›çš„æ€»ä»·
+		Double price1 = null;//è¾…åŠ©æ€»ä»·ï¼Œä¸ä¸ºnullåˆ™è¿™ä¸ªä»·æ ¼æ˜¯æœ€ç»ˆä»·æ ¼
+		Double price2 = 0D;//è¶…è¿‡è¾…åŠ©ä»·æ ¼æ—¶é•¿çš„ä»·æ ¼ï¼Œæœ€ååŠ ä¸Š
+		Double  dayPirce = Double.valueOf(dayMap.get("price")+"");//æ—¥é—´ä»·æ ¼
+		Integer dayUnit = (Integer) dayMap.get("unit");//æ—¥é—´è®¡è´¹å•ä½
+		Integer dftime = (Integer) dayMap.get("first_times");//æ—¥é—´é¦–ä¼˜æƒ æ—¶é•¿
+		Double  dfprice = Double.valueOf(dayMap.get("fprice")+"");//æ—¥é—´é¦–ä¼˜æƒ æ—¶é•¿ä»·æ ¼
+		Integer dft = (Integer)dayMap.get("free_time"); // æ—¥é—´å…è´¹æ—¶é•¿
+		Integer dfpt = (Integer)dayMap.get("fpay_type");//è¶…è¿‡å…è´¹æ—¶é•¿ 1å…è´¹ 0æ”¶è´¹
+		Integer isFullDayTime =(Integer)dayMap.get("is_fulldaytime");// æ˜¯å¦è¡¥è¶³æ—¥é—´æ—¶é•¿ 0è¡¥å…¨ï¼ˆé»˜è®¤ï¼‰1ä¸è¡¥å…¨
+
+		//å¼€å°ç«è½¦ç«™è®¡ä»·
 		if(dayMap!=null){
 			Long cid = (Long)dayMap.get("comid");
 			String threePrice = CustomDefind.getValue("THREEPRICE");
 			if(cid!=null&&threePrice!=null&&cid.equals(Long.valueOf(threePrice)))
 				return getPrice(start, end);
 		}
-		
-		if(dayMap!=null&&nightMap!=null){//¸¨Öú¼Û¸ñÖ»Ö§³ÖÈ«Ìì¼Û¸ñ
-		
+
+		if(dayMap!=null&&nightMap!=null){//è¾…åŠ©ä»·æ ¼åªæ”¯æŒå…¨å¤©ä»·æ ¼
+
 		}else{
-			if(assistPrice!=null){//ÓĞ¸¨Öú¼Û¸ñ
+			if(assistPrice!=null){//æœ‰è¾…åŠ©ä»·æ ¼
 				Long unit = Long.valueOf(assistPrice.get("assist_unit")+"");
 				Long dur = (end-start)/60;
 				assistPrice.get("assist_price");
-				if(dfpt==1)//³¬¹ıÃâ·ÑÊ±³¤Ãâ·Ñ
+				if(dfpt==1)//è¶…è¿‡å…è´¹æ—¶é•¿å…è´¹
 					unit = unit+dft;
-				if(dur>dft&&dur<=unit){//Í£³µÊ±³¤´óÓÚÃâ·ÑÊ±³¤²¢ÇÒÍ£³µÊ±³¤Ğ¡ÓÚ¸¨ÖúÊ±³¤
+				if(dur>dft&&dur<=unit){//åœè½¦æ—¶é•¿å¤§äºå…è´¹æ—¶é•¿å¹¶ä¸”åœè½¦æ—¶é•¿å°äºè¾…åŠ©æ—¶é•¿
 					price1 = Double.valueOf(assistPrice.get("assist_price")+"");
-				}else if(dur<=dft){//Í£³µÊ±³¤Ğ¡ÓÚÃâ·ÑÊ±³¤
+				}else if(dur<=dft){//åœè½¦æ—¶é•¿å°äºå…è´¹æ—¶é•¿
 					price1 = 0D;
-				}else{//Í£³µÊ±³¤´óÓÚ¸¨ÖúÊ±³¤£¨Ã¿*·ÖÖÓ*Ôª£©
+				}else{//åœè½¦æ—¶é•¿å¤§äºè¾…åŠ©æ—¶é•¿ï¼ˆæ¯*åˆ†é’Ÿ*å…ƒï¼‰
 					price2=Double.valueOf(assistPrice.get("assist_price")+"");
 					start = start+unit*60;
 					dft = 0;
@@ -241,128 +241,128 @@ public class CountPrice {
 				}
 			}
 		}
-		//Ä¬ÈÏÒ¹¼äµÄ²ÎÊıÓëÈÕ¼äÒ»Ñù
-		Double  nigthPrice = dayPirce;//Ò¹¼ä¼ä¼Û¸ñ
+		//é»˜è®¤å¤œé—´çš„å‚æ•°ä¸æ—¥é—´ä¸€æ ·
+		Double  nigthPrice = dayPirce;//å¤œé—´é—´ä»·æ ¼
 		Integer nightUnit = dayUnit;
-		Integer nftime = dftime;//Ò¹¼äÊ×ÓÅ»İÊ±³¤
-		Double  nfprice =dfprice;//Ò¹¼äÊ×ÓÅ»İÊ±³¤¼Û¸ñ
-		Integer nft = dft;// Ò¹¼äÃâ·ÑÊ±³¤
-		Integer nfpt = dfpt;// 1Ãâ·Ñ 0ÊÕ·Ñ
-		//Integer isFullNightTime =isFullDayTime;// ÊÇ·ñ²¹×ãÒ¹¼äÊ±³¤ 0²¹È«£¨Ä¬ÈÏ£©1²»²¹È«
-		
+		Integer nftime = dftime;//å¤œé—´é¦–ä¼˜æƒ æ—¶é•¿
+		Double  nfprice =dfprice;//å¤œé—´é¦–ä¼˜æƒ æ—¶é•¿ä»·æ ¼
+		Integer nft = dft;// å¤œé—´å…è´¹æ—¶é•¿
+		Integer nfpt = dfpt;// 1å…è´¹ 0æ”¶è´¹
+		//Integer isFullNightTime =isFullDayTime;// æ˜¯å¦è¡¥è¶³å¤œé—´æ—¶é•¿ 0è¡¥å…¨ï¼ˆé»˜è®¤ï¼‰1ä¸è¡¥å…¨
+
 		Integer btime = (Integer)dayMap.get("b_time");
 		Integer etime = (Integer)dayMap.get("e_time");
-		
-		if(nightMap==null){//Ã»ÓĞÒ¹¼ä¼Û¸ñ²ßÂÔÊ±£¬ÈÕ¼äÊÕ·ÑÊ±¶ÎÎªÈ«Ìì
+
+		if(nightMap==null){//æ²¡æœ‰å¤œé—´ä»·æ ¼ç­–ç•¥æ—¶ï¼Œæ—¥é—´æ”¶è´¹æ—¶æ®µä¸ºå…¨å¤©
 //			btime=0;
 //			etime=24;
 			nigthPrice = 0.0d;//dayPirce;
 			nightUnit= dayUnit ;
 			nfprice=0.0d;
 			nft =0;
-		}else {//µ±Ç°Ö»Ö§³ÖÁ½¸öÊ±¶ÎÇé¿ö£¬µÚÒ»¸ö½×¶Î±ØĞëÊÇÎ´Ê±¼ä´óÓÚÊ±¼ä £¬¶øµÚ¶ş¸öÊ±¶ÎÊÇµÚÒ»¸öÊ±¶ÎµÄ²¹¼¯,²»ĞèÒªÆğÖ¹Ê±¼ä
-			nightUnit=(Integer) nightMap.get("unit");//Ò¹¼ä¼Æ·Ñµ¥Î»
+		}else {//å½“å‰åªæ”¯æŒä¸¤ä¸ªæ—¶æ®µæƒ…å†µï¼Œç¬¬ä¸€ä¸ªé˜¶æ®µå¿…é¡»æ˜¯æœªæ—¶é—´å¤§äºæ—¶é—´ ï¼Œè€Œç¬¬äºŒä¸ªæ—¶æ®µæ˜¯ç¬¬ä¸€ä¸ªæ—¶æ®µçš„è¡¥é›†,ä¸éœ€è¦èµ·æ­¢æ—¶é—´
+			nightUnit=(Integer) nightMap.get("unit");//å¤œé—´è®¡è´¹å•ä½
 			nigthPrice = Double.valueOf(nightMap.get("price")+"");
-			nftime = (Integer) nightMap.get("first_times");//Ò¹¼ä Ê×ÓÅ»İÊ±¶Î
-			nfprice =Double.valueOf(nightMap.get("fprice")+"");//Ò¹¼ä Ê×ÓÅ»İ¼Û¸ñ
-			nft = (Integer)nightMap.get("free_time");// Ò¹¼äÃâ·ÑÊ±³¤
-			nfpt = (Integer)nightMap.get("fpay_type");;//³¬¹ıÃâ·ÑÊ±³¤ 1Ãâ·Ñ 0ÊÕ·Ñ
-			//isFullNightTime =(Integer)nightMap.get("is_fulldaytime");// ÊÇ·ñ²¹×ãÒ¹¼äÊ±³¤ 0²¹È«£¨Ä¬ÈÏ£©1²»²¹È«
+			nftime = (Integer) nightMap.get("first_times");//å¤œé—´ é¦–ä¼˜æƒ æ—¶æ®µ
+			nfprice =Double.valueOf(nightMap.get("fprice")+"");//å¤œé—´ é¦–ä¼˜æƒ ä»·æ ¼
+			nft = (Integer)nightMap.get("free_time");// å¤œé—´å…è´¹æ—¶é•¿
+			nfpt = (Integer)nightMap.get("fpay_type");;//è¶…è¿‡å…è´¹æ—¶é•¿ 1å…è´¹ 0æ”¶è´¹
+			//isFullNightTime =(Integer)nightMap.get("is_fulldaytime");// æ˜¯å¦è¡¥è¶³å¤œé—´æ—¶é•¿ 0è¡¥å…¨ï¼ˆé»˜è®¤ï¼‰1ä¸è¡¥å…¨
 		}
-		
+
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 		calendar.setTimeInMillis(start*1000);
 //		if(calendar.get(Calendar.SECOND)>0)
 //			calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE)+1);
 //		calendar.set(Calendar.SECOND, 0);
 //		start = calendar.getTimeInMillis()/1000;
-		Integer sh = calendar.get(Calendar.HOUR_OF_DAY);//¶©µ¥¿ªÊ¼Ğ¡Ê±
-		
-		//½áÊøÊ±¼äÈç¹ûÓĞÃë£¬È¡·ÖÖÓÕûÊı
+		Integer sh = calendar.get(Calendar.HOUR_OF_DAY);//è®¢å•å¼€å§‹å°æ—¶
+
+		//ç»“æŸæ—¶é—´å¦‚æœæœ‰ç§’ï¼Œå–åˆ†é’Ÿæ•´æ•°
 		calendar.setTimeInMillis(end*1000);
 //		calendar.set(Calendar.SECOND, 0);
 //		end = calendar.getTimeInMillis()/1000;
-		Integer eh = calendar.get(Calendar.HOUR_OF_DAY);//¶©µ¥½áÊøĞ¡Ê±
-		//ÈÕ¼ä¼Û¸ñ¿ªÊ¼Ê±¼ä
+		Integer eh = calendar.get(Calendar.HOUR_OF_DAY);//è®¢å•ç»“æŸå°æ—¶
+		//æ—¥é—´ä»·æ ¼å¼€å§‹æ—¶é—´
 		calendar.setTimeInMillis(start*1000);
 		calendar.set(Calendar.HOUR_OF_DAY, btime);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		Long ts = calendar.getTimeInMillis()/1000;
-		
-		//¼Û¸ñµ±ÈÕ½áÊøÊ±¼ä
+
+		//ä»·æ ¼å½“æ—¥ç»“æŸæ—¶é—´
 		calendar.set(Calendar.HOUR_OF_DAY, etime);
 		Long te = calendar.getTimeInMillis()/1000;
-		
-		//Í£³µÊµ¼Ê½áÊøÌìµÄ¼Û¸ñ½áÊøÊ±¼ä
+
+		//åœè½¦å®é™…ç»“æŸå¤©çš„ä»·æ ¼ç»“æŸæ—¶é—´
 		calendar.setTimeInMillis(end*1000);
 		calendar.set(Calendar.HOUR_OF_DAY, etime);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		Long te0 = calendar.getTimeInMillis()/1000;
-		
-		//Í£³µÊµ¼Ê½áÊøÌìµÄ¼Û¸ñ¿ªÊ¼Ê±¼ä
+
+		//åœè½¦å®é™…ç»“æŸå¤©çš„ä»·æ ¼å¼€å§‹æ—¶é—´
 		calendar.setTimeInMillis(end*1000);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.HOUR_OF_DAY, btime);
 		Long ts0 = calendar.getTimeInMillis()/1000;
-		
-		Integer btype = 1;//¿ªÊ¼ÔÚÈÕ¼ä
-		Integer etype =1;//½áÊøÔÚÈÕ¼ä
-		
-		if(sh<btime)//¼Û¸ñÊ±¼ä 7-21£¬¶©µ¥¿ªÊ¼Ğ¡Ê±<7
-			btype=0;//¿ªÊ¼ÔÚÒ¹¼äµÚÒ»¶Î
-		if(sh>=etime)//¶©µ¥¿ªÊ¼Ğ¡Ê±>=21
-			btype=2;////¿ªÊ¼ÔÚÒ¹¼äµÚ¶ş¶Î
-		
-		if(eh<btime)//¼Û¸ñÊ±¼ä 7-21£¬½áÊø¿ªÊ¼Ğ¡Ê±<7
-			etype=0;//½áÊøÔÚÒ¹¼äµÚÒ»¶Î
-		if(eh>=etime)//½áÊø¿ªÊ¼Ğ¡Ê±>=21
-			etype=2;//½áÊøÔÚÒ¹¼äµÚ¶ş¶Î
-		
-		List<Long> dayTimes = new ArrayList<Long>();//ÈÕ¼äÊ±¶Î
-		List<Long> nightTimes = new ArrayList<Long>();//Ò¹¼äÊ±¶Î
-		
-		Long days = (te0-te)/(24*60*60);//¶©µ¥ÌìÊı
+
+		Integer btype = 1;//å¼€å§‹åœ¨æ—¥é—´
+		Integer etype =1;//ç»“æŸåœ¨æ—¥é—´
+
+		if(sh<btime)//ä»·æ ¼æ—¶é—´ 7-21ï¼Œè®¢å•å¼€å§‹å°æ—¶<7
+			btype=0;//å¼€å§‹åœ¨å¤œé—´ç¬¬ä¸€æ®µ
+		if(sh>=etime)//è®¢å•å¼€å§‹å°æ—¶>=21
+			btype=2;////å¼€å§‹åœ¨å¤œé—´ç¬¬äºŒæ®µ
+
+		if(eh<btime)//ä»·æ ¼æ—¶é—´ 7-21ï¼Œç»“æŸå¼€å§‹å°æ—¶<7
+			etype=0;//ç»“æŸåœ¨å¤œé—´ç¬¬ä¸€æ®µ
+		if(eh>=etime)//ç»“æŸå¼€å§‹å°æ—¶>=21
+			etype=2;//ç»“æŸåœ¨å¤œé—´ç¬¬äºŒæ®µ
+
+		List<Long> dayTimes = new ArrayList<Long>();//æ—¥é—´æ—¶æ®µ
+		List<Long> nightTimes = new ArrayList<Long>();//å¤œé—´æ—¶æ®µ
+
+		Long days = (te0-te)/(24*60*60);//è®¢å•å¤©æ•°
 		int dayHours = etime-btime;
 		int nightHours=24-dayHours;
 		Long dur = end-start;
-		//¼Æ¼Û²ßÂÔ£ºÈÕ¼ä 7-21 Ò¹¼ä 21-7 
-		if(btype==0){//½ø³¡Ê±¼äÔÚÒ¹¼äµÚÒ»Ê±¶Î 0-7
-			if(etype==0){//³ö³¡Ê±¼äÔÚÒ¹¼äµÚÒ»Ê±¶Î 0-7
-				if(days==0)	{//³ö³¡Ê±¼äÓë½ø³¡Ê±¼äÊÇÍ¬Ò»Ìì 
+		//è®¡ä»·ç­–ç•¥ï¼šæ—¥é—´ 7-21 å¤œé—´ 21-7
+		if(btype==0){//è¿›åœºæ—¶é—´åœ¨å¤œé—´ç¬¬ä¸€æ—¶æ®µ 0-7
+			if(etype==0){//å‡ºåœºæ—¶é—´åœ¨å¤œé—´ç¬¬ä¸€æ—¶æ®µ 0-7
+				if(days==0)	{//å‡ºåœºæ—¶é—´ä¸è¿›åœºæ—¶é—´æ˜¯åŒä¸€å¤©
 					if(dur<60)
 						dur=60L;
 					nightTimes.add(dur);
-				}else {//³ö³¡Ê±¼ä±È½ø³¡Ê±¼ä´óÒ»ÌìÒÔÉÏ
+				}else {//å‡ºåœºæ—¶é—´æ¯”è¿›åœºæ—¶é—´å¤§ä¸€å¤©ä»¥ä¸Š
 					nightTimes.add(ts-start);
 					nightTimes.add((days-1)*(nightHours)*60*60);
 					nightTimes.add(end-(te0-24*60*60));
 					dayTimes.add(days*(te-ts));
 				}
-				//²âÊÔÍ¨¹ı
-			}else if(etype==1){////³ö³¡Ê±¼äÔÚÒ¹¼äµÚ¶şÊ±¶Î 7-21
+				//æµ‹è¯•é€šè¿‡
+			}else if(etype==1){////å‡ºåœºæ—¶é—´åœ¨å¤œé—´ç¬¬äºŒæ—¶æ®µ 7-21
 				nightTimes.add(ts-start);
 				dayTimes.add(days*(dayHours*60*60));
 				nightTimes.add(days*(nightHours)*60*60);
 				dayTimes.add(end-ts0);
-				//²âÊÔÍ¨¹ı
-			}else if(etype==2){//³ö³¡Ê±¼äÔÚÒ¹¼äµÚÈıÊ±¶Î 21-24
+				//æµ‹è¯•é€šè¿‡
+			}else if(etype==2){//å‡ºåœºæ—¶é—´åœ¨å¤œé—´ç¬¬ä¸‰æ—¶æ®µ 21-24
 				nightTimes.add(ts-start);
 				nightTimes.add((days)*(nightHours)*60*60);
 				nightTimes.add(end-te0);
 				dayTimes.add((days+1)*(dayHours*60*60));
-				//²âÊÔÍ¨¹ı
+				//æµ‹è¯•é€šè¿‡
 			}
-		}else if(btype==1){//½ø³¡Ê±¼äÔÚÒ¹¼äµÚ¶şÊ±¶Î 7-21
-			if(etype==0){//³ö³¡Ê±¼äÔÚÒ¹¼äµÚÒ»Ê±¶Î 0-7
+		}else if(btype==1){//è¿›åœºæ—¶é—´åœ¨å¤œé—´ç¬¬äºŒæ—¶æ®µ 7-21
+			if(etype==0){//å‡ºåœºæ—¶é—´åœ¨å¤œé—´ç¬¬ä¸€æ—¶æ®µ 0-7
 				dayTimes.add(te-start);
 				nightTimes.add((days-1)*(nightHours)*60*60);
 				dayTimes.add((days-1)*(dayHours*60*60));
 				nightTimes.add(end-(te0-24*60*60));
-				//²âÊÔÍ¨¹ı
-			}else if(etype==1){//³ö³¡Ê±¼äÔÚÒ¹¼äµÚ¶şÊ±¶Î 7-21
+				//æµ‹è¯•é€šè¿‡
+			}else if(etype==1){//å‡ºåœºæ—¶é—´åœ¨å¤œé—´ç¬¬äºŒæ—¶æ®µ 7-21
 				if(days==0){
 					if(dur<60)
 						dur=60L;
@@ -373,33 +373,33 @@ public class CountPrice {
 					dayTimes.add(end-ts0);
 					nightTimes.add(days*(nightHours*60*60));
 				}
-			}else if(etype==2){//³ö³¡Ê±¼äÔÚÒ¹¼äµÚÈıÊ±¶Î 21-24
+			}else if(etype==2){//å‡ºåœºæ—¶é—´åœ¨å¤œé—´ç¬¬ä¸‰æ—¶æ®µ 21-24
 				dayTimes.add(te-start);
 				dayTimes.add(days*(dayHours*60*60));
 				nightTimes.add(days*nightHours*60*60);
 				nightTimes.add(end-te0);
-				//²âÊÔÍ¨¹ı
+				//æµ‹è¯•é€šè¿‡
 			}
-		}else if(btype==2){//½ø³¡Ê±¼äÔÚÒ¹¼äµÚÈıÊ±¶Î 21-24
-			if(etype==0){//³ö³¡Ê±¼äÔÚÒ¹¼äµÚÒ»Ê±¶Î 0-7
-				if(days==1){//³ö³¡Ê±¼äÔÚ½ø³¡Ê±¼äµÄµÚ¶şÌì
+		}else if(btype==2){//è¿›åœºæ—¶é—´åœ¨å¤œé—´ç¬¬ä¸‰æ—¶æ®µ 21-24
+			if(etype==0){//å‡ºåœºæ—¶é—´åœ¨å¤œé—´ç¬¬ä¸€æ—¶æ®µ 0-7
+				if(days==1){//å‡ºåœºæ—¶é—´åœ¨è¿›åœºæ—¶é—´çš„ç¬¬äºŒå¤©
 					if(dur<60)
 						dur=60L;
 					nightTimes.add(dur);
-				}else {//³ö³¡Ê±¼äÔÚ½ø³¡Ê±¼äµÄµÚÈıÌìÒÔÉÏ
+				}else {//å‡ºåœºæ—¶é—´åœ¨è¿›åœºæ—¶é—´çš„ç¬¬ä¸‰å¤©ä»¥ä¸Š
 					nightTimes.add((ts+24*60*60)-start);
 					nightTimes.add((days-2)*nightHours*60*60);
 					nightTimes.add(end-(te0-24*60*60));
 					dayTimes.add((days-1)*dayHours*60*60);
 				}
-				//²âÊÔÍ¨¹ı
-			}else if(etype==1){//³ö³¡Ê±¼äÔÚÒ¹¼äµÚ¶şÊ±¶Î 7-21
+				//æµ‹è¯•é€šè¿‡
+			}else if(etype==1){//å‡ºåœºæ—¶é—´åœ¨å¤œé—´ç¬¬äºŒæ—¶æ®µ 7-21
 				nightTimes.add((ts+24*60*60)-start);
 				nightTimes.add((days-1)*nightHours*60*60);
 				dayTimes.add((days-1)*dayHours*60*60);
 				dayTimes.add(end-ts0);
-				//²âÊÔÍ¨¹ı
-			}else if(etype==2){//³ö³¡Ê±¼äÔÚÒ¹¼äµÚÈıÊ±¶Î 21-24
+				//æµ‹è¯•é€šè¿‡
+			}else if(etype==2){//å‡ºåœºæ—¶é—´åœ¨å¤œé—´ç¬¬ä¸‰æ—¶æ®µ 21-24
 				if(days==0){
 					if(dur<60)
 						dur=60L;
@@ -410,16 +410,16 @@ public class CountPrice {
 					nightTimes.add(end-te0);
 					dayTimes.add((days)*dayHours*60*60);
 				}
-				//²âÊÔÍ¨¹ı
+				//æµ‹è¯•é€šè¿‡
 			}
 		}
-		//¿ªÊ¼¼ÆËã¼Û¸ñ
-		if(btype==0||btype==2){//¿ªÊ¼Ê±¼äÔÚÒ¹¼ä
+		//å¼€å§‹è®¡ç®—ä»·æ ¼
+		if(btype==0||btype==2){//å¼€å§‹æ—¶é—´åœ¨å¤œé—´
 			Long nt = nightTimes.get(0)/60;
-			Long dt = 0L;//ÈÕ¼äÊ±³¤µÄÕûÊı±¶
-			Long nt1 =0L;//Ò¹¼äÊ±³¤µÄÕûÊı±¶
-			//²»´¦ÀíÒ¹¼ä²¹×ãÊ±³¤
-			if(etype==0||etype==2){//½áÊøÊ±¼äÔÚÒ¹¼ä
+			Long dt = 0L;//æ—¥é—´æ—¶é•¿çš„æ•´æ•°å€
+			Long nt1 =0L;//å¤œé—´æ—¶é•¿çš„æ•´æ•°å€
+			//ä¸å¤„ç†å¤œé—´è¡¥è¶³æ—¶é•¿
+			if(etype==0||etype==2){//ç»“æŸæ—¶é—´åœ¨å¤œé—´
 				Long nt2 =0L;
 				if(nightTimes.size()>1){
 					nt1 = nightTimes.get(1)/60;
@@ -427,34 +427,34 @@ public class CountPrice {
 				}
 				if(dayTimes.size()==1)
 					dt = dayTimes.get(0)/60;
-				//´¦Àí¶©µ¥½áÊø²¿·Ö nt2
+				//å¤„ç†è®¢å•ç»“æŸéƒ¨åˆ† nt2
 				if(nt2>0){
 					price =(nt2/nightUnit)*nigthPrice;
 					if(nt2%nightUnit!=0)
 						price +=nigthPrice;
 				}
-				//System.out.println("¿ªÊ¼½áÊøÊ±¼äÔÚÒ¹¼ä");
-			}else {//½áÊøÊ±¼äÔÚÈÕ¼ä
+				//System.out.println("å¼€å§‹ç»“æŸæ—¶é—´åœ¨å¤œé—´");
+			}else {//ç»“æŸæ—¶é—´åœ¨æ—¥é—´
 				nt1 = nightTimes.get(1)/60;
 				dt = dayTimes.get(0)/60;
 				Long dt1 = dayTimes.get(1)/60;
-				//System.out.println("¿ªÊ¼Ê±¼äÔÚÒ¹¼ä£¬½áÊøÊ±¼äÔÚÈÕ¼ä");
-				//´¦Àí¶©µ¥½áÊø²¿·Ö dt1
+				//System.out.println("å¼€å§‹æ—¶é—´åœ¨å¤œé—´ï¼Œç»“æŸæ—¶é—´åœ¨æ—¥é—´");
+				//å¤„ç†è®¢å•ç»“æŸéƒ¨åˆ† dt1
 				if(dt1>0){
 					price=(dt1/dayUnit)*dayPirce;
 					if((dt1%dayUnit!=0))
 						price +=dayPirce;
 				}
 			}
-			//´¦Àí¶©µ¥¿ªÊ¼²¿·Ö
-			if(nft>0){//Ò¹¼äÃâ·ÑÊ±³¤ 15·ÖÖÓ 
+			//å¤„ç†è®¢å•å¼€å§‹éƒ¨åˆ†
+			if(nft>0){//å¤œé—´å…è´¹æ—¶é•¿ 15åˆ†é’Ÿ
 				if(nt>=nft){
-					if(nfpt==1)//³¬¹ıÃâ·ÑÊ±³¤ 1Ãâ·Ñ 0ÊÕ·Ñ
-						nt = nt - nft;//³¬³öÃâ·Ñ£¬¼õÈ¥Ãâ·ÑÊ±³¤
+					if(nfpt==1)//è¶…è¿‡å…è´¹æ—¶é•¿ 1å…è´¹ 0æ”¶è´¹
+						nt = nt - nft;//è¶…å‡ºå…è´¹ï¼Œå‡å»å…è´¹æ—¶é•¿
 				}else
 					nt =0L;
 			}
-			if(nt>0&&nftime>0){//Ò¹¼äÊ×ÓÅ»İÊ±³¤
+			if(nt>0&&nftime>0){//å¤œé—´é¦–ä¼˜æƒ æ—¶é•¿
 				if(nt>nftime){
 					price += (nftime/nightUnit)*nfprice ;
 					nt = nt  - nftime;
@@ -477,22 +477,22 @@ public class CountPrice {
 				if(nt1%nightUnit!=0)
 					price +=nigthPrice;
 			}
-			
-		}else {//¿ªÊ¼Ê±¼äÔÚÈÕ¼ä
+
+		}else {//å¼€å§‹æ—¶é—´åœ¨æ—¥é—´
 			Long dt = dayTimes.get(0)/60;
-			Long nt = 0L;//Ò¹¼äµÄÕûÊı±¶
-			Long dt1 =0L;//ÈÕ¼äµÄÕûÊı±¶
-			//Òª´¦Àí²¹×ãÈÕ¼äÊ±³¤ÎÊÌâ//ÊÇ·ñ²¹×ãÈÕ¼äÊ±³¤ 0²¹È«£¨Ä¬ÈÏ£©1²»²¹È«
+			Long nt = 0L;//å¤œé—´çš„æ•´æ•°å€
+			Long dt1 =0L;//æ—¥é—´çš„æ•´æ•°å€
+			//è¦å¤„ç†è¡¥è¶³æ—¥é—´æ—¶é•¿é—®é¢˜//æ˜¯å¦è¡¥è¶³æ—¥é—´æ—¶é•¿ 0è¡¥å…¨ï¼ˆé»˜è®¤ï¼‰1ä¸è¡¥å…¨
 			boolean isFull = false;
-			if(isFullDayTime==0&&dt%dayUnit!=0){//ĞèÒª²¹È« 
+			if(isFullDayTime==0&&dt%dayUnit!=0){//éœ€è¦è¡¥å…¨
 				isFull=true;
 			}
-			if(etype==0||etype==2){//½áÊøÊ±¼äÔÚÒ¹¼ä
+			if(etype==0||etype==2){//ç»“æŸæ—¶é—´åœ¨å¤œé—´
 				nt = nightTimes.get(0)/60;
 				Long nt1 = nightTimes.get(1)/60;
-				if(isFull){//ĞèÒª²¹È«
-					Long d = dayUnit-dt%dayUnit;//²¹×ãµÄ·ÖÖÓÊı
-					if(nt==0){//Ò¹¼äµÄÕûÊıÖµ
+				if(isFull){//éœ€è¦è¡¥å…¨
+					Long d = dayUnit-dt%dayUnit;//è¡¥è¶³çš„åˆ†é’Ÿæ•°
+					if(nt==0){//å¤œé—´çš„æ•´æ•°å€¼
 						if(nt1>=d){
 							dt +=d;
 							nt1 = nt1-d;
@@ -511,21 +511,21 @@ public class CountPrice {
 					}
 				}
 				dt1 = dayTimes.get(1)/60;
-			//	System.out.println("3");
-				//´¦ÀíÒ¹¼ä½á²¿·Ö nt1
+				//	System.out.println("3");
+				//å¤„ç†å¤œé—´ç»“éƒ¨åˆ† nt1
 				if(nt1>0){
 					price =(nt1/nightUnit)*nigthPrice;
 					if(nt1%nightUnit!=0)
 						price +=nigthPrice;
 				}
-			}else {//½áÊøÊ±¼äÔÚÈÕ¼ä
+			}else {//ç»“æŸæ—¶é—´åœ¨æ—¥é—´
 				Long dt2 =0L;
 				if(dayTimes.size()>1){
 					dt1 = dayTimes.get(1)/60;
 					dt2 = dayTimes.get(2)/60;
 					nt = nightTimes.get(0)/60;
-					if(isFull){//ĞèÒª²¹È«
-						Long d = dayUnit-dt%dayUnit;//²¹×ãµÄ·ÖÖÓÊı
+					if(isFull){//éœ€è¦è¡¥å…¨
+						Long d = dayUnit-dt%dayUnit;//è¡¥è¶³çš„åˆ†é’Ÿæ•°
 						dt +=d;
 						if(dt2>d){
 							dt2=dt2-d;
@@ -536,25 +536,25 @@ public class CountPrice {
 					}
 				}
 				//System.out.println("4");
-				//´¦ÀíÈÕ¼ä½áÊø²¿·Ö£¬ÓĞ¿ÉÄÜÃ»ÓĞ
+				//å¤„ç†æ—¥é—´ç»“æŸéƒ¨åˆ†ï¼Œæœ‰å¯èƒ½æ²¡æœ‰
 				if(dt2>0){
 					price=(dt2/dayUnit)*dayPirce;
 					if((dt2%dayUnit!=0))
 						price +=dayPirce;
 				}
 			}
-			
-			if(dft>0){//ÈÕ¼äÃâ·ÑÊ±³¤ 15·ÖÖÓ 
+
+			if(dft>0){//æ—¥é—´å…è´¹æ—¶é•¿ 15åˆ†é’Ÿ
 				if(dt>=dft){
 					if(dfpt==1)
-						dt = dt -dft;//³¬³öÃâ·Ñ£¬¼õÈ¥Ãâ·ÑÊ±³¤
+						dt = dt -dft;//è¶…å‡ºå…è´¹ï¼Œå‡å»å…è´¹æ—¶é•¿
 				}else {
 					dt =0L;
 				}
 			}
-			
+
 			if(dt>0&&dftime>0){
-				if(dt>=dftime){//ÈÕ¼äÊ×ÓÅ»İÊ±³¤
+				if(dt>=dftime){//æ—¥é—´é¦–ä¼˜æƒ æ—¶é•¿
 					price += (dftime/dayUnit)*dfprice ;
 					dt = dt  - dftime;
 				}else {
@@ -564,14 +564,14 @@ public class CountPrice {
 					dt=0L;
 				}
 			}
-			
-			if(dt>0){//ÈÕ¼äÊ×Ê±³¤
+
+			if(dt>0){//æ—¥é—´é¦–æ—¶é•¿
 				price+=(dt/dayUnit)*dayPirce;
 				if(dt%dayUnit!=0)
 					price+=dayPirce;
-			}	
-			
-			
+			}
+
+
 			if(dt1>0){
 				price +=(dt1/dayUnit)*dayPirce;
 				if(dt1%dayUnit!=0)
@@ -582,26 +582,26 @@ public class CountPrice {
 				if(nt%nightUnit!=0)
 					price+=nigthPrice;
 			}
-			
+
 		}
-	
-		//´¦ÀíÈ«ÈÕ¼äÊ±¶ÎÎÊÌâ ¿ªÊ¼Ê±¼ä0£¬½áÊøÊ±¼ä24(btime=0,etime=24)
+
+		//å¤„ç†å…¨æ—¥é—´æ—¶æ®µé—®é¢˜ å¼€å§‹æ—¶é—´0ï¼Œç»“æŸæ—¶é—´24(btime=0,etime=24)
 		if(btime==0&&etime==24){
 			price=0d;
 			Long dayDur = (end-start)/60;
 			if(dayDur<1)
 				dayDur=1L;
-			if(dft>0){//ÈÕ¼äÃâ·ÑÊ±³¤ 15·ÖÖÓ 
+			if(dft>0){//æ—¥é—´å…è´¹æ—¶é•¿ 15åˆ†é’Ÿ
 				if(dayDur>=dft){
 					if(dfpt==1)
-						dayDur = dayDur -dft;//³¬³öÃâ·Ñ£¬¼õÈ¥Ãâ·ÑÊ±³¤
+						dayDur = dayDur -dft;//è¶…å‡ºå…è´¹ï¼Œå‡å»å…è´¹æ—¶é•¿
 				}else {
 					dayDur =0L;
 				}
 			}
-			
+
 			if(dayDur>0&&dftime>0){
-				if(dayDur>=dftime){//ÈÕ¼äÊ×ÓÅ»İÊ±³¤
+				if(dayDur>=dftime){//æ—¥é—´é¦–ä¼˜æƒ æ—¶é•¿
 					price += (dftime/dayUnit)*dfprice ;
 					dayDur = dayDur  - dftime;
 				}else {
@@ -611,12 +611,12 @@ public class CountPrice {
 					dayDur=0L;
 				}
 			}
-			
-			if(dayDur>0){//ÈÕ¼äÊ×Ê±³¤
+
+			if(dayDur>0){//æ—¥é—´é¦–æ—¶é•¿
 				price+=(dayDur/dayUnit)*dayPirce;
 				if(dayDur%dayUnit!=0)
 					price+=dayPirce;
-			}	
+			}
 		}
 		if(price1!=null){
 			price = price1;
@@ -625,12 +625,12 @@ public class CountPrice {
 		if(minPriceUnit!=0.00){
 			price = dealPrice(price,minPriceUnit);
 		}
-		
-	//	printList(dayTimes);
-	//	System.err.println("=============");
-	//	printList(nightTimes);
+
+		//	printList(dayTimes);
+		//	System.err.println("=============");
+		//	printList(nightTimes);
 		resultMap.put("total", StringUtils.formatDouble((price)));
-		resultMap.put("discount",0);//ÕÛ¿Û
+		resultMap.put("discount",0);//æŠ˜æ‰£
 		resultMap.put("duration", StringUtils.getTimeString(dur));
 		resultMap.put("btime", TimeTools.getTime_MMdd_HHmm(start*1000).substring(6));
 		resultMap.put("etime", TimeTools.getTime_MMdd_HHmm(end*1000).substring(6));
@@ -655,10 +655,10 @@ public class CountPrice {
 		//Long end = 1434927300L-24*60*60;//20150622 065500
 		Long end =1434938400L+24*60*60;//20150622 8:00:00
 		//Long end =1434983400L-2*24*60*60;//20150622 22:30:00
-		
-		
+
+
 //		getAccount(start,end,dayMap,nightMap,0.0);
-		
+
 	}
 	private static void printList(List<Long> list){
 		for(Long k:list){
@@ -666,67 +666,67 @@ public class CountPrice {
 		}
 	}
 	/**
-	 * ¼ÆËãÍ£³µ½ğ¶î
-	 * @param start ¿ªÊ¼utcÊ±¼ä
-	 * @param end ½áÊøutcÊ±¼ä
-	 * @param priceMap Ê±¶Î¼Æ·Ñ1
-	 * @param priceMap2 Ê±¶Î¼Æ·Ñ2 //·Ö¶Î¼Æ·ÑÊ±±ØĞëÓĞ£¬Ã»ÓĞÊ±£¬¼Æ·Ñ1±äÎªÈ«ÌìµÄ
+	 * è®¡ç®—åœè½¦é‡‘é¢
+	 * @param start å¼€å§‹utcæ—¶é—´
+	 * @param end ç»“æŸutcæ—¶é—´
+	 * @param priceMap æ—¶æ®µè®¡è´¹1
+	 * @param priceMap2 æ—¶æ®µè®¡è´¹2 //åˆ†æ®µè®¡è´¹æ—¶å¿…é¡»æœ‰ï¼Œæ²¡æœ‰æ—¶ï¼Œè®¡è´¹1å˜ä¸ºå…¨å¤©çš„
 	 * @return
 	 */
-	
+
 	public static Map<String, Object> getAccount1(Long start,Long end,Map dayMap,Map nightMap,double minPriceUnit){
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		Double hprice = 0d;//ÕûÌìÊ±³¤µÄÊÕ·Ñ
-		Double price = 0d;//·µ»ØµÄ×Ü¼Û
-		Double dayPirce = Double.valueOf(dayMap.get("price")+"");//ÈÕ¼ä¼Û¸ñ
-		Integer ftime = (Integer) dayMap.get("first_times");//ÈÕ¼äÊ×ÓÅ»İÊ±³¤
-		Double fprice = Double.valueOf(dayMap.get("fprice")+"");//ÈÕ¼äÊ×ÓÅ»İÊ±³¤¼Û¸ñ
-		Integer dft = (Integer)dayMap.get("free_time"); // ÈÕ¼äÃâ·ÑÊ±³¤
-		Integer dfpt = (Integer)dayMap.get("fpay_type");// 1Ãâ·Ñ 0ÊÕ·Ñ
-		Integer isFullDayTime =(Integer)dayMap.get("is_fulldaytime");// ÊÇ·ñ²¹×ãÈÕ¼äÊ±³¤ 0²¹È«£¨Ä¬ÈÏ£©1²»²¹È«
+		Double hprice = 0d;//æ•´å¤©æ—¶é•¿çš„æ”¶è´¹
+		Double price = 0d;//è¿”å›çš„æ€»ä»·
+		Double dayPirce = Double.valueOf(dayMap.get("price")+"");//æ—¥é—´ä»·æ ¼
+		Integer ftime = (Integer) dayMap.get("first_times");//æ—¥é—´é¦–ä¼˜æƒ æ—¶é•¿
+		Double fprice = Double.valueOf(dayMap.get("fprice")+"");//æ—¥é—´é¦–ä¼˜æƒ æ—¶é•¿ä»·æ ¼
+		Integer dft = (Integer)dayMap.get("free_time"); // æ—¥é—´å…è´¹æ—¶é•¿
+		Integer dfpt = (Integer)dayMap.get("fpay_type");// 1å…è´¹ 0æ”¶è´¹
+		Integer isFullDayTime =(Integer)dayMap.get("is_fulldaytime");// æ˜¯å¦è¡¥è¶³æ—¥é—´æ—¶é•¿ 0è¡¥å…¨ï¼ˆé»˜è®¤ï¼‰1ä¸è¡¥å…¨
 		dft = dft==null?0:dft;
 		dfpt = dfpt==null?0:dfpt;
-		Integer nft = dft;// Ò¹¼äÃâ·ÑÊ±³¤
-		Integer nfpt = dfpt;// 1Ãâ·Ñ 0ÊÕ·Ñ
-		Integer nftime = ftime;//Ò¹¼äÊ×ÓÅ»İÊ±³¤
-		Double nfprice =fprice;//Ò¹¼äÊ×ÓÅ»İÊ±³¤¼Û¸ñ
-		Double nigthPrice = null;//Ò¹¼ä¼ä¼Û¸ñ
-		Long dayDuration =0L;//ÈÕ¼äÊ±³¤
-		Long nightDuration =0L;//Ò¹¼äÊ±³¤
-		Double ymoney=0d;//ÓÅ»İ
+		Integer nft = dft;// å¤œé—´å…è´¹æ—¶é•¿
+		Integer nfpt = dfpt;// 1å…è´¹ 0æ”¶è´¹
+		Integer nftime = ftime;//å¤œé—´é¦–ä¼˜æƒ æ—¶é•¿
+		Double nfprice =fprice;//å¤œé—´é¦–ä¼˜æƒ æ—¶é•¿ä»·æ ¼
+		Double nigthPrice = null;//å¤œé—´é—´ä»·æ ¼
+		Long dayDuration =0L;//æ—¥é—´æ—¶é•¿
+		Long nightDuration =0L;//å¤œé—´æ—¶é•¿
+		Double ymoney=0d;//ä¼˜æƒ 
 		Long oldDuration =(end-start);
-//		System.out.println("ÈÕ¼ä£º"+dayMap);
-//		System.out.println("Ò¹¼ä£º"+nightMap);
+//		System.out.println("æ—¥é—´ï¼š"+dayMap);
+//		System.out.println("å¤œé—´ï¼š"+nightMap);
 		Integer btime = (Integer)dayMap.get("b_time");
 		Integer etime = (Integer)dayMap.get("e_time");
-		Integer dayUnit = (Integer) dayMap.get("unit");//ÈÕ¼ä¼Æ·Ñµ¥Î»
+		Integer dayUnit = (Integer) dayMap.get("unit");//æ—¥é—´è®¡è´¹å•ä½
 		Integer nightUnit = dayUnit;
-		if(nightMap==null){//Ã»ÓĞÒ¹¼ä¼Û¸ñ²ßÂÔÊ±£¬ÈÕ¼äÊÕ·ÑÊ±¶ÎÎªÈ«Ìì
+		if(nightMap==null){//æ²¡æœ‰å¤œé—´ä»·æ ¼ç­–ç•¥æ—¶ï¼Œæ—¥é—´æ”¶è´¹æ—¶æ®µä¸ºå…¨å¤©
 //			btime=0;
 //			etime=24;
 			nigthPrice = 0.0d;//dayPirce;
 			nightUnit= dayUnit ;
 			nfprice=0.0d;
 			nft =0;
-		}else {//µ±Ç°Ö»Ö§³ÖÁ½¸öÊ±¶ÎÇé¿ö£¬µÚÒ»¸ö½×¶Î±ØĞëÊÇÎ´Ê±¼ä´óÓÚÊ±¼ä £¬¶øµÚ¶ş¸öÊ±¶ÎÊÇµÚÒ»¸öÊ±¶ÎµÄ²¹¼¯,²»ĞèÒªÆğÖ¹Ê±¼ä
-			nightUnit=(Integer) nightMap.get("unit");//Ò¹¼ä¼Æ·Ñµ¥Î»
+		}else {//å½“å‰åªæ”¯æŒä¸¤ä¸ªæ—¶æ®µæƒ…å†µï¼Œç¬¬ä¸€ä¸ªé˜¶æ®µå¿…é¡»æ˜¯æœªæ—¶é—´å¤§äºæ—¶é—´ ï¼Œè€Œç¬¬äºŒä¸ªæ—¶æ®µæ˜¯ç¬¬ä¸€ä¸ªæ—¶æ®µçš„è¡¥é›†,ä¸éœ€è¦èµ·æ­¢æ—¶é—´
+			nightUnit=(Integer) nightMap.get("unit");//å¤œé—´è®¡è´¹å•ä½
 			nigthPrice = Double.valueOf(nightMap.get("price")+"");
-			nftime = (Integer) nightMap.get("first_times");//Ê×ÓÅ»İÊ±¶Î
+			nftime = (Integer) nightMap.get("first_times");//é¦–ä¼˜æƒ æ—¶æ®µ
 			nfprice =Double.valueOf(nightMap.get("fprice")+"");
 			nft = (Integer)nightMap.get("free_time");
 			nfpt = (Integer)nightMap.get("fpay_type");
 		}
 		List<Object> durs = getDurations(start,end,btime,etime);
 		Long times = (Long)durs.get(0);
-		Long fat = (Long)durs.get(1);//Í£³µÊ±¶ÎÔÚ  Ò¹¼ä :0 , ÈÕ¼ä£º1 ,Ò¹¼äµ½ÈÕ¼ä:2 , ÈÕ¼äµ½Ò¹¼ä:3,
-		
-		String days = (String)durs.get(2);//ÈÕ¼äÊ±³¤
-		String nights = (String)durs.get(3);//Ò¹¼äÊ±³¤
-		
-		dayDuration =0L; 
+		Long fat = (Long)durs.get(1);//åœè½¦æ—¶æ®µåœ¨  å¤œé—´ :0 , æ—¥é—´ï¼š1 ,å¤œé—´åˆ°æ—¥é—´:2 , æ—¥é—´åˆ°å¤œé—´:3,
+
+		String days = (String)durs.get(2);//æ—¥é—´æ—¶é•¿
+		String nights = (String)durs.get(3);//å¤œé—´æ—¶é•¿
+
+		dayDuration =0L;
 		nightDuration =0L;
-		Double aprice = 0.0;//¶îÍâ¼Û¸ñ£¬¼ÇÂ¼¶àÊ±¶Î
-		if(isFullDayTime!=null&&isFullDayTime==0){//²¹×ãÈÕ¼äÊ±³¤ 0
+		Double aprice = 0.0;//é¢å¤–ä»·æ ¼ï¼Œè®°å½•å¤šæ—¶æ®µ
+		if(isFullDayTime!=null&&isFullDayTime==0){//è¡¥è¶³æ—¥é—´æ—¶é•¿ 0
 			if(days.indexOf("_")!=-1){
 				String []ds = days.split("_");
 				dayDuration = (Long.valueOf(ds[0])+Long.valueOf(ds[1]))/60;
@@ -739,13 +739,13 @@ public class CountPrice {
 			}else {
 				nightDuration = (Long.valueOf(nights))/60;
 			}
-		}else {//²»²¹×ãÈÕ¼äÊ±³¤ 0
+		}else {//ä¸è¡¥è¶³æ—¥é—´æ—¶é•¿ 0
 			if(fat==4){//4day-night-day,
 				String []ds = days.split("_");
-				Long d1 = Long.valueOf(ds[0])/60;//µÚÒ»¶ÎÈÕ¼äÊ±³¤
-				Long d2 = Long.valueOf(ds[1])/60;//µÚ¶ş¶ÎÈÕ¼äÊ±³¤
-				if(d1<dayUnit){//µÚÒ»¶Î²»ÊÇÊ±¼äµ¥Î»µÄÕûÊıÊ±£¬¼ÓÒ»¸öÈÕ¼ä¼Û¸ñµ¥Î»
-					if(d1>dft){//µÚÒ»¶ÎÈÕ¼äÊ±³¤´óÓÚÈÕ¼äÃâ·ÑÊ±³¤
+				Long d1 = Long.valueOf(ds[0])/60;//ç¬¬ä¸€æ®µæ—¥é—´æ—¶é•¿
+				Long d2 = Long.valueOf(ds[1])/60;//ç¬¬äºŒæ®µæ—¥é—´æ—¶é•¿
+				if(d1<dayUnit){//ç¬¬ä¸€æ®µä¸æ˜¯æ—¶é—´å•ä½çš„æ•´æ•°æ—¶ï¼ŒåŠ ä¸€ä¸ªæ—¥é—´ä»·æ ¼å•ä½
+					if(d1>dft){//ç¬¬ä¸€æ®µæ—¥é—´æ—¶é•¿å¤§äºæ—¥é—´å…è´¹æ—¶é•¿
 						aprice = dayPirce;
 					}
 					dayDuration = d2;
@@ -754,14 +754,14 @@ public class CountPrice {
 						aprice=dayPirce;
 					dayDuration = (d1-d1%dayUnit)+d2;
 				}
-				dft=0;//µÚ¶ş¶Î²»ÔÙ´¦ÀíÃâ·ÑÊ±³¤
+				dft=0;//ç¬¬äºŒæ®µä¸å†å¤„ç†å…è´¹æ—¶é•¿
 				nightDuration=(Long.valueOf(nights))/60;
 			}else if(fat==5){//5night-day-night
 				String []ns = nights.split("_");
-				Long n1 = Long.valueOf(ns[0])/60;//µÚÒ»¶ÎÒ¹¼äÊ±³¤
-				Long n2 = Long.valueOf(ns[1])/60;//µÚ¶ş¶ÎÒ¹¼äÊ±³¤
-				
-				if(n1<nightUnit){//µÚÒ»¶Î²»ÊÇÊ±¼äµ¥Î»µÄÕûÊıÊ±£¬¼ÓÒ»¸öÒ¹¼ä¼Û¸ñµ¥Î»
+				Long n1 = Long.valueOf(ns[0])/60;//ç¬¬ä¸€æ®µå¤œé—´æ—¶é•¿
+				Long n2 = Long.valueOf(ns[1])/60;//ç¬¬äºŒæ®µå¤œé—´æ—¶é•¿
+
+				if(n1<nightUnit){//ç¬¬ä¸€æ®µä¸æ˜¯æ—¶é—´å•ä½çš„æ•´æ•°æ—¶ï¼ŒåŠ ä¸€ä¸ªå¤œé—´ä»·æ ¼å•ä½
 					if(n1>nft)
 						aprice = nigthPrice;
 					nightDuration = n2;
@@ -778,29 +778,29 @@ public class CountPrice {
 				nightDuration = (Long.valueOf(nights))/60;
 			}
 		}
-		
+
 		if(times>0){
 			Integer t1 = (etime-btime);
 			hprice =Double.valueOf(dayPirce*((t1*60)/dayUnit)+nigthPrice*(((24-t1)*60)/nightUnit));
 			hprice = Double.valueOf(hprice*times);
 		}
-		
-		//´¦ÀíÃâ·ÑÊ±³¤¡¢¼ÆËãÓÅ»İ
-		if(fat==0||fat==2){//Ò¹¼ä,ÏÈ´¦ÀíÃâ·ÑÊ±³¤,ÔÙ¼ÆËãÓÅ»İ
-			//Ò¹¼ä,ÏÈ´¦ÀíÃâ·ÑÊ±³¤
+
+		//å¤„ç†å…è´¹æ—¶é•¿ã€è®¡ç®—ä¼˜æƒ 
+		if(fat==0||fat==2){//å¤œé—´,å…ˆå¤„ç†å…è´¹æ—¶é•¿,å†è®¡ç®—ä¼˜æƒ 
+			//å¤œé—´,å…ˆå¤„ç†å…è´¹æ—¶é•¿
 			if(nft>0){
-				if(nightDuration<=nft){//Ğ¡ÓÚÃâ·ÑÊ±³¤£¬Ö±½ÓÃâ·Ñ
-					if(nft-nightDuration<dayDuration)//Í¬Ê±ÔÙ¿Û³ıÈÕ¼äµÄÊ±³¤£¬ÒÔ²¹×ãÃâ·ÑÊ±³¤
+				if(nightDuration<=nft){//å°äºå…è´¹æ—¶é•¿ï¼Œç›´æ¥å…è´¹
+					if(nft-nightDuration<dayDuration)//åŒæ—¶å†æ‰£é™¤æ—¥é—´çš„æ—¶é•¿ï¼Œä»¥è¡¥è¶³å…è´¹æ—¶é•¿
 						dayDuration = dayDuration-(nft- nightDuration);
-					else {//Ò¹¼ä+ÈÕ¼ä²»¹»Ãâ·ÑÊ±¼ä£¬ÈÕ¼äÒ²ÖÃÎª0;
+					else {//å¤œé—´+æ—¥é—´ä¸å¤Ÿå…è´¹æ—¶é—´ï¼Œæ—¥é—´ä¹Ÿç½®ä¸º0;
 						dayDuration=0L;
 					}
 					nightDuration=0L;
-				}else if(nfpt==1){//´óÓÚÃâ·ÑÊ±³¤£¬ÉèÖÃÎªÃâ·ÑÊ±£¬¼õÈ¥Ãâ·ÑÊ±³¤
+				}else if(nfpt==1){//å¤§äºå…è´¹æ—¶é•¿ï¼Œè®¾ç½®ä¸ºå…è´¹æ—¶ï¼Œå‡å»å…è´¹æ—¶é•¿
 					nightDuration = nightDuration-nft;
 				}
 			}
-			//Ò¹¼ä,ÔÙ¼ÆËãÓÅ»İ
+			//å¤œé—´,å†è®¡ç®—ä¼˜æƒ 
 			if(nightDuration>0&&nftime>0&&nfprice>0&&nigthPrice>nfprice){
 				ymoney = (nftime/nightUnit)*(nigthPrice-nfprice);
 				if(nightDuration>nftime)
@@ -814,25 +814,25 @@ public class CountPrice {
 			if(ymoney==0&&times>0){
 				ymoney = (nftime/nightUnit)*(nigthPrice-nfprice);
 			}
-		}else {//ÈÕ¼ä,ÏÈ´¦Àí²»×ãÒ»¸ö¼Æ·ÑÊ±³¤»ò²»ÊÇ¼Æ·ÑÊ±³¤µÄÕûÊı±¶Ê±,ÔÙ´¦ÀíÃâ·ÑÊ±³¤,×îºó¼ÆËãÓÅ»İ
-			
-			//ÈÕ¼ä,´¦ÀíÃâ·ÑÊ±³¤
+		}else {//æ—¥é—´,å…ˆå¤„ç†ä¸è¶³ä¸€ä¸ªè®¡è´¹æ—¶é•¿æˆ–ä¸æ˜¯è®¡è´¹æ—¶é•¿çš„æ•´æ•°å€æ—¶,å†å¤„ç†å…è´¹æ—¶é•¿,æœ€åè®¡ç®—ä¼˜æƒ 
+
+			//æ—¥é—´,å¤„ç†å…è´¹æ—¶é•¿
 			if(dft>0){
-				if(dayDuration<=dft){//Ğ¡Ãâ·ÑÊ±³¤£¬Ö±½ÓÃâ·Ñ
+				if(dayDuration<=dft){//å°å…è´¹æ—¶é•¿ï¼Œç›´æ¥å…è´¹
 					dayDuration=0L;
-					if(dft-dayDuration<nightDuration)//Í¬Ê±ÔÙ¿Û³ıÒ¹¼äµÄÊ±³¤£¬ÒÔ²¹×ãÃâ·ÑÊ±³¤
+					if(dft-dayDuration<nightDuration)//åŒæ—¶å†æ‰£é™¤å¤œé—´çš„æ—¶é•¿ï¼Œä»¥è¡¥è¶³å…è´¹æ—¶é•¿
 						nightDuration = nightDuration-(dft-dayDuration);
-					else {//Ò¹¼ä+ÈÕ¼ä²»¹»Ãâ·ÑÊ±¼ä£¬Ò¹¼äÒ²ÖÃÎª0;
+					else {//å¤œé—´+æ—¥é—´ä¸å¤Ÿå…è´¹æ—¶é—´ï¼Œå¤œé—´ä¹Ÿç½®ä¸º0;
 						nightDuration=0L;
 					}
-				}else if(dfpt==1){//´óÓÚÃâ·ÑÊ±³¤£¬ÉèÖÃÎªÃâ·ÑÊ±£¬¼õÈ¥Ãâ·ÑÊ±³¤
+				}else if(dfpt==1){//å¤§äºå…è´¹æ—¶é•¿ï¼Œè®¾ç½®ä¸ºå…è´¹æ—¶ï¼Œå‡å»å…è´¹æ—¶é•¿
 					dayDuration = dayDuration-dft;
 				}
 			}
-			if(isFullDayTime!=null&&isFullDayTime==0){//ÈÕ¼äÊ±¶ÎÊÇ·ñ²¹È«,0²¹È« Ä¬ÈÏ 1²»²¹È«£¬ÀıÈç¼ÃÄÏµÄ³µ³¡
-				//ÈÕ¼ä,´¦Àí²»×ãÒ»¸ö¼Æ·ÑÊ±³¤»ò²»ÊÇ¼Æ·ÑÊ±³¤µÄÕûÊı±¶Ê±
+			if(isFullDayTime!=null&&isFullDayTime==0){//æ—¥é—´æ—¶æ®µæ˜¯å¦è¡¥å…¨,0è¡¥å…¨ é»˜è®¤ 1ä¸è¡¥å…¨ï¼Œä¾‹å¦‚æµå—çš„è½¦åœº
+				//æ—¥é—´,å¤„ç†ä¸è¶³ä¸€ä¸ªè®¡è´¹æ—¶é•¿æˆ–ä¸æ˜¯è®¡è´¹æ—¶é•¿çš„æ•´æ•°å€æ—¶
 				if(dayDuration>0){
-					if(dayDuration<dayUnit){//ÈÕ¼äÊ±³¤²»×ãÒ»¸ö¸¶·Ñµ¥Î»£¬²¹×ãÒ»¸ö¼Æ·Ñµ¥Î»£¬Í¬Ê±Ò¹¼äÊ±³¤¼õÉÙ²¹Ê±²¿·Ö
+					if(dayDuration<dayUnit){//æ—¥é—´æ—¶é•¿ä¸è¶³ä¸€ä¸ªä»˜è´¹å•ä½ï¼Œè¡¥è¶³ä¸€ä¸ªè®¡è´¹å•ä½ï¼ŒåŒæ—¶å¤œé—´æ—¶é•¿å‡å°‘è¡¥æ—¶éƒ¨åˆ†
 						if(nightDuration>(dayUnit-dayDuration)){
 							nightDuration = nightDuration -(dayUnit-dayDuration);
 							dayDuration = dayUnit.longValue();
@@ -840,8 +840,8 @@ public class CountPrice {
 							dayDuration = dayDuration+nightDuration;
 							nightDuration=0L;
 						}
-					}else if(dayDuration%dayUnit>0){//ÈÕ¼äÊ±³¤²»ÊÇ¸¶·Ñµ¥Î»µÄÕûÊı£¬ÓàÊı²¹×ãÒ»¸ö¼Æ·Ñµ¥Î»£¬Í¬Ê±Ò¹¼äÊ±³¤¼õÉÙ²¹Ê±²¿·Ö
-						Long ld = dayDuration%dayUnit; //ÓàÊı
+					}else if(dayDuration%dayUnit>0){//æ—¥é—´æ—¶é•¿ä¸æ˜¯ä»˜è´¹å•ä½çš„æ•´æ•°ï¼Œä½™æ•°è¡¥è¶³ä¸€ä¸ªè®¡è´¹å•ä½ï¼ŒåŒæ—¶å¤œé—´æ—¶é•¿å‡å°‘è¡¥æ—¶éƒ¨åˆ†
+						Long ld = dayDuration%dayUnit; //ä½™æ•°
 						if(nightDuration>(dayUnit-ld)){
 							nightDuration = nightDuration -(dayUnit-ld);
 							dayDuration = dayDuration + (dayUnit-ld);
@@ -852,7 +852,7 @@ public class CountPrice {
 					}
 				}
 			}
-			//ÈÕ¼ä,ÔÙ¼ÆËãÓÅ»İ
+			//æ—¥é—´,å†è®¡ç®—ä¼˜æƒ 
 			if(times>0){
 				ymoney = (ftime/dayUnit)*(dayPirce-fprice);
 			}else {
@@ -872,9 +872,9 @@ public class CountPrice {
 				ymoney = (ftime/dayUnit)*(dayPirce-fprice);
 			}
 		}
-		//¼ÆËã×Ü¼Û
+		//è®¡ç®—æ€»ä»·
 		price = (dayDuration/dayUnit)*dayPirce + (nightDuration/nightUnit)*nigthPrice;
-		//ÁãÍ·°´Ò»¸ö¼Æ·Ñµ¥Î»ÊÕ·Ñ
+		//é›¶å¤´æŒ‰ä¸€ä¸ªè®¡è´¹å•ä½æ”¶è´¹
 		if(dayDuration%dayUnit>0)
 			price+=dayPirce;
 		if(nightDuration%nightUnit>0)
@@ -884,7 +884,7 @@ public class CountPrice {
 
 		price = price+hprice+aprice;
 		Double collect = price-ymoney;
-		//ÉèÖÃÁË³µ³¡×îĞ¡¼Û¸ñµ¥Î»°´×îĞ¡¼Û¸ñµ¥Î»´¦Àí
+		//è®¾ç½®äº†è½¦åœºæœ€å°ä»·æ ¼å•ä½æŒ‰æœ€å°ä»·æ ¼å•ä½å¤„ç†
 		if(minPriceUnit!=0.00){
 			collect = dealPrice(price-ymoney,minPriceUnit);
 			price = dealPrice(price,minPriceUnit);
@@ -892,12 +892,12 @@ public class CountPrice {
 		resultMap.put("btime", TimeTools.getTime_MMdd_HHmm(start*1000).substring(6));
 		resultMap.put("etime", TimeTools.getTime_MMdd_HHmm(end*1000).substring(6));
 		resultMap.put("total", StringUtils.formatDouble((price)));
-		resultMap.put("discount",StringUtils.formatDouble(ymoney));//ÕÛ¿Û
+		resultMap.put("discount",StringUtils.formatDouble(ymoney));//æŠ˜æ‰£
 		resultMap.put("collect", StringUtils.formatDouble((collect)));
 		resultMap.put("duration", StringUtils.getTimeString(oldDuration));
 		return resultMap;
 	}
-	
+
 	private static double dealPrice(double price,double minPriceUnit){
 		DecimalFormat dFormat = new DecimalFormat("#0.00");
 		String []pricearr = dFormat.format(price).split("\\.");
@@ -910,179 +910,179 @@ public class CountPrice {
 	}
 
 	/**
-	 * ·ÖÎöÍ£³µÊ±³¤ºÍÇø¼ä
-	 * @param start --Í£³µ¿ªÊ¼Ê±¼ä
-	 * @param end --Í£³µ½áÊøÊ±¼ä
-	 * @param btime --¼Û¸ñ¿ªÊ¼Ğ¡Ê±
-	 * @param etime --¼Û¸ñ½áÊøĞ¡Ê±
-	 * @return [ÌìÊı£¬Í£³µÊ±¶ÎÀàĞÍ(Í£³µÊ±¶ÎÔÚ  0Ò¹¼ä , 1ÈÕ¼ä,2Ò¹¼äµ½ÈÕ¼ä, 3ÈÕ¼äµ½Ò¹¼ä)£¬ÈÕ¼äÊ±³¤£¬Ò¹¼äÊ±³¤]
+	 * åˆ†æåœè½¦æ—¶é•¿å’ŒåŒºé—´
+	 * @param start --åœè½¦å¼€å§‹æ—¶é—´
+	 * @param end --åœè½¦ç»“æŸæ—¶é—´
+	 * @param btime --ä»·æ ¼å¼€å§‹å°æ—¶
+	 * @param etime --ä»·æ ¼ç»“æŸå°æ—¶
+	 * @return [å¤©æ•°ï¼Œåœè½¦æ—¶æ®µç±»å‹(åœè½¦æ—¶æ®µåœ¨  0å¤œé—´ , 1æ—¥é—´,2å¤œé—´åˆ°æ—¥é—´, 3æ—¥é—´åˆ°å¤œé—´)ï¼Œæ—¥é—´æ—¶é•¿ï¼Œå¤œé—´æ—¶é•¿]
 	 */
 	private static List<Object> getDurations(Long start,Long end,Integer btime,Integer etime){
 		List<Object> durList = new ArrayList<Object>();
 		Long times =0L;
-		//¿ªÊ¼Ê±¼äÈç¹ûÓĞÃë£¬·ÖÖÓ¼Ó1
+		//å¼€å§‹æ—¶é—´å¦‚æœæœ‰ç§’ï¼Œåˆ†é’ŸåŠ 1
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 		calendar.setTimeInMillis(start*1000);
 		if(calendar.get(Calendar.SECOND)>0)
 			calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE)+1);
 		calendar.set(Calendar.SECOND, 0);
 		start = calendar.getTimeInMillis()/1000;
-		//½áÊøÊ±¼äÈç¹ûÓĞÃë£¬È¡·ÖÖÓÕûÊı
+		//ç»“æŸæ—¶é—´å¦‚æœæœ‰ç§’ï¼Œå–åˆ†é’Ÿæ•´æ•°
 		calendar.setTimeInMillis(end*1000);
 		calendar.set(Calendar.SECOND, 0);
 		end = calendar.getTimeInMillis()/1000;
-		//Ê±³¤
+		//æ—¶é•¿
 		Long duration = end-start;
-		//¼ÆËãÌìÊı
+		//è®¡ç®—å¤©æ•°
 		if(duration>=24*60*60){
 			times = duration/(24*60*60);
 			start = start + times*24*60*60;
 			//System.err.println("times:"+times);
 		}
-		//[ÌìÊı£¬Í£³µÊ±¶ÎÀàĞÍ(Í£³µÊ±¶ÎÔÚ  0Ò¹¼ä , 1ÈÕ¼ä,2Ò¹¼äµ½ÈÕ¼ä, 3ÈÕ¼äµ½Ò¹¼ä,4day-night-day,5night-day-night)£¬ÈÕ¼äÊ±³¤£¬Ò¹¼äÊ±³¤]
+		//[å¤©æ•°ï¼Œåœè½¦æ—¶æ®µç±»å‹(åœè½¦æ—¶æ®µåœ¨  0å¤œé—´ , 1æ—¥é—´,2å¤œé—´åˆ°æ—¥é—´, 3æ—¥é—´åˆ°å¤œé—´,4day-night-day,5night-day-night)ï¼Œæ—¥é—´æ—¶é•¿ï¼Œå¤œé—´æ—¶é•¿]
 		durList.add(times);
-		
-		//ÈÕ¼ä¼Û¸ñ¿ªÊ¼Ê±¼ä
+
+		//æ—¥é—´ä»·æ ¼å¼€å§‹æ—¶é—´
 		calendar.setTimeInMillis(start*1000);
 		calendar.set(Calendar.HOUR_OF_DAY, btime);
 		calendar.set(Calendar.MINUTE, 0);
 		Long ts = calendar.getTimeInMillis()/1000;
-		//¼Û¸ñ½áÊ±¼ä
+		//ä»·æ ¼ç»“æ—¶é—´
 		calendar.set(Calendar.HOUR_OF_DAY, etime);
 		calendar.set(Calendar.MINUTE, 0);
 		Long te = calendar.getTimeInMillis()/1000;
-		//Ò¹¼ä¼Û¸ñ¿ªÊ¼½áÊøÊ±¼ä
+		//å¤œé—´ä»·æ ¼å¼€å§‹ç»“æŸæ—¶é—´
 		Long nts = ts+24*60*60;
 		Long nte = te+24*60*60;
-		//ÈÕ¼äÊ±³¤
+		//æ—¥é—´æ—¶é•¿
 		String dduration = "0";
-		//Ò¹¼äÊ±³¤
+		//å¤œé—´æ—¶é•¿
 		String nduration = "0";
-		
+
 //		System.err.println("start:"+TimeTools.getTime_yyyyMMdd_HHmmss(start*1000));
 //		System.err.println("end:"+TimeTools.getTime_yyyyMMdd_HHmmss(end*1000));
 //		System.err.println("ts:"+TimeTools.getTime_yyyyMMdd_HHmmss(ts*1000));
 //		System.err.println("te:"+TimeTools.getTime_yyyyMMdd_HHmmss(te*1000));
 //		System.err.println("nts:"+TimeTools.getTime_yyyyMMdd_HHmmss(nts*1000));
 //		System.err.println("nte:"+TimeTools.getTime_yyyyMMdd_HHmmss(nte*1000));
-		
-		if(start<ts){//Í£³µ¿ªÊ¼Ê±¼äĞ¡ÓÚ¼Û¸ñµÄ¿ªÊ¼Ê±¼ä
-			if(end<=ts){//Í£³µ½áÊøÊ±¼äÒ²Ğ¡ÓÚ¼Û¸ñ¿ªÊ¼Ê±¼ä£¬Èç¼Û¸ñÊ±¼ä 08:00-21:00,Í£³µÇø¼äÊÇ07:20-07:55
-				durList.add(0L);//Í£³µÊ±¶ÎÔÚ  0Ò¹¼ä 
-				nduration =(end-start)+"";//Ò¹¼äÊ±³¤ÎªÍ£³µ¿ªÊ¼Ê±¼ä-Í£³µ½áÊøÊ±¼ä£¬¶øÈÕ¼äÊ±³¤Îª0
+
+		if(start<ts){//åœè½¦å¼€å§‹æ—¶é—´å°äºä»·æ ¼çš„å¼€å§‹æ—¶é—´
+			if(end<=ts){//åœè½¦ç»“æŸæ—¶é—´ä¹Ÿå°äºä»·æ ¼å¼€å§‹æ—¶é—´ï¼Œå¦‚ä»·æ ¼æ—¶é—´ 08:00-21:00,åœè½¦åŒºé—´æ˜¯07:20-07:55
+				durList.add(0L);//åœè½¦æ—¶æ®µåœ¨  0å¤œé—´
+				nduration =(end-start)+"";//å¤œé—´æ—¶é•¿ä¸ºåœè½¦å¼€å§‹æ—¶é—´-åœè½¦ç»“æŸæ—¶é—´ï¼Œè€Œæ—¥é—´æ—¶é•¿ä¸º0
 //				System.err.println("night1 duration:"+nduration);
-			}else {//Í£³µ½áÊøÊ±¼ä´óÓÚ¼Û¸ñ¿ªÊ¼Ê±¼ä
-				if(end<=te){//Í£³µ½áÊøÊ±¼äĞ¡ÓÚ¼Û¸ñ½áÊøÊ±¼ä£¬ Èç¼Û¸ñÊ±¼ä 08:00-21:00,Í£³µÇø¼äÊÇ07:20-19:55
-					durList.add(2L);//Í£³µÊ±¶ÎÔÚ 2Ò¹¼äµ½ÈÕ¼ä 
-					nduration = (ts-start)+"";//ÈÕ¼äÊ±³¤
-					dduration = (end-ts)+"";//Ò¹¼äÊ±³¤
+			}else {//åœè½¦ç»“æŸæ—¶é—´å¤§äºä»·æ ¼å¼€å§‹æ—¶é—´
+				if(end<=te){//åœè½¦ç»“æŸæ—¶é—´å°äºä»·æ ¼ç»“æŸæ—¶é—´ï¼Œ å¦‚ä»·æ ¼æ—¶é—´ 08:00-21:00,åœè½¦åŒºé—´æ˜¯07:20-19:55
+					durList.add(2L);//åœè½¦æ—¶æ®µåœ¨ 2å¤œé—´åˆ°æ—¥é—´
+					nduration = (ts-start)+"";//æ—¥é—´æ—¶é•¿
+					dduration = (end-ts)+"";//å¤œé—´æ—¶é•¿
 //					System.err.println("night2 duration:"+nduration);
 //					System.err.println("day2 duration:"+dduration);
-				}else {//Í£³µ½áÊøÊ±¼ä´óÓÚ¼Û¸ñ½áÊøÊ±¼ä£¬
-					if(end<nts){//Í£³µ½áÊøÊ±¼äĞ¡ÓÚµÚ¶şÌì¼Û¸ñ¿ªÊ¼Ê±¼ä£¬ Èç¼Û¸ñÊ±¼ä 08:00-21:00,Í£³µÇø¼äÊÇ07:20-µÚ¶şÌì06:55
-						durList.add(5L);//Í£³µÊ±¶ÎÔÚ 5night-day-night 
-						nduration = (ts-start) +"_"+ (end-te);//Ò¹¼äÊ±¼äÎªÁ½¶Î£¬0800-0720 + 0655-2100
-						dduration = (te-ts)+"";//ÈÕ¼äÊ±³¤ 2100-0800
+				}else {//åœè½¦ç»“æŸæ—¶é—´å¤§äºä»·æ ¼ç»“æŸæ—¶é—´ï¼Œ
+					if(end<nts){//åœè½¦ç»“æŸæ—¶é—´å°äºç¬¬äºŒå¤©ä»·æ ¼å¼€å§‹æ—¶é—´ï¼Œ å¦‚ä»·æ ¼æ—¶é—´ 08:00-21:00,åœè½¦åŒºé—´æ˜¯07:20-ç¬¬äºŒå¤©06:55
+						durList.add(5L);//åœè½¦æ—¶æ®µåœ¨ 5night-day-night
+						nduration = (ts-start) +"_"+ (end-te);//å¤œé—´æ—¶é—´ä¸ºä¸¤æ®µï¼Œ0800-0720 + 0655-2100
+						dduration = (te-ts)+"";//æ—¥é—´æ—¶é•¿ 2100-0800
 //						System.err.println("night3 duration:"+nduration);
 //						System.err.println("day3 duration:"+dduration);
 					}else {
-						durList.add(2L);//Í£³µÊ±¶ÎÔÚ 2Ò¹¼äµ½ÈÕ¼ä 
+						durList.add(2L);//åœè½¦æ—¶æ®µåœ¨ 2å¤œé—´åˆ°æ—¥é—´
 					}
 				}
 			}
-		}else if(start<te){//Í£³µ¿ªÊ¼Ê±¼äĞ¡ÓÚ¼Û¸ñµÄ½áÊøÊ±¼ä Èç£º¼Û¸ñÊ±¼ä 08:00-21:00,Í£³µÇø¼äÊÇ09:20-17:55
-			if(end<=te){//Í£³µ½áÊøÊ±¼äĞ¡ÓÚ¼Û¸ñ½áÊøÊ±¼ä£¬ Èç£º¼Û¸ñÊ±¼ä 08:00-21:00,Í£³µÇø¼äÊÇ09:20-17:55
-				durList.add(1L);//Í£³µÊ±¶ÎÔÚ  1ÈÕ¼ä 
-				dduration = (end-start)+"";//ÈÕ¼äÊ±³¤,1755-0920£¬Ò¹¼äÊ±³¤Îª0
+		}else if(start<te){//åœè½¦å¼€å§‹æ—¶é—´å°äºä»·æ ¼çš„ç»“æŸæ—¶é—´ å¦‚ï¼šä»·æ ¼æ—¶é—´ 08:00-21:00,åœè½¦åŒºé—´æ˜¯09:20-17:55
+			if(end<=te){//åœè½¦ç»“æŸæ—¶é—´å°äºä»·æ ¼ç»“æŸæ—¶é—´ï¼Œ å¦‚ï¼šä»·æ ¼æ—¶é—´ 08:00-21:00,åœè½¦åŒºé—´æ˜¯09:20-17:55
+				durList.add(1L);//åœè½¦æ—¶æ®µåœ¨  1æ—¥é—´
+				dduration = (end-start)+"";//æ—¥é—´æ—¶é•¿,1755-0920ï¼Œå¤œé—´æ—¶é•¿ä¸º0
 //				System.err.println("day4 duration:"+dduration);
-			}else {//Í£³µ½áÊøÊ±¼ä´óÓÚ¼Û¸ñ½áÊøÊ±¼ä,Èç£º¼Û¸ñÊ±¼ä 08:00-21:00,Í£³µÇø¼äÊÇ09:20-22:55
-				//durList.add(3L);//Í£³µÊ±¶ÎÔÚ  3ÈÕ¼äµ½Ò¹¼ä
-				if(end<=nts){//Í£³µ½áÊøÊ±¼äĞ¡ÓÚµÚ¶şÌì¼Û¸ñ¿ªÊ¼Ê±¼ä£¬ Èç¼Û¸ñÊ±¼ä 08:00-21:00,Í£³µÇø¼äÊÇ09:20-µÚ¶şÌì07:55
-					durList.add(3L);//Í£³µÊ±¶ÎÔÚ  3ÈÕ¼äµ½Ò¹¼ä
-					nduration =(end-te)+"" ;//Ò¹¼äÊ±³¤,0755-2100
-					dduration = (te-start)+"";//ÈÕ¼äÊ±³¤,2100-0920
+			}else {//åœè½¦ç»“æŸæ—¶é—´å¤§äºä»·æ ¼ç»“æŸæ—¶é—´,å¦‚ï¼šä»·æ ¼æ—¶é—´ 08:00-21:00,åœè½¦åŒºé—´æ˜¯09:20-22:55
+				//durList.add(3L);//åœè½¦æ—¶æ®µåœ¨  3æ—¥é—´åˆ°å¤œé—´
+				if(end<=nts){//åœè½¦ç»“æŸæ—¶é—´å°äºç¬¬äºŒå¤©ä»·æ ¼å¼€å§‹æ—¶é—´ï¼Œ å¦‚ä»·æ ¼æ—¶é—´ 08:00-21:00,åœè½¦åŒºé—´æ˜¯09:20-ç¬¬äºŒå¤©07:55
+					durList.add(3L);//åœè½¦æ—¶æ®µåœ¨  3æ—¥é—´åˆ°å¤œé—´
+					nduration =(end-te)+"" ;//å¤œé—´æ—¶é•¿,0755-2100
+					dduration = (te-start)+"";//æ—¥é—´æ—¶é•¿,2100-0920
 //					System.err.println("night5 duration:"+nduration);
 //					System.err.println("day5 duration:"+dduration);
-				}else{//Í£³µ½áÊøÊ±¼ä´óÓÚµÚ¶şÌì¼Û¸ñ¿ªÊ¼Ê±¼ä, Èç¼Û¸ñÊ±¼ä 08:00-21:00,Í£³µÇø¼äÊÇ09:20-µÚ¶şÌì08:55
-					durList.add(4L);//Í£³µÊ±¶ÎÔÚ 4day-night-day
-					dduration = (te-start)+"_"+(end-nts);//ÈÕ¼äÊ±³¤ÓĞÁ½¶Î,2100-0920 + 0855-0800
-					nduration = (nts-te)+"";//Ò¹¼äÊ±³¤   0800-2100
+				}else{//åœè½¦ç»“æŸæ—¶é—´å¤§äºç¬¬äºŒå¤©ä»·æ ¼å¼€å§‹æ—¶é—´, å¦‚ä»·æ ¼æ—¶é—´ 08:00-21:00,åœè½¦åŒºé—´æ˜¯09:20-ç¬¬äºŒå¤©08:55
+					durList.add(4L);//åœè½¦æ—¶æ®µåœ¨ 4day-night-day
+					dduration = (te-start)+"_"+(end-nts);//æ—¥é—´æ—¶é•¿æœ‰ä¸¤æ®µ,2100-0920 + 0855-0800
+					nduration = (nts-te)+"";//å¤œé—´æ—¶é•¿   0800-2100
 //					System.err.println("night6 duration:"+nduration);
 //					System.err.println("day6 duration:"+dduration+",t1:"+(te-start)+",t2:"+(end-nts));
 				}
 			}
-		}else if(start>=te){//Í£³µ¿ªÊ¼Ê±¼ä´óÓÚ»òµÈÓÚ¼Û¸ñµÄ½áÊøÊ±¼ä ,Èç¼Û¸ñÊ±¼ä 08:00-21:00 Í£³µÇø¼äÊÇ22:20-µÚ¶şÌì06:55
-			if(end<=nts){//Í£³µ½áÊøÊ±¼äĞ¡ÓÚµÚ¶şÌì¼Û¸ñ¿ªÊ¼Ê±¼ä,Èç¼Û¸ñÊ±¼ä 08:00-21:00 Í£³µÇø¼äÊÇ22:20-µÚ¶şÌì06:55
-				durList.add(0L);//Í£³µÊ±¶ÎÔÚ  0Ò¹¼ä 
-				nduration = (end-start)+"";//Ò¹¼äÊ±³¤£¬0655-2220£¬¶øÈÕ¼äÊ±³¤Îª0
+		}else if(start>=te){//åœè½¦å¼€å§‹æ—¶é—´å¤§äºæˆ–ç­‰äºä»·æ ¼çš„ç»“æŸæ—¶é—´ ,å¦‚ä»·æ ¼æ—¶é—´ 08:00-21:00 åœè½¦åŒºé—´æ˜¯22:20-ç¬¬äºŒå¤©06:55
+			if(end<=nts){//åœè½¦ç»“æŸæ—¶é—´å°äºç¬¬äºŒå¤©ä»·æ ¼å¼€å§‹æ—¶é—´,å¦‚ä»·æ ¼æ—¶é—´ 08:00-21:00 åœè½¦åŒºé—´æ˜¯22:20-ç¬¬äºŒå¤©06:55
+				durList.add(0L);//åœè½¦æ—¶æ®µåœ¨  0å¤œé—´
+				nduration = (end-start)+"";//å¤œé—´æ—¶é•¿ï¼Œ0655-2220ï¼Œè€Œæ—¥é—´æ—¶é•¿ä¸º0
 //				System.err.println("night7 duration:"+nduration);
-			}else{//Í£³µ½áÊøÊ±¼ä´óÓÚµÚ¶şÌì¼Û¸ñ¿ªÊ¼Ê±¼ä,Èç¼Û¸ñÊ±¼ä 08:00-21:00 Í£³µÇø¼äÊÇ22:20-µÚ¶şÌì09:55
-				if(end<=nte){//Í£³µ½áÊøÊ±¼äĞ¡ÓÚ»òµÈÓÚµÚ¶şÌì¼Û¸ñ½áÊ±¼ä,Èç¼Û¸ñÊ±¼ä 08:00-21:00 Í£³µÇø¼äÊÇ22:20-µÚ¶şÌì20:55
-					durList.add(2L);//Í£³µÊ±¶ÎÔÚ 2Ò¹¼äµ½ÈÕ¼ä 
-					nduration = (nts-start)+"";//Ò¹¼äÊ±³¤,µÚ¶şÌìµÄ0800-2220
-					dduration = (end-nts)+"";//ÈÕ¼äÊ±³¤,2055-0800
+			}else{//åœè½¦ç»“æŸæ—¶é—´å¤§äºç¬¬äºŒå¤©ä»·æ ¼å¼€å§‹æ—¶é—´,å¦‚ä»·æ ¼æ—¶é—´ 08:00-21:00 åœè½¦åŒºé—´æ˜¯22:20-ç¬¬äºŒå¤©09:55
+				if(end<=nte){//åœè½¦ç»“æŸæ—¶é—´å°äºæˆ–ç­‰äºç¬¬äºŒå¤©ä»·æ ¼ç»“æ—¶é—´,å¦‚ä»·æ ¼æ—¶é—´ 08:00-21:00 åœè½¦åŒºé—´æ˜¯22:20-ç¬¬äºŒå¤©20:55
+					durList.add(2L);//åœè½¦æ—¶æ®µåœ¨ 2å¤œé—´åˆ°æ—¥é—´
+					nduration = (nts-start)+"";//å¤œé—´æ—¶é•¿,ç¬¬äºŒå¤©çš„0800-2220
+					dduration = (end-nts)+"";//æ—¥é—´æ—¶é•¿,2055-0800
 //					System.err.println("night8 duration:"+nduration);
 //					System.err.println("day8 duration:"+dduration);
-				}else {//Í£³µ½áÊøÊ±¼ä´óÓÚµÚ¶şÌì¼Û¸ñ½áÊ±¼ä,Èç¼Û¸ñÊ±¼ä 08:00-21:00 Í£³µÇø¼äÊÇ22:20-µÚ¶şÌì21:55
-					durList.add(5L);//Í£³µÊ±¶ÎÔÚ 5night-day-night 
-					nduration = (nts-start) +"_"+(end-nte);//Ò¹¼äÁ½²¿·Ö,µÚ¶şÌìµÄ0800-2220 + 2155-2100
-					dduration = (nte-nts)+"";//ÈÕ¼äÊ±³¤,2100-0800
+				}else {//åœè½¦ç»“æŸæ—¶é—´å¤§äºç¬¬äºŒå¤©ä»·æ ¼ç»“æ—¶é—´,å¦‚ä»·æ ¼æ—¶é—´ 08:00-21:00 åœè½¦åŒºé—´æ˜¯22:20-ç¬¬äºŒå¤©21:55
+					durList.add(5L);//åœè½¦æ—¶æ®µåœ¨ 5night-day-night
+					nduration = (nts-start) +"_"+(end-nte);//å¤œé—´ä¸¤éƒ¨åˆ†,ç¬¬äºŒå¤©çš„0800-2220 + 2155-2100
+					dduration = (nte-nts)+"";//æ—¥é—´æ—¶é•¿,2100-0800
 //					System.err.println("night9 duration:"+nduration);
 //					System.err.println("day9 duration:"+dduration);
 				}
 			}
-				
+
 		}
 		durList.add(dduration);
 		durList.add(nduration);
-		//·µ»Ø:[ÌìÊı£¬Í£³µÊ±¶ÎÀàĞÍ(Í£³µÊ±¶ÎÔÚ  0Ò¹¼ä , 1ÈÕ¼ä,2Ò¹¼äµ½ÈÕ¼ä, 3ÈÕ¼äµ½Ò¹¼ä)£¬ÈÕ¼äÊ±³¤£¬Ò¹¼äÊ±³¤]
+		//è¿”å›:[å¤©æ•°ï¼Œåœè½¦æ—¶æ®µç±»å‹(åœè½¦æ—¶æ®µåœ¨  0å¤œé—´ , 1æ—¥é—´,2å¤œé—´åˆ°æ—¥é—´, 3æ—¥é—´åˆ°å¤œé—´)ï¼Œæ—¥é—´æ—¶é•¿ï¼Œå¤œé—´æ—¶é•¿]
 		return durList;
 	}
-	
+
 	/**
-	 * ¼ÆËãÍ£³µ½ğ¶î
-	 * @param start ¿ªÊ¼utcÊ±¼ä
-	 * @param end ½áÊøutcÊ±¼ä
-	 * @param priceMap Ê±¶Î¼Æ·Ñ1
-	 * @param priceMap2 Ê±¶Î¼Æ·Ñ2 //·Ö¶Î¼Æ·ÑÊ±±ØĞëÓĞ£¬Ã»ÓĞÊ±£¬¼Æ·Ñ1±äÎªÈ«ÌìµÄ
+	 * è®¡ç®—åœè½¦é‡‘é¢
+	 * @param start å¼€å§‹utcæ—¶é—´
+	 * @param end ç»“æŸutcæ—¶é—´
+	 * @param priceMap æ—¶æ®µè®¡è´¹1
+	 * @param priceMap2 æ—¶æ®µè®¡è´¹2 //åˆ†æ®µè®¡è´¹æ—¶å¿…é¡»æœ‰ï¼Œæ²¡æœ‰æ—¶ï¼Œè®¡è´¹1å˜ä¸ºå…¨å¤©çš„
 	 * @return
 	 */
 	/*public static Map<String, Object> getAccount_bak11(Long start,Long end,Map dayMap,Map nightMap){
-		
-		 *  ÈÕ¼ä£º{price=3.00, unit=30, b_time=8, e_time=18, first_times=60, fprice=2.50, countless=5}
-			Ò¹¼ä£º{price=2.00, unit=60, b_time=18,e_time= 8,  first_times=0, fprice=0.00, countless=0}
+
+		 *  æ—¥é—´ï¼š{price=3.00, unit=30, b_time=8, e_time=18, first_times=60, fprice=2.50, countless=5}
+			å¤œé—´ï¼š{price=2.00, unit=60, b_time=18,e_time= 8,  first_times=0, fprice=0.00, countless=0}
 			btime:1405581081,etime:1405581549
-		 
+
 		//System.err.println("btime:"+start+",etime:"+end);
-		Double hprice = 0d;//ÕûÌìÊ±³¤µÄÊÕ·Ñ
-		Double price = 0d;//·µ»ØµÄ×Ü¼Û
-		Double dayPirce = null;//ÈÕ¼ä¼Û¸ñ
-		Double ymoney=0d;//ÓÅ»İ
-		Integer countless = 0;//ÁãÍ·¼Æ·ÑÊ±³¤£¬µ¥Î»·ÖÖÓ
+		Double hprice = 0d;//æ•´å¤©æ—¶é•¿çš„æ”¶è´¹
+		Double price = 0d;//è¿”å›çš„æ€»ä»·
+		Double dayPirce = null;//æ—¥é—´ä»·æ ¼
+		Double ymoney=0d;//ä¼˜æƒ 
+		Integer countless = 0;//é›¶å¤´è®¡è´¹æ—¶é•¿ï¼Œå•ä½åˆ†é’Ÿ
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		Long duration = (end-start)/60;//Í£³µÊ±³¤£¬µ¥Î»£º·ÖÖÓ,Ö»È¡ÕûÊı
+		Long duration = (end-start)/60;//åœè½¦æ—¶é•¿ï¼Œå•ä½ï¼šåˆ†é’Ÿ,åªå–æ•´æ•°
 		Long oldDuration =(end-start);
 		//Long allduration=duration;
 		if(start!=null&&end!=null&&dayMap!=null){
-			//System.err.println("×ÜÍ£³µÊ±³¤£º"+duration+"·ÖÖÓ");
+			//System.err.println("æ€»åœè½¦æ—¶é•¿ï¼š"+duration+"åˆ†é’Ÿ");
 			dayPirce=Double.valueOf(dayMap.get("price")+"");
-			//ÈÕ¼äÊ±¶Î1
+			//æ—¥é—´æ—¶æ®µ1
 			Integer btime = (Integer)dayMap.get("b_time");
 			Integer etime = (Integer)dayMap.get("e_time");
-			Integer dayUnit = (Integer) dayMap.get("unit");//ÈÕ¼ä¼Æ·Ñµ¥Î»
+			Integer dayUnit = (Integer) dayMap.get("unit");//æ—¥é—´è®¡è´¹å•ä½
 			countless = (Integer)dayMap.get("countless");
-			Integer ftime = (Integer) dayMap.get("first_times");//Ê×ÓÅ»İÊ±¶Î
+			Integer ftime = (Integer) dayMap.get("first_times");//é¦–ä¼˜æƒ æ—¶æ®µ
 			Double fprice = Double.valueOf(dayMap.get("fprice")+"");
-			Integer nightUnit =1; 
-			Double nigthPrice = 0d;//Ò¹¼ä¼Û¸ñ
+			Integer nightUnit =1;
+			Double nigthPrice = 0d;//å¤œé—´ä»·æ ¼
 			Integer nft = 0;
 			Integer nfpt =0;
-			//Ã»ÓĞÉèÖÃÊ±¶Î2Ê±£¬Ê±¶Î1ÊÇÈ«Ìì
-			if(nightMap==null){//Ã»ÓĞÒ¹¼ä¼Û¸ñ²ßÂÔÊ±£¬ÈÕ¼äÊÕ·ÑÊ±¶ÎÎªÈ«Ìì
+			//æ²¡æœ‰è®¾ç½®æ—¶æ®µ2æ—¶ï¼Œæ—¶æ®µ1æ˜¯å…¨å¤©
+			if(nightMap==null){//æ²¡æœ‰å¤œé—´ä»·æ ¼ç­–ç•¥æ—¶ï¼Œæ—¥é—´æ”¶è´¹æ—¶æ®µä¸ºå…¨å¤©
 				btime=0;
 				etime=24;
-			}else {//µ±Ç°Ö»Ö§³ÖÁ½¸öÊ±¶ÎÇé¿ö£¬µÚÒ»¸ö½×¶Î±ØĞëÊÇÎ´Ê±¼ä´óÓÚÊ±¼ä £¬¶øµÚ¶ş¸öÊ±¶ÎÊÇµÚÒ»¸öÊ±¶ÎµÄ²¹¼¯,²»ĞèÒªÆğÖ¹Ê±¼ä
-				nightUnit=(Integer) nightMap.get("unit");//Ò¹¼ä¼Æ·Ñµ¥Î»
+			}else {//å½“å‰åªæ”¯æŒä¸¤ä¸ªæ—¶æ®µæƒ…å†µï¼Œç¬¬ä¸€ä¸ªé˜¶æ®µå¿…é¡»æ˜¯æœªæ—¶é—´å¤§äºæ—¶é—´ ï¼Œè€Œç¬¬äºŒä¸ªæ—¶æ®µæ˜¯ç¬¬ä¸€ä¸ªæ—¶æ®µçš„è¡¥é›†,ä¸éœ€è¦èµ·æ­¢æ—¶é—´
+				nightUnit=(Integer) nightMap.get("unit");//å¤œé—´è®¡è´¹å•ä½
 				nigthPrice = Double.valueOf(nightMap.get("price")+"");
 				nft = (Integer)nightMap.get("free_time");
 				nfpt = (Integer)nightMap.get("fpay_type");
@@ -1095,22 +1095,22 @@ public class CountPrice {
 			Integer dfpt = (Integer)dayMap.get("fpay_type");
 			dft = dft==null?0:dft;
 			dfpt = dfpt==null?0:dfpt;
-			//System.out.println("ÈÕ¼ä£º"+dayMap);
-			//System.out.println("Ò¹¼ä£º"+nightMap);
-			//¸ù¾İÃâ·ÑÊ±³¤¼°Ãâ·Ñ¹æÔò¼ÆËãÍ£³µ¿ªÊ¼¼°½áÊøÊ±¼ä 
-			//if(dfpt!=0||dft!=0){//ÓĞÃâ·Ñ¹æÔòÊ±£¬´¦ÀíÃâ·Ñ¼°¿çÖçÒ¹ÎÊÌâ
+			//System.out.println("æ—¥é—´ï¼š"+dayMap);
+			//System.out.println("å¤œé—´ï¼š"+nightMap);
+			//æ ¹æ®å…è´¹æ—¶é•¿åŠå…è´¹è§„åˆ™è®¡ç®—åœè½¦å¼€å§‹åŠç»“æŸæ—¶é—´
+			//if(dfpt!=0||dft!=0){//æœ‰å…è´¹è§„åˆ™æ—¶ï¼Œå¤„ç†å…è´¹åŠè·¨æ˜¼å¤œé—®é¢˜
 			List<Long> seList = getStart(btime,etime,start,end,dayUnit,dft,nft,dfpt,nfpt);
 			if(!seList.isEmpty()){
 				start = seList.get(0);
 				end = seList.get(1);
 			}
-			//}else{//´¦ÀíÃâ·Ñ¼°¿çÖçÒ¹ÎÊÌâ
-				
+			//}else{//å¤„ç†å…è´¹åŠè·¨æ˜¼å¤œé—®é¢˜
+
 			//}
-			duration = (end-start)/60;//Í£³µÊ±³¤£¬µ¥Î»£º·ÖÖÓ,Ö»È¡ÕûÊı
-			//System.err.println("Ãâ·ÑÊ±³¤È¥³ıºóÊ±³¤£º"+duration+"·ÖÖÓ");
+			duration = (end-start)/60;//åœè½¦æ—¶é•¿ï¼Œå•ä½ï¼šåˆ†é’Ÿ,åªå–æ•´æ•°
+			//System.err.println("å…è´¹æ—¶é•¿å»é™¤åæ—¶é•¿ï¼š"+duration+"åˆ†é’Ÿ");
 			if(end>start){
-				//Ê±³¤³¬¹ı24Ğ¡Ê±,ÏÈ¼ÆËã¶àÉÙÌì¼°½ğ¶î
+				//æ—¶é•¿è¶…è¿‡24å°æ—¶,å…ˆè®¡ç®—å¤šå°‘å¤©åŠé‡‘é¢
 				if(duration>=24*60){
 					Long times = duration/(24*60);
 					Integer t1 = (etime-btime);
@@ -1127,27 +1127,27 @@ public class CountPrice {
 				}
 				Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 				calendar.setTimeInMillis(start*1000);
-				//¿ªÊ¼Ğ¡Ê±
+				//å¼€å§‹å°æ—¶
 				int bhour = calendar.get(Calendar.HOUR_OF_DAY);
 				int bmin = calendar.get(Calendar.MINUTE);
 				calendar.setTimeInMillis(end*1000);
-				//½áÊøĞ¡Ê±
+				//ç»“æŸå°æ—¶
 				int ehour = calendar.get(Calendar.HOUR_OF_DAY);
 //				if(ehour==0&&end>start)
 //					ehour=24;
 				int emin = calendar.get(Calendar.MINUTE);
-				//Õı³£Ê±Ğò 8:00-13:00\
+				//æ­£å¸¸æ—¶åº 8:00-13:00\
 				//System.out.println(stopInfo);
 				if(ehour>=bhour){
 					price = countPrice(bhour,ehour,bmin,emin,btime,etime,dayPirce,nigthPrice,dayUnit,nightUnit,duration,countless,true);
-				}else {//ÄæÊ±Ğò 21:00 -7:00 ·ÖÁ½¶Î¼Æ·Ñ   21:00-24:00,0:00-7:00
+				}else {//é€†æ—¶åº 21:00 -7:00 åˆ†ä¸¤æ®µè®¡è´¹   21:00-24:00,0:00-7:00
 					Long _duration = Long.valueOf((24-bhour-1)*60+(60-bmin));
 					price = countPrice(bhour,24,bmin,0,btime,etime,dayPirce,nigthPrice,dayUnit,nightUnit,_duration,countless,false);
-					//·ÖÁ½¶Î¼Æ·ÑÊ±£¬µÚÒ»¶Î²»ÄÜ¼ÆËã£¬°ÑµÚÒ»¶ÎµÄÁãÍ·¼Óµ½µÚ¶ş¸öÊ±¶ÎÄÚ ((24-etime)*60)%nightUnit
+					//åˆ†ä¸¤æ®µè®¡è´¹æ—¶ï¼Œç¬¬ä¸€æ®µä¸èƒ½è®¡ç®—ï¼ŒæŠŠç¬¬ä¸€æ®µçš„é›¶å¤´åŠ åˆ°ç¬¬äºŒä¸ªæ—¶æ®µå†… ((24-etime)*60)%nightUnit
 					_duration = Long.valueOf(ehour*60+emin)+((24-etime)*60)%nightUnit;
 					price +=countPrice(0,ehour,0,emin,btime,etime,dayPirce,nigthPrice,dayUnit,nightUnit,_duration,countless,true);
 				}
-				//¼ÆËãÓÅ»İ£¬Ö»¼ÆËãÈÕ¼äÊ±¶ÎÄÚµÄÓÅ»İ
+				//è®¡ç®—ä¼˜æƒ ï¼Œåªè®¡ç®—æ—¥é—´æ—¶æ®µå†…çš„ä¼˜æƒ 
 				Double _ymoney =countFprice(btime, etime, bhour, bmin, ehour, emin, (dayPirce-fprice), ftime, dayUnit, duration, countless);
 				if(ymoney<_ymoney)
 					ymoney =_ymoney;
@@ -1160,55 +1160,55 @@ public class CountPrice {
 		resultMap.put("collect", StringUtils.formatDouble(((price+hprice)-ymoney)));
 		resultMap.put("duration", StringUtils.getTimeString(oldDuration));
 		//System.out.println(resultMap);
-		return resultMap;//stopInfo+"£¬Ó¦ÊÕ£º"+(price+hprice)+",ÓÅ»İ£º"+ymoney+",ÊµÊÕ£º"+((price+hprice)-ymoney);
+		return resultMap;//stopInfo+"ï¼Œåº”æ”¶ï¼š"+(price+hprice)+",ä¼˜æƒ ï¼š"+ymoney+",å®æ”¶ï¼š"+((price+hprice)-ymoney);
 	}
 	*//**
-	 * @param bhour Í£³µ¿ªÊ¼ Ğ¡Ê± 
-	 * @param ehour Í£³µ½áÊøĞ¡Ê± 
-	 * @param bmin  Í£³µ¿ªÊ¼·ÖÖÓ 
-	 * @param emin  Í£³µ½áÊø·ÖÖÓ 
-	 * @param btime ÈÕ¼ä¼Æ·ÑÊ±¶Î ¿ªÊ¼Ğ¡Ê±
-	 * @param etime ÈÕ¼ä¼Æ·ÑÊ±¶Î ½áÊøĞ¡Ê±
-	 * @param dayPirce ÈÕ¼ä¼Æ·Ñ µ¥¼Û 
-	 * @param nigthPrice Ò¹¼ä¼Æ·Ñ µ¥¼Û  
-	 * @param dayUnit ÈÕ¼ä¼Æ·Ñµ¥Î»
-	 * @param nigthUnit Ò¹¼ä¼Æ·Ñµ¥Î»
-	 * @param duration Í£³µÊ±³¤£¬·ÖÖÓ
-	 * @param countless ÁãÍ·¼Æ·ÑÊ±³¤£¬µ¥Î»·ÖÖÓ
-	 * @param isFprice ÊÇ·ñ¼ÆËãÁãÍ·¼Æ·ÑÊ±³¤£¬·ÖÁ½¶Î¼Æ·ÑÊ±£¬µÚÒ»¶Î²»ÄÜ¼ÆËã£¬°ÑµÚÒ»¶ÎµÄÁãÍ·¼Óµ½µÚ¶ş¸öÊ±¶ÎÄÚ
-	 * @return ½ğ¶î
-	 * µ±Ç°Ö»Ö§³ÖÁ½¸öÊ±¶ÎÇé¿ö£¬µÚÒ»¸ö½×¶Î±ØĞëÊÇÎ´Ê±¼ä´óÓÚÊ±¼ä £¬¶øµÚ¶ş¸öÊ±¶ÎÊÇµÚÒ»¸öÊ±¶ÎµÄ²¹¼¯,²»ĞèÒªÆğÖ¹Ê±¼ä
+	 * @param bhour åœè½¦å¼€å§‹ å°æ—¶
+	 * @param ehour åœè½¦ç»“æŸå°æ—¶
+	 * @param bmin  åœè½¦å¼€å§‹åˆ†é’Ÿ
+	 * @param emin  åœè½¦ç»“æŸåˆ†é’Ÿ
+	 * @param btime æ—¥é—´è®¡è´¹æ—¶æ®µ å¼€å§‹å°æ—¶
+	 * @param etime æ—¥é—´è®¡è´¹æ—¶æ®µ ç»“æŸå°æ—¶
+	 * @param dayPirce æ—¥é—´è®¡è´¹ å•ä»·
+	 * @param nigthPrice å¤œé—´è®¡è´¹ å•ä»·
+	 * @param dayUnit æ—¥é—´è®¡è´¹å•ä½
+	 * @param nigthUnit å¤œé—´è®¡è´¹å•ä½
+	 * @param duration åœè½¦æ—¶é•¿ï¼Œåˆ†é’Ÿ
+	 * @param countless é›¶å¤´è®¡è´¹æ—¶é•¿ï¼Œå•ä½åˆ†é’Ÿ
+	 * @param isFprice æ˜¯å¦è®¡ç®—é›¶å¤´è®¡è´¹æ—¶é•¿ï¼Œåˆ†ä¸¤æ®µè®¡è´¹æ—¶ï¼Œç¬¬ä¸€æ®µä¸èƒ½è®¡ç®—ï¼ŒæŠŠç¬¬ä¸€æ®µçš„é›¶å¤´åŠ åˆ°ç¬¬äºŒä¸ªæ—¶æ®µå†…
+	 * @return é‡‘é¢
+	 * å½“å‰åªæ”¯æŒä¸¤ä¸ªæ—¶æ®µæƒ…å†µï¼Œç¬¬ä¸€ä¸ªé˜¶æ®µå¿…é¡»æ˜¯æœªæ—¶é—´å¤§äºæ—¶é—´ ï¼Œè€Œç¬¬äºŒä¸ªæ—¶æ®µæ˜¯ç¬¬ä¸€ä¸ªæ—¶æ®µçš„è¡¥é›†,ä¸éœ€è¦èµ·æ­¢æ—¶é—´
 	 *//*
 	private static Double countPrice(int bhour,int ehour,int bmin,int emin,int btime,
 			int etime,double dayPirce,double nigthPrice,Integer dayUnit,
 			Integer nigthUnit,Long duration,Integer countless,boolean isFprice){
 		Double price = null;
-		Double cprice=0d;//ÁãÍ·¼Æ·Ñ
-		
-		//ehour Ò»¶¨ÊÇ´óÓÚbhuour
-		if(ehour<=btime||bhour>=etime){//È«ÔÚµÚ¶ş¸ö¼Æ·ÑÊ±¼äÄÚ
-			if(ehour==btime){//ÈÕ¼äÊ±¶Î7-21£¬Í£³µ£º6:30:7:20,Ò¹¼äµ¥Î»£º120£¬ÈÕ¼äµ¥Î»£º15  £¬Ãâ·ÑÊ±³¤£º10
+		Double cprice=0d;//é›¶å¤´è®¡è´¹
+
+		//ehour ä¸€å®šæ˜¯å¤§äºbhuour
+		if(ehour<=btime||bhour>=etime){//å…¨åœ¨ç¬¬äºŒä¸ªè®¡è´¹æ—¶é—´å†…
+			if(ehour==btime){//æ—¥é—´æ—¶æ®µ7-21ï¼Œåœè½¦ï¼š6:30:7:20,å¤œé—´å•ä½ï¼š120ï¼Œæ—¥é—´å•ä½ï¼š15  ï¼Œå…è´¹æ—¶é•¿ï¼š10
 				if(bhour==ehour){
 					price = (duration/dayUnit)*dayPirce;
-					if(duration%dayUnit>countless)//Ò¹¼äÁãÍ·¼Æ·Ñ
+					if(duration%dayUnit>countless)//å¤œé—´é›¶å¤´è®¡è´¹
 						cprice=dayPirce;
 				}else {
 					duration = duration-emin;
 					int dayTimes = emin/dayUnit;//20/15;
 					price = (duration/nigthUnit)*nigthPrice+dayTimes*dayPirce;
-					if(duration%nigthUnit>countless)//Ò¹¼äÁãÍ·¼Æ·Ñ
+					if(duration%nigthUnit>countless)//å¤œé—´é›¶å¤´è®¡è´¹
 						cprice=nigthPrice;
-					if(emin!=0&&emin%dayUnit>countless)//ÈÕ¼äÁãÍ·¼Æ·Ñ   ÁãÍ·Ê±³¤>ÈÕ¼äÁãÍ·¼Æ·ÑÊ±³¤£¬ÁãÍ·¼Æ·Ñ=Ò¹¼ä¼Û¸ñ
+					if(emin!=0&&emin%dayUnit>countless)//æ—¥é—´é›¶å¤´è®¡è´¹   é›¶å¤´æ—¶é•¿>æ—¥é—´é›¶å¤´è®¡è´¹æ—¶é•¿ï¼Œé›¶å¤´è®¡è´¹=å¤œé—´ä»·æ ¼
 						cprice +=dayPirce;
 				}
-			}else {//ÈÕ¼äÊ±¶Î7-21£¬Í£³µ£º6:30:6:50
+			}else {//æ—¥é—´æ—¶æ®µ7-21ï¼Œåœè½¦ï¼š6:30:6:50
 				price = (duration/nigthUnit)*nigthPrice;
-				if(duration%nigthUnit>countless)//ÁãÍ·Ê±³¤>ÁãÍ·¼Æ·ÑÊ±³¤£¬ÁãÍ·¼Æ·Ñ=Ò¹¼ä¼Û¸ñ
+				if(duration%nigthUnit>countless)//é›¶å¤´æ—¶é•¿>é›¶å¤´è®¡è´¹æ—¶é•¿ï¼Œé›¶å¤´è®¡è´¹=å¤œé—´ä»·æ ¼
 					cprice=nigthPrice;
 			}
-		}else if(bhour<=btime){// Í£³µ¿ªÊ¼Ê±¼äĞ¡ÓÚ»òµÈÓÚÈÕ¼ä¿ªÊ¼Ê±¼ä 
-			if(bhour<btime){//Í£³µ¿ªÊ¼Ê±¼ä±ÈÈÕ¼ä¿ªÊ¼Ê±¼ä Ğ¡
-				if(ehour<etime){//Í£³µ½áÊøÊ±¼äĞ¡ÓÚÈÕ¼ä½áÊøÊ±¼ä£¬ÔÚÒ¹¼ä²ßÂÔ¡¢ÈÕ¼ä¼Û¸ñ²ßÂÔÄÚ
+		}else if(bhour<=btime){// åœè½¦å¼€å§‹æ—¶é—´å°äºæˆ–ç­‰äºæ—¥é—´å¼€å§‹æ—¶é—´
+			if(bhour<btime){//åœè½¦å¼€å§‹æ—¶é—´æ¯”æ—¥é—´å¼€å§‹æ—¶é—´ å°
+				if(ehour<etime){//åœè½¦ç»“æŸæ—¶é—´å°äºæ—¥é—´ç»“æŸæ—¶é—´ï¼Œåœ¨å¤œé—´ç­–ç•¥ã€æ—¥é—´ä»·æ ¼ç­–ç•¥å†…
 					int nightMin = ((btime-bhour-1)*60+(60-bmin));
 					int nightTimes = nightMin/nigthUnit;
 					int dayMin = ((ehour-btime)*60+emin);
@@ -1218,7 +1218,7 @@ public class CountPrice {
 					if(nightMin%nigthUnit>countless)
 						cprice+=nigthPrice;
 					price = nightTimes*nigthPrice+dayTimes*dayPirce;
-				}else {//Í£³µ½áÊøÊ±¼ä´óÓÚÈÕ¼ä½áÊøÊ±¼ä£¬ÔÚÒ¹¼ä²ßÂÔ¡¢ÈÕ¼äÕû¸ö¼Û¸ñ²ßÂÔºÍ Ò¹¼ä²ßÂÔÄÚ
+				}else {//åœè½¦ç»“æŸæ—¶é—´å¤§äºæ—¥é—´ç»“æŸæ—¶é—´ï¼Œåœ¨å¤œé—´ç­–ç•¥ã€æ—¥é—´æ•´ä¸ªä»·æ ¼ç­–ç•¥å’Œ å¤œé—´ç­–ç•¥å†…
 					int nightMin1 = ((btime-bhour-1)*60+(60-bmin));
 					int nightMin2 = ((ehour-etime)*60+emin);
 					int nightTimes1 = nightMin1/nigthUnit;
@@ -1230,13 +1230,13 @@ public class CountPrice {
 						cprice +=nigthPrice;
 					price = nightTimes1*nigthPrice+dsyTimes*dayPirce+nightTimes2*nigthPrice;
 				}
-			}else {//Í£³µ¿ªÊ¼Ê±¼ä=ÈÕ¼ä¿ªÊ¼Ê±¼ä 
-				if(ehour<etime){//Í£³µ½áÊøÊ±¼äĞ¡ÓÚÈÕ¼ä½áÊøÊ±¼ä£¬ÔÚÒ¹¼ä²ßÂÔ¡¢ÈÕ¼ä¼Û¸ñ²ßÂÔÄÚ
+			}else {//åœè½¦å¼€å§‹æ—¶é—´=æ—¥é—´å¼€å§‹æ—¶é—´
+				if(ehour<etime){//åœè½¦ç»“æŸæ—¶é—´å°äºæ—¥é—´ç»“æŸæ—¶é—´ï¼Œåœ¨å¤œé—´ç­–ç•¥ã€æ—¥é—´ä»·æ ¼ç­–ç•¥å†…
 					int dayTimes = duration.intValue()/dayUnit;
 					if(duration%dayUnit>countless)
 						cprice=dayPirce;
 					price =dayTimes*dayPirce;
-				}else {//Í£³µ½áÊøÊ±¼ä´óÓÚÈÕ¼ä½áÊøÊ±¼ä£¬ÔÚÒ¹¼ä²ßÂÔ¡¢ÈÕ¼äÕû¸ö¼Û¸ñ²ßÂÔºÍ Ò¹¼ä²ßÂÔÄÚ
+				}else {//åœè½¦ç»“æŸæ—¶é—´å¤§äºæ—¥é—´ç»“æŸæ—¶é—´ï¼Œåœ¨å¤œé—´ç­–ç•¥ã€æ—¥é—´æ•´ä¸ªä»·æ ¼ç­–ç•¥å’Œ å¤œé—´ç­–ç•¥å†…
 					int dsyTimes = ((etime-btime)*60)/dayUnit;
 					if(bhour==btime){
 						dsyTimes = ((etime-btime)*60-bmin)/dayUnit;
@@ -1249,18 +1249,18 @@ public class CountPrice {
 					price =dsyTimes*dayPirce+nightTimes2*nigthPrice;
 				}
 			}
-		}else if(bhour>btime){// Í£³µ¿ªÊ¼Ê±¼ä±ÈÈÕ¼ä¿ªÊ¼Ê±¼ä´ó
-			if(ehour<=etime){//µ±Í£³µ½áÊøÊ±¼ä³¬¹ıÈÕ¼äÊ±¶Î
-				if(ehour<etime){//Ê±¶Î7-21£¬Í£³µ19:19-20:12
+		}else if(bhour>btime){// åœè½¦å¼€å§‹æ—¶é—´æ¯”æ—¥é—´å¼€å§‹æ—¶é—´å¤§
+			if(ehour<=etime){//å½“åœè½¦ç»“æŸæ—¶é—´è¶…è¿‡æ—¥é—´æ—¶æ®µ
+				if(ehour<etime){//æ—¶æ®µ7-21ï¼Œåœè½¦19:19-20:12
 					int dayTimes = duration.intValue()/dayUnit;
-					if(duration%dayUnit>countless)//ÁãÍ·Ê±³¤>ÁãÍ·¼Æ·ÑÊ±³¤£¬ÁãÍ·¼Æ·Ñ=Ò¹¼ä¼Û¸ñ
+					if(duration%dayUnit>countless)//é›¶å¤´æ—¶é•¿>é›¶å¤´è®¡è´¹æ—¶é•¿ï¼Œé›¶å¤´è®¡è´¹=å¤œé—´ä»·æ ¼
 						cprice=dayPirce;
 					price = dayTimes*dayPirce;
-				}else {//Ê±¶Î7-21£¬Í£³µ19:19-21:12
+				}else {//æ—¶æ®µ7-21ï¼Œåœè½¦19:19-21:12
 					duration = duration-emin;
 					int dayTimes = duration.intValue()/dayUnit;
 					int nightTiimes = emin/nigthUnit;
-					if(emin%nigthUnit>countless)//ÁãÍ·Ê±³¤>ÁãÍ·¼Æ·ÑÊ±³¤£¬ÁãÍ·¼Æ·Ñ=Ò¹¼ä¼Û¸ñ
+					if(emin%nigthUnit>countless)//é›¶å¤´æ—¶é•¿>é›¶å¤´è®¡è´¹æ—¶é•¿ï¼Œé›¶å¤´è®¡è´¹=å¤œé—´ä»·æ ¼
 						cprice=nigthPrice;
 					if(duration%dayUnit>countless)
 						cprice+=dayPirce;
@@ -1280,37 +1280,37 @@ public class CountPrice {
 		}
 		if(!isFprice)
 			cprice=0d;
-		//System.out.println("×Ü¼Û£º"+price+",ÁãÍ·¼Æ·Ñ:"+cprice);
-		return price+cprice;	
+		//System.out.println("æ€»ä»·ï¼š"+price+",é›¶å¤´è®¡è´¹:"+cprice);
+		return price+cprice;
 	}
-	
+
 	private static Double countFprice(int btime,int etime,int bhour,int bmin,int ehour,int emin,
 			Double price,int ftime,int dayUnit,Long duration,int countless){
 		Double ymoney = 0d;
-		//¹Ø¼üÊÇËã³öÈÕ¼äÊ±¶ÎÄÚµÄÊ±³¤,Ò¹¼ä²»¼ÆËãÓÅ»İ
-		if(bhour>ehour){//Ê±¶Î7-21£¬Í£³µ23:00-7:05,ftime=30,dayUnit = 15
+		//å…³é”®æ˜¯ç®—å‡ºæ—¥é—´æ—¶æ®µå†…çš„æ—¶é•¿,å¤œé—´ä¸è®¡ç®—ä¼˜æƒ 
+		if(bhour>ehour){//æ—¶æ®µ7-21ï¼Œåœè½¦23:00-7:05,ftime=30,dayUnit = 15
 			if(bhour<etime){
 				duration = Long.valueOf((etime-bhour-1)*60+(60-bmin));
-			}else if(ehour>=btime){//Ê±¶Î7-21£¬Í£³µ23:49-2:11,ftime=30,dayUnit = 15
+			}else if(ehour>=btime){//æ—¶æ®µ7-21ï¼Œåœè½¦23:49-2:11,ftime=30,dayUnit = 15
 				duration=Long.valueOf((ehour-btime)*60+bmin);
-			}else {//Ê±¶Î7-21£¬Í£³µ23:49-2:11,ftime=30,dayUnit = 15
+			}else {//æ—¶æ®µ7-21ï¼Œåœè½¦23:49-2:11,ftime=30,dayUnit = 15
 				duration=0L;
 			}
 		}else if(ehour<btime||bhour>=etime){
 			return ymoney;
-		}else if(ehour==btime){//Ê±¶Î7-21£¬Í£³µ6:10-7:50,ftime=30,dayUnit = 15
+		}else if(ehour==btime){//æ—¶æ®µ7-21ï¼Œåœè½¦6:10-7:50,ftime=30,dayUnit = 15
 			if(ehour>bhour)
 				duration = Long.valueOf(emin);
-		}else if(ehour>btime){//Ê±¶Î7-21£¬Í£³µ6:10-8:50,ftime=30,dayUnit = 15,countless = 10;
-			if(bhour<btime){//Ê±¶Î7-21£¬Í£³µ6:10-8:50,ftime=30,dayUnit = 15,countless = 10;
+		}else if(ehour>btime){//æ—¶æ®µ7-21ï¼Œåœè½¦6:10-8:50,ftime=30,dayUnit = 15,countless = 10;
+			if(bhour<btime){//æ—¶æ®µ7-21ï¼Œåœè½¦6:10-8:50,ftime=30,dayUnit = 15,countless = 10;
 				duration = duration-((btime-bhour-1)*60+(60-bmin));
 			}else if(bhour>=btime){
-				if(ehour>=etime){//Ê±¶Î7-21£¬Í£³µ18:10-22:50,ftime=30,dayUnit = 15,countless = 10;
+				if(ehour>=etime){//æ—¶æ®µ7-21ï¼Œåœè½¦18:10-22:50,ftime=30,dayUnit = 15,countless = 10;
 					duration = duration -((ehour-etime)*60+emin);
 				}
 			}
 		}
-		//¿ªÊ¼¼ÆËã
+		//å¼€å§‹è®¡ç®—
 		if(duration>ftime){
 			ymoney = (ftime/dayUnit)*price;
 		}else {
@@ -1321,16 +1321,16 @@ public class CountPrice {
 		return ymoney;
 	}
 	*//**
-	 * @param btime ÈÕ¼ä¿ªÊ¼Ê±¼ä
-	 * @param etime ÈÕ¼ä½áÊøÊ±¼ä
-	 * @param start Í£³µ¿ªÊ¼Ê±¼ä
-	 * @param end Í£³µ½áÊøÊ±¼ä 
-	 * @param dunit ÈÕ¼ä¼Æ·Ñµ¥Î»£¨·ÖÖÓ£© 
-	 * @param dft ÈÕ¼äÃâ·ÑÊ±³¤
-	 * @param nft Ò¹¼äÃâ·ÑÊ±³¤
-	 * @param dfpt ÈÕ¼äÃâ·ÑÊ±³¤ºóÊÇ·ñÊÕ·Ñ    1Ãâ·Ñ 0ÊÕ·Ñ
-	 * @param nfpt Ò¹¼äÃâ·ÑÊ±³¤ºóÊÇ·ñÊÕ·Ñ    1Ãâ·Ñ 0ÊÕ·Ñ
-	 * @return List<Í£³µ¿ªÊ¼Ê±¼ä£¬Í£³µ½áÊøÊ±¼ä>
+	 * @param btime æ—¥é—´å¼€å§‹æ—¶é—´
+	 * @param etime æ—¥é—´ç»“æŸæ—¶é—´
+	 * @param start åœè½¦å¼€å§‹æ—¶é—´
+	 * @param end åœè½¦ç»“æŸæ—¶é—´
+	 * @param dunit æ—¥é—´è®¡è´¹å•ä½ï¼ˆåˆ†é’Ÿï¼‰
+	 * @param dft æ—¥é—´å…è´¹æ—¶é•¿
+	 * @param nft å¤œé—´å…è´¹æ—¶é•¿
+	 * @param dfpt æ—¥é—´å…è´¹æ—¶é•¿åæ˜¯å¦æ”¶è´¹    1å…è´¹ 0æ”¶è´¹
+	 * @param nfpt å¤œé—´å…è´¹æ—¶é•¿åæ˜¯å¦æ”¶è´¹    1å…è´¹ 0æ”¶è´¹
+	 * @return List<åœè½¦å¼€å§‹æ—¶é—´ï¼Œåœè½¦ç»“æŸæ—¶é—´>
 	 *//*
 	private static List<Long> getStart(Integer btime,Integer etime,Long start,Long end,Integer dunit,
 			Integer dft,Integer nft,Integer dfpt,Integer nfpt){
@@ -1338,89 +1338,89 @@ public class CountPrice {
 //		if(dft==0&&nft==0){
 //			return reslut;
 //		}
-			
-		Long duration = end-start;//Ô­Í£³µÊ±³¤ £¨Ãë£©
-		//System.out.println("Ô­¿ªÊ¼Ê±¼ä:"+TimeTools.getTime_yyyyMMdd_HHmmss(start*1000)+",Ô­½áÊøÊ±¼ä£º"+TimeTools.getTime_yyyyMMdd_HHmmss(end*1000));
+
+		Long duration = end-start;//åŸåœè½¦æ—¶é•¿ ï¼ˆç§’ï¼‰
+		//System.out.println("åŸå¼€å§‹æ—¶é—´:"+TimeTools.getTime_yyyyMMdd_HHmmss(start*1000)+",åŸç»“æŸæ—¶é—´ï¼š"+TimeTools.getTime_yyyyMMdd_HHmmss(end*1000));
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 		calendar.setTimeInMillis(start*1000);
-		int bhour = calendar.get(Calendar.HOUR_OF_DAY);//Í£³µ¿ªÊ¼Ğ¡Ê± 
-		int bmin  = calendar.get(Calendar.MINUTE); //Í£³µ¿ªÊ¼·ÖÖÓ
+		int bhour = calendar.get(Calendar.HOUR_OF_DAY);//åœè½¦å¼€å§‹å°æ—¶
+		int bmin  = calendar.get(Calendar.MINUTE); //åœè½¦å¼€å§‹åˆ†é’Ÿ
 		calendar.setTimeInMillis(end*1000);
-		int ehour = calendar.get(Calendar.HOUR_OF_DAY);//Í£³µ½áÊøĞ¡Ê± 
-		
-		if(start>end)//Í£³µ½áÊøÊ±³¤Ğ¡Í£³µ¿ªÊ¼Ê±¼ä£¬ÊÇ¿çÖçÒ¹£¬Ö»¼ÆËãµÚÒ»ÌìµÄÍ£³µ·Ñ,°ÑÍ£³µ½áÊøÊ±¼äÉèÖÃÎªµ±ÌìµÄ24µã
+		int ehour = calendar.get(Calendar.HOUR_OF_DAY);//åœè½¦ç»“æŸå°æ—¶
+
+		if(start>end)//åœè½¦ç»“æŸæ—¶é•¿å°åœè½¦å¼€å§‹æ—¶é—´ï¼Œæ˜¯è·¨æ˜¼å¤œï¼Œåªè®¡ç®—ç¬¬ä¸€å¤©çš„åœè½¦è´¹,æŠŠåœè½¦ç»“æŸæ—¶é—´è®¾ç½®ä¸ºå½“å¤©çš„24ç‚¹
 			ehour=24;
-		
-		if(bhour<btime){//Í£³µ¿ªÊ¼Ğ¡Ê± Ğ¡ÓÚ ÈÕ¼ä¿ªÊ¼Ğ¡Ê±    ÈÕ¼äÊ±¶Î7-21£¬Í£³µ6:49-?
-			if(ehour<btime){//È«ÔÚÒ¹¼äÊ±¶ÎÄÚ ---ÈÕ¼äÊ±¶Î7-21£¬Í£³µ6:49-6:59
-				if(nfpt==1){//Ò¹¼äÃâ·ÑÊ±³¤ºó²»ÊÕ·Ñ£¬Í£³µ¿ªÊ¼Ê±¼äÏòºóÍÆÒ»¸öÒ¹¼äÃâ·ÑÊ±³¤µ¥Î»£¬Í£³µ½áÊøÊ±¼ä²»±ä
-					if(nft!=0&&duration<=nft*60){//Í£³µ×ÜÊ±³¤Ğ¡ÓÚ»òµÈÓÚÃâ·ÑÊ±³¤£¬ÇÒ²»ÊÕ·Ñ£¬ÉèÖÃ³É¿ªÊ¼Ê±¼äµÈÓÚ½áÊøÊ±¼ä£¬ÕâÑù¾Í²»ÊÕ·ÑÁË¡£
+
+		if(bhour<btime){//åœè½¦å¼€å§‹å°æ—¶ å°äº æ—¥é—´å¼€å§‹å°æ—¶    æ—¥é—´æ—¶æ®µ7-21ï¼Œåœè½¦6:49-?
+			if(ehour<btime){//å…¨åœ¨å¤œé—´æ—¶æ®µå†… ---æ—¥é—´æ—¶æ®µ7-21ï¼Œåœè½¦6:49-6:59
+				if(nfpt==1){//å¤œé—´å…è´¹æ—¶é•¿åä¸æ”¶è´¹ï¼Œåœè½¦å¼€å§‹æ—¶é—´å‘åæ¨ä¸€ä¸ªå¤œé—´å…è´¹æ—¶é•¿å•ä½ï¼Œåœè½¦ç»“æŸæ—¶é—´ä¸å˜
+					if(nft!=0&&duration<=nft*60){//åœè½¦æ€»æ—¶é•¿å°äºæˆ–ç­‰äºå…è´¹æ—¶é•¿ï¼Œä¸”ä¸æ”¶è´¹ï¼Œè®¾ç½®æˆå¼€å§‹æ—¶é—´ç­‰äºç»“æŸæ—¶é—´ï¼Œè¿™æ ·å°±ä¸æ”¶è´¹äº†ã€‚
 						start=end;
-					}else {//Í£³µ×ÜÊ±³¤´óÓÚÁËÃâ·ÑÊ±³¤£¬Í£³µ¿ªÊ¼Ê±¼äÏòºóÍÆÒ»¸öÃâ·ÑÊ±³¤.
+					}else {//åœè½¦æ€»æ—¶é•¿å¤§äºäº†å…è´¹æ—¶é•¿ï¼Œåœè½¦å¼€å§‹æ—¶é—´å‘åæ¨ä¸€ä¸ªå…è´¹æ—¶é•¿.
 						start = start+nft*60;
 					}
-				}else{//Ò¹¼äÃâ·ÑÊ±³¤ºóÊÕ·Ñ
-					if(nft!=0&&duration<=nft*60){//Í£³µ×ÜÊ±³¤Ğ¡ÓÚ»òµÈÓÚÃâ·ÑÊ±³¤£¬ÇÒ²»ÊÕ·Ñ£¬ÉèÖÃ³É¿ªÊ¼Ê±¼äµÈÓÚ½áÊøÊ±¼ä£¬ÕâÑù¾Í²»ÊÕ·ÑÁË¡£
+				}else{//å¤œé—´å…è´¹æ—¶é•¿åæ”¶è´¹
+					if(nft!=0&&duration<=nft*60){//åœè½¦æ€»æ—¶é•¿å°äºæˆ–ç­‰äºå…è´¹æ—¶é•¿ï¼Œä¸”ä¸æ”¶è´¹ï¼Œè®¾ç½®æˆå¼€å§‹æ—¶é—´ç­‰äºç»“æŸæ—¶é—´ï¼Œè¿™æ ·å°±ä¸æ”¶è´¹äº†ã€‚
 						start=end;
 					}
 				}
-			}else if(ehour>=btime){//²¿·ÖÔÚÒ¹¼äÊ±¶ÎÄÚ£¬Ö»ËãÒ¹¼äÊ±¶ÎÄÚµÄÃâ·Ñ ---ÈÕ¼äÊ±¶Î7-21£¬Í£³µ6:49-7:59
-				int nlong = ((btime-bhour-1)*60)+(60-bmin);//Ò¹¼äÊ±¶ÎÄÚµÄÍ£³µÊ±³¤  ---11·ÖÖÓ
-				if(nlong>=nft){//Ò¹¼äÍ£³µÊ±³¤´óÓÚ»òµÈÓÚÒ»¸öÒ¹¼äÃâ·ÑÊ±³¤µ¥Î»
-					if(nfpt==1)//Ò¹¼äÃâ·ÑÊ±³¤ºó²»ÊÕ·Ñ£¬Í£³µ¿ªÊ¼Ê±¼äÏòºóÍÆÒ»¸öÒ¹¼äÃâ·ÑÊ±³¤µ¥Î»£¬Í£³µ½áÊøÊ±¼ä²»±ä
+			}else if(ehour>=btime){//éƒ¨åˆ†åœ¨å¤œé—´æ—¶æ®µå†…ï¼Œåªç®—å¤œé—´æ—¶æ®µå†…çš„å…è´¹ ---æ—¥é—´æ—¶æ®µ7-21ï¼Œåœè½¦6:49-7:59
+				int nlong = ((btime-bhour-1)*60)+(60-bmin);//å¤œé—´æ—¶æ®µå†…çš„åœè½¦æ—¶é•¿  ---11åˆ†é’Ÿ
+				if(nlong>=nft){//å¤œé—´åœè½¦æ—¶é•¿å¤§äºæˆ–ç­‰äºä¸€ä¸ªå¤œé—´å…è´¹æ—¶é•¿å•ä½
+					if(nfpt==1)//å¤œé—´å…è´¹æ—¶é•¿åä¸æ”¶è´¹ï¼Œåœè½¦å¼€å§‹æ—¶é—´å‘åæ¨ä¸€ä¸ªå¤œé—´å…è´¹æ—¶é•¿å•ä½ï¼Œåœè½¦ç»“æŸæ—¶é—´ä¸å˜
 						start = start+nft*60;
-					else {//Ò¹¼äÃâ·ÑÊ±³¤ºóÊÕ·Ñ
-						if(dft!=0&&duration<=dft*60)//ÔÚÃâ·ÑÊ±³¤ÄÚ²»ÊÕ·Ñ
+					else {//å¤œé—´å…è´¹æ—¶é•¿åæ”¶è´¹
+						if(dft!=0&&duration<=dft*60)//åœ¨å…è´¹æ—¶é•¿å†…ä¸æ”¶è´¹
 							start=end;
 					}
-				}else {//Ò¹¼äÍ£³µÊ±³¤²»¹»Ò»¸ö¼Æ·Ñµ¥Î»
+				}else {//å¤œé—´åœè½¦æ—¶é•¿ä¸å¤Ÿä¸€ä¸ªè®¡è´¹å•ä½
 					if(nfpt==1){
-						start =getBtime(start, btime);//Ò¹¼äÃâ·ÑÊ±³¤ºó²»ÊÕ·Ñ£¬Í£³µ¿ªÊ¼Ê±¼ä´ÓÈÕ¼ä¿ªÊ¼Ê±¼ä¿ªÊ¼£¬Í£³µ½áÊøÊ±¼ä²»±ä
+						start =getBtime(start, btime);//å¤œé—´å…è´¹æ—¶é•¿åä¸æ”¶è´¹ï¼Œåœè½¦å¼€å§‹æ—¶é—´ä»æ—¥é—´å¼€å§‹æ—¶é—´å¼€å§‹ï¼Œåœè½¦ç»“æŸæ—¶é—´ä¸å˜
 					}else{
-						if(dfpt!=0&&duration<=dfpt*60)//ÔÚÃâ·ÑÊ±³¤ÄÚ²»ÊÕ·Ñ
+						if(dfpt!=0&&duration<=dfpt*60)//åœ¨å…è´¹æ—¶é•¿å†…ä¸æ”¶è´¹
 							start=end;
 					}
 				}
 			}
-		}else if(bhour>=btime&&bhour<etime){//Í£³µ¿ªÊ¼Ğ¡Ê± ´óÓÚ»òµÈÓÚ ÈÕ¼ä¿ªÊ¼Ğ¡Ê±   -- ÈÕ¼äÊ±¶Î7-21£¬Í£³µ7:01-?
-			if(ehour<etime){//Í£³µ½áÊøÊ±¼äĞ¡ÓÚÈÕ¼ä½áÊøÊ±¼äÇÒÍ£³µ½áÊøÊ±¼äĞ¡ÓÚÈÕ¼ä½áÊøÊ±¼ä£¬È«ÔÚÈÕ¼äÊ±¶Î£¬-- ÈÕ¼äÊ±¶Î7-21£¬Í£³µ7:01-20:30
-				if(duration<=dft*60){//Í£³µÊ±³¤Ğ¡ÓÚ»òµÈÓÚÈÕ¼äÃâ·ÑÊ±³¤
+		}else if(bhour>=btime&&bhour<etime){//åœè½¦å¼€å§‹å°æ—¶ å¤§äºæˆ–ç­‰äº æ—¥é—´å¼€å§‹å°æ—¶   -- æ—¥é—´æ—¶æ®µ7-21ï¼Œåœè½¦7:01-?
+			if(ehour<etime){//åœè½¦ç»“æŸæ—¶é—´å°äºæ—¥é—´ç»“æŸæ—¶é—´ä¸”åœè½¦ç»“æŸæ—¶é—´å°äºæ—¥é—´ç»“æŸæ—¶é—´ï¼Œå…¨åœ¨æ—¥é—´æ—¶æ®µï¼Œ-- æ—¥é—´æ—¶æ®µ7-21ï¼Œåœè½¦7:01-20:30
+				if(duration<=dft*60){//åœè½¦æ—¶é•¿å°äºæˆ–ç­‰äºæ—¥é—´å…è´¹æ—¶é•¿
 					start = end;
-				}else if(duration>=dft*60){//Í£³µÊ±³¤´óÓÚÈÕ¼äÃâ·ÑÊ±³¤
-					if(dfpt==1){//ÈÕ¼äÃâ·ÑÊ±³¤ºó²»ÊÕ·Ñ£¬Í£³µ¿ªÊ¼Ê±¼äÏòºóÍÆÒ»¸öÈÕ¼äÃâ·ÑÊ±³¤µ¥Î»£¬Í£³µ½áÊøÊ±¼ä²»±ä
+				}else if(duration>=dft*60){//åœè½¦æ—¶é•¿å¤§äºæ—¥é—´å…è´¹æ—¶é•¿
+					if(dfpt==1){//æ—¥é—´å…è´¹æ—¶é•¿åä¸æ”¶è´¹ï¼Œåœè½¦å¼€å§‹æ—¶é—´å‘åæ¨ä¸€ä¸ªæ—¥é—´å…è´¹æ—¶é•¿å•ä½ï¼Œåœè½¦ç»“æŸæ—¶é—´ä¸å˜
 						start =start +dft*60;
-					}else {//ÈÕ¼äÃâ·ÑÊ±³¤ºóÊÕ·Ñ
-						//»¹ÊÇ°´ÕÕÖ®Ç°µÄ·½Ê½¼ÆËã
+					}else {//æ—¥é—´å…è´¹æ—¶é•¿åæ”¶è´¹
+						//è¿˜æ˜¯æŒ‰ç…§ä¹‹å‰çš„æ–¹å¼è®¡ç®—
 					}
 				}
-			}else if(ehour>=etime){//²¿·ÖÔÚÈÕ¼ä£¬²¿·ÖÔÚÒ¹¼ä
-				//¼ÆËãÔÚÈÕ¼äÊ±¶ÎÄÚµÄÊ±³¤
+			}else if(ehour>=etime){//éƒ¨åˆ†åœ¨æ—¥é—´ï¼Œéƒ¨åˆ†åœ¨å¤œé—´
+				//è®¡ç®—åœ¨æ—¥é—´æ—¶æ®µå†…çš„æ—¶é•¿
 				int dLong = ((etime-bhour-1)*60)+(60-bmin);
-				if(dLong<=dft){//ÈÕ¼äÊ±³¤Ğ¡ÓÚÃâ·ÑÊ±³¤£¬È¥µôÕâ¸öÊ±¼ä
+				if(dLong<=dft){//æ—¥é—´æ—¶é•¿å°äºå…è´¹æ—¶é•¿ï¼Œå»æ‰è¿™ä¸ªæ—¶é—´
 					start = getBtime(start, etime);
-				}else if(dLong>dft){//ÈÕ¼äÊ±³¤´óÓÚÃâ·ÑÊ±³¤
-					if(dfpt==1){//Ãâ·Ñ,Í£³µ¿ªÊ¼Ê±¼äÏòºóÍÆÒ»¸öÈÕ¼äÃâ·ÑÊ±³¤µ¥Î»£¬Í£³µ½áÊøÊ±¼ä²»±ä
+				}else if(dLong>dft){//æ—¥é—´æ—¶é•¿å¤§äºå…è´¹æ—¶é•¿
+					if(dfpt==1){//å…è´¹,åœè½¦å¼€å§‹æ—¶é—´å‘åæ¨ä¸€ä¸ªæ—¥é—´å…è´¹æ—¶é•¿å•ä½ï¼Œåœè½¦ç»“æŸæ—¶é—´ä¸å˜
 						start =start +dft*60;
 						dLong = dLong-dft;
-					}else {//ÊÕ·Ñ
-						//»¹ÊÇ°´ÕÕÖ®Ç°µÄ·½Ê½¼ÆËã
+					}else {//æ”¶è´¹
+						//è¿˜æ˜¯æŒ‰ç…§ä¹‹å‰çš„æ–¹å¼è®¡ç®—
 					}
-					//´¦ÀíÈÕ¼ä²»×ãÒ»¸ö¼Æ·Ñµ¥Î»µÄÎÊÌâ
-					if(dLong<dunit){//Í£³µ¿ªÊ¼ºÍ½áÊøÊ±¼äÏòÇ°ÍÆÒ»¸öÊ±¼ä²î£¨ÈÕ¼äÒ»¸öÊÕ·Ñµ¥Î»-ÈÕ¼äÍ£³µÊ±³¤£©
+					//å¤„ç†æ—¥é—´ä¸è¶³ä¸€ä¸ªè®¡è´¹å•ä½çš„é—®é¢˜
+					if(dLong<dunit){//åœè½¦å¼€å§‹å’Œç»“æŸæ—¶é—´å‘å‰æ¨ä¸€ä¸ªæ—¶é—´å·®ï¼ˆæ—¥é—´ä¸€ä¸ªæ”¶è´¹å•ä½-æ—¥é—´åœè½¦æ—¶é•¿ï¼‰
 						start = start -(dunit-dLong)*60;
 						end = end -(dunit-dLong)*60;
 					}
 				}
 			}
-		}else if(bhour>=etime){//Í£³µ¿ªÊ¼Ğ¡Ê± ´óÓÚ»òµÈÓÚ ÈÕ¼ä¿ªÊ¼Ğ¡Ê±   -- ÈÕ¼äÊ±¶Î7-21£¬Í£³µ21:01-?
-			if(nfpt==1){//Ò¹¼äÃâ·ÑÊ±³¤ºó²»ÊÕ·Ñ£¬Í£³µ¿ªÊ¼Ê±¼äÏòºóÍÆÒ»¸öÒ¹¼äÃâ·ÑÊ±³¤µ¥Î»£¬Í£³µ½áÊøÊ±¼ä²»±ä
-				if(nft!=0&&duration<=nft*60){//Í£³µ×ÜÊ±³¤Ğ¡ÓÚ»òµÈÓÚÃâ·ÑÊ±³¤£¬ÇÒ²»ÊÕ·Ñ£¬ÉèÖÃ³É¿ªÊ¼Ê±¼äµÈÓÚ½áÊøÊ±¼ä£¬ÕâÑù¾Í²»ÊÕ·ÑÁË¡£
+		}else if(bhour>=etime){//åœè½¦å¼€å§‹å°æ—¶ å¤§äºæˆ–ç­‰äº æ—¥é—´å¼€å§‹å°æ—¶   -- æ—¥é—´æ—¶æ®µ7-21ï¼Œåœè½¦21:01-?
+			if(nfpt==1){//å¤œé—´å…è´¹æ—¶é•¿åä¸æ”¶è´¹ï¼Œåœè½¦å¼€å§‹æ—¶é—´å‘åæ¨ä¸€ä¸ªå¤œé—´å…è´¹æ—¶é•¿å•ä½ï¼Œåœè½¦ç»“æŸæ—¶é—´ä¸å˜
+				if(nft!=0&&duration<=nft*60){//åœè½¦æ€»æ—¶é•¿å°äºæˆ–ç­‰äºå…è´¹æ—¶é•¿ï¼Œä¸”ä¸æ”¶è´¹ï¼Œè®¾ç½®æˆå¼€å§‹æ—¶é—´ç­‰äºç»“æŸæ—¶é—´ï¼Œè¿™æ ·å°±ä¸æ”¶è´¹äº†ã€‚
 					start=end;
-				}else {//Í£³µ×ÜÊ±³¤´óÓÚÁËÃâ·ÑÊ±³¤£¬Í£³µ¿ªÊ¼Ê±¼äÏòºóÍÆÒ»¸öÃâ·ÑÊ±³¤.
+				}else {//åœè½¦æ€»æ—¶é•¿å¤§äºäº†å…è´¹æ—¶é•¿ï¼Œåœè½¦å¼€å§‹æ—¶é—´å‘åæ¨ä¸€ä¸ªå…è´¹æ—¶é•¿.
 					start = start+nft*60;
 				}
-			}else{//Ò¹¼äÃâ·ÑÊ±³¤ºóÊÕ·Ñ
-				if(nft!=0&&duration<=nft*60){//Í£³µ×ÜÊ±³¤Ğ¡ÓÚ»òµÈÓÚÃâ·ÑÊ±³¤£¬ÇÒ²»ÊÕ·Ñ£¬ÉèÖÃ³É¿ªÊ¼Ê±¼äµÈÓÚ½áÊøÊ±¼ä£¬ÕâÑù¾Í²»ÊÕ·ÑÁË¡£
+			}else{//å¤œé—´å…è´¹æ—¶é•¿åæ”¶è´¹
+				if(nft!=0&&duration<=nft*60){//åœè½¦æ€»æ—¶é•¿å°äºæˆ–ç­‰äºå…è´¹æ—¶é•¿ï¼Œä¸”ä¸æ”¶è´¹ï¼Œè®¾ç½®æˆå¼€å§‹æ—¶é—´ç­‰äºç»“æŸæ—¶é—´ï¼Œè¿™æ ·å°±ä¸æ”¶è´¹äº†ã€‚
 					start=end;
 				}
 			}
@@ -1429,7 +1429,7 @@ public class CountPrice {
 			start=end;
 		reslut.add(start);
 		reslut.add(end);
-		//System.out.println("ÏÖ¿ªÊ¼Ê±¼ä:"+TimeTools.getTime_yyyyMMdd_HHmmss(start*1000)+",ÏÖ½áÊøÊ±¼ä£º"+TimeTools.getTime_yyyyMMdd_HHmmss(end*1000));
+		//System.out.println("ç°å¼€å§‹æ—¶é—´:"+TimeTools.getTime_yyyyMMdd_HHmmss(start*1000)+",ç°ç»“æŸæ—¶é—´ï¼š"+TimeTools.getTime_yyyyMMdd_HHmmss(end*1000));
 		return reslut;
 	}
 
@@ -1440,5 +1440,5 @@ public class CountPrice {
 		calendar.set(Calendar.MINUTE,0);
 		return calendar.getTimeInMillis()/1000;
 	}*/
-	
+
 }

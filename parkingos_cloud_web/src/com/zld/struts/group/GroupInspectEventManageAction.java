@@ -42,7 +42,7 @@ public class GroupInspectEventManageAction extends Action {
                                  HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         String action = RequestUtil.getString(request, "action");
-        Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+        Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
         request.setAttribute("authid", request.getParameter("authid"));
         Long cityid = (Long)request.getSession().getAttribute("cityid");
         Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -117,28 +117,28 @@ public class GroupInspectEventManageAction extends Action {
             Long inspectid = RequestUtil.getLong(request, "inspectid", -1L);
             String remark =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "remark"));
             if(type<0){
-                AjaxUtil.ajaxOutput(response,"ÇëÑ¡ÔñÀàÐÍ");
+                AjaxUtil.ajaxOutput(response,"è¯·é€‰æ‹©ç±»åž‹");
                 return null;
             }
             if(detailtype<0){
-                AjaxUtil.ajaxOutput(response,"ÇëÑ¡ÔñÈÎÎñÏêÇé");
+                AjaxUtil.ajaxOutput(response,"è¯·é€‰æ‹©ä»»åŠ¡è¯¦æƒ…");
                 return null;
             }
             if(berthsec_id<0){
-                AjaxUtil.ajaxOutput(response,"ÇëÑ¡Ôñ²´Î»¶Î");
+                AjaxUtil.ajaxOutput(response,"è¯·é€‰æ‹©æ³Šä½æ®µ");
                 return null;
             }
             if(inspectid<0){
-                AjaxUtil.ajaxOutput(response,"Çë·ÖÅäÑ²¼ìÔ±");
+                AjaxUtil.ajaxOutput(response,"è¯·åˆ†é…å·¡æ£€å‘˜");
                 return null;
             }
             if (remark.length()>1000){
-                AjaxUtil.ajaxOutput(response,"±¸×¢Ì«³¤");
+                AjaxUtil.ajaxOutput(response,"å¤‡æ³¨å¤ªé•¿");
                 return null;
             }
             if(type==0||type==1){
                 if (dici_id<0){
-                    AjaxUtil.ajaxOutput(response,"ÇëÑ¡Ôñ²´Î»");
+                    AjaxUtil.ajaxOutput(response,"è¯·é€‰æ‹©æ³Šä½");
                     return null;
                 }
             }
@@ -158,7 +158,7 @@ public class GroupInspectEventManageAction extends Action {
         return null;
     }
     /**
-     * ÏÂÔØÑ²³¡Í¼Æ¬
+     * ä¸‹è½½å·¡åœºå›¾ç‰‡
      * @param request
      * @param response
      * @throws Exception
@@ -171,7 +171,7 @@ public class GroupInspectEventManageAction extends Action {
             DBCollection collection = db.getCollection("inspectevent_pics");
             BasicDBObject document = new BasicDBObject();
             document.put("inspectevent_id", id);
-            //°´Éú³ÉÊ±¼ä²é×î½üµÄÊý¾Ý
+            //æŒ‰ç”Ÿæˆæ—¶é—´æŸ¥æœ€è¿‘çš„æ•°æ®
             //	condation.put("ctime", -1);
             //DBCursor objs = collection.find(document).sort(condation).limit(1);
             DBObject obj  = collection.findOne(document);
@@ -194,10 +194,10 @@ public class GroupInspectEventManageAction extends Action {
         }
     }
     /**
-     * Ð´ÏûÏ¢µ½»º´æ
-     * @param mesgtype ÏûÏ¢ÀàÐÍ 11Ñ²³¡ÊÂ¼þÏûÏ¢
-     * @param key ÊÕÏûÏ¢ÈË±àºÅ£¬Ñ²³¡Ô±±àºÅ
-     * @param putmesg ÏûÏ¢ÄÚÈÝ
+     * å†™æ¶ˆæ¯åˆ°ç¼“å­˜
+     * @param mesgtype æ¶ˆæ¯ç±»åž‹ 11å·¡åœºäº‹ä»¶æ¶ˆæ¯
+     * @param key æ”¶æ¶ˆæ¯äººç¼–å·ï¼Œå·¡åœºå‘˜ç¼–å·
+     * @param putmesg æ¶ˆæ¯å†…å®¹
      * @param memcacheUtils
      */
     private void putMesgToCache(String mesgtype,Long key,String putmesg, MemcacheUtils memcacheUtils){

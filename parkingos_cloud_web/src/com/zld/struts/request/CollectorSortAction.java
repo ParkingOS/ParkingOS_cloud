@@ -24,24 +24,24 @@ import com.zld.utils.RequestUtil;
 import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 /**
- * ÊÕ·ÑÔ±·ÖÏí³µÎ»ÅÅĞĞ
+ * æ”¶è´¹å‘˜åˆ†äº«è½¦ä½æ’è¡Œ
  * @author Administrator
  *
  */
 public class CollectorSortAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
 	private LogService logService;
 	@Autowired
 	private PgOnlyReadService onlyReadService;
-	
+
 	private Logger logger = Logger.getLogger(CollectorSortAction.class);
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -54,7 +54,7 @@ public class CollectorSortAction extends Action{
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("query")){
-			//¿Í»§¶Ë½Ó¿Ú£ºhttp://127.0.0.1/zld/collectorsort.do?action=query&type=client&week=
+			//å®¢æˆ·ç«¯æ¥å£ï¼šhttp://127.0.0.1/zld/collectorsort.do?action=query&type=client&week=
 			String week = RequestUtil.processParams(request, "week");
 			String month = RequestUtil.processParams(request, "month");
 			String sql = "select sum(lala_scroe+nfc_score+praise_scroe+pai_score+online_scroe+recom_scroe) share_time,uin from collector_scroe_tb where create_time between ? and ? group by uin order by share_time desc limit ? ";//=? order by share_time desc ";
@@ -68,17 +68,17 @@ public class CollectorSortAction extends Action{
 			String LastfirstDayOfMonth = StringUtils.getLastFistdayOfMonth();
 			Long btime = TimeTools.getLongMilliSecondFrom_HHMMDD(monday)/1000;
 			Long etime = System.currentTimeMillis()/1000;
-			if(month.equals("tomonth")){//±¾ÔÂ
+			if(month.equals("tomonth")){//æœ¬æœˆ
 				btime = TimeTools.getLongMilliSecondFrom_HHMMDD(firstDayOfMonth)/1000;
 				etime = System.currentTimeMillis()/1000;
-			}else if(month.equals("last")){//ÉÏÔÂ
+			}else if(month.equals("last")){//ä¸Šæœˆ
 				btime = TimeTools.getLongMilliSecondFrom_HHMMDD(LastfirstDayOfMonth)/1000;
 				etime = TimeTools.getLongMilliSecondFrom_HHMMDD(firstDayOfMonth)/1000-1;
-			}else if(week.equals("last")){//ÉÏÖÜ»ı·Ö
+			}else if(week.equals("last")){//ä¸Šå‘¨ç§¯åˆ†
 				etime = TimeTools.getLongMilliSecondFrom_HHMMDD(monday)/1000;
 				btime = etime-7*24*60*60;
 				etime = etime-1;
-			}else {//±¾ÖÜ»ı·Ö
+			}else {//æœ¬å‘¨ç§¯åˆ†
 				btime =TimeTools.getLongMilliSecondFrom_HHMMDD(monday)/1000;
 			}
 			params.add(btime);
@@ -104,17 +104,17 @@ public class CollectorSortAction extends Action{
 			String LastfirstDayOfMonth = StringUtils.getLastFistdayOfMonth();
 			Long btime = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(monday+" 00:00:00");
 			Long etime = System.currentTimeMillis()/1000;
-			if(ptype.equals("tomonth")){//±¾ÔÂ
+			if(ptype.equals("tomonth")){//æœ¬æœˆ
 				btime = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(firstDayOfMonth+" 00:00:00");
 				etime = System.currentTimeMillis()/1000;
-			}else if(ptype.equals("lastmonth")){//ÉÏÔÂ
+			}else if(ptype.equals("lastmonth")){//ä¸Šæœˆ
 				btime = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(LastfirstDayOfMonth+" 00:00:00");
 				etime = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(firstDayOfMonth+" 00:00:00")-1;
-			}else if(ptype.equals("lastweek")){//ÉÏÖÜ
+			}else if(ptype.equals("lastweek")){//ä¸Šå‘¨
 				etime = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(monday+" 00:00:00");
 				btime = etime-7*24*60*60;
 				etime = etime-1;
-			}else {//±¾ÖÜ
+			}else {//æœ¬å‘¨
 				btime = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(monday+" 00:00:00");
 				etime = System.currentTimeMillis()/1000;
 			}
@@ -131,59 +131,59 @@ public class CollectorSortAction extends Action{
 			String t1 = TimeTools.getTimeStr_yyyy_MM_dd(btime*1000);
 			String t2 = TimeTools.getTimeStr_yyyy_MM_dd(etime*1000);
 			request.setAttribute("details",setResult(list,btime,etime));
-			request.setAttribute("tips", " "+t1+"ÖÁ"+t2+"£¬Í£³µÔ±£º"+parker+"£¬ÊĞ³¡×¨Ô± £º"+user);
+			request.setAttribute("tips", " "+t1+"è‡³"+t2+"ï¼Œåœè½¦å‘˜ï¼š"+parker+"ï¼Œå¸‚åœºä¸“å‘˜ ï¼š"+user);
 			return mapping.findForward("detail");
-		}else if(action.equals("sendmoney")){//·¢·Å½±½ğ
+		}else if(action.equals("sendmoney")){//å‘æ”¾å¥–é‡‘
 			Long uin = RequestUtil.getLong(request, "uid", -1L);
 			Double money = RequestUtil.getDouble(request, "money", 0.0d);
 			Long toweekbegin = TimeTools.getWeekStartSeconds();
 			Long count = onlyReadService.getLong("select count(*) from parkuser_account_tb" +
-					" where uin=? and  create_time>? and target=? and remark=? ",
-					new Object[]{uin,toweekbegin,3,"Í£³µ±¦ÅÅĞĞ°ñÖÜ½±"}); 
+							" where uin=? and  create_time>? and target=? and remark=? ",
+					new Object[]{uin,toweekbegin,3,"åœè½¦å®æ’è¡Œæ¦œå‘¨å¥–"});
 			String result = "";
 			if(count>0){
-				result="ÒÑ·¢·Å¹ı£¬Çë²»ÒªÖØ¸´·¢·Å£¡";
+				result="å·²å‘æ”¾è¿‡ï¼Œè¯·ä¸è¦é‡å¤å‘æ”¾ï¼";
 			}else {
 				if(uin!=-1&&money!=0){
 					Map userMap = onlyReadService.getMap("select comid from user_info_tb where id=? ", new Object[]{uin});
 					Long comId = null;
 					count = onlyReadService.getLong("select count(*) from park_account_tb" +
-							" where uid=? and  create_time>? and type=? and remark=? ",
-							new Object[]{uin,toweekbegin,0,"Í£³µ±¦ÅÅĞĞ°ñÖÜ½±"}); 
+									" where uid=? and  create_time>? and type=? and remark=? ",
+							new Object[]{uin,toweekbegin,0,"åœè½¦å®æ’è¡Œæ¦œå‘¨å¥–"});
 					if(count>0){
-						result="ÒÑ·¢·Å¹ı£¬Çë²»ÒªÖØ¸´·¢·Å£¡";
+						result="å·²å‘æ”¾è¿‡ï¼Œè¯·ä¸è¦é‡å¤å‘æ”¾ï¼";
 						AjaxUtil.ajaxOutput(response, ""+result);
 						return null;
 					}
 					Integer payto=null;
 					if(userMap!=null&&userMap.get("comid")!=null){
 						comId = (Long)userMap.get("comid");
-						//²éÑ¯ÊÕ·ÑÉè¶¨ mtype:0:Í£³µ·Ñ,1:Ô¤¶©·Ñ,2:Í£³µ±¦·µÏÖ
+						//æŸ¥è¯¢æ”¶è´¹è®¾å®š mtype:0:åœè½¦è´¹,1:é¢„è®¢è´¹,2:åœè½¦å®è¿”ç°
 						Map msetMap = onlyReadService.getMap("select giveto from money_set_tb where comid=? and mtype=? ",
 								new Object[]{comId,3});
 						if(msetMap!=null)
 							payto = (Integer)msetMap.get("giveto");
 					}
-					
+
 					List<Map<String,Object>> sqlMap =new ArrayList<Map<String,Object>>();
 					Map<String,Object> userSql = new HashMap<String, Object>();
 					Map<String,Object> accountSql = new HashMap<String, Object>();
-					
-					
-					if(payto!=null&&payto==0){//ÖÜ½±¸ø¹«Ë¾
-						//¸üĞÂÍ£³µ³¡
+
+
+					if(payto!=null&&payto==0){//å‘¨å¥–ç»™å…¬å¸
+						//æ›´æ–°åœè½¦åœº
 						userSql.put("sql", "update com_info_tb set money=money+?,total_money=total_money+? where id=? ");
 						userSql.put("values", new Object[]{money,money,comId});
 						accountSql.put("sql", "insert into park_account_tb(comid,amount,type,create_time,remark,uid,source) values(?,?,?,?,?,?,?)");
-						accountSql.put("values", new Object[]{comId,money,0,System.currentTimeMillis()/1000,"Í£³µ±¦ÅÅĞĞ°ñÖÜ½±",uin,6});
+						accountSql.put("values", new Object[]{comId,money,0,System.currentTimeMillis()/1000,"åœè½¦å®æ’è¡Œæ¦œå‘¨å¥–",uin,6});
 						sqlMap.add(userSql);
 						sqlMap.add(accountSql);
-					}else {//ÖÜ½±ÊÕ·ÑÔ±
-						//¸üĞÂÓÃ»§±í¼°ÓÃ»§ÕË»§±í
+					}else {//å‘¨å¥–æ”¶è´¹å‘˜
+						//æ›´æ–°ç”¨æˆ·è¡¨åŠç”¨æˆ·è´¦æˆ·è¡¨
 						userSql.put("sql", "update user_info_tb set balance=balance+? where id=? ");
 						userSql.put("values", new Object[]{money,uin});
 						accountSql.put("sql", "insert into parkuser_account_tb(uin,amount,type,create_time,remark,target) values(?,?,?,?,?,?)");
-						accountSql.put("values", new Object[]{uin,money,0,System.currentTimeMillis()/1000,"Í£³µ±¦ÅÅĞĞ°ñÖÜ½±",3});
+						accountSql.put("values", new Object[]{uin,money,0,System.currentTimeMillis()/1000,"åœè½¦å®æ’è¡Œæ¦œå‘¨å¥–",3});
 						sqlMap.add(userSql);
 						sqlMap.add(accountSql);
 					}
@@ -194,7 +194,7 @@ public class CollectorSortAction extends Action{
 					if(ret){
 						result="1";
 						if(payto==null||payto==1)
-							logService.insertParkUserMesg(2, uin, "ÄúÉÏÖÜÍ£³µ±¦ÖÜ½±"+money+"ÔªÒÑµ½ÕË£¬Çë²éÊÕ¡£", "ÖÜ½±µ½ÕËÍ¨Öª");
+							logService.insertParkUserMesg(2, uin, "æ‚¨ä¸Šå‘¨åœè½¦å®å‘¨å¥–"+money+"å…ƒå·²åˆ°è´¦ï¼Œè¯·æŸ¥æ”¶ã€‚", "å‘¨å¥–åˆ°è´¦é€šçŸ¥");
 					}
 				}
 			}
@@ -202,7 +202,7 @@ public class CollectorSortAction extends Action{
 		}
 		return null;
 	}
-	
+
 	private void setSort(List list){
 		if(list!=null&&list.size()>0){
 			for(int i=0;i<list.size();i++){
@@ -211,7 +211,7 @@ public class CollectorSortAction extends Action{
 			}
 		}
 	}
-	
+
 	private String setResult (List<Map<String, Object>> lists,Long start,Long end){
 		String result = "{\"page\":1,\"total\":"+lists.size()+",\"rows\":[]}";
 		String data = "[";
@@ -231,12 +231,12 @@ public class CollectorSortAction extends Action{
 			}
 		}
 		List<Map.Entry<Long, Integer>> mapList = new ArrayList<Map.Entry<Long,Integer>>(dMap.entrySet());
-		Collections.sort(mapList, new Comparator<Map.Entry<Long,Integer>>(){ 
+		Collections.sort(mapList, new Comparator<Map.Entry<Long,Integer>>(){
 			   public int compare(Map.Entry<Long,Integer> mapping1,Map.Entry<Long,Integer> mapping2){
-			     return mapping1.getKey().compareTo(mapping2.getKey()); 
-			   } 
-			  }); 
-		
+			     return mapping1.getKey().compareTo(mapping2.getKey());
+			   }
+			  });
+
 		for(Map.Entry<Long, Integer> mlist : mapList){
 			String skey = TimeTools.getTimeStr_yyyy_MM_dd(mlist.getKey()*1000);
 			if(data.equals("[")){
@@ -258,7 +258,7 @@ public class CollectorSortAction extends Action{
 		result = result.replace("[]", data);
 		return result;
 	}
-	
+
 	private List<Map<String, Object >> setName(List list,int type){
 		List<Map<String, Object >> templiList = new ArrayList<Map<String, Object >>();
 		List<Object> uins = new ArrayList<Object>();
@@ -282,10 +282,10 @@ public class CollectorSortAction extends Action{
 			List<Map<String, Object>> resultList = onlyReadService.getAllMap("select u.id,u.mobile ,u.nickname as uname,c.company_name cname ," +
 					"c.uid from user_info_tb u,com_info_tb c" +
 					" where u.comid=c.id and  u.id in ("+preParams+")  and c.state=?", uins);
-			
+
 			Map<String ,Object> markerMap = new HashMap<String ,Object>();
 			if(resultList!=null&&!resultList.isEmpty()){
-				
+
 				for(int i=0;i<list.size();i++){
 					Map map1 = (Map)list.get(i);
 					for(Map<String,Object> map: resultList){
@@ -294,9 +294,9 @@ public class CollectorSortAction extends Action{
 							templiList.add(map1);
 							String name  = (String)map.get("uname");
 							if(name == null || name.equals("")){
-								name = "ÎŞ";
+								name = "æ— ";
 							}else if(name.length() > 1&&type==0){
-								//ĞÕÃûÏÔÊ¾×îºóÒ»¸ö×Ö£¬ÆäËû×ÖÓÃ*´úÌæ
+								//å§“åæ˜¾ç¤ºæœ€åä¸€ä¸ªå­—ï¼Œå…¶ä»–å­—ç”¨*ä»£æ›¿
 								String hidename = "";
 								for(int j=0;j<name.length()-1;j++){
 									hidename += "*";
@@ -337,20 +337,20 @@ public class CollectorSortAction extends Action{
 						preParams += ",?";
 					uins.add(Long.valueOf(key));
 				}
-				
+
 				List<Map<String, Object>> markerList = null;
 				if(!preParams.equals(""))
 					markerList=onlyReadService.getAllMap("select id,nickname from user_info_tb where id in("+preParams+")",uins);
-				
+
 				if(markerList!=null&&!markerList.isEmpty()){
-					
+
 					for(int i=0;i<templiList.size();i++){
 						Map map1 = (Map)templiList.get(i);
 						for(Map<String,Object> map: markerList){
 							Long uin = (Long)map.get("id");
 							if(map1.get("uid").equals(uin)){
 								if(type==1){
-									map1.put("uid",map.get("nickname")==null?"ÎŞ":map.get("nickname"));
+									map1.put("uid",map.get("nickname")==null?"æ— ":map.get("nickname"));
 								}
 								break;
 							}

@@ -18,20 +18,20 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 /**
- * NFC¹ÜÀí£¬ÔÚ×Ü¹ÜÀíÔ±ºóÌ¨
+ * NFCç®¡ç†ï¼Œåœ¨æ€»ç®¡ç†å‘˜åå°
  * @author Administrator
  *
  */
 public class MobileManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(MobileManageAction.class);
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -69,10 +69,10 @@ public class MobileManageAction extends Action{
 			String result = createNfc(request);
 			AjaxUtil.ajaxOutput(response, result);
 		}else if(action.equals("edit")){
-			/* distru_date bigint, -- ·ÖÅäÊ±¼ä
-			  uid bigint, -- ÊĞ³¡×¨Ô±
-			  comid bigint, -- Í£³µ³¡
-			  uin bigint, -- ³µ³¡Ç©ÊÕÈËÕÊºÅ*/
+			/* distru_date bigint, -- åˆ†é…æ—¶é—´
+			  uid bigint, -- å¸‚åœºä¸“å‘˜
+			  comid bigint, -- åœè½¦åœº
+			  uin bigint, -- è½¦åœºç­¾æ”¶äººå¸å·*/
 			Long id =RequestUtil.getLong(request, "id",-1L);
 			Long uid = RequestUtil.getLong(request, "uid", -1L);
 			Long _comid = RequestUtil.getLong(request, "comid", -1L);
@@ -101,20 +101,20 @@ public class MobileManageAction extends Action{
 	private String createNfc(HttpServletRequest request) {
 		/**
 		 *  id bigint NOT NULL,
-			  imei character varying(25), -- ÊÖ»ú´®ºÅ
-			  num character varying(15), -- ÊÖ»úºÅÂë
-			  mode character varying(100), -- ÊÖ»úĞÍºÅ
-			  price numeric(5,2), -- ¼Û¸ñ
-			  create_tiime bigint, -- Èë¿âÊ±¼ä
-			  editor character varying(50), -- Èë¿âÈË
-			  distru_date bigint, -- ·ÖÅäÊ±¼ä
-			  uid bigint, -- ÊĞ³¡×¨Ô±
-			  comid bigint, -- Í£³µ³¡
-			  uin bigint, -- ³µ³¡Ç©ÊÕÈËÕÊºÅ
-			  money_3 numeric(5,2), -- ½üÈıÈÕ½áËã½ğ¶î
-			  order_3 integer, -- ½üÈıÈÕ¶©µ¥ÊıÁ¿
-			  CONSTRAINT mobile_tb_pkey PRIMARY KEY (id)
-  
+		 imei character varying(25), -- æ‰‹æœºä¸²å·
+		 num character varying(15), -- æ‰‹æœºå·ç 
+		 mode character varying(100), -- æ‰‹æœºå‹å·
+		 price numeric(5,2), -- ä»·æ ¼
+		 create_tiime bigint, -- å…¥åº“æ—¶é—´
+		 editor character varying(50), -- å…¥åº“äºº
+		 distru_date bigint, -- åˆ†é…æ—¶é—´
+		 uid bigint, -- å¸‚åœºä¸“å‘˜
+		 comid bigint, -- åœè½¦åœº
+		 uin bigint, -- è½¦åœºç­¾æ”¶äººå¸å·
+		 money_3 numeric(5,2), -- è¿‘ä¸‰æ—¥ç»“ç®—é‡‘é¢
+		 order_3 integer, -- è¿‘ä¸‰æ—¥è®¢å•æ•°é‡
+		 CONSTRAINT mobile_tb_pkey PRIMARY KEY (id)
+
 		 */
 		String imei =RequestUtil.processParams(request, "imei");
 		String deviceCode =RequestUtil.processParams(request, "device_code");
@@ -130,6 +130,6 @@ public class MobileManageAction extends Action{
 		int result = daService.update(sql, values);
 		return result+"";
 	}
-	
+
 
 }

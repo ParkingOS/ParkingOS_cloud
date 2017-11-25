@@ -4,19 +4,19 @@ import java.io.Serializable;
 
 public class GroupEpayAccount implements Serializable {
 	private Long id = -1L;
-	private Long comid = -1L;//³µ³¡±àºÅ
-	private Double amount = 0d;//½ğ¶î
-	private Long create_time;//¼ÇÂ¼Ê±¼ä
-	private Long uid = -1L;//ÊÕ·ÑÔ±ÕËºÅ
-	private Integer type = 0;//ÀàĞÍ 0£º³äÖµ 1£ºÖ§³ö
-	private Integer source = 0;//À´Ô´ 0£ºÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©£¬1£ºÌáÏÖ£¬2£º×·½ÉÍ£³µ·Ñ£¬3£ºÔ¤¸¶Í£³µ·Ñ£¬4£ºÔ¤¸¶ÍË¿î£¨Ô¤¸¶£©£¬5£ºÔ¤¸¶²¹½É£¨Ô¤¸¶½ğ¶î²»×ã£©
-	private Long orderid = -1L;//¶©µ¥±àºÅ
-	private Long withdraw_id = -1L;//ÌáÏÖ¼ÇÂ¼±àºÅ
-	private Long groupid = -1L;//ÔËÓª¼¯ÍÅ±àºÅ
-	private String remark;//ËµÃ÷
-	private Long berthseg_id = -1L;//²úÉúÕâ±ÊÁ÷Ë®ËùÔÚµÄ²´Î»¶Î±àºÅ
-	private Long berth_id = -1L;//²úÉúÕâ±ÊÁ÷Ë®ËùÔÚµÄ²´Î»±àºÅ
-	private Integer is_delete = 0;//ÕËÄ¿Á÷Ë®×´Ì¬ 0£ºÕı³£ 1£ºÉ¾³ı
+	private Long comid = -1L;//è½¦åœºç¼–å·
+	private Double amount = 0d;//é‡‘é¢
+	private Long create_time;//è®°å½•æ—¶é—´
+	private Long uid = -1L;//æ”¶è´¹å‘˜è´¦å·
+	private Integer type = 0;//ç±»å‹ 0ï¼šå……å€¼ 1ï¼šæ”¯å‡º
+	private Integer source = 0;//æ¥æº 0ï¼šåœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰ï¼Œ1ï¼šæç°ï¼Œ2ï¼šè¿½ç¼´åœè½¦è´¹ï¼Œ3ï¼šé¢„ä»˜åœè½¦è´¹ï¼Œ4ï¼šé¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜ï¼‰ï¼Œ5ï¼šé¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜é‡‘é¢ä¸è¶³ï¼‰
+	private Long orderid = -1L;//è®¢å•ç¼–å·
+	private Long withdraw_id = -1L;//æç°è®°å½•ç¼–å·
+	private Long groupid = -1L;//è¿è¥é›†å›¢ç¼–å·
+	private String remark;//è¯´æ˜
+	private Long berthseg_id = -1L;//äº§ç”Ÿè¿™ç¬”æµæ°´æ‰€åœ¨çš„æ³Šä½æ®µç¼–å·
+	private Long berth_id = -1L;//äº§ç”Ÿè¿™ç¬”æµæ°´æ‰€åœ¨çš„æ³Šä½ç¼–å·
+	private Integer is_delete = 0;//è´¦ç›®æµæ°´çŠ¶æ€ 0ï¼šæ­£å¸¸ 1ï¼šåˆ é™¤
 	public Long getId() {
 		return id;
 	}
@@ -117,6 +117,6 @@ public class GroupEpayAccount implements Serializable {
 	public void setIs_delete(Integer is_delete) {
 		this.is_delete = is_delete;
 	}
-	
-	
+
+
 }

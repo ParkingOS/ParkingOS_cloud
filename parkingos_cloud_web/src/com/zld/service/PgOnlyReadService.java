@@ -14,27 +14,27 @@ public class PgOnlyReadService {
 
 	@Autowired
 	private PgOnlyReadDao userDao;
-	
+
 
 	public List<Map<String, Object>> getAll(String sql,Object[] values ){
 		return userDao.getAll(sql, values);
 	}
-	
+
 	public String find(String sql,Object[] values){
 		List<Map<String, Object>> list = userDao.getAll(sql, values);
 		if(list!=null&&list.size()==1)
 			return "1";
 		return "0";
 	}
-	
+
 	public Map<String,Object> getMap(String sql,Object[] values){
 		List<Map<String, Object>> list = userDao.getAll(sql, values);
 		if(list!=null&&list.size()>0){
 			return list.get(0);
 		}
-		return null;	
+		return null;
 	}
-	
+
 	public Map<String,Object> getMap(String sql,List values){
 		Object[] valObjects =null;
 		if(values!=null){
@@ -43,14 +43,14 @@ public class PgOnlyReadService {
 				valObjects[i]=values.get(i);
 			}
 		}
-		return getMap(sql, valObjects);	
+		return getMap(sql, valObjects);
 	}
-	
-	
+
+
 	public Long getLong(String sql,Object[] values){
 		return userDao.getLong(sql, values);
 	}
-	
+
 	public Long getLong(String sql,List values){
 		Object[] valObjects =null;
 		if(values!=null){
@@ -61,7 +61,7 @@ public class PgOnlyReadService {
 		}
 		return userDao.getLong(sql, valObjects);
 	}
-	
+
 	public Long getCount(String sql,List<Object> values){
 		Object[] valObjects =null;
 		if(values!=null){
@@ -72,11 +72,11 @@ public class PgOnlyReadService {
 		}
 		return getLong(sql, valObjects);
 	}
-	
+
 	public List<Map<String, Object>> getPage(String sql,Object[] values, int pageNum,int pageSize){
 		return userDao.getPage(sql, values, pageNum, pageSize);
 	}
-	
+
 	public Object getObject(String sql, Object[] values, Class type) {
 		return userDao.getObject(sql, values,type);
 	}
@@ -90,7 +90,7 @@ public class PgOnlyReadService {
 		}
 		return userDao.getAll(sql, objects);
 	}
-	
+
 	public List<Map<String, Object>> getAll(String sql, List<Object> values, int pageNum, int pageSize ){
 		if(values==null)
 			values= new ArrayList<Object>();
@@ -98,7 +98,7 @@ public class PgOnlyReadService {
 			int end = pageSize;
 			int start = (pageNum - 1) * pageSize;
 			sql =sql +" limit ? offset ?";
-			
+
 			values.add(end);
 			values.add(start);
 		}
@@ -111,15 +111,15 @@ public class PgOnlyReadService {
 		}
 		return userDao.getAll(sql, objects);
 	}
-	
+
 	public Map<String, Object> getPojo(String sql,Object[] values){
 		return getMap(sql, values);
 	}
-	
+
 	public <T> List<T> getPOJOList(String sql, Object[] values, Class<T> type){
 		return userDao.getPOJOList(sql, values, type);
 	}
-	
+
 	public <T> List<T> getPOJOList(String sql, List<Object> values, int pageNum, int pageSize, Class<T> type){
 		if(values == null)
 			values= new ArrayList<Object>();
@@ -139,7 +139,7 @@ public class PgOnlyReadService {
 		}
 		return userDao.getPOJOList(sql, objects, type);
 	}
-	
+
 	public <T> T getPOJO(String sql, Object[] values, Class<T> type){
 		return userDao.getPOJO(sql, values, type);
 	}

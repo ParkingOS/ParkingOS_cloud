@@ -7,58 +7,61 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+
+import sun.util.logging.resources.logging;
 /**
- * 电子支付菜单
+ * 鐢靛瓙鏀粯鑿滃崟
  * @author Administrator
  *
  */
 public class MenuForwordAction extends Action{
-	
-	
+
+
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String uri = request.getRequestURI();
 		request.setAttribute("authid", request.getParameter("authid"));
+		System.err.println(">>>>>>>>>>>>>>>>>>>>"+uri);
 		if(uri.indexOf("devicemenu")!=-1){
-			request.setAttribute("menuname","设备管理");
+			request.setAttribute("menuname","璁惧绠＄悊");
 		}else if(uri.indexOf("syssetmenu")!=-1){
-			request.setAttribute("menuname","综合设置");
+			request.setAttribute("menuname","缁煎悎璁剧疆");
 		}else if(uri.indexOf("authmenu")!=-1){
-			request.setAttribute("menuname","权限管理");
+			request.setAttribute("menuname","鏉冮檺绠＄悊");
 		}else if(uri.indexOf("anlysismenu")!=-1){
-			request.setAttribute("menuname","统计分析");
+			request.setAttribute("menuname","缁熻鍒嗘瀽");
 		}else if(uri.indexOf("parkepaymenu")!=-1){
-			request.setAttribute("menuname","电子支付");
+			request.setAttribute("menuname","鐢靛瓙鏀粯");
 		}else if(uri.indexOf("parkordermenu")!=-1){
-			request.setAttribute("menuname","订单管理");
+			request.setAttribute("menuname","璁㈠崟绠＄悊");
 		}else if(uri.indexOf("parkmanagemenu")!=-1){
-			request.setAttribute("menuname","系统管理");
+			request.setAttribute("menuname","绯荤粺绠＄悊");
 		}else if(uri.indexOf("membermanage")!=-1){
-			request.setAttribute("menuname","员工权限");
+			request.setAttribute("menuname","鍛樺伐鏉冮檺");
 		}else if(uri.indexOf("carplate")!=-1){
-			request.setAttribute("menuname","设备管理");
+			request.setAttribute("menuname","璁惧绠＄悊");
 		}else if(uri.indexOf("parkanlysis")!=-1){
-			request.setAttribute("menuname","统计分析");
+			request.setAttribute("menuname","缁熻鍒嗘瀽");
 		}else if(uri.indexOf("logomanage")!=-1){
-			request.setAttribute("menuname","系统管理");
+			request.setAttribute("menuname","绯荤粺绠＄悊");
 		}else if(uri.indexOf("sysmanage") != -1){
-			request.setAttribute("menuname","系统管理");
+			request.setAttribute("menuname","绯荤粺绠＄悊");
 		}else if(uri.indexOf("vipmanage") != -1){
-			request.setAttribute("menuname","会员管理");
+			request.setAttribute("menuname","浼氬憳绠＄悊");
 		}else if(uri.indexOf("citycommand") != -1){
-			request.setAttribute("menuname","指挥中心");
+			request.setAttribute("menuname","鎸囨尌涓績");
 		}else if(uri.indexOf("inducemenu") != -1){
-			request.setAttribute("menuname","诱导管理");
+			request.setAttribute("menuname","璇卞绠＄悊");
 		}else if(uri.indexOf("paymenu") != -1){
-			request.setAttribute("menuname","支付管理");
+			request.setAttribute("menuname","鏀粯绠＄悊");
 		}else if(uri.indexOf("cityanlysis") != -1){
-			request.setAttribute("menuname","决策分析");
+			request.setAttribute("menuname","鍐崇瓥鍒嗘瀽");
 		}
 		return mapping.findForward("menu");
 	}
 
-	
+
 }

@@ -26,20 +26,20 @@ import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 /**
- * Í£³µ³¡ºóÌ¨¹ÜÀíÔ±µÇÂ¼ºó£¬ÌáÏÖ¹ÜÀí 
+ * åœè½¦åœºåå°ç®¡ç†å‘˜ç™»å½•åï¼Œæç°ç®¡ç†
  * @author Administrator
  *
  */
 public class WithDrawerManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(WithDrawerManageAction.class);
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -149,27 +149,27 @@ public class WithDrawerManageAction extends Action{
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("excle")){
-			//³µ³¡Ãû³Æ ÌáÏÖ½ğ¶î  ÉêÇëÊ±¼ä ´¦ÀíÈÕÆÚ ×´Ì¬ 
-			String [] heards = new String[]{"³µ³¡Ãû³Æ","ÉêÇëÊ±¼ä","´¦ÀíÈÕÆÚ","×´Ì¬","ÕÊ»§ĞÕÃû","ÌáÏÖ½ğ¶î","ÕËºÅ","¿ª»§ĞĞ/Ö§ĞĞ","¿ª»§µØ","ÊÖ»ú","Éí·İÖ¤ºÅ","³µÖ÷ÕËºÅ"};
-			//String [] heards = new String[]{"³µ³¡Ãû³Æ","ÌáÏÖ½ğ¶î","ÉêÇëÊ±¼ä","´¦ÀíÈÕÆÚ","×´Ì¬"};
+			//è½¦åœºåç§° æç°é‡‘é¢  ç”³è¯·æ—¶é—´ å¤„ç†æ—¥æœŸ çŠ¶æ€
+			String [] heards = new String[]{"è½¦åœºåç§°","ç”³è¯·æ—¶é—´","å¤„ç†æ—¥æœŸ","çŠ¶æ€","å¸æˆ·å§“å","æç°é‡‘é¢","è´¦å·","å¼€æˆ·è¡Œ/æ”¯è¡Œ","å¼€æˆ·åœ°","æ‰‹æœº","èº«ä»½è¯å·","è½¦ä¸»è´¦å·"};
+			//String [] heards = new String[]{"è½¦åœºåç§°","æç°é‡‘é¢","ç”³è¯·æ—¶é—´","å¤„ç†æ—¥æœŸ","çŠ¶æ€"};
 			List<List<String>> bodyList = new ArrayList<List<String>>();
 			//String sql = "select * from withdrawer_tb where state=? ";
 			String sql = "select t.*,c.atype,c.card_number,c.name,c.mobile,c.area,c.bank_name,c.bank_pint,c.user_id ,c.uin from withdrawer_tb t left join com_account_tb c on t.acc_id=c.id where t.state=? and wtype=? ";
 			String [] f = new String[]{"comid","create_time","update_time","state","name","amount","card_number","bank_name","area","mobile","user_id","uin"};
-			
+
 			Integer state = RequestUtil.getInteger(request, "state_start", 0);
-			if(state>11){//µ¼³ö¶Ô¹«ÌáÏÖ
+			if(state>11){//å¯¼å‡ºå¯¹å…¬æç°
 				List<Object> publicAcc = getpublicAccount();
-				heards=(String[])publicAcc.get(0);	
+				heards=(String[])publicAcc.get(0);
 				sql =(String)publicAcc.get(1);
 				f=(String[])publicAcc.get(2);
 			}
-			
+
 			List<Object> params = new ArrayList<Object>();
-			if(state>11){//µ¼³ö¶Ô¹«ÌáÏÖ
+			if(state>11){//å¯¼å‡ºå¯¹å…¬æç°
 				params.add(state-12);
 				params.add(2);
-			}else if(state>5){//µ¼³ö¹«Ë¾ÌáÏÖ
+			}else if(state>5){//å¯¼å‡ºå…¬å¸æç°
 				params.add(state-6);
 				params.add(0);
 			}else {
@@ -202,8 +202,8 @@ public class WithDrawerManageAction extends Action{
 					Map map = (Map)list.get(i);
 					Integer atype =(Integer) map.get("atype");
 					String info="";
-					if(atype==1&&state<12){//Ö§¸¶±¦
-						heards = new String[]{"³µ³¡Ãû³Æ","ÉêÇëÊ±¼ä","´¦ÀíÈÕÆÚ","×´Ì¬","ÕÊ»§ĞÕÃû","ÌáÏÖ½ğ¶î","Ö§¸¶±¦ÕËºÅ","ÊÖ»ú"};
+					if(atype==1&&state<12){//æ”¯ä»˜å®
+						heards = new String[]{"è½¦åœºåç§°","ç”³è¯·æ—¶é—´","å¤„ç†æ—¥æœŸ","çŠ¶æ€","å¸æˆ·å§“å","æç°é‡‘é¢","æ”¯ä»˜å®è´¦å·","æ‰‹æœº"};
 						f = new String[]{"comid","create_time","update_time","state","name","amount","card_number","mobile"};
 					}
 					List<String> values = new ArrayList<String>();
@@ -213,25 +213,25 @@ public class WithDrawerManageAction extends Action{
 						}else if(field.equals("state")){
 							int s = Integer.parseInt(map.get("state")+"");
 							if(s==0){
-								values.add("µÈ´ıÉóºË");
+								values.add("ç­‰å¾…å®¡æ ¸");
 							}else if(s==2){
-								values.add("´¦ÀíÖĞ");
+								values.add("å¤„ç†ä¸­");
 							}else if(s==3){
-								values.add("ÒÑÖ§¸¶");
+								values.add("å·²æ”¯ä»˜");
 							}else if(s==4){
-								values.add("ÌáÏÖÊ§°Ü");
+								values.add("æç°å¤±è´¥");
 							}else if(s==5){
-								values.add("ÑÓ³Ù´¦Àí");
+								values.add("å»¶è¿Ÿå¤„ç†");
 							}
 						}else {
-							
+
 							values.add(map.get(field)+"");
 						}
 					}
 					bodyList.add(values);
 				}
 			}
-			String fname = "ÌáÏÖÉêÇë" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
+			String fname = "æç°ç”³è¯·" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
 			fname = StringUtils.encodingFileName(fname);
 			java.io.OutputStream os;
 			try {
@@ -239,7 +239,7 @@ public class WithDrawerManageAction extends Action{
 				response.reset();
 				response.setHeader("Content-disposition", "attachment; filename="
 						+ fname + ".xls");
-				ExportExcelUtil importExcel = new ExportExcelUtil("ÌáÏÖÉêÇë",
+				ExportExcelUtil importExcel = new ExportExcelUtil("æç°ç”³è¯·",
 						heards, bodyList);
 				importExcel.createExcelFile(os);
 			} catch (IOException e) {
@@ -252,7 +252,7 @@ public class WithDrawerManageAction extends Action{
 				Map userMap = daService.getMap("select nickname from user_info_tb where id =?", new Object[]{uin});
 				if(userMap!=null&&userMap.get("nickname")!=null)
 					name = userMap.get("nickname")+"";
-					
+
 			}
 			AjaxUtil.ajaxOutput(response, name);
 		}else if(action.equals("multiedit")){
@@ -274,13 +274,13 @@ public class WithDrawerManageAction extends Action{
 				params.add(0,state);
 				result = daService.update("update withdrawer_tb set state = ?,update_time = ?  where id in("+parmstrs+")", params);
 			}
-			
+
 			AjaxUtil.ajaxOutput(response, result+"");
 		}
 		return null;
 	}
-	
-	
+
+
 	private void setComName(List list){
 		if(list!=null&&!list.isEmpty()){
 			List<Object> comIdList = new ArrayList<Object>();
@@ -301,16 +301,16 @@ public class WithDrawerManageAction extends Action{
 				}
 				Integer state = (Integer)map.get("state");
 				map.put("create_time", TimeTools.getTime_yyyyMMdd_HHmm(ctime*1000));
-//				String tate = "µÈ´ı´¦Àí";
+//				String tate = "ç­‰å¾…å¤„ç†";
 //				if(state==2)
-//					tate = "´¦ÀíÖĞ";
+//					tate = "å¤„ç†ä¸­";
 //				else if(state==3)
-//					tate="ÒÑÖ§¸¶";
+//					tate="å·²æ”¯ä»˜";
 //				else if(state==4)
-//					tate="ÌáÏÖÊ§°Ü";
+//					tate="æç°å¤±è´¥";
 				map.put("state",state);
 			}
-			
+
 			List<Map<String, Object>> listMaps = daService.getAllMap("select id,company_name from com_info_tb where id in("+params+")", comIdList);
 			if(listMaps!=null){
 				Map<Long, Object> idNameMap = new HashMap<Long, Object>();
@@ -324,7 +324,7 @@ public class WithDrawerManageAction extends Action{
 					map.put("comid", idNameMap.get(_comid));
 				}
 			}
-			
+
 		}
 	}
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
@@ -345,33 +345,33 @@ public class WithDrawerManageAction extends Action{
 		}
 		return sqlInfo2;
 	}
-	
-	
+
+
 	private List<Object> getpublicAccount(){
 		/*
-		 * ÊÕ¿îÈËÕÊºÅ, card_number
-		ÊÕ¿îÈËÃû³Æ, name
-		ÊÕ·½¿ª»§Ö§ĞĞ,bank_pint
-		ÊÕ¿îÈËËùÔÚÊ¡,area
-		ÊÕ¿îÈËËùÔÚÊĞ,city
-		½áËã·½Ê½£¨ÆÕÍ¨£©,pay_type
-		ÆÚÍûÈÕ£¨´¦ÀíÈÕÆÚ£©,pay_date
-		ÓÃÍ¾£¨´úÊÕÍ£³µ·Ñ£©,use
-		½ğ¶î,
-		ÊÕ·½ĞĞºÅbank_no
-		ÊÕ·½¿ª»§ÒøĞĞ bank_name
+		 * æ”¶æ¬¾äººå¸å·, card_number
+		æ”¶æ¬¾äººåç§°, name
+		æ”¶æ–¹å¼€æˆ·æ”¯è¡Œ,bank_pint
+		æ”¶æ¬¾äººæ‰€åœ¨çœ,area
+		æ”¶æ¬¾äººæ‰€åœ¨å¸‚,city
+		ç»“ç®—æ–¹å¼ï¼ˆæ™®é€šï¼‰,pay_type
+		æœŸæœ›æ—¥ï¼ˆå¤„ç†æ—¥æœŸï¼‰,pay_date
+		ç”¨é€”ï¼ˆä»£æ”¶åœè½¦è´¹ï¼‰,use
+		é‡‘é¢,
+		æ”¶æ–¹è¡Œå·bank_no
+		æ”¶æ–¹å¼€æˆ·é“¶è¡Œ bank_name
 		 */
-		String [] heards = new String[]{"³µ³¡Ãû³Æ","ÉêÇëÊ±¼ä","´¦ÀíÈÕÆÚ","×´Ì¬","ÌáÏÖ½ğ¶î","ÊÕ¿îÈËÕÊºÅ","ÊÕ¿îÈËÃû³Æ","ÊÕ¿îÈËËùÔÚÊ¡","ÊÕ¿îÈËËùÔÚÊĞ","½áËã·½Ê½","ÆÚÍûÈÕ","ÓÃÍ¾","ÊÕ·½ĞĞºÅ","ÊÕ·½¿ª»§ÒøĞĞ"};
+		String [] heards = new String[]{"è½¦åœºåç§°","ç”³è¯·æ—¶é—´","å¤„ç†æ—¥æœŸ","çŠ¶æ€","æç°é‡‘é¢","æ”¶æ¬¾äººå¸å·","æ”¶æ¬¾äººåç§°","æ”¶æ¬¾äººæ‰€åœ¨çœ","æ”¶æ¬¾äººæ‰€åœ¨å¸‚","ç»“ç®—æ–¹å¼","æœŸæœ›æ—¥","ç”¨é€”","æ”¶æ–¹è¡Œå·","æ”¶æ–¹å¼€æˆ·é“¶è¡Œ"};
 		String sql = "select t.*,c.atype,c.card_number,c.name,c.mobile,c.area,c.bank_name,c.bank_pint,c.user_id ," +
 				"c.uin,c.city,c.pay_type,c.pay_date,c.use,c.bank_no  " +
 				"from withdrawer_tb t left join com_account_tb c on t.acc_id=c.id where t.state=? and wtype=? ";
 		String [] f = new String[]{"comid","create_time","update_time","state","amount","card_number","name","area","city","pay_type","pay_date","use","bank_no","bank_name"};
-		
+
 		List<Object> publicAcc = new ArrayList<Object>();
 		publicAcc.add(heards);
 		publicAcc.add(sql);
 		publicAcc.add(f);
 		return publicAcc;
-		
+
 	}
 }

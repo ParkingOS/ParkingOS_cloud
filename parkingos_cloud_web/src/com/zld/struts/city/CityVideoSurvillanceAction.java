@@ -27,16 +27,16 @@ import com.zld.utils.StringUtils;
 import freemarker.template.utility.StringUtil;
 
 public class CityVideoSurvillanceAction extends Action {
-	
+
 	@Autowired
 	private PgOnlyReadService onlyReadService;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//閻ц缍嶉惃鍕暏閹寸d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		//String target = null;
@@ -54,8 +54,8 @@ public class CityVideoSurvillanceAction extends Action {
 		Double lon = RequestUtil.getDouble(request, "lon", 0.0);
 		Double lat = RequestUtil.getDouble(request, "lat", 0.0);
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
-       	//String url ="http://api.map.baidu.com/geoconv/v1/?";
-       	//String result1 = null;
+		//String url ="http://api.map.baidu.com/geoconv/v1/?";
+		//String result1 = null;
 		if(lon>0&&lat>0){
 			//double lngp = 0.02346 * 2;
 			//double latp = 0.01792;
@@ -68,7 +68,7 @@ public class CityVideoSurvillanceAction extends Action {
 				List<Map<String, Object>> vList = new ArrayList<Map<String,Object>>();
 				for(Map<String, Object> map : result){
 					Map<String, Object> v = new HashMap<String, Object>();
-					//{ "name": "瑗块儴鏋㈢航1", "channelID": "1000002$1$0$0" }
+					//{ "name": "鐟楀潡鍎撮弸銏㈣埅1", "channelID": "1000002$1$0$0" }
 					v.put("name",map.get("video_name"));
 					v.put("channelID", map.get("channelid"));
 					vList.add(v);
@@ -76,9 +76,9 @@ public class CityVideoSurvillanceAction extends Action {
 				ret +="{\"playlist\":"+StringUtils.createJson(vList)+"}";
 				return ret;
 			}
-			//return "[[116.417854,39.921988,\"鍦板潃锛氬寳浜競涓滃煄鍖虹帇搴滀簳澶ц88鍙蜂箰澶╅摱娉扮櫨璐у叓灞俓"],"+
-			//		" [116.406605,39.921585,\"鍦板潃锛氬寳浜競涓滃煄鍖轰笢鍗庨棬澶ц\"],"+
-			//		" [116.412222,39.912345,\"鍦板潃锛氬寳浜競涓滃煄鍖烘涔夎矾鐢�鍙穃"]]";//StringUtils.createJson(result);
+			//return "[[116.417854,39.921988,\"閸︽澘娼冮敍姘娴滎剙绔舵稉婊冪厔閸栬櫣甯囨惔婊�俺婢堆嗩敎88閸欒渹绠版径鈺呮懕濞夋壆娅ㄧ拹褍鍙撶仦淇�],"+
+			//		" [116.406605,39.921585,\"閸︽澘娼冮敍姘娴滎剙绔舵稉婊冪厔閸栬桨绗㈤崡搴ㄦ，婢堆嗩敎\"],"+
+			//		" [116.412222,39.912345,\"閸︽澘娼冮敍姘娴滎剙绔舵稉婊冪厔閸栫儤顒滄稊澶庣熅閻拷閸欑﹥"]]";//StringUtils.createJson(result);
 		}
 		return "[]";
 	}

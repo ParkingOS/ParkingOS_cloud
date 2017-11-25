@@ -33,7 +33,7 @@ public class CardServiceImpl implements CardService {
 	private MemcacheUtils memcacheUtils;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	Logger logger = Logger.getLogger(CardServiceImpl.class);
 	@Override
 	public BaseResp cardCharge(CardChargeReq req) {
@@ -49,142 +49,142 @@ public class CardServiceImpl implements CardService {
 			long orderId = req.getOrderId();
 			long groupId = req.getGroupId();
 			String subOrderId = req.getSubOrderId();
-			if(cardId <= 0 
-					|| money <= 0 
-					|| chargeType < 0 
+			if(cardId <= 0
+					|| money <= 0
+					|| chargeType < 0
 					|| cashierId <= 0
 					|| groupId <= 0){
 				resp.setResult(-2);
-				resp.setErrmsg("²ÎÊı´íÎó");
-				return resp;//²ÎÊı´íÎó
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
+				return resp;//å‚æ•°é”™è¯¯
 			}
-			//----------------------------·Ö²¼Ê½Ëø--------------------------------//
+			//----------------------------åˆ†å¸ƒå¼é”--------------------------------//
 			lock = commonMethods.getLock(cardId);
-			if(!memcacheUtils.addLock(lock, 60)){//ÎªÁË·ÀÖ¹³äÖµ²¢·¢
+			if(!memcacheUtils.addLock(lock, 60)){//ä¸ºäº†é˜²æ­¢å……å€¼å¹¶å‘
 				logger.error("lock:"+lock);
 				resp.setResult(-8);
-				resp.setErrmsg("Í¬Ò»ÕÅ¿¨Æ¬Ò»·ÖÖÓÖ®ÄÚÖ»ÄÜ³äÖµÒ»´Î");
+				resp.setErrmsg("åŒä¸€å¼ å¡ç‰‡ä¸€åˆ†é’Ÿä¹‹å†…åªèƒ½å……å€¼ä¸€æ¬¡");
 				return resp;
 			}
-			//---------------------------¿¨Æ¬ĞÅÏ¢------------------------------------//
+			//---------------------------å¡ç‰‡ä¿¡æ¯------------------------------------//
 			Card card = readService.getPOJO("select * from com_nfc_tb where " +
-					" id=? and is_delete=? and type=? limit ? ", new Object[]{cardId, 0, 2, 1}, 
+							" id=? and is_delete=? and type=? limit ? ", new Object[]{cardId, 0, 2, 1},
 					Card.class);
 			if(card == null){
 				resp.setResult(-3);
-				resp.setErrmsg("¸Ã¿¨Æ¬Î´¿ª¿¨");
+				resp.setErrmsg("è¯¥å¡ç‰‡æœªå¼€å¡");
 				return resp;
 			}
 			logger.error(card.toString());
 			if(card.getGroup_id() <= 0){
 				resp.setResult(-4);
-				resp.setErrmsg("¿¨Æ¬ĞÅÏ¢´íÎó");
+				resp.setErrmsg("å¡ç‰‡ä¿¡æ¯é”™è¯¯");
 				return resp;
 			}
 			if(card.getGroup_id().intValue() != groupId){
 				resp.setResult(-5);
-				resp.setErrmsg("¿¨Æ¬²»ÊôÓÚµ±Ç°ÔËÓª¼¯ÍÅ£¬²»ÄÜ³äÖµ");
+				resp.setErrmsg("å¡ç‰‡ä¸å±äºå½“å‰è¿è¥é›†å›¢ï¼Œä¸èƒ½å……å€¼");
 				return resp;
 			}
-			if(card.getState() == 1){//×¢Ïú×´Ì¬
+			if(card.getState() == 1){//æ³¨é”€çŠ¶æ€
 				resp.setResult(-6);
-				resp.setErrmsg("¿¨Æ¬ÒÑ×¢Ïú£¬ĞèÖØĞÂ¿ª¿¨");
+				resp.setErrmsg("å¡ç‰‡å·²æ³¨é”€ï¼Œéœ€é‡æ–°å¼€å¡");
 				return resp;
 			}
-			if(card.getState() == 3){//¿ª¿¨×´Ì¬
+			if(card.getState() == 3){//å¼€å¡çŠ¶æ€
 				resp.setResult(-7);
-				resp.setErrmsg("¿¨Æ¬Î´¼¤»î");
+				resp.setErrmsg("å¡ç‰‡æœªæ¿€æ´»");
 				return resp;
 			}
 			long userId = card.getUin();
-			//---------------------------Ö§¸¶·½Ê½------------------------------------//
+			//---------------------------æ”¯ä»˜æ–¹å¼------------------------------------//
 			String remark = null;
 			switch (chargeType) {
-			case 0:
-				remark = "ÏÖ½ğ³äÖµ" + money + "Ôª";
-				break;
-			case 1:
-				remark = "Î¢ĞÅ¹«ÖÚºÅ³äÖµ" + money + "Ôª";
-				break;
-			case 2:
-				remark = "Î¢ĞÅ¿Í»§¶Ë³äÖµ" + money + "Ôª";
-				break;
-			case 3:
-				remark = "Ö§¸¶±¦¿Í»§¶Ë³äÖµ" + money + "Ôª";
-				break;
-			case 4:
-				remark = "Ô¤Ö§¸¶ÍË¿î" + money + "Ôª";
-				break;
-			case 5:
-				remark = "¶©µ¥ÍË¿î" + money + "Ôª";
-				break;
-			default:
-				break;
+				case 0:
+					remark = "ç°é‡‘å……å€¼" + money + "å…ƒ";
+					break;
+				case 1:
+					remark = "å¾®ä¿¡å…¬ä¼—å·å……å€¼" + money + "å…ƒ";
+					break;
+				case 2:
+					remark = "å¾®ä¿¡å®¢æˆ·ç«¯å……å€¼" + money + "å…ƒ";
+					break;
+				case 3:
+					remark = "æ”¯ä»˜å®å®¢æˆ·ç«¯å……å€¼" + money + "å…ƒ";
+					break;
+				case 4:
+					remark = "é¢„æ”¯ä»˜é€€æ¬¾" + money + "å…ƒ";
+					break;
+				case 5:
+					remark = "è®¢å•é€€æ¬¾" + money + "å…ƒ";
+					break;
+				default:
+					break;
 			}
-			//---------------------------¾ßÌåÂß¼­------------------------------------//
+			//---------------------------å…·ä½“é€»è¾‘------------------------------------//
 			List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-			//¸üĞÂ¿¨Æ¬Óà¶î
+			//æ›´æ–°å¡ç‰‡ä½™é¢
 			Map<String, Object> cardSqlMap = new HashMap<String, Object>();
-			//¿¨Æ¬Á÷Ë®
+			//å¡ç‰‡æµæ°´
 			Map<String, Object> cardAccountSqlMap = new HashMap<String, Object>();
-			//ÊÕ·ÑÔ±ÏÖ½ğÁ÷Ë®
+			//æ”¶è´¹å‘˜ç°é‡‘æµæ°´
 			Map<String, Object> cashAccountSqlMap = new HashMap<String, Object>();
-			//µÚÈı·½Ö§¸¶×ÓÕËºÅ³äÖµÁ÷Ë®
+			//ç¬¬ä¸‰æ–¹æ”¯ä»˜å­è´¦å·å……å€¼æµæ°´
 			Map<String, Object> subAccountSqlMap = new HashMap<String, Object>();
-			
+
 			cardSqlMap.put("sql", "update com_nfc_tb set balance=balance+? where id=?");
 			cardSqlMap.put("values", new Object[]{money, cardId});
 			bathSql.add(cardSqlMap);
 			Long card_account_id = writeService.getkey("seq_card_account_tb");
 			cardAccountSqlMap.put("sql", "insert into card_account_tb(id,uin,card_id,type,charge_type," +
 					"amount,create_time,remark,orderid,uid,groupid) values(?,?,?,?,?,?,?,?,?,?,?)");
-			cardAccountSqlMap.put("values", new Object[]{card_account_id, userId, cardId, 0, chargeType, 
+			cardAccountSqlMap.put("values", new Object[]{card_account_id, userId, cardId, 0, chargeType,
 					money, curTime, remark, orderId, cashierId, groupId});
 			bathSql.add(cardAccountSqlMap);
 			switch (chargeType) {
-			case 0://ÏÖ½ğ³äÖµ
-				cashAccountSqlMap.put("sql", "insert into parkuser_cash_tb(uin,amount,type,create_time," +
-						"target,ctype,card_account_id,groupid) values(?,?,?,?,?,?,?,?)");
-				cashAccountSqlMap.put("values", new Object[]{cashierId, money, 2, curTime, 5, 0, 
-						card_account_id, groupId});
-				bathSql.add(cashAccountSqlMap);
-				break;
-			case 1://Î¢ĞÅ¹«ÖÚºÅ³äÖµ
-			case 2://Î¢ĞÅ¿Í»§¶Ë³äÖµ
-			case 3://Ö§¸¶±¦¿Í»§¶Ë³äÖµ
-				int subType = 0;//ÔÚÏß³äÖµ·½Ê½ 0£ºÎ¢ĞÅ¹«ÖÚºÅ 1£ºÎ¢ĞÅ¿Í»§¶Ë 2£ºÖ§¸¶±¦¿Í»§¶Ë
-				if(chargeType == 2){
-					subType = 1;
-				}else if(chargeType == 3){
-					subType = 2;
-				}
-				subAccountSqlMap.put("sql", "insert into sub_account_tb(groupid,amount,sub_orderid," +
-						"create_time,card_account_id,uin,type) values(?,?,?,?,?,?,?,?)");
-				subAccountSqlMap.put("values", new Object[]{groupId, money, subOrderId, curTime, 
-						card_account_id, userId, subType});
-				bathSql.add(subAccountSqlMap);
-				break;
-			case 4://Ô¤Ö§¸¶ÍË¿î
-				//Âß¼­ºóÃæ²¹³ä........
-				break;
-			case 5://¶©µ¥ÍË¿î
-				//Âß¼­ºóÃæ²¹³ä........
-				break;
-			default:
-				break;
+				case 0://ç°é‡‘å……å€¼
+					cashAccountSqlMap.put("sql", "insert into parkuser_cash_tb(uin,amount,type,create_time," +
+							"target,ctype,card_account_id,groupid) values(?,?,?,?,?,?,?,?)");
+					cashAccountSqlMap.put("values", new Object[]{cashierId, money, 2, curTime, 5, 0,
+							card_account_id, groupId});
+					bathSql.add(cashAccountSqlMap);
+					break;
+				case 1://å¾®ä¿¡å…¬ä¼—å·å……å€¼
+				case 2://å¾®ä¿¡å®¢æˆ·ç«¯å……å€¼
+				case 3://æ”¯ä»˜å®å®¢æˆ·ç«¯å……å€¼
+					int subType = 0;//åœ¨çº¿å……å€¼æ–¹å¼ 0ï¼šå¾®ä¿¡å…¬ä¼—å· 1ï¼šå¾®ä¿¡å®¢æˆ·ç«¯ 2ï¼šæ”¯ä»˜å®å®¢æˆ·ç«¯
+					if(chargeType == 2){
+						subType = 1;
+					}else if(chargeType == 3){
+						subType = 2;
+					}
+					subAccountSqlMap.put("sql", "insert into sub_account_tb(groupid,amount,sub_orderid," +
+							"create_time,card_account_id,uin,type) values(?,?,?,?,?,?,?,?)");
+					subAccountSqlMap.put("values", new Object[]{groupId, money, subOrderId, curTime,
+							card_account_id, userId, subType});
+					bathSql.add(subAccountSqlMap);
+					break;
+				case 4://é¢„æ”¯ä»˜é€€æ¬¾
+					//é€»è¾‘åé¢è¡¥å……........
+					break;
+				case 5://è®¢å•é€€æ¬¾
+					//é€»è¾‘åé¢è¡¥å……........
+					break;
+				default:
+					break;
 			}
 			boolean r = writeService.bathUpdate2(bathSql);
 			logger.error("r:"+r);
 			if(r){
 				resp.setResult(1);
-				resp.setErrmsg("³äÖµ³É¹¦");
+				resp.setErrmsg("å……å€¼æˆåŠŸ");
 				return resp;
 			}
 			resp.setResult(-6);
-			resp.setErrmsg("³äÖµÊ§°Ü");
+			resp.setErrmsg("å……å€¼å¤±è´¥");
 		} catch (Exception e) {
 			resp.setResult(-1);
-			resp.setErrmsg("ÏµÍ³´íÎó");
+			resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		}
 		return resp;
 	}
@@ -199,53 +199,53 @@ public class CardServiceImpl implements CardService {
 			Long unbinder = req.getUnBinder();
 			Long curTime = req.getCurTime();
 			Long groupId = req.getGroupId();
-			if(cardId <= 0 
+			if(cardId <= 0
 					|| unbinder <= 0
 					|| groupId <= 0){
 				resp.setResult(-2);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
-			//-------------------------·Ö²¼Ê½Ëø---------------------------//
+			//-------------------------åˆ†å¸ƒå¼é”---------------------------//
 			lock = commonMethods.getLock(cardId);
 			if(!memcacheUtils.addLock(lock)){
 				logger.error("lock:"+lock);
 				resp.setResult(-3);
-				resp.setErrmsg("²¢·¢ÇëÇó´íÎó");
+				resp.setErrmsg("å¹¶å‘è¯·æ±‚é”™è¯¯");
 				return resp;
 			}
-			//-------------------------¿¨Æ¬ĞÅÏ¢---------------------------//
+			//-------------------------å¡ç‰‡ä¿¡æ¯---------------------------//
 			Card card = writeService.getPOJO("select * from com_nfc_tb where " +
-					" id=? and is_delete=? and type=? limit ? ", new Object[]{cardId, 0, 2, 1}, 
+							" id=? and is_delete=? and type=? limit ? ", new Object[]{cardId, 0, 2, 1},
 					Card.class);
-			//Ö÷¿â²éÑ¯·À²¢·¢
+			//ä¸»åº“æŸ¥è¯¢é˜²å¹¶å‘
 			if(card == null){
 				resp.setResult(-4);
-				resp.setErrmsg("¸Ã¿¨Æ¬Î´¿ª¿¨");
+				resp.setErrmsg("è¯¥å¡ç‰‡æœªå¼€å¡");
 				return resp;
 			}
 			logger.error(card);
 			if(card.getGroup_id() <= 0){
 				resp.setResult(-5);
-				resp.setErrmsg("¿¨Æ¬ĞÅÏ¢´íÎó");
+				resp.setErrmsg("å¡ç‰‡ä¿¡æ¯é”™è¯¯");
 				return resp;
 			}
 			if(card.getGroup_id().intValue() != groupId){
 				resp.setResult(-6);
-				resp.setErrmsg("¿¨Æ¬²»ÊôÓÚµ±Ç°ÔËÓª¼¯ÍÅ£¬²»ÄÜ×¢Ïú");
+				resp.setErrmsg("å¡ç‰‡ä¸å±äºå½“å‰è¿è¥é›†å›¢ï¼Œä¸èƒ½æ³¨é”€");
 				return resp;
 			}
-			if(card.getState() == 1){//×¢Ïú×´Ì¬
+			if(card.getState() == 1){//æ³¨é”€çŠ¶æ€
 				resp.setResult(-7);
-				resp.setErrmsg("¿¨Æ¬ÒÑ×¢Ïú");
+				resp.setErrmsg("å¡ç‰‡å·²æ³¨é”€");
 				return resp;
 			}
 			Double balance = card.getBalance();
 			int state = card.getState();
-			//-------------------------ÅĞ¶ÏÊÇ·ñÓĞÎ´´¦Àí¶©µ¥---------------------------//
+			//-------------------------åˆ¤æ–­æ˜¯å¦æœ‰æœªå¤„ç†è®¢å•---------------------------//
 			List<Order> orderList = readService.getPOJOList("select * from order_tb" +
-					" where nfc_uuid=? and state<>? ", 
-					new Object[]{card.getNfc_uuid(), 1}, Order.class);//nfc_uuidÓĞË÷Òı
+							" where nfc_uuid=? and state<>? ",
+					new Object[]{card.getNfc_uuid(), 1}, Order.class);//nfc_uuidæœ‰ç´¢å¼•
 			if(orderList != null && !orderList.isEmpty()){
 				String ids = null;
 				for(Order order : orderList){
@@ -257,26 +257,26 @@ public class CardServiceImpl implements CardService {
 				}
 				logger.error("orderids:"+ids);
 				resp.setResult(-8);
-				resp.setErrmsg("¿¨Æ¬´æÔÚÎ´´¦Àí¶©µ¥£¬ĞèÏÈ´¦Àí£¬¶©µ¥±àºÅ£º"+ids);
+				resp.setErrmsg("å¡ç‰‡å­˜åœ¨æœªå¤„ç†è®¢å•ï¼Œéœ€å…ˆå¤„ç†ï¼Œè®¢å•ç¼–å·ï¼š"+ids);
 				return resp;
 			}
-			//-------------------------¾ßÌåÂß¼­---------------------------//
-			String remark = "×¢Ïú¿¨Æ¬£¬ÍË»¹Óà¶î"+balance+"Ôª";
-			if(state == 3){//¿ª¿¨£¨´ËÊ±µÄ¿¨Æ¬»¹²»ÄÜÓÃ£¬Òª¼¤»îºó²Å¿ÉÊ¹ÓÃ£©
-				remark = "×¢ÏúÎ´¼¤»î¿¨Æ¬";
-				balance = 0d;//¿¨Æ¬ÉĞÎ´Âô³ö£¬Ã»ÓĞÍË¿î²Ù×÷£¬Êµ¼Ê²Ù×÷½ğ¶îÎª0
+			//-------------------------å…·ä½“é€»è¾‘---------------------------//
+			String remark = "æ³¨é”€å¡ç‰‡ï¼Œé€€è¿˜ä½™é¢"+balance+"å…ƒ";
+			if(state == 3){//å¼€å¡ï¼ˆæ­¤æ—¶çš„å¡ç‰‡è¿˜ä¸èƒ½ç”¨ï¼Œè¦æ¿€æ´»åæ‰å¯ä½¿ç”¨ï¼‰
+				remark = "æ³¨é”€æœªæ¿€æ´»å¡ç‰‡";
+				balance = 0d;//å¡ç‰‡å°šæœªå–å‡ºï¼Œæ²¡æœ‰é€€æ¬¾æ“ä½œï¼Œå®é™…æ“ä½œé‡‘é¢ä¸º0
 			}
 			logger.error("balance:"+balance);
 			List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-			//¸üĞÂ¿¨Æ¬Óà¶î
+			//æ›´æ–°å¡ç‰‡ä½™é¢
 			Map<String, Object> cardSqlMap = new HashMap<String, Object>();
-			//Ğ´¿¨Æ¬Á÷Ë®
+			//å†™å¡ç‰‡æµæ°´
 			Map<String, Object> cardAccountSqlMap = new HashMap<String, Object>();
-			//Ğ´ÊÕ·ÑÔ±ÏÖ½ğÁ÷Ë®
+			//å†™æ”¶è´¹å‘˜ç°é‡‘æµæ°´
 			Map<String, Object> cashSqlMap = new HashMap<String, Object>();
-			//¿¨Æ¬ºÍ³µÅÆ¹ØÁª±í
+			//å¡ç‰‡å’Œè½¦ç‰Œå…³è”è¡¨
 			Map<String, Object> cardCarSqlMap = new HashMap<String, Object>();
-			
+
 			cardSqlMap.put("sql", "update com_nfc_tb set state=?,cancel_id=?," +
 					"cancel_time=?,balance=?,uin=? where id=?");
 			cardSqlMap.put("values", new Object[]{1, unbinder, curTime, 0d, -1, cardId});
@@ -287,7 +287,7 @@ public class CardServiceImpl implements CardService {
 			cardAccountSqlMap.put("values", new Object[]{accountId, cardId, 5, balance, curTime,
 					remark, unbinder, card.getUin(), groupId});
 			bathSql.add(cardAccountSqlMap);
-			if(state != 3){//3£º¿ª¿¨£¨´ËÊ±µÄ¿¨Æ¬»¹²»ÄÜÓÃ£¬Òª¼¤»îºó²Å¿ÉÊ¹ÓÃ£©£¬´ËÊ±µÄ¿¨Æ¬ÉĞÎ´Âô³ö£¬ÎŞĞèĞ´ÍË¿îÁ÷Ë®
+			if(state != 3){//3ï¼šå¼€å¡ï¼ˆæ­¤æ—¶çš„å¡ç‰‡è¿˜ä¸èƒ½ç”¨ï¼Œè¦æ¿€æ´»åæ‰å¯ä½¿ç”¨ï¼‰ï¼Œæ­¤æ—¶çš„å¡ç‰‡å°šæœªå–å‡ºï¼Œæ— éœ€å†™é€€æ¬¾æµæ°´
 				cashSqlMap.put("sql", "insert into parkuser_cash_tb(uin,amount,type,create_time," +
 						"target,ctype,card_account_id,groupid) values(?,?,?,?,?,?,?,?)");
 				cashSqlMap.put("values", new Object[]{unbinder, balance, 2, curTime,
@@ -304,18 +304,18 @@ public class CardServiceImpl implements CardService {
 			logger.error("b:"+b);
 			if(b){
 				resp.setResult(1);
-				resp.setErrmsg("×¢Ïú³É¹¦");
+				resp.setErrmsg("æ³¨é”€æˆåŠŸ");
 				return resp;
 			}
 			resp.setResult(-9);
-			resp.setErrmsg("×¢ÏúÊ§°Ü");
+			resp.setErrmsg("æ³¨é”€å¤±è´¥");
 		} catch (Exception e) {
 			logger.error(e);
 			resp.setResult(-1);
-			resp.setErrmsg("ÏµÍ³´íÎó");
+			resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		} finally {
 			boolean b = memcacheUtils.delLock(lock);
-			logger.error("É¾³ıËølock:"+lock+"b:"+b);
+			logger.error("åˆ é™¤é”lock:"+lock+"b:"+b);
 		}
 		return resp;
 	}
@@ -332,89 +332,89 @@ public class CardServiceImpl implements CardService {
 			String carNumber = req.getCarNumber();
 			Long curTime = req.getCurTime();
 			long groupId = req.getGroupId();
-			//Ã»ÓĞ²´Î»ÊôĞÔ
+			//æ²¡æœ‰æ³Šä½å±æ€§
 			if(cardId <= 0
 					|| binder <= 0
-					//ÊÖ»úºÅºÍ³µÅÆºÅ²»ÄÜ¶¼Îª¿Õ
+					//æ‰‹æœºå·å’Œè½¦ç‰Œå·ä¸èƒ½éƒ½ä¸ºç©º
 					|| (carNumber == null || "".equals(carNumber))
 					|| (mobile == null || "".equals(mobile))
 					|| groupId <= 0){
 				resp.setResult(-2);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
-			//----------------------------Ğ£ÑéÊÖ»úºÅºÍ³µÅÆºÅ------------------------//
+			//----------------------------æ ¡éªŒæ‰‹æœºå·å’Œè½¦ç‰Œå·------------------------//
 			boolean m = StringUtils.checkMobile(mobile);
 			if(!m){
 				resp.setResult(-13);
-				resp.setErrmsg("ÇëÊäÈëÕıÈ·µÄÊÖ»úºÅ");
+				resp.setErrmsg("è¯·è¾“å…¥æ­£ç¡®çš„æ‰‹æœºå·");
 				return resp;
 			}
 			List<String> plateList = new ArrayList<String>();
 			if(carNumber != null){
-				//¶à³µÅÆÒÔÓ¢ÎÄ¶ººÅ¸ô¿ª
+				//å¤šè½¦ç‰Œä»¥è‹±æ–‡é€—å·éš”å¼€
 				String[] cars = carNumber.split(",");
 				for(int i = 0; i< cars.length; i++){
 					String plate = cars[i];
 					plateList.add(plate);
 					if(!StringUtils.checkPlate(plate)){
 						resp.setResult(-14);
-						resp.setErrmsg("ÇëÊäÈëÕıÈ·µÄ³µÅÆºÅ£¬¶à¸ö³µÅÆÒÔÓ¢ÎÄ¶ººÅ¸ô¿ª");
+						resp.setErrmsg("è¯·è¾“å…¥æ­£ç¡®çš„è½¦ç‰Œå·ï¼Œå¤šä¸ªè½¦ç‰Œä»¥è‹±æ–‡é€—å·éš”å¼€");
 						return resp;
 					}
 				}
 			}
-			//----------------------------·Ö²¼Ê½Ëø--------------------------------//
+			//----------------------------åˆ†å¸ƒå¼é”--------------------------------//
 			lock = commonMethods.getLock(cardId);
 			if(!memcacheUtils.addLock(lock)){
 				logger.error("lock:"+lock);
 				resp.setResult(-12);
-				resp.setErrmsg("²¢·¢ÇëÇó´íÎó");
+				resp.setErrmsg("å¹¶å‘è¯·æ±‚é”™è¯¯");
 				return resp;
 			}
-			//--------------------Ğ£Ñé¿¨Æ¬---------------------//
+			//--------------------æ ¡éªŒå¡ç‰‡---------------------//
 			Card card = writeService.getPOJO("select * from com_nfc_tb where " +
-					" id=? and is_delete=? and type=? ", 
+							" id=? and is_delete=? and type=? ",
 					new Object[]{cardId, 0, 2}, Card.class);
-			//Ö÷¿â²éÑ¯·À²¢·¢
+			//ä¸»åº“æŸ¥è¯¢é˜²å¹¶å‘
 			if(card == null){
 				resp.setResult(-3);
-				resp.setErrmsg("¿¨Æ¬²»´æÔÚ");
+				resp.setErrmsg("å¡ç‰‡ä¸å­˜åœ¨");
 				return resp;
 			}
 			logger.error(card.toString());
 			int state = card.getState();
 			switch (state) {
-				case 0://0£ºÒÑ¼¤»îÎ´°ó¶¨
-				case 2://2£ºÒÑ°ó¶¨ÓÃ»§
-				case 4://4£ºÒÑ°ó¶¨³µÅÆºÅ
+				case 0://0ï¼šå·²æ¿€æ´»æœªç»‘å®š
+				case 2://2ï¼šå·²ç»‘å®šç”¨æˆ·
+				case 4://4ï¼šå·²ç»‘å®šè½¦ç‰Œå·
 					break;
-				case 1://×¢Ïú×´Ì¬
+				case 1://æ³¨é”€çŠ¶æ€
 					resp.setResult(-6);
-					resp.setErrmsg("¸Ã¿¨Æ¬ÒÑ±»×¢Ïú£¬ĞèÖØĞÂ¿ª¿¨");
+					resp.setErrmsg("è¯¥å¡ç‰‡å·²è¢«æ³¨é”€ï¼Œéœ€é‡æ–°å¼€å¡");
 					return resp;
-				case 3://3£º¿ª¿¨
+				case 3://3ï¼šå¼€å¡
 					resp.setResult(-8);
-					resp.setErrmsg("¿¨Æ¬Ã»ÓĞ¼¤»î");
+					resp.setErrmsg("å¡ç‰‡æ²¡æœ‰æ¿€æ´»");
 					return resp;
 				default:
 					resp.setResult(-9);
-					resp.setErrmsg("¿¨Æ¬ĞÅÏ¢´íÎó");
+					resp.setErrmsg("å¡ç‰‡ä¿¡æ¯é”™è¯¯");
 					return resp;
 			}
-			//--------------------¾ßÌåÂß¼­---------------------//
+			//--------------------å…·ä½“é€»è¾‘---------------------//
 			List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-			//ÓÃ»§
+			//ç”¨æˆ·
 			Map<String, Object> userSqlMap = new HashMap<String, Object>();
-			//¿¨Æ¬ºÍ³µÅÆ¹ØÁª±í
+			//å¡ç‰‡å’Œè½¦ç‰Œå…³è”è¡¨
 			Map<String, Object> cardCarSqlMap = new HashMap<String, Object>();
-			//°ó¶¨¿¨Æ¬
+			//ç»‘å®šå¡ç‰‡
 			Map<String, Object> cardSqlMap = new HashMap<String, Object>();
-			//¿¨Æ¬Á÷Ë®°ó¶¨ÓÃ»§
+			//å¡ç‰‡æµæ°´ç»‘å®šç”¨æˆ·
 			Map<String, Object> bindAccountSqlMap = new HashMap<String, Object>();
-			//¿¨Æ¬Á÷Ë®
+			//å¡ç‰‡æµæ°´
 			Map<String, Object> cardAccountSqlMap = new HashMap<String, Object>();
-			
+
 			Long userId = -1L;
 			Map<String, Object> userMap = readService.getMap("select id from user_info_tb" +
 					" where mobile=? and auth_flag=? ", new Object[]{mobile, 4});
@@ -423,41 +423,41 @@ public class CardServiceImpl implements CardService {
 				String strid = userId+"zld";
 				userSqlMap.put("sql", "insert into user_info_tb (id,nickname,password,strid," +
 						"reg_time,mobile,auth_flag,comid) values (?,?,?,?,?,?,?,?)");
-				userSqlMap.put("values", new Object[]{userId, "³µÖ÷", strid, strid, curTime, mobile, 4, 0});
+				userSqlMap.put("values", new Object[]{userId, "è½¦ä¸»", strid, strid, curTime, mobile, 4, 0});
 				bathSql.add(userSqlMap);
 			}else{
 				userId = (Long)userMap.get("id");
 			}
 			logger.error("userId:"+userId+",mobile:"+mobile);
 			if(plateList != null && !plateList.isEmpty()){
-				//-------------------------------¼ì²é³µÅÆÊÇ·ñ±»±ğÈË°ó¶¨£¬¶¼Ã»ÓĞ°ó¶¨¾Í²åÈëÒ»Ìõ--------------------------//
+				//-------------------------------æ£€æŸ¥è½¦ç‰Œæ˜¯å¦è¢«åˆ«äººç»‘å®šï¼Œéƒ½æ²¡æœ‰ç»‘å®šå°±æ’å…¥ä¸€æ¡--------------------------//
 				for(String car : plateList){
-					//É¾³ı³µÅÆºÅ(ÊéÓã¾ö¶¨µÄ£¬²»Í¨ÖªÓÃ»§Ç¿ĞĞÉ¾³ıÓÃ»§ºÍ³µÅÆµÄ°ó¶¨¹ØÏµ)
+					//åˆ é™¤è½¦ç‰Œå·(ä¹¦é±¼å†³å®šçš„ï¼Œä¸é€šçŸ¥ç”¨æˆ·å¼ºè¡Œåˆ é™¤ç”¨æˆ·å’Œè½¦ç‰Œçš„ç»‘å®šå…³ç³»)
 					Map<String, Object> delCarSqlMap = new HashMap<String, Object>();
 					delCarSqlMap.put("sql", "update car_info_tb set state=? where car_number=? and " +
-						" state=? and uin>? and uin<>? ");
+							" state=? and uin>? and uin<>? ");
 					delCarSqlMap.put("values", new Object[]{0, car, 1, 0, userId});
 					bathSql.add(delCarSqlMap);
-					
+
 					Long count = readService.getLong("select count(id) from car_info_tb where car_number=? and " +
 							" state=? and uin=? ", new Object[]{car, 1, userId});
 					if(count == 0){
-						//Ìí¼Ó³µÅÆºÅ
+						//æ·»åŠ è½¦ç‰Œå·
 						Map<String, Object> carSqlMap = new HashMap<String, Object>();
 						carSqlMap.put("sql", "insert into car_info_tb (uin,car_number,create_time) values (?,?,?)");
 						carSqlMap.put("values", new Object[]{userId, car, curTime});
 						bathSql.add(carSqlMap);
 					}
 				}
-				//----------------------------------É¾³ıÒÔÇ°µÄ³µÅÆ-----------------------------------//
+				//----------------------------------åˆ é™¤ä»¥å‰çš„è½¦ç‰Œ-----------------------------------//
 				List<Car> carList = readService.getPOJOList("select id,car_number from car_info_tb where uin=? and " +
 						" state=? ", new Object[]{userId, 1}, Car.class);
 				if(carList != null && !carList.isEmpty()){
 					for(Car car : carList){
 						String plate = car.getCar_number();
 						Long id = car.getId();
-						if(!plateList.contains(plate)){//ÆäËûµÄ³µÅÆÉ¾³ıµô
-							//É¾³ı³µÅÆºÅ
+						if(!plateList.contains(plate)){//å…¶ä»–çš„è½¦ç‰Œåˆ é™¤æ‰
+							//åˆ é™¤è½¦ç‰Œå·
 							Map<String, Object> carSqlMap = new HashMap<String, Object>();
 							carSqlMap.put("sql", "update car_info_tb set state=? where id=? ");
 							carSqlMap.put("values", new Object[]{0, id});
@@ -469,19 +469,19 @@ public class CardServiceImpl implements CardService {
 			cardSqlMap.put("sql", "update com_nfc_tb set state=?,uin=?,uid=?,update_time=? where id=?");
 			cardSqlMap.put("values", new Object[]{2, userId, binder, curTime, card.getId()});
 			bathSql.add(cardSqlMap);
-			
+
 			cardAccountSqlMap.put("sql", "insert into card_account_tb(card_id,type,create_time,remark,uid," +
 					"uin,comid,berthseg_id,groupid) values(?,?,?,?,?,?,?,?,?)");
-			cardAccountSqlMap.put("values", new Object[]{card.getId(), 4, curTime, "°ó¶¨ÓÃ»§£¬ÊÖ»úºÅ:" + mobile,
+			cardAccountSqlMap.put("values", new Object[]{card.getId(), 4, curTime, "ç»‘å®šç”¨æˆ·ï¼Œæ‰‹æœºå·:" + mobile,
 					binder, userId, -1L, -1L, groupId});
 			bathSql.add(cardAccountSqlMap);
-			
-			bindAccountSqlMap.put("sql", "update card_account_tb set uin=? where card_id=? and uin<=? ");//state=0¼¤»î
+
+			bindAccountSqlMap.put("sql", "update card_account_tb set uin=? where card_id=? and uin<=? ");//state=0æ¿€æ´»
 			bindAccountSqlMap.put("values", new Object[]{userId, card.getId(), 0});
 			bathSql.add(bindAccountSqlMap);
-			
-			if(state == 4){//°ó¶¨µÄ³µÅÆºÅ
-				//ºÍÊéÓã¾ö¶¨£¬Ô­À´µÄ³µÅÆ°ó¶¨Êı¾İ»áÉ¾µô,²»×Ô¶¯µ¼Èë³µÅÆ±í
+
+			if(state == 4){//ç»‘å®šçš„è½¦ç‰Œå·
+				//å’Œä¹¦é±¼å†³å®šï¼ŒåŸæ¥çš„è½¦ç‰Œç»‘å®šæ•°æ®ä¼šåˆ æ‰,ä¸è‡ªåŠ¨å¯¼å…¥è½¦ç‰Œè¡¨
 				cardCarSqlMap.put("sql", "update card_carnumber_tb set is_delete=? where card_id=? " +
 						" and is_delete=? ");
 				cardCarSqlMap.put("values", new Object[]{1, cardId, 0});
@@ -491,19 +491,19 @@ public class CardServiceImpl implements CardService {
 			logger.error("b:"+b);
 			if(b){
 				resp.setResult(1);
-				resp.setErrmsg("°ó¶¨³É¹¦");
+				resp.setErrmsg("ç»‘å®šæˆåŠŸ");
 				return resp;
 			}
 			resp.setResult(-11);
-			resp.setErrmsg("°ó¶¨Ê§°Ü");
+			resp.setErrmsg("ç»‘å®šå¤±è´¥");
 		} catch (Exception e) {
 			logger.error(e);
 		} finally {
 			boolean b = memcacheUtils.delLock(lock);
-			logger.error("É¾³ıËølock:"+lock+"b:"+b);
+			logger.error("åˆ é™¤é”lock:"+lock+"b:"+b);
 		}
 		resp.setResult(-1);
-		resp.setErrmsg("ÏµÍ³´íÎó");
+		resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		return resp;
 	}
 
@@ -517,65 +517,65 @@ public class CardServiceImpl implements CardService {
 			Long unbinder = req.getUnBinder();
 			Long curTime = req.getCurTime();
 			Long groupId = req.getGroupId();
-			if(cardId <= 0 
+			if(cardId <= 0
 					|| unbinder <= 0
 					|| groupId <= 0){
 				resp.setResult(-2);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
-			//-------------------------·Ö²¼Ê½Ëø---------------------------//
+			//-------------------------åˆ†å¸ƒå¼é”---------------------------//
 			lock = commonMethods.getLock(cardId);
 			if(!memcacheUtils.addLock(lock)){
 				logger.error("lock:"+lock);
 				resp.setResult(-3);
-				resp.setErrmsg("²¢·¢ÇëÇó´íÎó");
+				resp.setErrmsg("å¹¶å‘è¯·æ±‚é”™è¯¯");
 				return resp;
 			}
-			//-------------------------¿¨Æ¬ĞÅÏ¢---------------------------//
+			//-------------------------å¡ç‰‡ä¿¡æ¯---------------------------//
 			Card card = writeService.getPOJO("select * from com_nfc_tb where " +
-					" id=? and is_delete=? and type=? limit ? ", new Object[]{cardId, 0, 2, 1}, 
+							" id=? and is_delete=? and type=? limit ? ", new Object[]{cardId, 0, 2, 1},
 					Card.class);
-			//Ö÷¿â²éÑ¯·À²¢·¢
+			//ä¸»åº“æŸ¥è¯¢é˜²å¹¶å‘
 			if(card == null){
 				resp.setResult(-4);
-				resp.setErrmsg("¸Ã¿¨Æ¬Î´¿ª¿¨");
+				resp.setErrmsg("è¯¥å¡ç‰‡æœªå¼€å¡");
 				return resp;
 			}
 			logger.error(card);
 			if(card.getGroup_id() <= 0){
 				resp.setResult(-5);
-				resp.setErrmsg("¿¨Æ¬ĞÅÏ¢´íÎó");
+				resp.setErrmsg("å¡ç‰‡ä¿¡æ¯é”™è¯¯");
 				return resp;
 			}
 			if(card.getGroup_id().intValue() != groupId){
 				resp.setResult(-6);
-				resp.setErrmsg("¿¨Æ¬²»ÊôÓÚµ±Ç°ÔËÓª¼¯ÍÅ£¬²»ÄÜ½â°ó");
+				resp.setErrmsg("å¡ç‰‡ä¸å±äºå½“å‰è¿è¥é›†å›¢ï¼Œä¸èƒ½è§£ç»‘");
 				return resp;
 			}
 			int state = card.getState();
 			long userId = card.getUin();
 			switch (state) {
-			case 0://0:¼¤»î
-			case 3://0:¿ª¿¨
-				resp.setResult(-10);
-				resp.setErrmsg("¿¨Æ¬Î´°ó¶¨ÓÃ»§»òÕß³µÅÆ");
-				return resp;
-			case 1://×¢Ïú×´Ì¬
-				resp.setResult(-7);
-				resp.setErrmsg("¿¨Æ¬ÒÑ×¢Ïú");
-				return resp;
-			default:
-				break;
+				case 0://0:æ¿€æ´»
+				case 3://0:å¼€å¡
+					resp.setResult(-10);
+					resp.setErrmsg("å¡ç‰‡æœªç»‘å®šç”¨æˆ·æˆ–è€…è½¦ç‰Œ");
+					return resp;
+				case 1://æ³¨é”€çŠ¶æ€
+					resp.setResult(-7);
+					resp.setErrmsg("å¡ç‰‡å·²æ³¨é”€");
+					return resp;
+				default:
+					break;
 			}
-			//-------------------------²éÑ¯°ó¶¨ĞÅÏ¢------------------------//
+			//-------------------------æŸ¥è¯¢ç»‘å®šä¿¡æ¯------------------------//
 			String remark = null;
 			if(state == 2 && userId > 0){
-				logger.error("¿¨Æ¬°ó¶¨µÄÓÃ»§£¬½â³ı°ó¶¨£¬userId:" + userId);
+				logger.error("å¡ç‰‡ç»‘å®šçš„ç”¨æˆ·ï¼Œè§£é™¤ç»‘å®šï¼ŒuserId:" + userId);
 				Map<String, Object> userMap = readService.getMap("select mobile from user_info_tb " +
 						" where id=? ", new Object[]{userId});
 				if(userMap != null){
-					remark = "½â°óÓÃ»§£¬ÊÖ»úºÅ£º" + userMap.get("mobile");
+					remark = "è§£ç»‘ç”¨æˆ·ï¼Œæ‰‹æœºå·ï¼š" + userMap.get("mobile");
 				}
 			}else if(state == 4){
 				List<CardCarNumber> ccList = readService.getPOJOList("select car_number from card_carnumber_tb" +
@@ -586,38 +586,38 @@ public class CardServiceImpl implements CardService {
 						if("".equals(carNumber)){
 							carNumber = c.getCar_number();
 						}else{
-							carNumber += ("£¬" + c.getCar_number());
+							carNumber += ("ï¼Œ" + c.getCar_number());
 						}
 					}
 				}
-				remark = "½â°ó³µÅÆºÅ£¬³µÅÆºÅ£º" + carNumber;
+				remark = "è§£ç»‘è½¦ç‰Œå·ï¼Œè½¦ç‰Œå·ï¼š" + carNumber;
 			}
 			logger.error("remark:" + remark);
-			//-------------------------¾ßÌåÂß¼­---------------------------//
+			//-------------------------å…·ä½“é€»è¾‘---------------------------//
 			List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-			//¸üĞÂ¿¨Æ¬Óà¶î
+			//æ›´æ–°å¡ç‰‡ä½™é¢
 			Map<String, Object> cardSqlMap = new HashMap<String, Object>();
-			//Ğ´¿¨Æ¬Á÷Ë®
+			//å†™å¡ç‰‡æµæ°´
 			Map<String, Object> cardAccountSqlMap = new HashMap<String, Object>();
-			//¿¨Æ¬ºÍ³µÅÆ¹ØÁª±í
+			//å¡ç‰‡å’Œè½¦ç‰Œå…³è”è¡¨
 			Map<String, Object> cardCarSqlMap = new HashMap<String, Object>();
-			//¸üĞÂÖ®Ç°Á÷Ë®
+			//æ›´æ–°ä¹‹å‰æµæ°´
 			Map<String, Object> bindAccountSqlMap = new HashMap<String, Object>();
-			
+
 			cardSqlMap.put("sql", "update com_nfc_tb set state=?,uin=? where id=?");
 			cardSqlMap.put("values", new Object[]{0, -1, cardId});
 			bathSql.add(cardSqlMap);
 			long accountId = writeService.getkey("seq_card_account_tb");
 			cardAccountSqlMap.put("sql", "insert into card_account_tb(id,card_id,type,create_time," +
 					"remark,uid,uin,groupid) values(?,?,?,?,?,?,?,?)");
-			cardAccountSqlMap.put("values", new Object[]{accountId, cardId, 6, curTime, remark, 
+			cardAccountSqlMap.put("values", new Object[]{accountId, cardId, 6, curTime, remark,
 					unbinder, -1, groupId});
 			bathSql.add(cardAccountSqlMap);
-			if(state == 2){//°ó¶¨ÁËÓÃ»§
-				bindAccountSqlMap.put("sql", "update card_account_tb set uin=? where card_id=? and uin>? ");//state=0¼¤»î
+			if(state == 2){//ç»‘å®šäº†ç”¨æˆ·
+				bindAccountSqlMap.put("sql", "update card_account_tb set uin=? where card_id=? and uin>? ");//state=0æ¿€æ´»
 				bindAccountSqlMap.put("values", new Object[]{-1, card.getId(), 0});
 				bathSql.add(bindAccountSqlMap);
-			}else if(state == 4){//°ó¶¨³µÅÆºÅ
+			}else if(state == 4){//ç»‘å®šè½¦ç‰Œå·
 				cardCarSqlMap.put("sql", "update card_carnumber_tb set is_delete=? where card_id=? " +
 						" and is_delete=? ");
 				cardCarSqlMap.put("values", new Object[]{1, cardId, 0});
@@ -627,18 +627,18 @@ public class CardServiceImpl implements CardService {
 			logger.error("b:"+b);
 			if(b){
 				resp.setResult(1);
-				resp.setErrmsg("½â°ó³É¹¦");
+				resp.setErrmsg("è§£ç»‘æˆåŠŸ");
 				return resp;
 			}
 			resp.setResult(-9);
-			resp.setErrmsg("½â°óÊ§°Ü");
+			resp.setErrmsg("è§£ç»‘å¤±è´¥");
 		} catch (Exception e) {
 			logger.error(e);
 			resp.setResult(-1);
-			resp.setErrmsg("ÏµÍ³´íÎó");
+			resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		} finally {
 			boolean b = memcacheUtils.delLock(lock);
-			logger.error("É¾³ıËølock:"+lock+"b:"+b);
+			logger.error("åˆ é™¤é”lock:"+lock+"b:"+b);
 		}
 		return resp;
 	}
@@ -655,97 +655,97 @@ public class CardServiceImpl implements CardService {
 			String carNumber = req.getCarNumber();
 			Long curTime = req.getCurTime();
 			long groupId = req.getGroupId();
-			//Ã»ÓĞ²´Î»ÊôĞÔ
+			//æ²¡æœ‰æ³Šä½å±æ€§
 			if(cardId <= 0
 					|| binder <= 0
-					//ÊÖ»úºÅºÍ³µÅÆºÅ²»ÄÜ¶¼Îª¿Õ
+					//æ‰‹æœºå·å’Œè½¦ç‰Œå·ä¸èƒ½éƒ½ä¸ºç©º
 					|| (carNumber == null || "".equals(carNumber))
 					|| (mobile != null && !"".equals(mobile))
 					|| groupId <= 0){
 				resp.setResult(-2);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
-			//----------------------------Ğ£Ñé³µÅÆºÅ------------------------//
+			//----------------------------æ ¡éªŒè½¦ç‰Œå·------------------------//
 			List<String> plateList = new ArrayList<String>();
-			//¶à³µÅÆÒÔÓ¢ÎÄ¶ººÅ¸ô¿ª
+			//å¤šè½¦ç‰Œä»¥è‹±æ–‡é€—å·éš”å¼€
 			String[] cars = carNumber.split(",");
 			for(int i = 0; i< cars.length; i++){
 				String plate = cars[i];
 				plateList.add(plate);
 				if(!StringUtils.checkPlate(plate)){
 					resp.setResult(-14);
-					resp.setErrmsg("ÇëÊäÈëÕıÈ·µÄ³µÅÆºÅ£¬¶à¸ö³µÅÆÒÔÓ¢ÎÄ¶ººÅ¸ô¿ª");
+					resp.setErrmsg("è¯·è¾“å…¥æ­£ç¡®çš„è½¦ç‰Œå·ï¼Œå¤šä¸ªè½¦ç‰Œä»¥è‹±æ–‡é€—å·éš”å¼€");
 					return resp;
 				}
 			}
-			//----------------------------·Ö²¼Ê½Ëø--------------------------------//
+			//----------------------------åˆ†å¸ƒå¼é”--------------------------------//
 			lock = commonMethods.getLock(cardId);
 			if(!memcacheUtils.addLock(lock)){
 				logger.error("lock:"+lock);
 				resp.setResult(-12);
-				resp.setErrmsg("²¢·¢ÇëÇó´íÎó");
+				resp.setErrmsg("å¹¶å‘è¯·æ±‚é”™è¯¯");
 				return resp;
 			}
-			//--------------------Ğ£Ñé¿¨Æ¬---------------------//
+			//--------------------æ ¡éªŒå¡ç‰‡---------------------//
 			Card card = writeService.getPOJO("select * from com_nfc_tb where " +
-					" id=? and is_delete=? and type=? ", 
+							" id=? and is_delete=? and type=? ",
 					new Object[]{cardId, 0, 2}, Card.class);
-			//Ö÷¿â²éÑ¯·À²¢·¢
+			//ä¸»åº“æŸ¥è¯¢é˜²å¹¶å‘
 			if(card == null){
 				resp.setResult(-3);
-				resp.setErrmsg("¿¨Æ¬²»´æÔÚ");
+				resp.setErrmsg("å¡ç‰‡ä¸å­˜åœ¨");
 				return resp;
 			}
 			logger.error(card.toString());
 			int state = card.getState();
 			switch (state) {
-				case 0://0£ºÒÑ¼¤»îÎ´°ó¶¨
-				case 2://2£ºÒÑ°ó¶¨ÓÃ»§
-				case 4://4£ºÒÑ°ó¶¨³µÅÆºÅ
+				case 0://0ï¼šå·²æ¿€æ´»æœªç»‘å®š
+				case 2://2ï¼šå·²ç»‘å®šç”¨æˆ·
+				case 4://4ï¼šå·²ç»‘å®šè½¦ç‰Œå·
 					break;
-				case 1://×¢Ïú×´Ì¬
+				case 1://æ³¨é”€çŠ¶æ€
 					resp.setResult(-6);
-					resp.setErrmsg("¸Ã¿¨Æ¬ÒÑ±»×¢Ïú£¬ĞèÖØĞÂ¿ª¿¨");
+					resp.setErrmsg("è¯¥å¡ç‰‡å·²è¢«æ³¨é”€ï¼Œéœ€é‡æ–°å¼€å¡");
 					return resp;
-				case 3://3£º¿ª¿¨
+				case 3://3ï¼šå¼€å¡
 					resp.setResult(-8);
-					resp.setErrmsg("¿¨Æ¬Ã»ÓĞ¼¤»î");
+					resp.setErrmsg("å¡ç‰‡æ²¡æœ‰æ¿€æ´»");
 					return resp;
 				default:
 					resp.setResult(-9);
-					resp.setErrmsg("¿¨Æ¬ĞÅÏ¢´íÎó");
+					resp.setErrmsg("å¡ç‰‡ä¿¡æ¯é”™è¯¯");
 					return resp;
 			}
-			//--------------------¾ßÌåÂß¼­---------------------//
+			//--------------------å…·ä½“é€»è¾‘---------------------//
 			List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-			//°ó¶¨¿¨Æ¬
+			//ç»‘å®šå¡ç‰‡
 			Map<String, Object> cardSqlMap = new HashMap<String, Object>();
-			//¿¨Æ¬Á÷Ë®°ó¶¨ÓÃ»§
+			//å¡ç‰‡æµæ°´ç»‘å®šç”¨æˆ·
 			Map<String, Object> bindAccountSqlMap = new HashMap<String, Object>();
-			//¿¨Æ¬Á÷Ë®
+			//å¡ç‰‡æµæ°´
 			Map<String, Object> cardAccountSqlMap = new HashMap<String, Object>();
-			
+
 			cardSqlMap.put("sql", "update com_nfc_tb set state=?,uin=?,uid=?,update_time=? where id=?");
 			cardSqlMap.put("values", new Object[]{4, -1L, binder, curTime, card.getId()});
 			bathSql.add(cardSqlMap);
-			
+
 			cardAccountSqlMap.put("sql", "insert into card_account_tb(card_id,type,create_time,remark,uid," +
 					"uin,comid,berthseg_id,groupid) values(?,?,?,?,?,?,?,?,?)");
-			cardAccountSqlMap.put("values", new Object[]{card.getId(), 4, curTime, "°ó¶¨³µÅÆºÅ£¬³µÅÆºÅ:" + carNumber,
+			cardAccountSqlMap.put("values", new Object[]{card.getId(), 4, curTime, "ç»‘å®šè½¦ç‰Œå·ï¼Œè½¦ç‰Œå·:" + carNumber,
 					binder, -1L, -1L, -1L, groupId});
 			bathSql.add(cardAccountSqlMap);
-			
-			bindAccountSqlMap.put("sql", "update card_account_tb set uin=? where card_id=? and uin>? ");//state=0¼¤»î
+
+			bindAccountSqlMap.put("sql", "update card_account_tb set uin=? where card_id=? and uin>? ");//state=0æ¿€æ´»
 			bindAccountSqlMap.put("values", new Object[]{-1, card.getId(), 0});
 			bathSql.add(bindAccountSqlMap);
-			
+
 			for(String plate : plateList){
 				Long count = readService.getLong("select count(id) from card_carnumber_tb where car_number=?" +
 						" and card_id=? and is_delete=? ", new Object[]{plate, cardId, 0});
 				logger.error("plate:"+plate+"count:"+count);
 				if(count == 0){
-					//¿¨Æ¬ºÍ³µÅÆ¹ØÁª±í
+					//å¡ç‰‡å’Œè½¦ç‰Œå…³è”è¡¨
 					Map<String, Object> cardCarSqlMap = new HashMap<String, Object>();
 					cardCarSqlMap.put("sql", "insert into card_carnumber_tb(car_number,card_id,create_time) values(?,?,?)");
 					cardCarSqlMap.put("values", new Object[]{plate, cardId, curTime});
@@ -756,19 +756,19 @@ public class CardServiceImpl implements CardService {
 			logger.error("b:"+b);
 			if(b){
 				resp.setResult(1);
-				resp.setErrmsg("°ó¶¨³É¹¦");
+				resp.setErrmsg("ç»‘å®šæˆåŠŸ");
 				return resp;
 			}
 			resp.setResult(-11);
-			resp.setErrmsg("°ó¶¨Ê§°Ü");
+			resp.setErrmsg("ç»‘å®šå¤±è´¥");
 		} catch (Exception e) {
 			logger.error(e);
 		} finally {
 			boolean b = memcacheUtils.delLock(lock);
-			logger.error("É¾³ıËølock:"+lock+"b:"+b);
+			logger.error("åˆ é™¤é”lock:"+lock+"b:"+b);
 		}
 		resp.setResult(-1);
-		resp.setErrmsg("ÏµÍ³´íÎó");
+		resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		return resp;
 	}
 }

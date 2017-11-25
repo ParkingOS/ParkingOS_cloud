@@ -20,20 +20,20 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 /**
- * NFC¹ÜÀí£¬ÔÚ×Ü¹ÜÀíÔ±ºóÌ¨
+ * NFCç®¡ç†ï¼Œåœ¨æ€»ç®¡ç†å‘˜åŽå°
  * @author Administrator
  *
  */
 public class NFCManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(NFCManageAction.class);
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -98,7 +98,7 @@ public class NFCManageAction extends Action{
 		}else if(action.equals("modify")){
 			Long id = RequestUtil.getLong(request, "selids", -1L);
 			Integer state = RequestUtil.getInteger(request, "state", 0);
-			if(state==0)//0¿ÉÓÃ£¬1½ûÓÃ£¬Îª0Ê±ÊÇÒª¸ÄÎª½ûÓÃ£¬Îª1Ê±ÊÇÒª¸ÄÎª½ûÓÃ£¬ÔÚÕâÀï·´×ª Ò»ÏÂ¡£
+			if(state==0)//0å¯ç”¨ï¼Œ1ç¦ç”¨ï¼Œä¸º0æ—¶æ˜¯è¦æ”¹ä¸ºç¦ç”¨ï¼Œä¸º1æ—¶æ˜¯è¦æ”¹ä¸ºç¦ç”¨ï¼Œåœ¨è¿™é‡Œåè½¬ ä¸€ä¸‹ã€‚
 				state=1;
 			else if(state==1)
 				state=0;
@@ -107,7 +107,7 @@ public class NFCManageAction extends Action{
 			int result = daService.update(sql, values);
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("sutong")){
-			//ËÙÍ¨¿¨ÓÃ»§²éÑ¯
+			//é€Ÿé€šå¡ç”¨æˆ·æŸ¥è¯¢
 			String sql = "select cn.*,ci.car_number carnumber from com_nfc_tb cn left join car_info_tb ci on cn.uin=ci.uin where cn.uin>0";
 			String countSql = "select count(*) from com_nfc_tb where uin>0";
 			Long count = daService.getLong(countSql,null);
@@ -137,7 +137,7 @@ public class NFCManageAction extends Action{
 		int result = daService.update(sql, values);
 		return result+"";
 	}
-	
+
 	private List<Map<String, Object>> setList(List<Map<String, Object>> lists){
 		List<Object> comids = new ArrayList<Object>();
 		List<Object> uids = new ArrayList<Object>();
@@ -229,6 +229,6 @@ public class NFCManageAction extends Action{
 		}
 		return lists;
 	}
-	
+
 
 }

@@ -19,20 +19,20 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 /**
- * ÉÌÈ¦¹ÜÀí£¬ÔÚ×Ü¹ÜÀíÔ±ºóÌ¨
+ * å•†åœˆç®¡ç†ï¼Œåœ¨æ€»ç®¡ç†å‘˜åå°
  * @author Administrator
  *
  */
 public class BizCircleManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(BizCircleManageAction.class);
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -106,7 +106,7 @@ public class BizCircleManageAction extends Action{
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "selids", -1L);
 			Integer state = RequestUtil.getInteger(request, "state", 0);
-			if(state==0)//0¿ÉÓÃ£¬1½ûÓÃ£¬Îª0Ê±ÊÇÒª¸ÄÎª½ûÓÃ£¬Îª1Ê±ÊÇÒª¸ÄÎª½ûÓÃ£¬ÔÚÕâÀï·´×ª Ò»ÏÂ¡£
+			if(state==0)//0å¯ç”¨ï¼Œ1ç¦ç”¨ï¼Œä¸º0æ—¶æ˜¯è¦æ”¹ä¸ºç¦ç”¨ï¼Œä¸º1æ—¶æ˜¯è¦æ”¹ä¸ºç¦ç”¨ï¼Œåœ¨è¿™é‡Œåè½¬ ä¸€ä¸‹ã€‚
 				state=1;
 			else if(state==1)
 				state=0;
@@ -117,12 +117,12 @@ public class BizCircleManageAction extends Action{
 		}
 		return null;
 	}
-	//×¢²áÉÌÈ¦
+	//æ³¨å†Œå•†åœˆ
 	@SuppressWarnings({ "rawtypes" })
 	private int createBizCricle(HttpServletRequest request){
 		String name =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
 		String resume =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "resume"));
-		//ÓÃ»§±í
+		//ç”¨æˆ·è¡¨
 		String sql="insert into bizcircle_tb (name,resume,create_time) " +
 				"values (?,?,?)";
 		Object [] values= new Object[]{name,resume,System.currentTimeMillis()/1000};

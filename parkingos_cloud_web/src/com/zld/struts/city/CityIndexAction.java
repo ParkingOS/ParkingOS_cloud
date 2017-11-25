@@ -40,14 +40,14 @@ public class CityIndexAction extends Action {
 	private CommonMethods commonMethods;
 	@Autowired
 	private StatsAccountFacade accountFacade;
-	
+
 	Logger logger = Logger.getLogger(CityIndexAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null){
@@ -75,7 +75,7 @@ public class CityIndexAction extends Action {
 				}
 			}
 			String ret = "{\"recordsTotal\":\""+list.size()+"\",\"draw\":\""+draw+"\",\"recordsFiltered\":\""+list.size()+"\",\"data\":[]}";
-			
+
 			String jsonData =StringUtils.createJson(list);
 			ret = ret.replace("[]", jsonData);
 			AjaxUtil.ajaxOutput(response, ret);
@@ -85,7 +85,7 @@ public class CityIndexAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void setResponse(HttpServletRequest request, Long cityid){
 		try {
 			ExecutorService pool = ExecutorsUtil.getExecutorService();
@@ -98,7 +98,7 @@ public class CityIndexAction extends Action {
 			ExeCallable callable6 = new ExeCallable(request, cityid, 6);
 			ExeCallable callable7 = new ExeCallable(request, cityid, 7);
 			ExeCallable callable8 = new ExeCallable(request, cityid, 8);
-			
+
 			Future<Object> future0 = pool.submit(callable0);
 			Future<Object> future1 = pool.submit(callable1);
 			Future<Object> future2 = pool.submit(callable2);
@@ -108,7 +108,7 @@ public class CityIndexAction extends Action {
 			Future<Object> future6 = pool.submit(callable6);
 			Future<Object> future7 = pool.submit(callable7);
 			Future<Object> future8 = pool.submit(callable8);
-			
+
 			future0.get();
 			future1.get();
 			future2.get();
@@ -122,7 +122,7 @@ public class CityIndexAction extends Action {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void getAlert(HttpServletRequest request, Long cityid){
 		try {
 			String countSql = "select count(*) from com_alert_tb where cityid=? and state=? " ;
@@ -132,7 +132,7 @@ public class CityIndexAction extends Action {
 			// TODO: handle exception
 		}
 	}
-	
+
 	private void getIncome(HttpServletRequest request, Long cityid){
 		try {
 			Long curTime = System.currentTimeMillis()/1000;
@@ -148,7 +148,7 @@ public class CityIndexAction extends Action {
 			logger.error("getMoney", e);
 		}
 	}
-	
+
 	private Map<String,Object> setMoney(List<Object> idList, long startTime, long endTime){
 		try {
 			Map<String, Object> map = new HashMap<String, Object>();
@@ -172,19 +172,19 @@ public class CityIndexAction extends Action {
 							double cashRefundFee = accountClass.getCashRefundFee();
 							double cashAddFee = accountClass.getCashAddFee();
 							double cashPursueFee = accountClass.getCashPursueFee();
-							
+
 							double ePayParkingFee = accountClass.getePayParkingFee();
 							double ePayPrepayFee = accountClass.getePayPrepayFee();
 							double ePayRefundFee = accountClass.getePayRefundFee();
 							double ePayAddFee = accountClass.getePayAddFee();
 							double ePayPursueFee = accountClass.getePayPursueFee();
-							
+
 							double cardParkingFee = accountClass.getCardParkingFee();
 							double cardPrepayFee = accountClass.getCardPrepayFee();
 							double cardRefundFee = accountClass.getCardRefundFee();
 							double cardAddFee = accountClass.getCardAddFee();
 							double cardPursueFee = accountClass.getCardPursueFee();
-							
+
 							cashTotalFee += StringUtils.formatDouble(cashParkingFee + cashPrepayFee +
 									cashAddFee + cashPursueFee - cashRefundFee);
 							epayTotalFee += StringUtils.formatDouble(ePayParkingFee + ePayPrepayFee +
@@ -206,7 +206,7 @@ public class CityIndexAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void getRedirAuth(HttpServletRequest request, Long cityid){
 		List<Map<String, Object>> authList = (List<Map<String, Object>>)request.getSession().getAttribute("authlist");
 		if(authList != null){
@@ -235,7 +235,7 @@ public class CityIndexAction extends Action {
 			}
 		}
 	}
-	
+
 	private void getVIPInfo(HttpServletRequest request, Long cityid){
 		Long todaybeigintime = TimeTools.getToDayBeginTime();
 		Long todayNewVip = pgOnlyReadService.getLong("select count(id) from user_info_tb where auth_flag=? and cityid=? and reg_time>? ",
@@ -245,7 +245,7 @@ public class CityIndexAction extends Action {
 		request.setAttribute("newvip", todayNewVip);
 		request.setAttribute("allvip", allVip);
 	}
-	
+
 	private void getDeviceInfo(HttpServletRequest request, Long cityid){
 		Long ntime = System.currentTimeMillis()/1000;
 		List<Object> parks = null;
@@ -263,51 +263,51 @@ public class CityIndexAction extends Action {
 			List<Object> params0 = new ArrayList<Object>();
 			params0.addAll(parks);
 			params0.add(0);
-			//************************³µ¼ìÆ÷×ÜÊıÁ¿ºÍ¹ÊÕÏÊı***************************//
+			//************************è½¦æ£€å™¨æ€»æ•°é‡å’Œæ•…éšœæ•°***************************//
 			Long allSensor = pgOnlyReadService.getCount("select count(id) from dici_tb where comid in " +
-					" ("+preParams+") and is_delete=? ", params0);//»ñÈ¡ËùÓĞµÄ³µ¼ìÆ÷ÊıÁ¿
+					" ("+preParams+") and is_delete=? ", params0);//è·å–æ‰€æœ‰çš„è½¦æ£€å™¨æ•°é‡
 			List<Object> params1 = new ArrayList<Object>();
 			params1.addAll(parks);
 			params1.add(ntime);
 			params1.add(30 * 60);
 			params1.add(0);
 			Long failSensor = pgOnlyReadService.getCount("select count(id) from dici_tb where comid in " +
-					" ("+preParams+") and (?-beart_time>? or beart_time is null) and is_delete=? ", params1);//»ñÈ¡Äã¹ÊÕÏµÄ³µ¼ìÆ÷ÊıÁ¿
-			//************************ÉãÏñÍ·×ÜÊıÁ¿ºÍ¹ÊÕÏÊı***************************//
+					" ("+preParams+") and (?-beart_time>? or beart_time is null) and is_delete=? ", params1);//è·å–ä½ æ•…éšœçš„è½¦æ£€å™¨æ•°é‡
+			//************************æ‘„åƒå¤´æ€»æ•°é‡å’Œæ•…éšœæ•°***************************//
 			Long allCamera = pgOnlyReadService.getCount("select count(id) from com_camera_tb where comid in " +
-					" ("+preParams+")", parks);//»ñÈ¡ËùÓĞµÄ³µ¼ìÆ÷ÊıÁ¿
+					" ("+preParams+")", parks);//è·å–æ‰€æœ‰çš„è½¦æ£€å™¨æ•°é‡
 			List<Object> params2 = new ArrayList<Object>();
 			params2.addAll(parks);
 			params2.add(0);
 			Long failCamera = pgOnlyReadService.getCount("select count(id) from com_camera_tb where comid in " +
-					" ("+preParams+") and state=? ", params2);//»ñÈ¡ËùÓĞµÄ³µ¼ìÆ÷ÊıÁ¿
-			//************************»ùÕ¾×ÜÊıÁ¿ºÍ¹ÊÕÏÊı***************************//
+					" ("+preParams+") and state=? ", params2);//è·å–æ‰€æœ‰çš„è½¦æ£€å™¨æ•°é‡
+			//************************åŸºç«™æ€»æ•°é‡å’Œæ•…éšœæ•°***************************//
 			List<Object> params3 = new ArrayList<Object>();
 			params3.addAll(parks);
 			params3.add(0);
 			Long allSite = pgOnlyReadService.getCount("select count(id) from sites_tb where comid in " +
-					" ("+preParams+") and is_delete=? ", params3);//»ñÈ¡ËùÓĞµÄ³µ¼ìÆ÷ÊıÁ¿
+					" ("+preParams+") and is_delete=? ", params3);//è·å–æ‰€æœ‰çš„è½¦æ£€å™¨æ•°é‡
 			List<Object> params4 = new ArrayList<Object>();
 			params4.addAll(parks);
 			params4.add(0);
 			params4.add(ntime);
 			params4.add(30 * 60);
 			Long failSite = pgOnlyReadService.getCount("select count(id) from sites_tb where comid in " +
-					" ("+preParams+") and is_delete=? and (?-heartbeat>? or heartbeat is null) ", params4);//»ñÈ¡Äã¹ÊÕÏµÄ³µ¼ìÆ÷ÊıÁ¿
-			//************************ÓÕµ¼ÆÁ×ÜÊıÁ¿ºÍ¹ÊÕÏÊı***************************//
+					" ("+preParams+") and is_delete=? and (?-heartbeat>? or heartbeat is null) ", params4);//è·å–ä½ æ•…éšœçš„è½¦æ£€å™¨æ•°é‡
+			//************************è¯±å¯¼å±æ€»æ•°é‡å’Œæ•…éšœæ•°***************************//
 			List<Object> params5 = new ArrayList<Object>();
 			params5.add(cityid);
 			params5.add(0);
 			Long allInduce = pgOnlyReadService.getCount("select count(id) from induce_tb where cityid=? " +
-					" and is_delete=? ", params5);//»ñÈ¡ËùÓĞµÄ³µ¼ìÆ÷ÊıÁ¿
+					" and is_delete=? ", params5);//è·å–æ‰€æœ‰çš„è½¦æ£€å™¨æ•°é‡
 			List<Object> params6 = new ArrayList<Object>();
 			params6.add(cityid);
 			params6.add(0);
 			params6.add(ntime);
 			params6.add(30 * 60);
 			Long failInduce = pgOnlyReadService.getCount("select count(id) from induce_tb where cityid=? " +
-					" and is_delete=? and (?-heartbeat_time>? or heartbeat_time is null) ", params6);//»ñÈ¡Äã¹ÊÕÏµÄ³µ¼ìÆ÷ÊıÁ¿
-			
+					" and is_delete=? and (?-heartbeat_time>? or heartbeat_time is null) ", params6);//è·å–ä½ æ•…éšœçš„è½¦æ£€å™¨æ•°é‡
+
 			if(allSensor == 0) allSensor = 1L;
 			if(allCamera == 0) allCamera = 1L;
 			if(allSite == 0) allSite = 1L;
@@ -325,7 +325,7 @@ public class CityIndexAction extends Action {
 			request.setAttribute("fail_device", failCamera + failInduce + failSensor + failSite);
 		}
 	}
-	
+
 	private void getUtilization(HttpServletRequest request, Long cityid){
 		try {
 			Long asum = 0L;
@@ -348,7 +348,7 @@ public class CityIndexAction extends Action {
 			logger.error("getUtilization", e);
 		}
 	}
-	
+
 	private String anlyOnline(HttpServletRequest request, Long cityid){
 		try {
 			Long ntime = System.currentTimeMillis()/1000;
@@ -367,7 +367,7 @@ public class CityIndexAction extends Action {
 						else
 							preParms +=",?";
 					}
-					
+
 					sql += " or groupid in ("+preParms+") ";
 					params.addAll(groups);
 				}
@@ -381,7 +381,7 @@ public class CityIndexAction extends Action {
 						else
 							preParms +=",?";
 					}
-					
+
 					sql += " or comid in ("+preParms+") ";
 					params.addAll(parks);
 				}
@@ -394,7 +394,7 @@ public class CityIndexAction extends Action {
 						map.put("time",TimeTools.getTime_MMdd_HHmm(create_time*1000));
 					}
 				}
-				
+
 				String json = StringUtils.createJson(list);
 				return json;
 			}
@@ -403,14 +403,14 @@ public class CityIndexAction extends Action {
 		}
 		return "[]";
 	}
-	//************************POS»ú¶©µ¥Õ¼±È***************************//
+	//************************POSæœºè®¢å•å æ¯”***************************//
 	private void  posPercent(HttpServletRequest request, Long cityid){
 		SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 		String nowtime= df2.format(System.currentTimeMillis());
 		Long b =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(nowtime+" 00:00:00");
 		Long e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(nowtime+" 23:59:59");
-        String  posSql="select count(id) from  order_tb where end_time between ? and ?";
-        String  SitesSql="select count(id) from  berth_order_tb where  out_uid > ? and  out_time between ? and ?   ";
+		String  posSql="select count(id) from  order_tb where end_time between ? and ?";
+		String  SitesSql="select count(id) from  berth_order_tb where  out_uid > ? and  out_time between ? and ?   ";
 		List<Object> paramsPos = new ArrayList<Object>();
 		List<Object> paramsSites = new ArrayList<Object>();
 		Long countPos = 0L;
@@ -438,20 +438,20 @@ public class CityIndexAction extends Action {
 			paramsPos.addAll(parks);
 			paramsSites.addAll(parks);
 
-	     }
-		 countPos= pgOnlyReadService.getCount(posSql, paramsPos);
-		 countSites=pgOnlyReadService.getCount(SitesSql, paramsSites);
-		 double percent=StringUtils.formatDouble(((double)countPos/countSites) * 100);
-		 request.setAttribute("percent", percent);
 		}
-	//************************²´Î»ÖÜ×ªÂÊ***************************//
+		countPos= pgOnlyReadService.getCount(posSql, paramsPos);
+		countSites=pgOnlyReadService.getCount(SitesSql, paramsSites);
+		double percent=StringUtils.formatDouble(((double)countPos/countSites) * 100);
+		request.setAttribute("percent", percent);
+	}
+	//************************æ³Šä½å‘¨è½¬ç‡***************************//
 	private void  parkTurn(HttpServletRequest request, Long cityid){
 		SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 		String nowtime= df2.format(System.currentTimeMillis());
 		Long b =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(nowtime+" 00:00:00");
 		Long e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(nowtime+" 23:59:59");
-        String  posSql="select count(id) from  order_tb where end_time between ? and ?  ";
-        String  SitesSql="select count(id) from  com_park_tb where is_delete=? and  ";
+		String  posSql="select count(id) from  order_tb where end_time between ? and ?  ";
+		String  SitesSql="select count(id) from  com_park_tb where is_delete=? and  ";
 		List<Object> paramsPos = new ArrayList<Object>();
 		List<Object> paramsSites = new ArrayList<Object>();
 		Long countPos = 0L;
@@ -476,20 +476,20 @@ public class CityIndexAction extends Action {
 			paramsPos.addAll(parks);
 			paramsSites.addAll(parks);
 
-	     }
-		 countPos = pgOnlyReadService.getCount(posSql, paramsPos);
-		 countSites = pgOnlyReadService.getCount(SitesSql, paramsSites);
-		 double parkturn = StringUtils.formatDouble((double)countPos/countSites);
-		 request.setAttribute("parkturn", parkturn);
 		}
-	//************************×·½ÉÂÊ***************************//
+		countPos = pgOnlyReadService.getCount(posSql, paramsPos);
+		countSites = pgOnlyReadService.getCount(SitesSql, paramsSites);
+		double parkturn = StringUtils.formatDouble((double)countPos/countSites);
+		request.setAttribute("parkturn", parkturn);
+	}
+	//************************è¿½ç¼´ç‡***************************//
 	private void  recoveryrate(HttpServletRequest request, Long cityid){
 		SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 		String nowtime= df2.format(System.currentTimeMillis());
 		Long b =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(nowtime+" 00:00:00");
 		Long e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(nowtime+" 23:59:59");
-        String  posSql="select count(id) from  no_payment_tb where end_time between ? and ?  ";
-        String  SitesSql="select count(id) from  no_payment_tb where end_time  between ? and ? and state=? and  ";
+		String  posSql="select count(id) from  no_payment_tb where end_time between ? and ?  ";
+		String  SitesSql="select count(id) from  no_payment_tb where end_time  between ? and ? and state=? and  ";
 		List<Object> paramsPos = new ArrayList<Object>();
 		List<Object> paramsSites = new ArrayList<Object>();
 		Long countPos = 0L;
@@ -516,13 +516,13 @@ public class CityIndexAction extends Action {
 			paramsPos.addAll(parks);
 			paramsSites.addAll(parks);
 
-	     }
-		 countPos= pgOnlyReadService.getCount(posSql, paramsPos);
-		 countSites=pgOnlyReadService.getCount(SitesSql, paramsSites);
-		 double eacaperate=StringUtils.formatDouble(((double)countSites/countPos) * 100);
-		 request.setAttribute("eacaperate", eacaperate);
+		}
+		countPos= pgOnlyReadService.getCount(posSql, paramsPos);
+		countSites=pgOnlyReadService.getCount(SitesSql, paramsSites);
+		double eacaperate=StringUtils.formatDouble(((double)countSites/countPos) * 100);
+		request.setAttribute("eacaperate", eacaperate);
 	}
-	
+
 	class ExeCallable implements Callable<Object>{
 		private HttpServletRequest request;
 		private Long cityid = -1L;
@@ -537,42 +537,42 @@ public class CityIndexAction extends Action {
 			Object result = null;
 			try {
 				switch (type) {
-				case 0:
-					getRedirAuth(request, cityid);
-					break;
-				case 1:
-					getVIPInfo(request, cityid);//»áÔ±ĞÅÏ¢
-					break;
-				case 2:
-					getDeviceInfo(request, cityid);//Éè±¸Õı³£ÂÊ
-					break;
-				case 3:
-					getUtilization(request,cityid);//ÀûÓÃÂÊ
-					break;
-				case 4:
-					getIncome(request, cityid);//½ñÈÕÊÕÈë
-					break;
-				case 5:
-					getAlert(request, cityid);//¸æ¾¯ÊÂ¼ş
-					break;
-				case 6:
-					posPercent(request,cityid);//pos»ú¶©µ¥Õ¼±È
-					break;
-				case 7:
-					parkTurn(request, cityid);//²´Î»ÖÜ×ªÂÊ
-					break;
-				case 8:
-					recoveryrate(request, cityid);//×·½ÉÂÊ
-					break;
-				default:
-					break;
+					case 0:
+						getRedirAuth(request, cityid);
+						break;
+					case 1:
+						getVIPInfo(request, cityid);//ä¼šå‘˜ä¿¡æ¯
+						break;
+					case 2:
+						getDeviceInfo(request, cityid);//è®¾å¤‡æ­£å¸¸ç‡
+						break;
+					case 3:
+						getUtilization(request,cityid);//åˆ©ç”¨ç‡
+						break;
+					case 4:
+						getIncome(request, cityid);//ä»Šæ—¥æ”¶å…¥
+						break;
+					case 5:
+						getAlert(request, cityid);//å‘Šè­¦äº‹ä»¶
+						break;
+					case 6:
+						posPercent(request,cityid);//posæœºè®¢å•å æ¯”
+						break;
+					case 7:
+						parkTurn(request, cityid);//æ³Šä½å‘¨è½¬ç‡
+						break;
+					case 8:
+						recoveryrate(request, cityid);//è¿½ç¼´ç‡
+						break;
+					default:
+						break;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return result;
 		}
-		
+
 	}
 
 }

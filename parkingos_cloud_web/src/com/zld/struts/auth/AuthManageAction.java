@@ -22,7 +22,7 @@ import com.zld.utils.StringUtils;
 
 
 /**
- * È¨ÏŞ¹ÜÀí---È¨ÏŞÁĞ±í
+ * æƒé™ç®¡ç†---æƒé™åˆ—è¡¨
  * @author Gecko
  *
  */
@@ -32,25 +32,25 @@ public class AuthManageAction extends Action {
 	private DataBaseService daService;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
 		request.setAttribute("authid", request.getParameter("authid"));
 		String target = null;
 		if(action.equals("")){
-			Integer oid = RequestUtil.getInteger(request, "oid", 8);//Ä¬ÈÏ¼ÓÔØ³µ³¡µÄ
+			Integer oid = RequestUtil.getInteger(request, "oid", 8);//é»˜è®¤åŠ è½½è½¦åœºçš„
 			List<Map<String, Object>> list = daService.getAll("select id,name from zld_orgtype_tb ", new Object[]{});
 			if(list != null){
 				for(Map<String, Object> map : list){
 					Long id = (Long)map.get("id");
 					String name = (String)map.get("name");
-					if(name.contains("³µ³¡")){
+					if(name.contains("è½¦åœº")){
 						request.setAttribute("org_comid", id);
 					}else if(name.contains("BOSS")){
 						request.setAttribute("org_tcbid", id);
-					}else if(name.contains("ÇşµÀ")){
+					}else if(name.contains("æ¸ é“")){
 						request.setAttribute("org_chanid", id);
-					}else if(name.contains("¼¯ÍÅ")){
+					}else if(name.contains("é›†å›¢")){
 						request.setAttribute("org_groupid", id);
 					}
 				}
@@ -59,7 +59,7 @@ public class AuthManageAction extends Action {
 			target="authlist";
 		}else if(action.equals("query")){
 			String sql = "select * from auth_tb  where oid =? ";
-			Integer oid = RequestUtil.getInteger(request, "oid", 8);//Ä¬ÈÏ¼ÓÔØ³µ³¡µÄ
+			Integer oid = RequestUtil.getInteger(request, "oid", 8);//é»˜è®¤åŠ è½½è½¦åœºçš„
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			//System.out.println(sqlInfo);
 			List list = daService.getAll(sql+" order by sort ",new Object[]{oid});
@@ -78,7 +78,7 @@ public class AuthManageAction extends Action {
 				list = 	daService.getAll("select id as value_no,nname as value_name from auth_tb where oid=? ",new Object[]{oid});
 				Map<String, Object> firstMap = new HashMap<String, Object>();
 				firstMap.put("value_no", "0");
-				firstMap.put("value_name", "ÎŞ");
+				firstMap.put("value_name", "æ— ");
 				if(list.isEmpty())
 					list = new ArrayList<Map<String, Object>>();
 				list.add(0,firstMap);
@@ -87,7 +87,7 @@ public class AuthManageAction extends Action {
 			}
 			result= StringUtils.createJson(list);
 			if(type.equals("state")){
-				result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"},{\"value_no\":\"0\",\"value_name\":\"Õı³£\"},{\"value_no\":\"1\",\"value_name\":\"½ûÓÃ\"}]";
+				result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"},{\"value_no\":\"0\",\"value_name\":\"æ­£å¸¸\"},{\"value_no\":\"1\",\"value_name\":\"ç¦ç”¨\"}]";
 			}
 			AjaxUtil.ajaxOutput(response, result);
 			return null;

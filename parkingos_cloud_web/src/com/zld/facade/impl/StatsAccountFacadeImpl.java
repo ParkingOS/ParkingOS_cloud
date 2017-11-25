@@ -52,7 +52,7 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 	@Autowired
 	@Resource(name = "sensorOrder")
 	private StatsOrderService sensorService;
-	
+
 	Logger logger = Logger.getLogger(StatsAccountFacadeImpl.class);
 
 	@Override
@@ -60,14 +60,14 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 		//logger.error(req.toString());
 		StatsFacadeResp resp = new StatsFacadeResp();
 		try {
-			req.setType(0);//0£º°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ 1£º°´³µ³¡±àºÅÍ³¼Æ 2£º°´²´Î»¶Î±àºÅ²éÑ¯ 3£º°´²´Î»²éÑ¯ 4:°´ÔËÓª¼¯ÍÅ²éÑ¯
+			req.setType(0);//0ï¼šæŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡ 1ï¼šæŒ‰è½¦åœºç¼–å·ç»Ÿè®¡ 2ï¼šæŒ‰æ³Šä½æ®µç¼–å·æŸ¥è¯¢ 3ï¼šæŒ‰æ³Šä½æŸ¥è¯¢ 4:æŒ‰è¿è¥é›†å›¢æŸ¥è¯¢
 			resp = mergeFee(req);
 			return resp;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		resp.setResult(-1);
-		resp.setErrmsg("ÏµÍ³´íÎó");
+		resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		return resp;
 	}
 
@@ -76,14 +76,14 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 		//logger.error(req.toString());
 		StatsFacadeResp resp = new StatsFacadeResp();
 		try {
-			req.setType(1);//0£º°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ 1£º°´³µ³¡±àºÅÍ³¼Æ 2£º°´²´Î»¶Î±àºÅ²éÑ¯ 3£º°´²´Î»²éÑ¯ 4:°´ÔËÓª¼¯ÍÅ²éÑ¯
+			req.setType(1);//0ï¼šæŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡ 1ï¼šæŒ‰è½¦åœºç¼–å·ç»Ÿè®¡ 2ï¼šæŒ‰æ³Šä½æ®µç¼–å·æŸ¥è¯¢ 3ï¼šæŒ‰æ³Šä½æŸ¥è¯¢ 4:æŒ‰è¿è¥é›†å›¢æŸ¥è¯¢
 			resp = mergeFee(req);
 			return resp;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		resp.setResult(-1);
-		resp.setErrmsg("ÏµÍ³´íÎó");
+		resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		return resp;
 	}
 
@@ -92,14 +92,14 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 		//logger.error(req.toString());
 		StatsFacadeResp resp = new StatsFacadeResp();
 		try {
-			req.setType(2);//0£º°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ 1£º°´³µ³¡±àºÅÍ³¼Æ 2£º°´²´Î»¶Î±àºÅ²éÑ¯ 3£º°´²´Î»²éÑ¯ 4:°´ÔËÓª¼¯ÍÅ²éÑ¯
+			req.setType(2);//0ï¼šæŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡ 1ï¼šæŒ‰è½¦åœºç¼–å·ç»Ÿè®¡ 2ï¼šæŒ‰æ³Šä½æ®µç¼–å·æŸ¥è¯¢ 3ï¼šæŒ‰æ³Šä½æŸ¥è¯¢ 4:æŒ‰è¿è¥é›†å›¢æŸ¥è¯¢
 			resp = mergeFee(req);
 			return resp;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		resp.setResult(-1);
-		resp.setErrmsg("ÏµÍ³´íÎó");
+		resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		return resp;
 	}
 
@@ -108,35 +108,35 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 		//logger.error(req.toString());
 		StatsFacadeResp resp = new StatsFacadeResp();
 		try {
-			req.setType(3);//0£º°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ 1£º°´³µ³¡±àºÅÍ³¼Æ 2£º°´²´Î»¶Î±àºÅ²éÑ¯ 3£º°´²´Î»²éÑ¯ 4:°´ÔËÓª¼¯ÍÅ²éÑ¯
+			req.setType(3);//0ï¼šæŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡ 1ï¼šæŒ‰è½¦åœºç¼–å·ç»Ÿè®¡ 2ï¼šæŒ‰æ³Šä½æ®µç¼–å·æŸ¥è¯¢ 3ï¼šæŒ‰æ³Šä½æŸ¥è¯¢ 4:æŒ‰è¿è¥é›†å›¢æŸ¥è¯¢
 			resp = mergeFee(req);
 			return resp;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		resp.setResult(-1);
-		resp.setErrmsg("ÏµÍ³´íÎó");
+		resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		return resp;
 	}
-	
+
 	@Override
 	public StatsFacadeResp statsGroupAccount(StatsReq req) {
 		//logger.error(req.toString());
 		StatsFacadeResp resp = new StatsFacadeResp();
 		try {
-			req.setType(4);//0£º°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ 1£º°´³µ³¡±àºÅÍ³¼Æ 2£º°´²´Î»¶Î±àºÅ²éÑ¯ 3£º°´²´Î»²éÑ¯ 4:°´ÔËÓª¼¯ÍÅ²éÑ¯
+			req.setType(4);//0ï¼šæŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡ 1ï¼šæŒ‰è½¦åœºç¼–å·ç»Ÿè®¡ 2ï¼šæŒ‰æ³Šä½æ®µç¼–å·æŸ¥è¯¢ 3ï¼šæŒ‰æ³Šä½æŸ¥è¯¢ 4:æŒ‰è¿è¥é›†å›¢æŸ¥è¯¢
 			resp = mergeFee(req);
 			return resp;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		resp.setResult(-1);
-		resp.setErrmsg("ÏµÍ³´íÎó");
+		resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		return resp;
 	}
-	
+
 	/**
-	 * ºÏ²¢ËùÓĞÕËÄ¿£¬·â×°¸ø¿Í»§¶Ë
+	 * åˆå¹¶æ‰€æœ‰è´¦ç›®ï¼Œå°è£…ç»™å®¢æˆ·ç«¯
 	 * @param req
 	 * @return
 	 */
@@ -151,7 +151,7 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 					|| idList == null
 					|| idList.isEmpty()){
 				resp.setResult(-1);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
 			ExecutorService pool = ExecutorsUtil.getExecutorService();
@@ -163,7 +163,7 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 			ExeCallable callable5 = new ExeCallable(req, 5);
 			ExeCallable callable6 = new ExeCallable(req, 6);
 			ExeCallable callable7 = new ExeCallable(req, 7);
-			
+
 			Future<Object> future0 = pool.submit(callable0);
 			Future<Object> future1 = pool.submit(callable1);
 			Future<Object> future2 = pool.submit(callable2);
@@ -172,8 +172,8 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 			Future<Object> future5 = pool.submit(callable5);
 			Future<Object> future6 = pool.submit(callable6);
 			Future<Object> future7 = pool.submit(callable7);
-			
-			
+
+
 			StatsAccountResp parkUserEpayResp = (StatsAccountResp)future0.get();
 			StatsAccountResp parkEpayResp = (StatsAccountResp)future1.get();
 			StatsAccountResp groupEpayResp = (StatsAccountResp)future2.get();
@@ -182,50 +182,50 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 			StatsCardResp cardResp = (StatsCardResp)future5.get();
 			StatsOrderResp escapeOrderResp = (StatsOrderResp)future6.get();
 			StatsOrderResp sensorOrderResp = (StatsOrderResp)future7.get();
-			
+
 			List<StatsAccountClass> classes = new ArrayList<StatsAccountClass>();
-			//*****************************³õÊ¼»¯********************************//
+			//*****************************åˆå§‹åŒ–********************************//
 			for(Object object : idList){
 				StatsAccountClass accountClass = new StatsAccountClass();
 				accountClass.setId((Long)object);
 				classes.add(accountClass);
 			}
-			//**************************ÊÕ·ÑÔ±µç×ÓÕË»§*****************************//
+			//**************************æ”¶è´¹å‘˜ç”µå­è´¦æˆ·*****************************//
 			if(parkUserEpayResp != null){
 				List<StatsAccount> accounts = parkUserEpayResp.getAccounts();
 				setAccountClass1(classes, accounts, 0);
 			}
-			//**************************³µ³¡µç×ÓÕË»§*****************************//
+			//**************************è½¦åœºç”µå­è´¦æˆ·*****************************//
 			if(parkEpayResp != null){
 				List<StatsAccount> accounts = parkEpayResp.getAccounts();
 				setAccountClass1(classes, accounts, 0);
 			}
-			//**************************ÔËÓª¼¯ÍÅµç×ÓÕË»§*****************************//
+			//**************************è¿è¥é›†å›¢ç”µå­è´¦æˆ·*****************************//
 			if(groupEpayResp != null){
 				List<StatsAccount> accounts = groupEpayResp.getAccounts();
 				setAccountClass1(classes, accounts, 0);
 			}
-			//**************************³ÇÊĞÉÌ»§µç×ÓÕË»§*****************************//
+			//**************************åŸå¸‚å•†æˆ·ç”µå­è´¦æˆ·*****************************//
 			if(tenantEpayResp != null){
 				List<StatsAccount> accounts = tenantEpayResp.getAccounts();
 				setAccountClass1(classes, accounts, 0);
 			}
-			//**************************ÊÕ·ÑÔ±ÏÖ½ğÕË»§*****************************//
+			//**************************æ”¶è´¹å‘˜ç°é‡‘è´¦æˆ·*****************************//
 			if(parkUserCashResp != null){
 				List<StatsAccount> accounts = parkUserCashResp.getAccounts();
 				setAccountClass1(classes, accounts, 1);
 			}
-			//**************************ÌÓµ¥*****************************//
+			//**************************é€ƒå•*****************************//
 			if(escapeOrderResp != null){
 				List<StatsOrder> orders = escapeOrderResp.getOrders();
 				setAccountClass2(classes, orders, 0);
 			}
-			//**************************³µ¼ìÆ÷¶©µ¥*****************************//
+			//**************************è½¦æ£€å™¨è®¢å•*****************************//
 			if(sensorOrderResp != null){
 				List<StatsOrder> orders = sensorOrderResp.getOrders();
 				setAccountClass2(classes, orders, 1);
 			}
-			//**************************¿¨Æ¬ÕË»§*****************************//
+			//**************************å¡ç‰‡è´¦æˆ·*****************************//
 			if(cardResp != null){
 				List<StatsCard> cards = cardResp.getCards();
 				setAccountClass3(classes, cards, 0);
@@ -237,15 +237,15 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 			e.printStackTrace();
 		}
 		resp.setResult(-1);
-		resp.setErrmsg("ÏµÍ³´íÎó");
+		resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		return resp;
 	}
-	
+
 	/**
-	 * Á÷Ë®ÕË·ÖÀà
+	 * æµæ°´è´¦åˆ†ç±»
 	 * @param classes
 	 * @param accounts
-	 * @param type 0£ºµç×ÓÖ§¸¶ 1£ºÏÖ½ğÖ§¸¶ 2£º¿¨Æ¬Ö§¸¶
+	 * @param type 0ï¼šç”µå­æ”¯ä»˜ 1ï¼šç°é‡‘æ”¯ä»˜ 2ï¼šå¡ç‰‡æ”¯ä»˜
 	 */
 	private void setAccountClass1(List<StatsAccountClass> classes, List<StatsAccount> accounts, int type){
 		try {
@@ -256,22 +256,22 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 						long classId = accountClass.getId();
 						if(id == classId){
 							switch (type) {
-							case 0://µç×ÓÖ§¸¶
-								accountClass.setePayParkingFee(accountClass.getePayParkingFee() + account.getParkingFee());
-								accountClass.setePayPrepayFee(accountClass.getePayPrepayFee() + account.getPrepayFee());
-								accountClass.setePayRefundFee(accountClass.getePayRefundFee() + account.getRefundFee());
-								accountClass.setePayAddFee(accountClass.getePayAddFee() + account.getAddFee());
-								accountClass.setePayPursueFee(accountClass.getePayPursueFee() + account.getPursueFee());
-								break;
-							case 1://ÏÖ½ğÖ§¸¶
-								accountClass.setCashParkingFee(accountClass.getCashParkingFee()+ account.getParkingFee());
-								accountClass.setCashPrepayFee(accountClass.getCashPrepayFee() + account.getPrepayFee());
-								accountClass.setCashRefundFee(accountClass.getCashRefundFee() + account.getRefundFee());
-								accountClass.setCashAddFee(accountClass.getCashAddFee() + account.getAddFee());
-								accountClass.setCashPursueFee(accountClass.getCashPursueFee() + account.getPursueFee());
-								break;
-							default:
-								break;
+								case 0://ç”µå­æ”¯ä»˜
+									accountClass.setePayParkingFee(accountClass.getePayParkingFee() + account.getParkingFee());
+									accountClass.setePayPrepayFee(accountClass.getePayPrepayFee() + account.getPrepayFee());
+									accountClass.setePayRefundFee(accountClass.getePayRefundFee() + account.getRefundFee());
+									accountClass.setePayAddFee(accountClass.getePayAddFee() + account.getAddFee());
+									accountClass.setePayPursueFee(accountClass.getePayPursueFee() + account.getPursueFee());
+									break;
+								case 1://ç°é‡‘æ”¯ä»˜
+									accountClass.setCashParkingFee(accountClass.getCashParkingFee()+ account.getParkingFee());
+									accountClass.setCashPrepayFee(accountClass.getCashPrepayFee() + account.getPrepayFee());
+									accountClass.setCashRefundFee(accountClass.getCashRefundFee() + account.getRefundFee());
+									accountClass.setCashAddFee(accountClass.getCashAddFee() + account.getAddFee());
+									accountClass.setCashPursueFee(accountClass.getCashPursueFee() + account.getPursueFee());
+									break;
+								default:
+									break;
 							}
 							break;
 						}
@@ -282,12 +282,12 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * ¶©µ¥·ÖÀà
+	 * è®¢å•åˆ†ç±»
 	 * @param classes
 	 * @param orders
-	 * @param type 0£ºÌÓµ¥ 1£º³µ¼ìÆ÷¶©µ¥
+	 * @param type 0ï¼šé€ƒå• 1ï¼šè½¦æ£€å™¨è®¢å•
 	 */
 	private void setAccountClass2(List<StatsAccountClass> classes, List<StatsOrder> orders, int type){
 		try {
@@ -298,14 +298,14 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 						long classId = accountClass.getId();
 						if(id == classId){
 							switch (type) {
-							case 0://ÌÓµ¥Î´×·½É
-								accountClass.setEscapeFee(order.getEscapeFee());
-								break;
-							case 1://³µ¼ìÆ÷¶©µ¥
-								accountClass.setSensorOrderFee(order.getSensorFee());
-								break;
-							default:
-								break;
+								case 0://é€ƒå•æœªè¿½ç¼´
+									accountClass.setEscapeFee(order.getEscapeFee());
+									break;
+								case 1://è½¦æ£€å™¨è®¢å•
+									accountClass.setSensorOrderFee(order.getSensorFee());
+									break;
+								default:
+									break;
 							}
 							break;
 						}
@@ -316,12 +316,12 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * ¿¨Æ¬·ÖÀà 
+	 * å¡ç‰‡åˆ†ç±»
 	 * @param classes
 	 * @param cards
-	 * @param type 0£ºÉÌ¼Ò×Ô¼º·¢ĞĞµÄ¿¨Æ¬
+	 * @param type 0ï¼šå•†å®¶è‡ªå·±å‘è¡Œçš„å¡ç‰‡
 	 */
 	private void setAccountClass3(List<StatsAccountClass> classes, List<StatsCard> cards, int type){
 		try {
@@ -332,25 +332,25 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 						long classId = accountClass.getId();
 						if(id == classId){
 							switch (type) {
-							case 0://ÉÌ¼Ò×Ô¼º·¢ĞĞµÄ¿¨Æ¬
-								accountClass.setCardParkingFee(card.getParkingFee());
-								accountClass.setCardPrepayFee(card.getPrepayFee());
-								accountClass.setCardRefundFee(card.getRefundFee());
-								accountClass.setCardAddFee(card.getAddFee());
-								accountClass.setCardPursueFee(card.getPursueFee());
-								
-								accountClass.setCardActCount(card.getActCount());
-								accountClass.setCardActFee(card.getActFee());
-								accountClass.setCardBindCount(card.getBindCount());
-								accountClass.setCardChargeCashFee(card.getChargeCashFee());
-								accountClass.setCardRegCount(card.getRegCount());
-								accountClass.setCardRegFee(card.getRegFee());
-								accountClass.setCardReturnCount(card.getReturnCount());
-								accountClass.setCardReturnFee(card.getReturnFee());
-								break;
+								case 0://å•†å®¶è‡ªå·±å‘è¡Œçš„å¡ç‰‡
+									accountClass.setCardParkingFee(card.getParkingFee());
+									accountClass.setCardPrepayFee(card.getPrepayFee());
+									accountClass.setCardRefundFee(card.getRefundFee());
+									accountClass.setCardAddFee(card.getAddFee());
+									accountClass.setCardPursueFee(card.getPursueFee());
 
-							default:
-								break;
+									accountClass.setCardActCount(card.getActCount());
+									accountClass.setCardActFee(card.getActFee());
+									accountClass.setCardBindCount(card.getBindCount());
+									accountClass.setCardChargeCashFee(card.getChargeCashFee());
+									accountClass.setCardRegCount(card.getRegCount());
+									accountClass.setCardRegFee(card.getRegFee());
+									accountClass.setCardReturnCount(card.getReturnCount());
+									accountClass.setCardReturnFee(card.getReturnFee());
+									break;
+
+								default:
+									break;
 							}
 						}
 					}
@@ -360,7 +360,7 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 			e.printStackTrace();
 		}
 	}
-	
+
 	class ExeCallable implements Callable<Object>{
 		private StatsReq req;
 		private int type;
@@ -373,39 +373,39 @@ public class StatsAccountFacadeImpl implements StatsAccountFacade {
 			Object result = null;
 			try {
 				switch (type) {
-				case 0:
-					result = parkUserEpayService.statsAccount(req);
-					break;
-				case 1:
-					result = parkEpayService.statsAccount(req);
-					break;
-				case 2:
-					result = groupEpayService.statsAccount(req);
-					break;
-				case 3:
-					result = tenantEpayService.statsAccount(req);
-					break;
-				case 4:
-					result = parkUserCashService.statsAccount(req);
-					break;
-				case 5:
-					result = cardService.statsCard(req);
-					break;
-				case 6:
-					result = escapeOrderService.statsOrder(req);
-					break;
-				case 7:
-					result = sensorService.statsOrder(req);
-					break;
-				default:
-					break;
+					case 0:
+						result = parkUserEpayService.statsAccount(req);
+						break;
+					case 1:
+						result = parkEpayService.statsAccount(req);
+						break;
+					case 2:
+						result = groupEpayService.statsAccount(req);
+						break;
+					case 3:
+						result = tenantEpayService.statsAccount(req);
+						break;
+					case 4:
+						result = parkUserCashService.statsAccount(req);
+						break;
+					case 5:
+						result = cardService.statsCard(req);
+						break;
+					case 6:
+						result = escapeOrderService.statsOrder(req);
+						break;
+					case 7:
+						result = sensorService.statsOrder(req);
+						break;
+					default:
+						break;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return result;
 		}
-		
+
 	}
 
 }

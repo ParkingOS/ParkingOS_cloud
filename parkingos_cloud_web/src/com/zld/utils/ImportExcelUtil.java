@@ -1,27 +1,11 @@
 /**
  * @author drh
- * Excel ˝æ›µº»Î ˝æ›ø‚
+ * ExcelÊï∞ÊçÆÂØºÂÖ•Êï∞ÊçÆÂ∫ì
  * @version 1.0
  */
 package com.zld.utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -29,149 +13,84 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Set;
+
 public class ImportExcelUtil {
-	
+
 	/**
-	 * ≤Ÿ◊˜Excel±Ì∏Òµƒπ¶ƒ‹¿‡
+	 * Êìç‰ΩúExcelË°®Ê†ºÁöÑÂäüËÉΩÁ±ª
 	 */
-    private static Workbook wb;
-    private static Sheet sheet;
-    private static Row row;
-    
-    /**
-	 * µº»Î±®±ÌExcel ˝æ›£¨…˙≥…”√ªß±Ìµƒ ˝æ›ø‚µº»Î”Ôæ‰
-	 * @param File formFile£∫…œ¥´µƒŒƒº˛
-	 *        String formFileName£∫…œ¥´µƒŒƒº˛√˚£®ªÒ»°∫Û◊∫£©≈–∂œ «2007£®.xlsx£©ªπ «2003£®.xls£©
-	 *        int isTitle: «∑Ò”–±ÍÃ‚£¨”–‘Ú «1£¨Œﬁ‘Ú0
+
+
+	/**
+	 * ÂØºÂÖ•Êä•Ë°®ExcelÊï∞ÊçÆÔºåÁîüÊàêÁî®Êà∑Ë°®ÁöÑÊï∞ÊçÆÂ∫ìÂØºÂÖ•ËØ≠Âè•
+	 *        String formFileNameÔºö‰∏ä‰º†ÁöÑÊñá‰ª∂ÂêçÔºàËé∑ÂèñÂêéÁºÄÔºâÂà§Êñ≠ÊòØ2007Ôºà.xlsxÔºâËøòÊòØ2003Ôºà.xlsÔºâ
+	 *        int isTitle:ÊòØÂê¶ÊúâÊ†áÈ¢òÔºåÊúâÂàôÊòØ1ÔºåÊó†Âàô0
 	 * @return ArrayList<Object[]>
 	 * @throws Exception,Set<String> set
 	 */
-	public static ArrayList<Object[]> generateUserSql(File formFile,String formFileName,int isTitle,Set<String> set)
+	public static ArrayList<Object[]> generateUserSql(InputStream in,String formFileName,int isTitle)
 			throws Exception {
-		FileInputStream in = null;
+        Workbook wb;
+        Sheet sheet;
+        Row row;
+		//FileInputStream in = null;
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		//Map<String, String> localMap = readLocal();
-		set =new HashSet<String>();
+		//Set set =new HashSet<String>();
 		try {
-			if (formFile == null) {
-				throw new Exception("Œƒº˛Œ™ø’£°");
-			}
-			
-			in = new FileInputStream(formFile);//Ω´Œƒº˛∂¡»ÎµΩ ‰»Î¡˜÷–
-			
-			//¥” ‰»Î¡˜÷–ªÒ»°WorkBook∂‘œÛ£¨º”‘ÿ—°÷–µƒexcelŒƒº˛
-			String suffix = formFileName.substring(formFileName.lastIndexOf("."));  // Œƒº˛∫ÛÍ°.
-			String area = "321000";
-			/*if(formFileName.indexOf("bj")!=-1){
-				area = "110000";
-			}
-			if(formFileName.indexOf("sz")!=-1){
-				area = "440300";
-			}
-			if(formFileName.indexOf("gz")!=-1){
-				area = "440100";
-			}
-			if(formFileName.indexOf("sh")!=-1){
-				area = "310000";
-			}*/
-			//÷ß≥÷office2007
+
+			//in = new FileInputStream(formFile);//Â∞ÜÊñá‰ª∂ËØªÂÖ•Âà∞ËæìÂÖ•ÊµÅ‰∏≠
+
+			//‰ªéËæìÂÖ•ÊµÅ‰∏≠Ëé∑ÂèñWorkBookÂØπË±°ÔºåÂä†ËΩΩÈÄâ‰∏≠ÁöÑexcelÊñá‰ª∂
+			String suffix = formFileName.substring(formFileName.lastIndexOf("."));  // Êñá‰ª∂ÂêéËæç.
+
+			//ÊîØÊåÅoffice2007
 			if (".xlsx".equals(suffix.toLowerCase())) {
 				wb = new XSSFWorkbook(in);
 			}
 			else{
-				//÷ß≥÷office2003
-	        //	wb = new HSSFWorkbook(in);
+				//ÊîØÊåÅoffice2003
+				wb = new HSSFWorkbook(in);
 			}
-			
-			for (int i=0; i<wb.getNumberOfSheets(); i++) {//ªÒ»°√ø∏ˆSheet±Ì
-	             sheet = wb.getSheetAt(i);
-	             if(sheet!=null){
-	            	 int count = i+1;
-	            	 System.err.println(">>>>>Œƒº˛–– ˝ £∫"+sheet.getPhysicalNumberOfRows());
-	            	 for (int j=isTitle; j<sheet.getPhysicalNumberOfRows(); j++) {//ªÒ»°√ø––£¨j=isTitle±Ì æ¥”µ⁄j––ø™ ºªÒ»° ˝æ›
-//	            		 Object[] valStr = new String[row.getPhysicalNumberOfCells()];//”√ ˝◊È¿¥¥Ê∑≈√ø“ª––µƒ ˝æ›£¨9±Ì æ√ø“ª––µƒ ˝æ›≤ªƒ‹≥¨π˝9£¨ø…“‘<=9
-	            		 ArrayList<Object> arrayList = new ArrayList<Object>();
-		                 row = sheet.getRow(j);
-		                 StringBuffer str = new StringBuffer();
-		                																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																															
-		                 for (int k=0; k<row.getPhysicalNumberOfCells(); k++) {//ªÒ»°√ø∏ˆµ•‘™∏Ò
-		                     String content = getCellFormatValue(row.getCell(k)).trim();
-		                     if(k==3){
-		                    	 if(content.equals(""))
-		                    		 content="0000";
-		                     }
-		                     arrayList.add(content);
-//		                     if(StringUtils.isNotNull(content)){
-////		                    	 valStr[k] = content;//Ω´excelªÒ»°µΩµƒ÷µ∏≥÷µ∏¯object¿‡–Õµƒ ˝◊È
-//		                    	 arrayList.add(content);
-//		                    	 if(k==6){
-//		                    		 String pattern = "#0.000000";
-//		               			  	 DecimalFormat formatter = new DecimalFormat();
-//		               			  	 formatter.applyPattern(pattern);
-//		                    		 String resString = formatter.format(Double.parseDouble(content));
-//		                    		 str.append(resString);
-//		                    	 }
-//		                     }
-		                 }
-		                 //System.out.println(arrayList);
-//		                 Boolean flag = set.add(str.toString());
-//		                 if(!flag){
-//		                	 System.out.println(">>>>÷ÿ∏¥æ≠Œ≥∂»:"+str.toString());
-//		                 }
-//		                 Boolean flag = set.add(str.toString());
-//		                 str.delete(0, str.length()-1);
-//		                 if(flag){
-//		                	 continue;
-//		                 }
-		                 //µ˜’˚◊÷∂ŒÀ≥–Ú£¨±‹√‚≥ˆœ÷org.postgresql.util.PSQLException: Œ¥…Ë∂®≤Œ ˝÷µ *µƒƒ⁄»›°£
-		                 if(arrayList.size()<4){
-		                	 continue;
-		                 }
-		                 String t = arrayList.get(4).toString().trim();
-		                 //≥µŒª¿‡–Õ£¨0µÿ√Ê£¨1µÿœ¬£¨2’ºµ¿ 3 “Õ‚ 4 “ƒ⁄ 5 “ƒ⁄Õ‚
-		                 if(t!=null){
-		                	 if(t.equals("’ºµ¿"))
-		                		 t="2";
-		                	 else if (t.equals(" “Õ‚")){
-								t="3";
-							} else if (t.equals(" “ƒ⁄")){
-								t="4";
-							} else if (t.equals(" “ƒ⁄Õ‚")){
-								t="5";
-							} else 
-								t="1";
-							
-		                 }
-		                 if(arrayList.get(3)!=null&&!arrayList.get(3).toString().equals("0000")){
-		                	 if(!set.add(arrayList.get(3).toString())){
-		                		 continue;
-		                	 }
-		                	 double lon = Double.parseDouble(arrayList.get(3).toString().split(",")[0]);
-		                	 double lat = Double.parseDouble(arrayList.get(3).toString().split(",")[1]);
-		                	 Long ntime = System.currentTimeMillis()/1000;
-		                	 //company_name,parking_type,address,city,parking_total,longitude,latitude,create_time,update_time,state,type,mobile,remarks,chanid,groupid
-		                	 Object[] values = new Object[]{arrayList.get(1).toString(),Integer.valueOf(t),arrayList.get(2).toString(),
-		                			 Integer.valueOf(area),Double.valueOf(arrayList.get(5).toString()).intValue(),lon,lat,ntime,ntime,0,0
-		                			 ,arrayList.get(7),arrayList.get(8),321000,7};
-		                	 list.add(values);
-		                 }
-		                 //–Ú∫≈	Õ£≥µ≥°√˚≥∆1	µÿ÷∑2	æ≠Œ≥∂»3	≥µ≥°¿‡–Õ4	◊‹≥µŒª ˝5	∏∫‘»À6	µÁª∞7	 ’∑—8	±∏◊¢9	
-		                 //√Ò◊Â¬∑∫œæ∞æ€»⁄Õ£≥µ≥°	’ºµ¿		¡ŸΩ≠÷ß¬∑2∫≈º∞√Ò◊Â¬∑108∫≈	”Â÷–«¯	22	106.580433,29.559969	π´π≤	∞Ÿ∂»µÿÕº…œµƒµÿ÷∑£∫”Â÷–«¯√Ò»®¬∑586∫≈
-//		                 ArrayList<Object> arrayListRet = new ArrayList<Object>();
-//		                 arrayListRet.add(arrayList.get(0));
-//		                 arrayListRet.add(localMap.get(str.toString()));
-//		                 arrayListRet.add(arrayList.get(3));
-//		                 arrayListRet.add(TimeTools.getLongMilliSeconds());
-//		                 arrayListRet.add(TimeTools.getLongMilliSeconds());
-//		                 arrayListRet.add(Double.parseDouble(arrayList.get(1)+""));
-//		                 arrayListRet.add(Double.parseDouble(arrayList.get(2)+""));
-//		                 arrayListRet.add(1);
-//		                 arrayListRet.add(0);
-//		                 arrayListRet.add(Integer.parseInt(area));
-	                	// list.add(values);
 
-		             }
-	             }
+			for (int i=0; i<wb.getNumberOfSheets(); i++) {//Ëé∑ÂèñÊØè‰∏™SheetË°®
+				sheet = wb.getSheetAt(i);
+				if(sheet!=null){
+					int count = i+1;
+					System.err.println(">>>>>Êñá‰ª∂Ë°åÊï∞ Ôºö"+sheet.getPhysicalNumberOfRows());
+					for (int j=isTitle; j<sheet.getPhysicalNumberOfRows(); j++) {//Ëé∑ÂèñÊØèË°åÔºåj=isTitleË°®Á§∫‰ªéÁ¨¨jË°åÂºÄÂßãËé∑ÂèñÊï∞ÊçÆ
+//	            		 Object[] valStr = new String[row.getPhysicalNumberOfCells()];//Áî®Êï∞ÁªÑÊù•Â≠òÊîæÊØè‰∏ÄË°åÁöÑÊï∞ÊçÆÔºå9Ë°®Á§∫ÊØè‰∏ÄË°åÁöÑÊï∞ÊçÆ‰∏çËÉΩË∂ÖËøá9ÔºåÂèØ‰ª•<=9
+						ArrayList<Object> arrayList = new ArrayList<Object>();
+						row = sheet.getRow(j);
+						StringBuffer str = new StringBuffer();
+
+						//System.out.println("Á¨¨"+j+"Ë°åÔºöÈïøÂ∫¶Ôºö"+row.getPhysicalNumberOfCells()+",getLastCellNum:"+row.getLastCellNum());
+						for (int k=0; k<row.getLastCellNum(); k++) {//Ëé∑ÂèñÊØè‰∏™ÂçïÂÖÉÊ†º
+							Cell cell = row.getCell(k);
+							if((k<1||k>2))
+								if(cell!=null)
+									cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+							String content = getCellFormatValue(cell).trim();
+							arrayList.add(content);
+						}
+						//Ë∞ÉÊï¥Â≠óÊÆµÈ°∫Â∫èÔºåÈÅøÂÖçÂá∫Áé∞org.postgresql.util.PSQLException: Êú™ËÆæÂÆöÂèÇÊï∞ÂÄº *ÁöÑÂÜÖÂÆπ„ÄÇ
+//						if(arrayList.size()<4){
+//							continue;
+//						}
+
+						//company_name,parking_type,address,city,parking_total,longitude,latitude,create_time,update_time,state,type,mobile,remarks,chanid,groupid
+						System.out.println(arrayList);
+						Object[] values = arrayList.toArray();
+						list.add(values);
+					}
+				}
 			}
 			return list;
 		} catch (Exception e) {
@@ -188,120 +107,81 @@ public class ImportExcelUtil {
 		}
 	}
 
-    /**
-     * ∏˘æ›HSSFCell¿‡–Õ…Ë÷√ ˝æ›
-     * @param cell
-     * @return
-     */
-    private static String getCellFormatValue(Cell cell) {
-        String cellvalue = "";
-        if (cell != null) {
-            // ≈–∂œµ±«∞CellµƒType
-            switch (cell.getCellType()) {
-            // »Áπ˚µ±«∞CellµƒTypeŒ™NUMERIC
-            case HSSFCell.CELL_TYPE_NUMERIC:
-            case HSSFCell.CELL_TYPE_FORMULA: {
-                // ≈–∂œµ±«∞µƒcell «∑ÒŒ™Date
-                if (true){
-                	//	HSSFDateUtil.isCellDateFormatted(cell)) {
-                    // »Áπ˚ «Date¿‡–Õ‘Ú£¨◊™ªØŒ™Data∏Ò Ω
-                    
-                    //∑Ω∑®1£∫’‚—˘◊”µƒdata∏Ò Ω «¥¯ ±∑÷√Îµƒ£∫2011-10-12 0:00:00
-                    //cellvalue = cell.getDateCellValue().toLocaleString();
-                    
-                    //∑Ω∑®2£∫’‚—˘◊”µƒdata∏Ò Ω «≤ª¥¯¥¯ ±∑÷√Îµƒ£∫2011-10-12
-                    Date date = cell.getDateCellValue();
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    cellvalue = sdf.format(date);
-                    
-                }
-                // »Áπ˚ «¥ø ˝◊÷
-                else {
-                    // »°µ√µ±«∞Cellµƒ ˝÷µ
-                    cellvalue = String.valueOf(cell.getNumericCellValue());
-                }
-                break;
-            }
-            // »Áπ˚µ±«∞CellµƒTypeŒ™STRIN
-            case HSSFCell.CELL_TYPE_STRING:
-                // »°µ√µ±«∞µƒCell◊÷∑˚¥Æ
-                cellvalue = cell.getRichStringCellValue().getString();
-                break;
-            // ƒ¨»œµƒCell÷µ
-            default:
-                cellvalue = " ";
-            }
-        } else {
-            cellvalue = "";
-        }
-        return cellvalue;
+	/**
+	 * Ê†πÊçÆHSSFCellÁ±ªÂûãËÆæÁΩÆÊï∞ÊçÆ
+	 * @param cell
+	 * @return
+	 */
+	private static String getCellFormatValue(Cell cell) {
+		String cellvalue = "";
+		if (cell != null) {
+			// Âà§Êñ≠ÂΩìÂâçCellÁöÑType
+            //System.out.println(cell.getCellType());
 
-    }
+			switch (cell.getCellType()) {
+				// Â¶ÇÊûúÂΩìÂâçCellÁöÑType‰∏∫NUMERIC
+				case HSSFCell.CELL_TYPE_NUMERIC:
+//                    cellvalue = String.valueOf(cell.getNumericCellValue());
+//                    System.out.println(cellvalue);
+//                    if(cellvalue.length()>7){
+//                        //ÊñπÊ≥ï2ÔºöËøôÊ†∑Â≠êÁöÑdataÊ†ºÂºèÊòØ‰∏çÂ∏¶Â∏¶Êó∂ÂàÜÁßíÁöÑÔºö2011-10-12
+//                        Date date = cell.getDateCellValue();
+//                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//                        cellvalue = sdf.format(date);
+//                    }else if(cellvalue.indexOf(".")!=-1){
+//                        cellvalue =cellvalue.substring(0,cellvalue.indexOf("."));
+//                    }
+//                    break;
+				case HSSFCell.CELL_TYPE_FORMULA: {
+					// Âà§Êñ≠ÂΩìÂâçÁöÑcellÊòØÂê¶‰∏∫Date
+					if (true){
+						//	HSSFDateUtil.isCellDateFormatted(cell)) {
+						// Â¶ÇÊûúÊòØDateÁ±ªÂûãÂàôÔºåËΩ¨Âåñ‰∏∫DataÊ†ºÂºè
 
-    
-    public  static List<Object[]> importExcelFile(Set<String> set){
-    	String name = "d:/yangzhou.xls";
-    	File file = new File(name);
-    	name  = "yangzhou.xls";
-    	List<Object[]> resultList=new ArrayList<Object[]>();
-    	List<Object[]>  list = null;
-		try {
-			list = generateUserSql(file, name, 1,set);
-			if(list!=null)
-				resultList.addAll(list);
-//			name = "d://sz.xls";
-//			file= new File(name);
-//			name= "sz.xls";
-//			list = generateUserSql(file, name, 0,set);
-//			if(list!=null)
-//				resultList.addAll(list);
-//			name = "d://sh.xls";
-//			file= new File(name);
-//			name= "sh.xls";
-//			list = generateUserSql(file, name, 0,set);
-//			if(list!=null)
-//				resultList.addAll(list);
-//			name = "d://gz.xls";
-//			file= new File(name);
-//			name= "gz.xls";
-//			list = generateUserSql(file, name, 0,set);
-//			if(list!=null)
-//				resultList.addAll(list);
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+						//ÊñπÊ≥ï1ÔºöËøôÊ†∑Â≠êÁöÑdataÊ†ºÂºèÊòØÂ∏¶Êó∂ÂàÜÁßíÁöÑÔºö2011-10-12 0:00:00
+						//cellvalue = cell.getDateCellValue().toLocaleString();
+
+						//ÊñπÊ≥ï2ÔºöËøôÊ†∑Â≠êÁöÑdataÊ†ºÂºèÊòØ‰∏çÂ∏¶Â∏¶Êó∂ÂàÜÁßíÁöÑÔºö2011-10-12
+						Date date = cell.getDateCellValue();
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						cellvalue = sdf.format(date);
+
+					}
+					// Â¶ÇÊûúÊòØÁ∫ØÊï∞Â≠ó
+					else {
+						// ÂèñÂæóÂΩìÂâçCellÁöÑÊï∞ÂÄº
+						cellvalue = String.valueOf(cell.getNumericCellValue());
+					}
+					break;
+				}
+				// Â¶ÇÊûúÂΩìÂâçCellÁöÑType‰∏∫STRIN
+				case HSSFCell.CELL_TYPE_STRING:
+					// ÂèñÂæóÂΩìÂâçÁöÑCellÂ≠óÁ¨¶‰∏≤
+					cellvalue = cell.getRichStringCellValue().getString();
+					break;
+				// ÈªòËÆ§ÁöÑCellÂÄº
+				default:
+					cellvalue = " ";
+			}
+		} else {
+			cellvalue = "";
 		}
-    	return resultList;
+		return cellvalue;
+
 	}
-    
-    private static Map<String, String> readLocal(){
-    	BufferedReader br =null;
-    	Map<String, String>  resultMap = new HashMap<String, String>();
-    	String data ="";
-    	try {
-    		br =new BufferedReader(new FileReader("d:\\datafile.txt"));  
-			data = br.readLine();
-			while( data!=null){  
-				
-				resultMap.put(data.split("\\|")[0], data.split("\\|")[1]);
-				data = br.readLine(); //Ω”◊≈∂¡œ¬“ª––  
-			} 
-			br.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}//“ª¥Œ∂¡»Î“ª––£¨÷±µΩ∂¡»ÎnullŒ™Œƒº˛Ω· ¯
-    	return resultMap;
-    }
-    
-    public static void main(String[] args) {
-    	try {
-    		//System.err.println(readLocal().size());
-			//ArrayList<Object[]> values = ImportExcelUtil.generateUserSql(new File("C:\\Users\\drh\\Desktop\\√‚∑—Õ£≥µ–≈œ¢_20150519\\bj.xls"), "bj.xls", 0);
+
+
+
+
+	public static void main(String[] args) {
+		try {
+//			System.err.println(readLocal().size());
+			File file = new File("C:\\test.xlsx");
+			ArrayList<Object[]> values = generateUserSql(new FileInputStream(file), "test.xlsx", 1);
+			System.out.println(values);
 			//String sql = "insert into com_info_tb(company_name,resume,create_time,longitude,latitude,type,state,city) values(?,?,?,?,?,?,?,?)";
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    }
+	}
 }

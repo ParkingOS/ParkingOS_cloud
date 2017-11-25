@@ -13,9 +13,9 @@ import com.mongodb.ServerAddress;
 import com.zld.CustomDefind;
 
 
-/**mongodb≈‰÷√**/
+/**mongodbÈÖçÁΩÆ**/
 public class MongoClientFactory {
-	
+
 	//private Logger logger = Logger.getLogger(MongoClientFactory.class);
 
 	private HashMap<String, DB> mongodbmap = new HashMap<String, DB>();
@@ -43,7 +43,7 @@ public class MongoClientFactory {
 			System.out.println("mongodb init over...");
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
 	}
 
 	public DB getMongoDBBuilder(String dbName) {
@@ -65,7 +65,7 @@ public class MongoClientFactory {
 		}
 		return db;
 	}
-	
+
 	static List<ServerAddress> setAddresses(){
 		List<ServerAddress> list=new ArrayList<ServerAddress>();
 		String address = CustomDefind.MONGOADDRESS;

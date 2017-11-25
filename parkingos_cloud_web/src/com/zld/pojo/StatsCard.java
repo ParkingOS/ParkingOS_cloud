@@ -3,16 +3,16 @@ package com.zld.pojo;
 import java.io.Serializable;
 
 public class StatsCard extends StatsAccount implements Serializable {
-	//¿¨Æ¬Í³¼Æ
-	private double regFee = 0;//¿ª¿¨³õÊ¼»¯½ğ¶î
-	private double chargeCashFee = 0;//¿¨Æ¬³äÖµ½ğ¶î
-	private double returnFee = 0;//ÍË¿¨ÍË»¹½ğ¶î
-	private double actFee = 0;//¼¤»î¿¨Æ¬³õÊ¼»¯½ğ¶î
-	private long returnCount = 0;//ÍË¿¨ÊıÁ¿
-	private long actCount = 0;//¼¤»î¿¨Æ¬ÊıÁ¿
-	private long regCount = 0;//¿ª¿¨ÊıÁ¿
-	private long bindCount = 0;//°ó¶¨ÓÃ»§ÊıÁ¿
-	
+	//å¡ç‰‡ç»Ÿè®¡
+	private double regFee = 0;//å¼€å¡åˆå§‹åŒ–é‡‘é¢
+	private double chargeCashFee = 0;//å¡ç‰‡å……å€¼é‡‘é¢
+	private double returnFee = 0;//é€€å¡é€€è¿˜é‡‘é¢
+	private double actFee = 0;//æ¿€æ´»å¡ç‰‡åˆå§‹åŒ–é‡‘é¢
+	private long returnCount = 0;//é€€å¡æ•°é‡
+	private long actCount = 0;//æ¿€æ´»å¡ç‰‡æ•°é‡
+	private long regCount = 0;//å¼€å¡æ•°é‡
+	private long bindCount = 0;//ç»‘å®šç”¨æˆ·æ•°é‡
+
 	public double getRegFee() {
 		return regFee;
 	}
@@ -69,5 +69,5 @@ public class StatsCard extends StatsAccount implements Serializable {
 				+ actCount + ", regCount=" + regCount + ", bindCount="
 				+ bindCount + "]";
 	}
-	
+
 }

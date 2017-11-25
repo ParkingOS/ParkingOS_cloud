@@ -52,7 +52,7 @@ public class VisitAnlysisAction extends Action {
 			String departvalue = RequestUtil.processParams(request, "departvalue");
 			Long department_id = -1L;
 			if(!departvalue.equals("") && !departvalue.equals("15")){
-				if(departvalue.contains("_")){//×Ü¹ÜÀíÔ±
+				if(departvalue.contains("_")){//æ€»ç®¡ç†å‘˜
 					String[] node = departvalue.split("_");
 					String pid = node[0];
 					String nid = node[1];
@@ -62,7 +62,7 @@ public class VisitAnlysisAction extends Action {
 					if(map != null){
 						department_id = (Long)map.get("id");
 					}
-				}else{//²¿ÃÅ¾­Àí
+				}else{//éƒ¨é—¨ç»ç†
 					department_id = Long.parseLong(departvalue);
 				}
 			}
@@ -77,7 +77,7 @@ public class VisitAnlysisAction extends Action {
 				Long b = TimeTools.getLongMilliSecondFrom_HHMMDD(btime)/1000;
 				Long e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime+" 23:59:59");
 				sqlInfo =new SqlInfo(" create_time between ? and ? ",
-						new Object[]{b,e});//state=1ÒÑÖ§¸¶;pay_type=2ÊÖ»úÖ§¸¶
+						new Object[]{b,e});//state=1å·²æ”¯ä»˜;pay_type=2æ‰‹æœºæ”¯ä»˜
 			}
 			sql +=" where "+sqlInfo.getSql();
 			params= sqlInfo.getParams();
@@ -114,7 +114,7 @@ public class VisitAnlysisAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private List<Map<String, Object>> setName(List<Map<String, Object>> list,Long department_id){
 		List<Map<String, Object>> list2 = new ArrayList<Map<String,Object>>();
 		List<Object> uids = new ArrayList<Object>();
@@ -159,7 +159,7 @@ public class VisitAnlysisAction extends Action {
 		}
 		return list2;
 	}
-	
+
 	private void setOtherInfo(List<Map<String, Object>> list){
 		List<Object> uids = new ArrayList<Object>();
 		if(list != null && !list.isEmpty()){

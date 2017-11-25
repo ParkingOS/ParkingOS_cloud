@@ -3,41 +3,41 @@ package com.zld.pojo;
 import java.io.Serializable;
 
 public class StatsAccountClass implements Serializable {
-	//Í³¼Æ·ÖÀà
-	private long id = -1;//Í³¼Æ±àºÅ
-	//Í£³µ·ÑÏÖ½ğÕËÄ¿Í³¼Æ
-	private double cashParkingFee = 0;//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-	private double cashPrepayFee = 0;//Ô¤¸¶Í£³µ·Ñ
-	private double cashRefundFee = 0;//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
-	private double cashAddFee = 0;//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-	private double cashPursueFee = 0;//×·½ÉÍ£³µ·Ñ
-	//Í£³µ·Ñµç×ÓÕËÄ¿Í³¼Æ
-	private double ePayParkingFee = 0;//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-	private double ePayPrepayFee = 0;//Ô¤¸¶Í£³µ·Ñ
-	private double ePayRefundFee = 0;//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
-	private double ePayAddFee = 0;//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-	private double ePayPursueFee = 0;//×·½ÉÍ£³µ·Ñ
-	//Í£³µ·Ñ¿¨Æ¬ÕËÄ¿Í³¼Æ
-	private double cardParkingFee = 0;//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-	private double cardPrepayFee = 0;//Ô¤¸¶Í£³µ·Ñ
-	private double cardRefundFee = 0;//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
-	private double cardAddFee = 0;//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-	private double cardPursueFee = 0;//×·½ÉÍ£³µ·Ñ
-	//¿¨Æ¬Í³¼Æ
-	private double cardRegFee = 0;//¿ª¿¨³õÊ¼»¯½ğ¶î
-	private double cardChargeCashFee = 0;//¿¨Æ¬³äÖµ½ğ¶î
-	private double cardReturnFee = 0;//ÍË¿¨ÍË»¹½ğ¶î
-	private double cardActFee = 0;//¼¤»î¿¨Æ¬³õÊ¼»¯½ğ¶î
-	private long cardReturnCount = 0;//ÍË¿¨ÊıÁ¿
-	private long cardActCount = 0;//¼¤»î¿¨Æ¬ÊıÁ¿
-	private long cardRegCount = 0;//¿ª¿¨ÊıÁ¿
-	private long cardBindCount = 0;//°ó¶¨ÓÃ»§ÊıÁ¿
-	
-	//ÌÓµ¥ÕËÄ¿Í³¼Æ
-	private double escapeFee = 0;//Î´×·½ÉÌÓµ¥½ğ¶î
-	//³µ¼ìÆ÷¶©µ¥ÕËÄ¿Í³¼Æ
-	private double sensorOrderFee = 0;//Î´×·½ÉÌÓµ¥½ğ¶î
-	
+	//ç»Ÿè®¡åˆ†ç±»
+	private long id = -1;//ç»Ÿè®¡ç¼–å·
+	//åœè½¦è´¹ç°é‡‘è´¦ç›®ç»Ÿè®¡
+	private double cashParkingFee = 0;//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+	private double cashPrepayFee = 0;//é¢„ä»˜åœè½¦è´¹
+	private double cashRefundFee = 0;//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
+	private double cashAddFee = 0;//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+	private double cashPursueFee = 0;//è¿½ç¼´åœè½¦è´¹
+	//åœè½¦è´¹ç”µå­è´¦ç›®ç»Ÿè®¡
+	private double ePayParkingFee = 0;//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+	private double ePayPrepayFee = 0;//é¢„ä»˜åœè½¦è´¹
+	private double ePayRefundFee = 0;//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
+	private double ePayAddFee = 0;//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+	private double ePayPursueFee = 0;//è¿½ç¼´åœè½¦è´¹
+	//åœè½¦è´¹å¡ç‰‡è´¦ç›®ç»Ÿè®¡
+	private double cardParkingFee = 0;//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+	private double cardPrepayFee = 0;//é¢„ä»˜åœè½¦è´¹
+	private double cardRefundFee = 0;//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
+	private double cardAddFee = 0;//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+	private double cardPursueFee = 0;//è¿½ç¼´åœè½¦è´¹
+	//å¡ç‰‡ç»Ÿè®¡
+	private double cardRegFee = 0;//å¼€å¡åˆå§‹åŒ–é‡‘é¢
+	private double cardChargeCashFee = 0;//å¡ç‰‡å……å€¼é‡‘é¢
+	private double cardReturnFee = 0;//é€€å¡é€€è¿˜é‡‘é¢
+	private double cardActFee = 0;//æ¿€æ´»å¡ç‰‡åˆå§‹åŒ–é‡‘é¢
+	private long cardReturnCount = 0;//é€€å¡æ•°é‡
+	private long cardActCount = 0;//æ¿€æ´»å¡ç‰‡æ•°é‡
+	private long cardRegCount = 0;//å¼€å¡æ•°é‡
+	private long cardBindCount = 0;//ç»‘å®šç”¨æˆ·æ•°é‡
+
+	//é€ƒå•è´¦ç›®ç»Ÿè®¡
+	private double escapeFee = 0;//æœªè¿½ç¼´é€ƒå•é‡‘é¢
+	//è½¦æ£€å™¨è®¢å•è´¦ç›®ç»Ÿè®¡
+	private double sensorOrderFee = 0;//æœªè¿½ç¼´é€ƒå•é‡‘é¢
+
 	public double getCardRegFee() {
 		return cardRegFee;
 	}
@@ -86,7 +86,7 @@ public class StatsAccountClass implements Serializable {
 	public void setCardBindCount(long cardBindCount) {
 		this.cardBindCount = cardBindCount;
 	}
-	
+
 	public long getId() {
 		return id;
 	}

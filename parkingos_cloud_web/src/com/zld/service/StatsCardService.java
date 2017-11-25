@@ -7,14 +7,14 @@ import com.zld.pojo.StatsReq;
 
 public interface StatsCardService {
 	/**
-	 * Í³¼Æ¿¨Æ¬
+	 * ç»Ÿè®¡å¡ç‰‡
 	 * @param req
 	 * @return
 	 */
 	public StatsCardResp statsCard(StatsReq req);
-	
+
 	/**
-	 * ²éÁ÷Ë®ÕËÄ¿Ã÷Ï¸
+	 * æŸ¥æµæ°´è´¦ç›®æ˜ç»†
 	 * @param req
 	 * @return
 	 */

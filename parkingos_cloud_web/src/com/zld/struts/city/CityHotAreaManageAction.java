@@ -29,13 +29,13 @@ public class CityHotAreaManageAction extends Action {
 	private DataBaseService daService;
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null || cityid == null){
@@ -80,7 +80,7 @@ public class CityHotAreaManageAction extends Action {
 			}
 			List<Map<String, Object>> list  = pgOnlyReadService.getAll(sql +" order by create_time desc ",params, 0, 0);
 			if(list!=null&&!list.isEmpty()){
-				String heards[] = new String[]{"±àºÅ","Ãû³Æ","ÏêÏ¸µØÖ·","ÃèÊö","×´Ì¬","ĞÂ½¨ÈÕÆÚ","´´½¨ÈË"};
+				String heards[] = new String[]{"ç¼–å·","åç§°","è¯¦ç»†åœ°å€","æè¿°","çŠ¶æ€","æ–°å»ºæ—¥æœŸ","åˆ›å»ºäºº"};
 				List<List<String>> bodyList = new ArrayList<List<String>>();
 				for(Map<String, Object> map : list){
 					List<String> valueList = new ArrayList<String>();
@@ -91,19 +91,19 @@ public class CityHotAreaManageAction extends Action {
 					Integer state = (Integer)map.get("state");
 					if(state!=null){
 						switch (state) {
-						case 0:
-							valueList.add("ĞÂ½¨");
-							break;
-						case 1:
-							valueList.add("ÒÑÉ¾³ı");
-							break;
-						default:
-							break;
+							case 0:
+								valueList.add("æ–°å»º");
+								break;
+							case 1:
+								valueList.add("å·²åˆ é™¤");
+								break;
+							default:
+								break;
 						}
 					}else {
 						valueList.add("");
 					}
-					
+
 					Long htime = (Long)map.get("create_time");
 					if(htime!=null){
 						valueList.add(TimeTools.getTime_yyyyMMdd_HHmmss(htime*1000));
@@ -113,7 +113,7 @@ public class CityHotAreaManageAction extends Action {
 					valueList.add(map.get("create_user")+"");
 					bodyList.add(valueList);
 				}
-				String fname = "ÈÈµãÇøÓò" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
+				String fname = "çƒ­ç‚¹åŒºåŸŸ" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
 				fname = StringUtils.encodingFileName(fname);
 				java.io.OutputStream os;
 				try {
@@ -121,7 +121,7 @@ public class CityHotAreaManageAction extends Action {
 					response.reset();
 					response.setHeader("Content-disposition", "attachment; filename="
 							+ fname + ".xls");
-					ExportExcelUtil importExcel = new ExportExcelUtil("ÈÈµãÇøÓò",
+					ExportExcelUtil importExcel = new ExportExcelUtil("çƒ­ç‚¹åŒºåŸŸ",
 							heards, bodyList);
 					importExcel.createExcelFile(os);
 				} catch (IOException e) {
@@ -137,7 +137,7 @@ public class CityHotAreaManageAction extends Action {
 			if(cityid > 0){
 				Long ntime  =System.currentTimeMillis()/1000;
 				int r = daService.update("insert into city_hotarea_tb(name,adress,reason,state,cityid,create_time,create_user) " +
-						"values(?,?,?,?,?,?,?)", 
+								"values(?,?,?,?,?,?,?)",
 						new Object[]{name,adress,reason,state,cityid,ntime,createUid});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -151,7 +151,7 @@ public class CityHotAreaManageAction extends Action {
 			Long updateUid = (Long)request.getSession().getAttribute("loginuin");
 			Integer state = RequestUtil.getInteger(request, "state", 0);
 			if(id > 0){
-				int r = daService.update("update city_hotarea_tb set name=?,adress=?,reason=?,state=?,update_user=?,update_time=? where id=? ", 
+				int r = daService.update("update city_hotarea_tb set name=?,adress=?,reason=?,state=?,update_user=?,update_time=? where id=? ",
 						new Object[]{name, adress, reason, state,updateUid,System.currentTimeMillis()/1000,id});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -161,7 +161,7 @@ public class CityHotAreaManageAction extends Action {
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			Long deleteUid = (Long)request.getSession().getAttribute("loginuin");
 			if(id>0){
-				int r = daService.update("update city_hotarea_tb set state=?,delete_user=?,delete_time=? where id=? ", 
+				int r = daService.update("update city_hotarea_tb set state=?,delete_user=?,delete_time=? where id=? ",
 						new Object[]{1,deleteUid,System.currentTimeMillis()/1000,id});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -192,13 +192,13 @@ public class CityHotAreaManageAction extends Action {
 		}else if(action.equals("parkcreate")){
 			Long hotid = RequestUtil.getLong(request, "hotid", -1L);
 			Long comid = RequestUtil.getLong(request, "comid", -1L);
-			int r = daService.update("update com_info_tb set hotarea_id=? where id=? ", 
+			int r = daService.update("update com_info_tb set hotarea_id=? where id=? ",
 					new Object[]{hotid, comid});
 			AjaxUtil.ajaxOutput(response, r + "");
 			return null;
 		}else if(action.equals("parkdelete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			int r = daService.update("update com_info_tb set hotarea_id=? where id=? ", 
+			int r = daService.update("update com_info_tb set hotarea_id=? where id=? ",
 					new Object[]{-1, id});
 			AjaxUtil.ajaxOutput(response, r + "");
 		}

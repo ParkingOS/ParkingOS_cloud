@@ -23,33 +23,33 @@ import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
 /**
- * ÊĞ³¡×¨Ô±¹ÜÀí£¬ÔÚ×Ü¹ÜÀíÔ±ºóÌ¨
+ * å¸‚åœºä¸“å‘˜ç®¡ç†ï¼Œåœ¨æ€»ç®¡ç†å‘˜åå°
  * @author Administrator
  *
  */
 public class MarketerManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
 	private LogService logService;
-	
+
 	private Logger logger = Logger.getLogger(MarketerManageAction.class);
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
 		request.setAttribute("authid", request.getParameter("authid"));
-		Long loginuin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long loginuin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		if(loginuin == null){
 			response.sendRedirect("login.do");
 			return null;
 		}
-		Map<String, Object> adminRoleMap = daService.getMap("select * from user_role_tb where type=? and oid =(select id from zld_orgtype_tb where name like ? limit ? ) limit ? ", 
-				new Object[]{0, "%BOSS%", 1, 1});//²éÕÒ¹ÜÀíÔ±½ÇÉ«
+		Map<String, Object> adminRoleMap = daService.getMap("select * from user_role_tb where type=? and oid =(select id from zld_orgtype_tb where name like ? limit ? ) limit ? ",
+				new Object[]{0, "%BOSS%", 1, 1});//æŸ¥æ‰¾ç®¡ç†å‘˜è§’è‰²
 		if(adminRoleMap == null){
 			return null;
 		}
@@ -107,7 +107,7 @@ public class MarketerManageAction extends Action{
 			Object [] values = new Object[]{1, id};
 			int result = daService.update(sql, values);
 			if(result==1)
-				logService.updateSysLog(comid,request.getSession().getAttribute("loginuin")+"","½ûÓÃÁËÍ£³µ³¡ÈËÔ±,±àºÅ£º"+id, 204);
+				logService.updateSysLog(comid,request.getSession().getAttribute("loginuin")+"","ç¦ç”¨äº†åœè½¦åœºäººå‘˜,ç¼–å·ï¼š"+id, 204);
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("cominfo")){
 			Integer uin = RequestUtil.getInteger(request, "id", -1);
@@ -119,7 +119,7 @@ public class MarketerManageAction extends Action{
 				}
 			}
 			return mapping.findForward("cominfo");
-			//http://127.0.0.1/zld/marketer.do?action=editpass&id=10133&r=1404548466661	
+			//http://127.0.0.1/zld/marketer.do?action=editpass&id=10133&r=1404548466661
 		}else if(action.equals("editpass")){
 			int result = 0;
 			Long id = RequestUtil.getLong(request, "id", -1L);
@@ -151,47 +151,47 @@ public class MarketerManageAction extends Action{
 					" from user_role_tb where adminid =? and oid=? " , new Object[]{loginuin, adminRoleMap.get("oid")});
 			Map adminMap = new HashMap<String, Object>();
 			adminMap.put("value_no", -1);
-			adminMap.put("value_name", "ÇëÑ¡Ôñ");
+			adminMap.put("value_name", "è¯·é€‰æ‹©");
 			list.add(0,adminMap);
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(list));
 		}
 		return null;
 	}
-	//×¢²áÍ£³µ³¡ÊÕ·ÑÔ±ÕÊºÅ
-		@SuppressWarnings({ "rawtypes" })
-		private int createMember(HttpServletRequest request){
-			String strid =RequestUtil.processParams(request, "strid");
-			String nickname =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "nickname"));
-			String phone =RequestUtil.processParams(request, "phone");
-			String mobile =RequestUtil.processParams(request, "mobile");
-			Long role_id =RequestUtil.getLong(request, "role_id", -1L);
-			if(nickname.equals("")) nickname=null;
-			if(phone.equals("")) phone=null;
-			if(mobile.equals("")) mobile=null;
-			if(role_id < 0){
-				return 0;
-			}
-			Map adminMap = (Map) request.getSession().getAttribute("userinfo");
-			Long time = System.currentTimeMillis()/1000;
-			if(!checkStrid(strid))
-				return 0;
-			Long comId = (Long)request.getSession().getAttribute("comid");
-			//ÓÃ»§±í
-			String sql="insert into user_info_tb (nickname,password,strid," +
-					"address,reg_time,mobile,phone,role_id,comid) " +
-					"values (?,?,?,?,?,?,?,?,?)";
-			Object [] values= new Object[]{nickname,strid,strid,
-					adminMap.get("address"),time,mobile,phone,role_id,comId};
-			int r = daService.update(sql, values);
-			return r;
+	//æ³¨å†Œåœè½¦åœºæ”¶è´¹å‘˜å¸å·
+	@SuppressWarnings({ "rawtypes" })
+	private int createMember(HttpServletRequest request){
+		String strid =RequestUtil.processParams(request, "strid");
+		String nickname =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "nickname"));
+		String phone =RequestUtil.processParams(request, "phone");
+		String mobile =RequestUtil.processParams(request, "mobile");
+		Long role_id =RequestUtil.getLong(request, "role_id", -1L);
+		if(nickname.equals("")) nickname=null;
+		if(phone.equals("")) phone=null;
+		if(mobile.equals("")) mobile=null;
+		if(role_id < 0){
+			return 0;
 		}
-		
-		private boolean checkStrid(String strid){
-			String sql = "select count(*) from user_info_tb where strid =? ";
-			Long result = daService.getLong(sql, new Object[]{strid});
-			if(result > 0){
-				return false;
-			}
-			return true;
+		Map adminMap = (Map) request.getSession().getAttribute("userinfo");
+		Long time = System.currentTimeMillis()/1000;
+		if(!checkStrid(strid))
+			return 0;
+		Long comId = (Long)request.getSession().getAttribute("comid");
+		//ç”¨æˆ·è¡¨
+		String sql="insert into user_info_tb (nickname,password,strid," +
+				"address,reg_time,mobile,phone,role_id,comid) " +
+				"values (?,?,?,?,?,?,?,?,?)";
+		Object [] values= new Object[]{nickname,strid,strid,
+				adminMap.get("address"),time,mobile,phone,role_id,comId};
+		int r = daService.update(sql, values);
+		return r;
+	}
+
+	private boolean checkStrid(String strid){
+		String sql = "select count(*) from user_info_tb where strid =? ";
+		Long result = daService.getLong(sql, new Object[]{strid});
+		if(result > 0){
+			return false;
 		}
+		return true;
+	}
 }

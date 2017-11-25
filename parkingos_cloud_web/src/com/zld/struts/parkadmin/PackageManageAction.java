@@ -1,5 +1,6 @@
 package com.zld.struts.parkadmin;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.util.RequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.zld.AjaxUtil;
@@ -23,12 +25,12 @@ import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.TimeTools;
 /**
- * Í£³µ³¡ºóÌ¨¹ÜÀíÔ±µÇÂ¼ºó£¬²é¿´¶©µ¥£¬²»ÄÜĞŞ¸ÄºÍÉ¾³ı
+ * åœè½¦åœºåå°ç®¡ç†å‘˜ç™»å½•åï¼ŒæŸ¥çœ‹è®¢å•ï¼Œä¸èƒ½ä¿®æ”¹å’Œåˆ é™¤
  * @author Administrator
  *
  */
 public class PackageManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -39,7 +41,7 @@ public class PackageManageAction extends Action{
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -78,12 +80,12 @@ public class PackageManageAction extends Action{
 			List list = null;//daService.getAll(sql, null, 1, 20);
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
-			//Ìí¼ÓÉ¾³ı±êÖ¾
+			//æ·»åŠ åˆ é™¤æ ‡å¿—
 			params.add(0);
 			if(count>0){
 				list = daService.getAll(sql+ " and is_delete=? order by id desc", params, pageNum, pageSize);
 			}
-			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
+			String json = JsonUtil.Map2JsonSingleIgnore(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
 		}else if(action.equals("query")){
@@ -109,105 +111,58 @@ public class PackageManageAction extends Action{
 			//System.out.println(sqlInfo);
 			Long count= daService.getLong(countSql, values);
 			List list = null;//daService.getAll(sql, null, 1, 20);
-			//Ìí¼ÓÉ¾³ı±êÖ¾¡¢
+			//æ·»åŠ åˆ é™¤æ ‡å¿—ã€
 			params.add(0);
 			if(count>0){
 				list = daService.getAll(sql+ " and is_delete=? order by id desc", params, pageNum, pageSize);
 			}
-			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
+			String json = JsonUtil.Map2JsonSingleIgnore(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
 		}else if(action.equals("create")){
-			Integer b_time =RequestUtil.getInteger(request, "b_time", 8);
-			Integer e_time =RequestUtil.getInteger(request, "e_time", 20);
-			Integer bmin =RequestUtil.getInteger(request, "bmin", 0);
-			Integer emin =RequestUtil.getInteger(request, "emin", 0);
-			Integer type =RequestUtil.getInteger(request, "type", 0);
+			//åˆ›å»ºæ—¶é—´
+			Long createTime = System.currentTimeMillis()/1000;
+			//è½¦åœºç¼–å·
 			comid = RequestUtil.getLong(request, "comid", comid);
-			Integer favourable_precent =RequestUtil.getInteger(request, "favourable_precent", 0);
-			Integer out_favourable_precent =RequestUtil.getInteger(request, "out_favourable_precent", 0);
-			Integer free_minutes =RequestUtil.getInteger(request, "free_minutes", 0);
-			String limitday = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "limitday"));
-			Long lday = System.currentTimeMillis()/1000+3*30*24*60*60;//Ä¬ÈÏÈıÊ®Ìì
-			if(!limitday.equals("")){
-				lday=TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(limitday+" 23:59:59");
-			}	
-			String resume =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "resume"));
-			Integer remain_number =RequestUtil.getInteger(request, "remain_number", 8);
-			Double price =RequestUtil.getDouble(request, "price", 0d);
-			Double oprice =RequestUtil.getDouble(request, "old_price",0d);
-			String p_name =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "p_name"));
-			Integer scope =RequestUtil.getInteger(request, "scope", 0);
-			if(type==0){//È«Ìì°üÔÂ
-				b_time=0;
-				e_time=24;
-				bmin=0;
-				emin=0;
-			}else if(type==1){//Ò¹¼ä°üÔÂ
-				if(e_time>=b_time){
-					b_time = 21;
-					e_time=7;
-				}
-			}else if(type==2){
-				if(e_time<=b_time){
-					b_time = 7;
-					e_time=21;
-				}
-			}
+			String period = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "period"));
+			Long carTypeId =RequestUtil.getLong(request, "car_type_id", -1L);
+			Double price = RequestUtil.getDouble(request, "price", 0.0);
+			//æœˆå¡åç§°
+			String p_name =URLDecoder.decode(AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "p_name")),"UTF-8");
+			//æœˆå¡æè¿°
+			String describe = URLDecoder.decode(RequestUtil.getString(request, "describe"),"UTF-8");
 			Long nextid = daService.getLong(
 					"SELECT nextval('seq_product_package_tb'::REGCLASS) AS newid", null);
-			String sql = "insert into  product_package_tb (id,b_time,e_time,price,old_price,p_name, comid,remain_number," +
-					"bmin,emin,limitday,resume,type,favourable_precent,free_minutes,out_favourable_precent,scope) values" +
-					"(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-			Object [] values = new Object[]{nextid,b_time,e_time,price,oprice,p_name,comid,remain_number,bmin,emin,lday,resume,type,favourable_precent,free_minutes,out_favourable_precent,scope};
+			String sql = "insert into  product_package_tb (id,comid,create_time,p_name," +
+					"describe,card_id,car_type_id,period,price) " +
+					"values(?,?,?,?,?,?,?,?,?)";
+			Object [] values = new Object[]{nextid,comid,createTime,p_name,describe,String.valueOf(nextid),carTypeId,period,price};
 			int result = daService.update(sql, values);
-			if(result==1){//Ìí¼Ó³É¹¦ºó£¬¸üĞÂ³µ³¡Ö§³Ö°üÔÂ¹¦ÄÜ 
+			if(result==1){//æ·»åŠ æˆåŠŸåï¼Œæ›´æ–°è½¦åœºæ”¯æŒåŒ…æœˆåŠŸèƒ½
 				if(publicMethods.isEtcPark(comid)){
 					int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"product_package_tb",nextid,System.currentTimeMillis()/1000,0});
 					logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" package ,add sync ret:"+r);
 				}else{
 					logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" package");
 				}
-				int ret = daService.update(" update com_info_tb set monthlypay=? where id=?",new Object[]{1,comid});
-				if(ret==1){
-					if(publicMethods.isEtcPark(comid)){
-						int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate,state) values(?,?,?,?,?,?)", new Object[]{comid,"com_info_tb",comid,System.currentTimeMillis()/1000,1,1});
-						logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" com_info_tb ,add sync ret:"+re);
-					}else{
-						logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" com_info_tb ");
-					}
-					mongoDbUtils.saveLogs(request, 0, 2, "Ìí¼ÓÁË³µ³¡£¨" + comid + "£©Ì×²Í£º" + p_name);
-				}
+				mongoDbUtils.saveLogs(request, 0, 2, "æ·»åŠ äº†è½¦åœºï¼ˆ" + comid + "ï¼‰å¥—é¤ï¼š" + p_name);
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("edit")){
+			//æœˆå¡å¥—é¤id
 			String id =RequestUtil.processParams(request, "id");
-			Integer b_time = RequestUtil.getInteger(request, "b_time", 8);
-			Integer e_time =RequestUtil.getInteger(request, "e_time",20);
-			Double price =RequestUtil.getDouble(request, "price",0.0);
-			Double oprice =RequestUtil.getDouble(request, "old_price",0d);
-			Integer remain_number =RequestUtil.getInteger(request, "remain_number",0);
-			Integer bmin =RequestUtil.getInteger(request, "bmin", 0);
-			Integer emin =RequestUtil.getInteger(request, "emin", 0);
-			Integer type =RequestUtil.getInteger(request, "type", 0);
+			//è½¦åœºç¼–å·
 			comid = RequestUtil.getLong(request, "comid", comid);
-			Integer favourable_precent =RequestUtil.getInteger(request, "favourable_precent", 0);
-			Integer out_favourable_precent =RequestUtil.getInteger(request, "out_favourable_precent", 0);
-			Integer free_minutes =RequestUtil.getInteger(request, "free_minutes", 0);
-			String limitday = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "limitday"));
-			Integer state = RequestUtil.getInteger(request, "state", -1);
-			Integer scope = RequestUtil.getInteger(request, "scope", 0);
-			Long lday = System.currentTimeMillis()/1000+30*24*60*60;//Ä¬ÈÏÈıÊ®Ìì
-			if(!limitday.equals("")){
-				lday=TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(limitday+" 00:00:00");
-			}	
-			String resume =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "resume"));
+			//ä¿®æ”¹æ—¶é—´
+			Long updateTime = System.currentTimeMillis()/1000;
+			//æœˆå¡å¥—é¤æè¿°
+			String describe = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "describe"));
 			String p_name =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "p_name"));
-			String sql = "update product_package_tb set p_name=?,b_time=?,e_time=?,price=?, old_price=?," +
-					"remain_number=? ,bmin=?,emin=?, limitday = ?,type=?, resume=?,favourable_precent=?," +
-					"out_favourable_precent=?,free_minutes=?,state = ?,scope=?,comid=? where id=?";
-			Object [] values = new Object[]{p_name,b_time,e_time,price,oprice,remain_number,
-					bmin,emin,lday,type,resume,favourable_precent,out_favourable_precent,free_minutes,state,scope,comid,Long.valueOf(id)};
+			String period = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "period"));
+			Long carTypeId =RequestUtil.getLong(request, "car_type_id", -1L);
+			Double price = RequestUtil.getDouble(request, "price", 0.0);
+			String sql = "update product_package_tb set p_name=?,comid=?,update_time=?,describe=?,period=?,car_type_id=?,price=? where id=?";
+			Object [] values = new Object[]{p_name,comid,updateTime,describe,period,carTypeId,price,Long.valueOf(id)};
 			int result = daService.update(sql, values);
 			if(result==1){
 				if(publicMethods.isEtcPark(comid)){
@@ -216,21 +171,21 @@ public class PackageManageAction extends Action{
 				}else{
 					logger.error("parkadmin or admin:"+nickname+" edit comid:"+comid+" package ");
 				}
-				mongoDbUtils.saveLogs(request, 0, 3, "ĞŞ¸ÄÁË³µ³¡£¨"+comid+"£©Ì×²Í£º"+p_name);
+				mongoDbUtils.saveLogs(request, 0, 3, "ä¿®æ”¹äº†è½¦åœºï¼ˆ"+comid+"ï¼‰å¥—é¤ï¼š"+p_name);
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("delete")){
 			Long id =RequestUtil.getLong(request, "id", -1L);
 			comid = RequestUtil.getLong(request, "comid", comid);
-			Long count = daService.getLong("select count(id) from carower_product where pid=?", new Object[]{id});
+			Long count = daService.getLong("select count(id) from carower_product where pid=? and is_delete=?", new Object[]{id,0});
 			if(count>0){
-				AjaxUtil.ajaxOutput(response, "¸ÃÌ×²ÍÒÑ±»Ê¹ÓÃ£¬¹²"+count+"Ìõ£¬ÇëÔÚ»áÔ±¹ÜÀíÖĞ½â³ı°ó¶¨ºóÉ¾³ı");
+				AjaxUtil.ajaxOutput(response, "è¯¥å¥—é¤å·²è¢«ä½¿ç”¨ï¼Œå…±"+count+"æ¡ï¼Œè¯·åœ¨ä¼šå‘˜ç®¡ç†ä¸­è§£é™¤ç»‘å®šååˆ é™¤");
 				return null;
 			}
 			Map parkMap = daService.getMap("select * from product_package_tb where id =?", new Object[]{Long.valueOf(id)});
 //			String sql = "delete from product_package_tb where id =?";
 //			Object [] values = new Object[]{Long.valueOf(id)};
-			//Ìí¼ÓÉ¾³ıÂß¼­
+			//æ·»åŠ åˆ é™¤é€»è¾‘
 			String sql = "update product_package_tb set is_delete=? where id =?";
 			Object [] values = new Object[]{1,Long.valueOf(id)};
 			int result = daService.update(sql, values);
@@ -241,7 +196,7 @@ public class PackageManageAction extends Action{
 				if(publicMethods.isEtcPark(comid)){
 					int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"product_package_tb",Long.valueOf(id),System.currentTimeMillis()/1000,2});
 				}
-				mongoDbUtils.saveLogs(request, 0, 4, nickname + "É¾³ıÁË³µ³¡£¨" + comid + "£©Ì×²Í£º" + parkMap);
+				mongoDbUtils.saveLogs(request, 0, 4, nickname + "åˆ é™¤äº†è½¦åœºï¼ˆ" + comid + "ï¼‰å¥—é¤ï¼š" + parkMap);
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("week")){
@@ -263,9 +218,9 @@ public class PackageManageAction extends Action{
 				result = daService.update("update product_package_tb set exclude_date= ? where id =? ",new Object[]{week,id});
 				if(result==1){
 					if(publicMethods.isEtcPark(comid)) {
-						 daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid, "product_package_tb", Long.valueOf(id), System.currentTimeMillis() / 1000, 1});
+						daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid, "product_package_tb", Long.valueOf(id), System.currentTimeMillis() / 1000, 1});
 					}
-					mongoDbUtils.saveLogs(request, 0, 3, "±à¼­ÁË³µ³¡£¨"+comid+"£©Ì×²Í£ºÌí¼ÓÁËÊÕ·Ñ°üÔÂÌ×²Í£¨"+id+"£©µÄÊÕ·ÑÈÕÆÚ£º"+week);
+					mongoDbUtils.saveLogs(request, 0, 3, "ç¼–è¾‘äº†è½¦åœºï¼ˆ"+comid+"ï¼‰å¥—é¤ï¼šæ·»åŠ äº†æ”¶è´¹åŒ…æœˆå¥—é¤ï¼ˆ"+id+"ï¼‰çš„æ”¶è´¹æ—¥æœŸï¼š"+week);
 				}
 			}
 			AjaxUtil.ajaxOutput(response, result+"");

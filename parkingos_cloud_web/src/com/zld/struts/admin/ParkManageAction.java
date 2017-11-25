@@ -42,7 +42,7 @@ import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 import com.zld.utils.ZLDType;
 /**
- * ×Ü¹ÜÀíÔ±   Í£³µ³¡×¢²áĞŞ¸ÄÉ¾³ıµÈ
+ * æ€»ç®¡ç†å‘˜   åœè½¦åœºæ³¨å†Œä¿®æ”¹åˆ é™¤ç­‰
  * @author Administrator
  *
  */
@@ -61,14 +61,14 @@ public class ParkManageAction extends Action {
 	@Autowired
 	private CommonMethods commonMethods;
 	Logger logger = Logger.getLogger(ParkManageAction.class);
-	
-	
+
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		
-		
+
+
 		String action = RequestUtil.processParams(request, "action");
 		Integer state = RequestUtil.getInteger(request, "state", 0);
 		String userId = (String)request.getSession().getAttribute("userid");
@@ -81,9 +81,9 @@ public class ParkManageAction extends Action {
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("ugc")){
-			if(state==0)//ÒÑÉóºËUGCÍ£³µ³¡
+			if(state==0)//å·²å®¡æ ¸UGCåœè½¦åœº
 				return mapping.findForward("ugclist");
-			else {//Î´ÉóºËUGCÍ£³µ³¡
+			else {//æœªå®¡æ ¸UGCåœè½¦åœº
 				return mapping.findForward("ugcverify");
 			}
 		}else if(action.equals("unionparks")){
@@ -140,6 +140,9 @@ public class ParkManageAction extends Action {
 			return null;
 		}else if(action.equals("sendparktounion")){
 			String ids = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "seleids"));
+			String union_id = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "union_id"));
+			String union_key = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "union_key"));
+			String server_id = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "server_id"));
 			String []sids = ids.split(",");
 			int uploadCount = 0;
 			int unUploadCount=0;
@@ -154,7 +157,7 @@ public class ParkManageAction extends Action {
 				}
 				List<Map<String, Object>> list = onlyReadService.getAll(
 						"select id,address,company_name,phone,longitude,latitude,parking_total,remarks " +
-						"from com_info_tb where id in ("+paramStr+")",params);
+								"from com_info_tb where id in ("+paramStr+")",params);
 				if(list!=null&&list.size()>0){
 					for(Map<String, Object> map : list){
 						//String url = "https://127.0.0.1/api-web/park/addpark";
@@ -171,13 +174,13 @@ public class ParkManageAction extends Action {
 						paramMap.put("empty_plot",  map.get("parking_total"));
 						paramMap.put("price_desc", getPrice(Long.valueOf(map.get("id")+"")));
 						paramMap.put("remark",map.get("remarks"));
-						paramMap.put("union_id", CustomDefind.UNIONID);
-						paramMap.put("server_id", CustomDefind.SERVERID);
+						paramMap.put("union_id", union_id);
+						paramMap.put("server_id", server_id);
 						paramMap.put("rand", Math.random());
 						String ret = "";
 						try {
 							logger.error(paramMap);
-							String linkParams = StringUtils.createLinkString(paramMap)+"key="+CustomDefind.UNIONKEY;
+							String linkParams = StringUtils.createLinkString(paramMap)+"key="+union_key;
 							System.out.println(linkParams);
 							String sign =StringUtils.MD5(linkParams).toUpperCase();
 							logger.error(sign);
@@ -192,7 +195,7 @@ public class ParkManageAction extends Action {
 								if(uploadState==1){
 									daService.update("update com_info_tb set upload_union_time=?,union_state=? " +
 											"where id =?", new Object[]{System.currentTimeMillis()/1000,2,map.get("id")});
-								uploadCount++;
+									uploadCount++;
 								}else {
 									logger.error(object.get("errmsg"));
 								}
@@ -205,7 +208,21 @@ public class ParkManageAction extends Action {
 					unUploadCount = list.size()-uploadCount;
 				}
 			}
-			AjaxUtil.ajaxOutput(response, "ÉÏ´«"+sids.length+"¸ö³µ³¡£¬³É¹¦"+uploadCount+"¸ö£¬Î´³É¹¦"+unUploadCount+"¸ö");
+			AjaxUtil.ajaxOutput(response, "ä¸Šä¼ "+sids.length+"ä¸ªè½¦åœºï¼ŒæˆåŠŸ"+uploadCount+"ä¸ªï¼ŒæœªæˆåŠŸ"+unUploadCount+"ä¸ª");
+		}else if(action.equals("getUnionInfo")){
+			Long park_id = RequestUtil.getLong(request, "park_id",-1L);
+			Map unionInfo = daService.getMap("select oc.union_id, oc.ukey union_key, og.serverid server_id from org_city_merchants oc " +
+					"left outer join org_group_tb og on oc.id = og.cityid " +
+					"left outer join com_info_tb co on co.groupid = og.id " +
+					"where co.id = ?", new Object[]{park_id});
+			if(unionInfo==null || unionInfo.isEmpty() || unionInfo.get("union_id") == null){
+				unionInfo = new HashMap();
+				unionInfo.put("union_id", "");
+				unionInfo.put("union_key", "");
+				unionInfo.put("server_id", "");
+			}
+			String json = JsonUtil.createJsonforMap(unionInfo);
+			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("quickquery")){
 			String sql = "select * from com_info_tb  where state=? and upload_uin= ? ";
 			String countSql = "select count(*) from com_info_tb where state=? and upload_uin= ? " ;
@@ -238,7 +255,7 @@ public class ParkManageAction extends Action {
 				sql +=" and upload_uin=? ";
 				countSql +=" and upload_uin=? ";
 				params.add(-1);
-			}else {//²éUGC³µ³¡
+			}else {//æŸ¥UGCè½¦åœº
 				sql +=" and upload_uin>? ";
 				countSql +=" and upload_uin>? ";
 				params.add(1);
@@ -300,32 +317,32 @@ public class ParkManageAction extends Action {
 			Double latitude =RequestUtil.getDouble(request, "latitude",0d);
 			Long count = daService.getLong("select count(*) from com_info_tb where longitude=? and latitude=?",
 					new Object[]{longitude,latitude});
-			if(count>0){//¾­Î³¶ÈÖØ¸´ÁË
+			if(count>0){//ç»çº¬åº¦é‡å¤äº†
 				if(from.equals("client"))
 					AjaxUtil.ajaxOutput(response, "-1");
-				else 
-					AjaxUtil.ajaxOutput(response, "¾­Î³¶ÈÒÑ´æÔÚ£¡");
+				else
+					AjaxUtil.ajaxOutput(response, "ç»çº¬åº¦å·²å­˜åœ¨ï¼");
 				return null;
 			}
 			String cmobile =RequestUtil.processParams(request, "cmobile");
 			count = daService.getLong("select count(*) from user_info_tb where mobile=? and auth_flag=?",
 					new Object[]{cmobile,1});
-			if(count>0){//³µ³¡¹ÜÀíÔ±ÊÖ»úºÅÖØ¸´ÁË
+			if(count>0){//è½¦åœºç®¡ç†å‘˜æ‰‹æœºå·é‡å¤äº†
 				if(from.equals("client"))
 					AjaxUtil.ajaxOutput(response, "-2");
-				else 
-					AjaxUtil.ajaxOutput(response, "ÊÖ»úºÅÒÑ´æÔÚ£¡");
+				else
+					AjaxUtil.ajaxOutput(response, "æ‰‹æœºå·å·²å­˜åœ¨ï¼");
 				return null;
 			}
 			Integer result = createAdmin(request);
-			String log = "ĞÂ½¨ÁËÍ£³µ³¡,"+result;
+			String log = "æ–°å»ºäº†åœè½¦åœº,"+result;
 			if(result == 1){
 				AjaxUtil.ajaxOutput(response, "1");
 				logService.updateSysLog(comId, userId,log, 100);
 			}else {
 				AjaxUtil.ajaxOutput(response, "0");
 			}
-		}else if(action.equals("modify")){	//ºóÌ¨ĞŞ¸Ä	
+		}else if(action.equals("modify")){	//åå°ä¿®æ”¹
 			String company =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "company_name"));
 			String address =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
 			String phone =RequestUtil.processParams(request, "phone");
@@ -350,7 +367,7 @@ public class ParkManageAction extends Action {
 			Integer isfixed = RequestUtil.getInteger(request, "isfixed", 0);
 			Integer monthlypay = RequestUtil.getInteger(request, "monthlypay", 0);
 			Integer epay = RequestUtil.getInteger(request, "epay", 0);
-			Integer isnight = RequestUtil.getInteger(request, "isnight", 0);//Ò¹ÍíÍ£³µ£¬0:Ö§³Ö£¬1²»Ö§³Ö
+			Integer isnight = RequestUtil.getInteger(request, "isnight", 0);//å¤œæ™šåœè½¦ï¼Œ0:æ”¯æŒï¼Œ1ä¸æ”¯æŒ
 			Long invalid_order = RequestUtil.getLong(request, "invalid_order", 0L);
 			Long pid = RequestUtil.getLong(request, "pid", -1L);
 			Integer isview = RequestUtil.getInteger(request, "isview", 0);
@@ -359,25 +376,25 @@ public class ParkManageAction extends Action {
 			Integer isautopay = RequestUtil.getInteger(request, "isautopay", 0);
 			Integer full_set = RequestUtil.getInteger(request, "full_set", 0);
 			Integer leave_set = RequestUtil.getInteger(request, "leave_set", 0);
-			Integer activity = RequestUtil.getInteger(request, "activity", 0);//³µ³¡»î¶¯£º0 Ã»ÓĞ»î¶¯ 1ÉêÇë»î¶¯ 2:ÉêÇëÍ¨¹ı
+			Integer activity = RequestUtil.getInteger(request, "activity", 0);//è½¦åœºæ´»åŠ¨ï¼š0 æ²¡æœ‰æ´»åŠ¨ 1ç”³è¯·æ´»åŠ¨ 2:ç”³è¯·é€šè¿‡
 			Double allowance = RequestUtil.getDouble(request, "allowance", 0d);
-			String activity_content = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "activity_content"));//»î¶¯ÄÚÈİ
+			String activity_content = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "activity_content"));//æ´»åŠ¨å†…å®¹
 			if(share_number>parking_total)
 				share_number=parking_total;
-			
-			//¼ì²é¾­Î³¶È
+
+			//æ£€æŸ¥ç»çº¬åº¦
 			Long count = daService.getLong("select count(*) from com_info_tb where longitude=? and latitude=? and id<>? ",
 					new Object[]{longitude,latitude,Long.valueOf(id)});
-			if(count > 0){//¾­Î³¶ÈÖØ¸´ÁË
+			if(count > 0){//ç»çº¬åº¦é‡å¤äº†
 				AjaxUtil.ajaxOutput(response, "-1");
 				return null;
 			}
 //			share_number = getShareNumber(Long.valueOf(id), share_number);
 			//System.out.println(longitude+","+latitude);
-			String log = "ºóÌ¨ĞŞ¸ÄÁËÍ£³µ³¡,±àºÅ£º"+id+"";
+			String log = "åå°ä¿®æ”¹äº†åœè½¦åœº,ç¼–å·ï¼š"+id+"";
 			if(state==-1)
 				state=0;
-			
+
 			String fields = "invalid_order=?,company_name=?,address=?,phone=?,mobile=?,mcompany=?,parking_total=?," +
 					"parking_type=?,type=?,minprice_unit=?,share_number=?,update_time=?,uid=?,biz_id=?,state=? ," +
 					"etc=?,nfc=?,book=?,navi=?,monthlypay=?,isnight=?,isfixed=?,epay=?,city=?,longitude=?,latitude=?," +
@@ -401,7 +418,7 @@ public class ParkManageAction extends Action {
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
 			logService.updateSysLog(Long.valueOf(id), userId,log+"("+sql+",params:"+StringUtils.objArry2String(values)+")", 101);
-		}else if(action.equals("edit")){//¿Í»§¶ËĞŞ¸Ä	
+		}else if(action.equals("edit")){//å®¢æˆ·ç«¯ä¿®æ”¹
 			String company =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "company_name"));
 			String address =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
 			String phone =RequestUtil.processParams(request, "phone");
@@ -414,7 +431,7 @@ public class ParkManageAction extends Action {
 			Double latitude =RequestUtil.getDouble(request, "latitude",0.0);
 			String resume = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "resume"));
 			logger.error(">>>>>>>>>>>>>>>>>>resume="+resume);
-			String uin = RequestUtil.processParams(request, "uin");//¿Í»§¶Ë´«À´µÄÕÊºÅ
+			String uin = RequestUtil.processParams(request, "uin");//å®¢æˆ·ç«¯ä¼ æ¥çš„å¸å·
 			//share_number = getShareNumber(Long.valueOf(id), share_number);
 			if(state==-1)
 				state=0;
@@ -443,7 +460,7 @@ public class ParkManageAction extends Action {
 			String sql = "update com_info_tb set "+fields+ "where id=? ";
 			int result = daService.update(sql, values);
 			AjaxUtil.ajaxOutput(response, result+"");
-			String log = "¿Í»§¶ËĞŞ¸ÄÁËÍ£³µ³¡,±àºÅ£º"+id+"";
+			String log = "å®¢æˆ·ç«¯ä¿®æ”¹äº†åœè½¦åœº,ç¼–å·ï¼š"+id+"";
 			logService.updateSysLog(Long.valueOf(id), uin,log+"("+sql+",params:"+StringUtils.objArry2String(values)+")", 101);
 		}else if(action.equals("editcontactor")){
 			String mobile =RequestUtil.processParams(request, "mobile");
@@ -456,7 +473,7 @@ public class ParkManageAction extends Action {
 			String sql = "update user_info_tb set strid=?,password=?,mobile=?,nickname=? where comid=? and auth_flag=?";
 			int result = daService.update(sql, new Object[]{strid,pass,mobile,nickname,comid,ZLDType.ZLD_PARKADMIN_ROLE});
 			AjaxUtil.ajaxOutput(response, result+"");
-			logService.updateSysLog(comId, userId,"ĞŞ¸ÄÁËÍ£³µ³¡¹ÜÀíÔ±,±àºÅ£º"+strid, 201);
+			logService.updateSysLog(comId, userId,"ä¿®æ”¹äº†åœè½¦åœºç®¡ç†å‘˜,ç¼–å·ï¼š"+strid, 201);
 		}else if(action.equals("delete")){
 			String id =RequestUtil.processParams(request, "selids");
 			String sql = "update com_info_tb set state=?,update_time=? where id =?";
@@ -465,7 +482,7 @@ public class ParkManageAction extends Action {
 //			if(result==1)
 //				ParkingMap.deleteParkingMap(Long.valueOf(id));
 			AjaxUtil.ajaxOutput(response, result+"");
-			logService.updateSysLog(comId, userId,"É¾³ıÁËÍ£³µ³¡£¬±àºÅ£º"+id, 102);
+			logService.updateSysLog(comId, userId,"åˆ é™¤äº†åœè½¦åœºï¼Œç¼–å·ï¼š"+id, 102);
 		}else if(action.equals("check")){
 			String strid = RequestUtil.processParams(request, "value");
 			String sql = "select count(*) from user_info_tb where strid =?";
@@ -475,7 +492,7 @@ public class ParkManageAction extends Action {
 			else {
 				AjaxUtil.ajaxOutput(response, "0");
 			}
-		}else if(action.equals("localdata")){//µØÇøĞÅÏ¢
+		}else if(action.equals("localdata")){//åœ°åŒºä¿¡æ¯
 			AjaxUtil.ajaxOutput(response,GetLocalCode.getLocalData());
 		}else if(action.equals("getlocalbycode")){
 			Integer code = RequestUtil.getInteger(request, "code", 0);
@@ -492,7 +509,7 @@ public class ParkManageAction extends Action {
 		}else if(action.equals("getbizs")){
 			List<Map> tradsList = daService.getAll("select * from bizcircle_tb where state =?",
 					new Object[]{0});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("name")+"\"}";
@@ -503,7 +520,7 @@ public class ParkManageAction extends Action {
 		}else if(action.equals("getparkings")){
 			List<Map> tradsList = daService.getAll("select id,company_name from com_info_tb where state =?",
 					new Object[]{0});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("company_name")+"\"}";
@@ -511,7 +528,7 @@ public class ParkManageAction extends Action {
 			}
 			result+="]";
 			AjaxUtil.ajaxOutput(response, result);
-		}else if(action.equals("isview")){//ÏÔÊ¾ÔÚÊÖ»úµØÍ¼
+		}else if(action.equals("isview")){//æ˜¾ç¤ºåœ¨æ‰‹æœºåœ°å›¾
 			Long id =RequestUtil.getLong(request, "id",-1L);
 			Long isview =RequestUtil.getLong(request, "isview",-1L);
 			if(isview==0)
@@ -520,11 +537,11 @@ public class ParkManageAction extends Action {
 				isview=0L;
 			int ret = 0;
 			if(id!=-1&&isview!=-1){
-				ret = daService.update("update com_info_tb set isview=?,update_time=? where id =?", 
+				ret = daService.update("update com_info_tb set isview=?,update_time=? where id =?",
 						new Object[]{isview,System.currentTimeMillis()/1000,id});
 			}
 			AjaxUtil.ajaxOutput(response, ret+"");
-		}else if(action.equals("getver")){//²éÑ¯ÉóºËÊı¾İ
+		}else if(action.equals("getver")){//æŸ¥è¯¢å®¡æ ¸æ•°æ®
 			String name = RequestUtil.getString(request, "type");
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			//logger.error(id+","+name);
@@ -542,7 +559,7 @@ public class ParkManageAction extends Action {
 				}
 			}
 			AjaxUtil.ajaxOutput(response, ret);
-		}else if(action.equals("verifydetail")){//²é¿´ÉóºËÏêÇé
+		}else if(action.equals("verifydetail")){//æŸ¥çœ‹å®¡æ ¸è¯¦æƒ…
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			String type = RequestUtil.getString(request, "type");
 			String sql = "select * from park_verify_tb where comid=?  ";
@@ -555,9 +572,9 @@ public class ParkManageAction extends Action {
 					for(Map<String, Object> map :list){
 						Long ctime = (Long)map.get("ctime");
 						Integer v = (Integer)map.get(type);
-						String vs = "Í¨¹ı";
+						String vs = "é€šè¿‡";
 						if(v==0)
-							vs = "Î´Í¨¹ı";
+							vs = "æœªé€šè¿‡";
 						data+="[\""+map.get("car_number")+"\",\""+TimeTools.getTime_yyMMdd_HHmm(ctime*1000)+"\",\""+vs+"\"],";
 					}
 					if(data.endsWith(","))
@@ -566,9 +583,9 @@ public class ParkManageAction extends Action {
 				}
 			}
 			request.setAttribute("type", type);
-			request.setAttribute("data", data.replace("null", "Î´Öª"));
+			request.setAttribute("data", data.replace("null", "æœªçŸ¥"));
 			return mapping.findForward("verifydetail");
-		}else if(action.equals("initnobj")){//³õÊ¼»¯·Ç±±¾©³µ³¡
+		}else if(action.equals("initnobj")){//åˆå§‹åŒ–éåŒ—äº¬è½¦åœº
 			List<Map<String, Object>> mList = daService.getAll("select id from com_info_tb where city >?", new Object[]{110229});
 			if(mList!=null&&!mList.isEmpty()){
 				Map<Long, Integer> map = new HashMap<Long, Integer>();
@@ -588,35 +605,35 @@ public class ParkManageAction extends Action {
 //			}
 			Long ntime = System.currentTimeMillis()/1000;
 			List<Object[]> values = new ArrayList<Object[]>();//ImportExcelUtil.importExcelFile(set);
-			values.add(new Object[]{"Ø¹ÏÍ½Ö","Ø¹ÏÍ½ÖÄÏ²à",119.428060118785,32.3935220438341,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ÆßÀïÏã","ÎÄ²ıÖĞÂ·Óë¹úÇìÂ·½»²æ¿Ú",119.435645528907,32.3962392513232,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ÒøºÓµç×Ó³Ç","ÎÄ²ıÖĞÂ·",119.442387299432,32.3968781006322,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"²Ë¸ùÏã","¹úÇìÂ·",119.435811471349,32.3932786873232,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"Îå½»»¯","¹úÇìÂ·Óë¶É½­Â·½»²æ¿Ú",119.436165337525,32.3906813694866,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ĞìÄıÃÅ½Ö¶«£¨ºÎÔ°£©","ĞìÄıÃÅ½Ö¶«²à",119.444360143582,32.3872557106368,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ÇïÓê¶«Â·","ÇïÓê¶«Â·Â·ÄÏ²àÈ«Ïß",119.410544071258,32.3909962083873,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ÇïÓêÎ÷Â·","ÇïÓêÎ÷Â·Â·±±²àÈ«Ïß",119.404136899797,32.3903941406342,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ĞË³Ç¶«Â·£¨Î÷£©","ĞË³Ç¶«Â·£¨Î÷£©",119.411234020821,32.3813977220772,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ÍûÔÂÂ·£¨Íòºè£©","ÍûÔÂÂ·£¨Íòºè£©£¨Úõ½­Â·-°ÙÏéÂ·ÄÏ²à£©",119.391311401272,32.3886407916227,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ÍûÔÂÂ·£¨ÃÀç÷£©","ÍûÔÂÂ·£¨ÃÀç÷£©£¨Úõ½­Â·-°ÙÏéÂ·±±²à£©",119.385996157504,32.3877749600766,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ÍûÔÂÂ·Î÷¶Î","ÍûÔÂÂ·£¨Úõ½­ÖĞÂ·¡ª¡ªÈóÑïÂ·£©",119.384698117787,32.3875496598764,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ĞË³Ç¶«Â·£¨¶«£©","ĞË³Ç¶«Â·£¨¶«£©",119.411361348279,32.3814207120106,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ËÄÍûÍ¤¶«²à","ËÄÍûÍ¤¶«²à",119.428033366341,32.3994080560416,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ËÄÍûÍ¤Â·ÄÏ£¨âùÔ°£©","ËÄÍûÍ¤Â·ÄÏ²à(ãëºÓ±±Â·ÖÁ»´º£Â·¶Î£©",119.425856206604,32.3994514519998,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ËÄÍûÍ¤Â·ÄÏ£¨Ê¢Ñç£©","ËÄÍûÍ¤Â·ÄÏ²à£¨»´º£Â·ÖÁÀ´º×ÇÅ¶Î£©",119.425953559577,32.3994515404289,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ËÄÍûÍ¤Â·ÄÏ£¨ÑïÊ¦Ôº£©","ËÄÍûÍ¤Â·ÄÏ²à£¨À´º×ÇÅÖÁÑïÊ¦ÔºÄÏÃÅ¶Î£©",119.42036960027,32.3994116619424,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ÁøºşÂ·ÄÏ¶Î","ÁøºşÂ·Ïò±±Ë«²à£¨ËÄÍûÍ¤Â·ÖÁÑïÊ¦Ôº¶«ÃÅÇÅ¶Î£©",119.421019080302,32.399512919219,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ÁøºşÂ·±±¶Î","ÁøºşÂ·¶«²à£¨ÑïÊ¦Ôº¶«ÃÅÇÅ¡ª¡ª´óºçÇÅÎ÷Â·¶Î£©",119.420931940081,32.4035303809354,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ÂÌÑï´å","Ò±´º¿µÀÖÔ°ÃÅ¿Ú",119.428685784381,32.4031329276058,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ºìÔ°","ºìÔ°ÃÅÇ°",119.425502321245,32.4036513006389,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"¹¤ÒÕÃÀÊõ´óÂ¥ÃÅÇ°","ÑÎ¸·Î÷Â·",119.425502651357,32.4023672874231,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"´óÃ·¼ÒÏï","»´º£Â·Óë´óÃ·¼ÒÏï",119.425133015786,32.3978258496966,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"´óÃ÷ËÂÉ½ÏÂ","´óÃ÷ËÂ½ÅÏÂ",119.40931040882,32.4212138936712,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ãëºÓ±±Â·","ãëºÓ±±Â·¶«²à",119.428661216111,32.398498249061,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ÌìÄşËÂ²©Îï¹İ","ÌìÄşËÂ²©Îï¹İÃÅÇ°",119.432407288933,32.4023568298202,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"Ã·Áë¶«Â·","Ã·Áë¶«Â·È«Ïß",119.43520055061,32.4089373971226,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"Ã·ÁëÎ÷Â·","Ã·ÁëÎ÷Â·È«Ïß",119.4341142724156,32.4089267864255,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
-			values.add(new Object[]{"ÓñÆ÷³§ÃÅÇ°","ÓñÆ÷³§ÃÅÇ°ÑØºÓ½ÖµÀ",119.437596634205,32.403046892805,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"æ¯“è´¤è¡—","æ¯“è´¤è¡—å—ä¾§",119.428060118785,32.3935220438341,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"ä¸ƒé‡Œé¦™","æ–‡æ˜Œä¸­è·¯ä¸å›½åº†è·¯äº¤å‰å£",119.435645528907,32.3962392513232,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"é“¶æ²³ç”µå­åŸ","æ–‡æ˜Œä¸­è·¯",119.442387299432,32.3968781006322,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"èœæ ¹é¦™","å›½åº†è·¯",119.435811471349,32.3932786873232,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"äº”äº¤åŒ–","å›½åº†è·¯ä¸æ¸¡æ±Ÿè·¯äº¤å‰å£",119.436165337525,32.3906813694866,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"å¾å‡é—¨è¡—ä¸œï¼ˆä½•å›­ï¼‰","å¾å‡é—¨è¡—ä¸œä¾§",119.444360143582,32.3872557106368,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"ç§‹é›¨ä¸œè·¯","ç§‹é›¨ä¸œè·¯è·¯å—ä¾§å…¨çº¿",119.410544071258,32.3909962083873,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"ç§‹é›¨è¥¿è·¯","ç§‹é›¨è¥¿è·¯è·¯åŒ—ä¾§å…¨çº¿",119.404136899797,32.3903941406342,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"å…´åŸä¸œè·¯ï¼ˆè¥¿ï¼‰","å…´åŸä¸œè·¯ï¼ˆè¥¿ï¼‰",119.411234020821,32.3813977220772,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"æœ›æœˆè·¯ï¼ˆä¸‡é¸¿ï¼‰","æœ›æœˆè·¯ï¼ˆä¸‡é¸¿ï¼‰ï¼ˆé‚—æ±Ÿè·¯-ç™¾ç¥¥è·¯å—ä¾§ï¼‰",119.391311401272,32.3886407916227,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"æœ›æœˆè·¯ï¼ˆç¾çªï¼‰","æœ›æœˆè·¯ï¼ˆç¾çªï¼‰ï¼ˆé‚—æ±Ÿè·¯-ç™¾ç¥¥è·¯åŒ—ä¾§ï¼‰",119.385996157504,32.3877749600766,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"æœ›æœˆè·¯è¥¿æ®µ","æœ›æœˆè·¯ï¼ˆé‚—æ±Ÿä¸­è·¯â€”â€”æ¶¦æ‰¬è·¯ï¼‰",119.384698117787,32.3875496598764,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"å…´åŸä¸œè·¯ï¼ˆä¸œï¼‰","å…´åŸä¸œè·¯ï¼ˆä¸œï¼‰",119.411361348279,32.3814207120106,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"å››æœ›äº­ä¸œä¾§","å››æœ›äº­ä¸œä¾§",119.428033366341,32.3994080560416,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"å››æœ›äº­è·¯å—ï¼ˆæ€¡å›­ï¼‰","å››æœ›äº­è·¯å—ä¾§(æ±¶æ²³åŒ—è·¯è‡³æ·®æµ·è·¯æ®µï¼‰",119.425856206604,32.3994514519998,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"å››æœ›äº­è·¯å—ï¼ˆç››å®´ï¼‰","å››æœ›äº­è·¯å—ä¾§ï¼ˆæ·®æµ·è·¯è‡³æ¥é¹¤æ¡¥æ®µï¼‰",119.425953559577,32.3994515404289,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"å››æœ›äº­è·¯å—ï¼ˆæ‰¬å¸ˆé™¢ï¼‰","å››æœ›äº­è·¯å—ä¾§ï¼ˆæ¥é¹¤æ¡¥è‡³æ‰¬å¸ˆé™¢å—é—¨æ®µï¼‰",119.42036960027,32.3994116619424,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"æŸ³æ¹–è·¯å—æ®µ","æŸ³æ¹–è·¯å‘åŒ—åŒä¾§ï¼ˆå››æœ›äº­è·¯è‡³æ‰¬å¸ˆé™¢ä¸œé—¨æ¡¥æ®µï¼‰",119.421019080302,32.399512919219,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"æŸ³æ¹–è·¯åŒ—æ®µ","æŸ³æ¹–è·¯ä¸œä¾§ï¼ˆæ‰¬å¸ˆé™¢ä¸œé—¨æ¡¥â€”â€”å¤§è™¹æ¡¥è¥¿è·¯æ®µï¼‰",119.420931940081,32.4035303809354,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"ç»¿æ‰¬æ‘","å†¶æ˜¥åº·ä¹å›­é—¨å£",119.428685784381,32.4031329276058,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"çº¢å›­","çº¢å›­é—¨å‰",119.425502321245,32.4036513006389,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"å·¥è‰ºç¾æœ¯å¤§æ¥¼é—¨å‰","ç›é˜œè¥¿è·¯",119.425502651357,32.4023672874231,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"å¤§æ¢…å®¶å··","æ·®æµ·è·¯ä¸å¤§æ¢…å®¶å··",119.425133015786,32.3978258496966,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"å¤§æ˜å¯ºå±±ä¸‹","å¤§æ˜å¯ºè„šä¸‹",119.40931040882,32.4212138936712,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"æ±¶æ²³åŒ—è·¯","æ±¶æ²³åŒ—è·¯ä¸œä¾§",119.428661216111,32.398498249061,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"å¤©å®å¯ºåšç‰©é¦†","å¤©å®å¯ºåšç‰©é¦†é—¨å‰",119.432407288933,32.4023568298202,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"æ¢…å²­ä¸œè·¯","æ¢…å²­ä¸œè·¯å…¨çº¿",119.43520055061,32.4089373971226,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"æ¢…å²­è¥¿è·¯","æ¢…å²­è¥¿è·¯å…¨çº¿",119.4341142724156,32.4089267864255,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
+			values.add(new Object[]{"ç‰å™¨å‚é—¨å‰","ç‰å™¨å‚é—¨å‰æ²¿æ²³è¡—é“",119.437596634205,32.403046892805,2,321000,1000,ntime,ntime,0,0,"","",1008,7,321000});
 			String sql = "insert into com_info_tb(company_name,address,longitude,latitude,parking_type,city,parking_total," +
 					"create_time,update_time,state,type,mobile,remarks,chanid,groupid,cityid) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			System.out.println(sql);
@@ -629,11 +646,11 @@ public class ParkManageAction extends Action {
 //			}
 			int ret = 0;
 			ret = daService.bathInsert(sql, values, new int[]{12,4,12,4,4,3,3,4,4,4,4,12,12,4,4,4});
-			
+
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}
 		/*
-		 * Î÷²¿¿ÍÔËÊàÅ¦Í£³µ³¡	°×ÌìĞ¡ĞÍ³µÊ×Ğ¡Ê±4Ôª£¬Ê×Ğ¡Ê±ºó1Ôª/Ğ¡Ê±£»ÍíÉÏÊ×Ğ¡Ê±2Ôª£¬Ê×Ğ¡Ê±ºó1Ôª/Ğ¡Ê±£»	ÎÄ²ıÎ÷Â·ÑïÖİÎ÷²¿½»Í¨¿ÍÔËÊàÅ¦ÀïÃæ				Õş¸®Ö¸µ¼¼Û	ÊÒÄÚ	¼ÇÊ±	Ò»ÀàÇø	142			119.357553,32.392485
+		 * è¥¿éƒ¨å®¢è¿æ¢çº½åœè½¦åœº	ç™½å¤©å°å‹è½¦é¦–å°æ—¶4å…ƒï¼Œé¦–å°æ—¶å1å…ƒ/å°æ—¶ï¼›æ™šä¸Šé¦–å°æ—¶2å…ƒï¼Œé¦–å°æ—¶å1å…ƒ/å°æ—¶ï¼›	æ–‡æ˜Œè¥¿è·¯æ‰¬å·è¥¿éƒ¨äº¤é€šå®¢è¿æ¢çº½é‡Œé¢				æ”¿åºœæŒ‡å¯¼ä»·	å®¤å†…	è®°æ—¶	ä¸€ç±»åŒº	142			119.357553,32.392485
 		 * else if(action.equals("weixin")){
 			List<Map<String, Object>> aliList = onlyReadService.getAll("select notify_no,create_time,money,uin,comid,wxp_orderid from alipay_log" +
 					" where length(notify_no)< ? and create_time between ? and ? order by uin ", new Object[]{20,1437926400L,1443628800L});
@@ -655,16 +672,16 @@ public class ParkManageAction extends Action {
 			if(t1==-1||t2==-1){
 				t1 = 1437926400L;
 				t2 = 1438358400L;
-				//AjaxUtil.ajaxOutput(response, "ÊäÈë²»ºÏ·¨¡£¡£¡£¡£");
+				//AjaxUtil.ajaxOutput(response, "è¾“å…¥ä¸åˆæ³•ã€‚ã€‚ã€‚ã€‚");
 			}
 			String fname = TimeTools.getTime_yyyyMMdd_HH(t1*1000)+"_"+TimeTools.getTime_yyyyMMdd_HH(t2*1000);
-			//²é³öËùÓĞÎ¢ĞÅ´òÕÛÈ¯ÏûÏ¢¼ÇÂ¼
-			System.out.println("¿ªÊ¼²éÑ¯ËùÓĞ¶©µ¥¡£¡£¡£¡£¡£"+fname);
+			//æŸ¥å‡ºæ‰€æœ‰å¾®ä¿¡æ‰“æŠ˜åˆ¸æ¶ˆæ¯è®°å½•
+			System.out.println("å¼€å§‹æŸ¥è¯¢æ‰€æœ‰è®¢å•ã€‚ã€‚ã€‚ã€‚ã€‚"+fname);
 			List<Map<String, Object>> allList  = onlyReadService.getAll("select o.id,o.create_time,o.end_time,o.total,o.comid,o.uin," +
 					"t.umoney,t.money,t.utime,t.resources,t.type from order_tb o left join ticket_tb t on t.orderid=o.id" +
 					" where o.create_time between ? and ? order by o.id ", new Object[]{t1,t2});
-			System.out.println("ËùÓĞ¶©µ¥"+allList.size());
-			//È¥ÖØ
+			System.out.println("æ‰€æœ‰è®¢å•"+allList.size());
+			//å»é‡
 			Set<Long> idSet = new HashSet<Long>();
 			List<Map<String, Object>> orderList =new ArrayList<Map<String,Object>>();
 			for(Map<String, Object>  map : allList){
@@ -673,12 +690,12 @@ public class ParkManageAction extends Action {
 					orderList.add(map);
 				}
 			}
-			System.out.println("È¥ÖØºóËùÓĞ¶©µ¥"+orderList.size());
-			//²é³öËùÓĞÎ¢ĞÅÖ§¸¶ÈÕÖ¾ 
+			System.out.println("å»é‡åæ‰€æœ‰è®¢å•"+orderList.size());
+			//æŸ¥å‡ºæ‰€æœ‰å¾®ä¿¡æ”¯ä»˜æ—¥å¿—
 			List<Map<String, Object>> aliList = onlyReadService.getAll("select notify_no,create_time,money,uin,comid,wxp_orderid,orderid from alipay_log" +
 					" where length(notify_no)< ? and create_time between ? and ? order by uin ", new Object[]{20,t1,t2});
 			Map<Long, List<Map<String, Object>>> aliMap = new HashMap<Long, List<Map<String,Object>>>();
-			System.out.println("Î¢ĞÅÖ§¸¶ÈÕÖ¾"+aliList.size());
+			System.out.println("å¾®ä¿¡æ”¯ä»˜æ—¥å¿—"+aliList.size());
 			for(Map<String, Object> m: aliList){
 				Long uin = (Long)m.get("uin");
 				if(uin==null||uin==-1)
@@ -692,36 +709,36 @@ public class ParkManageAction extends Action {
 					aliMap.put(uin, l);
 				}
 			}
-			//²éËùÓĞOPENID
+			//æŸ¥æ‰€æœ‰OPENID
 			List<Map<String, Object>> openList = onlyReadService.getAll("select id, wxp_openid from user_info_tb where wxp_openid is not null", null);
-			System.out.println("ÒÑ×¢²áµÄ¹«ÖÚºÅ"+openList.size());
+			System.out.println("å·²æ³¨å†Œçš„å…¬ä¼—å·"+openList.size());
 			Map<Long,String> openidMap = new HashMap<Long, String>();
 			for(Map<String, Object> m: openList){
 				openidMap.put((Long)m.get("id"), ""+m.get("wxp_openid"));
 			}
 			openList = onlyReadService.getAll("select uin,openid from wxp_user_tb ", null);
-			System.out.println("Î´×¢²áµÄ¹«ÖÚºÅ"+openList.size());
+			System.out.println("æœªæ³¨å†Œçš„å…¬ä¼—å·"+openList.size());
 			for(Map<String, Object> m: openList){
 				openidMap.put((Long)m.get("uin"), ""+m.get("openid"));
 			}
-			//²¹Ö§¸¶ÉÌ»§¶©µ¥ºÅ
+			//è¡¥æ”¯ä»˜å•†æˆ·è®¢å•å·
 			for(Map<String, Object> map: orderList){
 				Long uin = (Long)map.get("uin");
 				map.put("openid", openidMap.get(uin));
 				Long id = (Long)map.get("id");
-				Integer res =(Integer)map.get("resources");//1¹ºÂòÈ¯
+				Integer res =(Integer)map.get("resources");//1è´­ä¹°åˆ¸
 				if(res==null)
 					res = 0;
 				Long obtime = (Long)map.get("create_time");
 				Long oetime = (Long)map.get("end_time");
 				if(oetime==null)
 					oetime = obtime+60;
-				Double umoney =  StringUtils.formatDouble(map.get("umoney"));//È¯Ê¹ÓÃ½ğ¶î
+				Double umoney =  StringUtils.formatDouble(map.get("umoney"));//åˆ¸ä½¿ç”¨é‡‘é¢
 				if(umoney==null)
 					umoney=0.0;
-				if(res==1){//1¹ºÂòÈ¯
+				if(res==1){//1è´­ä¹°åˆ¸
 					Integer zc = 8;
-					if(obtime<1441036800){//9.1Ö®Ç°°´7ÕÛ£¬Ö®ºó°´8ÕÛ
+					if(obtime<1441036800){//9.1ä¹‹å‰æŒ‰7æŠ˜ï¼Œä¹‹åæŒ‰8æŠ˜
 						zc = 7;
 					}
 					umoney = StringUtils.formatDouble(umoney*(10-zc)*0.1);
@@ -757,9 +774,9 @@ public class ParkManageAction extends Action {
 					}
 				}
 			}
-			System.out.println("¿ªÊ¼Ğ´ÎÄ¼ş....¹²"+orderList.size()+"Ìõ");
+			System.out.println("å¼€å§‹å†™æ–‡ä»¶....å…±"+orderList.size()+"æ¡");
 			try {
-				
+
 				BufferedWriter writer = new BufferedWriter(new FileWriter(new File("/data/"+fname+"_weixin.csv"),true));
 				//BufferedWriter writer = new BufferedWriter(new FileWriter(new File("e:/weixin0727-0930.csv"),true));
 				String line = "";
@@ -775,7 +792,7 @@ public class ParkManageAction extends Action {
 					//}
 					String openid =(String) map.get("openid");
 					String wxp_orderid =(String) map.get("wxp_orderid");
-					//Integer m = (Integer)map.get("money");//ÕÛ¿ÛÂÊ
+					//Integer m = (Integer)map.get("money");//æŠ˜æ‰£ç‡
 					if(openid==null||"".equals(openid))
 						continue;
 					if(wxp_orderid==null||"".equals(wxp_orderid))
@@ -796,7 +813,7 @@ public class ParkManageAction extends Action {
 					index++;
 					if(index%500==0){
 						writer.write(line);
-						logger.error("ÒÑĞ´µ½µÚ"+index+"Ìõ;");
+						logger.error("å·²å†™åˆ°ç¬¬"+index+"æ¡;");
 						line = "";
 					}
 				}
@@ -811,8 +828,8 @@ public class ParkManageAction extends Action {
 		}else if(action.equals("parkout")){
 			List all = daService.getAll("select id,company_name,city,create_time from com_info_tb where id " +
 					"in(select distinct(comid) from order_tb where state=? and pay_type=?) order by create_time",new Object[]{1,2});
-			Long time = 1433088000L;//6ÔÂ1ÈÕ
-			List list1 = new ArrayList();	
+			Long time = 1433088000L;//6æœˆ1æ—¥
+			List list1 = new ArrayList();
 			List list2 = new ArrayList();
 			List mall = daService.getAll("select count(id) count,sum(total) money,comid from order_tb " +
 					"where state=? and pay_type=? group by comid",new Object[]{1,2});
@@ -824,7 +841,7 @@ public class ParkManageAction extends Action {
 				String c =getCity(city);
 				Long comid = (Long)map.get("id");
 				if(c==null)
-					c="±±¾©ÊĞ";
+					c="åŒ—äº¬å¸‚";
 				map.put("city", c);
 				if(ctime<time)
 					list1.add(map);
@@ -840,7 +857,7 @@ public class ParkManageAction extends Action {
 					}
 				}
 			}
-		
+
 			String r1 = "";
 			for(int j=0;j<list1.size();j++){
 				Map map = (Map)list1.get(j);
@@ -887,51 +904,51 @@ public class ParkManageAction extends Action {
 					//writer.write(line3);
 				writer.flush();
 				writer.close();
-				
+
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
-			
+
 		}*/
 		return null;
 	}
 	/**
-	 * È¡Ê×Ğ¡Ê±¼Û¸ñ
+	 * å–é¦–å°æ—¶ä»·æ ¼
 	 * @param parkId
 	 * @return
 	 */
 	private String getPrice(Long parkId){
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
-		//¿ªÊ¼Ğ¡Ê±
+		//å¼€å§‹å°æ—¶
 		int bhour = calendar.get(Calendar.HOUR_OF_DAY);
 		List<Map> priceList=daService.getAll("select * from price_tb where comid=? " +
 				"and state=? and pay_type=? order by id desc", new Object[]{parkId,0,0});
-		if(priceList==null||priceList.size()==0){//Ã»ÓĞ°´Ê±¶Î²ßÂÔ
-			//²é°´´Î²ßÂÔ
+		if(priceList==null||priceList.size()==0){//æ²¡æœ‰æŒ‰æ—¶æ®µç­–ç•¥
+			//æŸ¥æŒ‰æ¬¡ç­–ç•¥
 			priceList=daService.getAll("select * from price_tb where comid=? " +
 					"and state=? and pay_type=? order by id desc", new Object[]{parkId,0,1});
-			if(priceList==null||priceList.size()==0){//Ã»ÓĞ°´´Î²ßÂÔ£¬·µ»ØÌáÊ¾
-				return "0Ôª/´Î";
-			}else {//ÓĞ°´´Î²ßÂÔ£¬Ö±½Ó·µ»ØÒ»´ÎµÄÊÕ·Ñ
+			if(priceList==null||priceList.size()==0){//æ²¡æœ‰æŒ‰æ¬¡ç­–ç•¥ï¼Œè¿”å›æç¤º
+				return "0å…ƒ/æ¬¡";
+			}else {//æœ‰æŒ‰æ¬¡ç­–ç•¥ï¼Œç›´æ¥è¿”å›ä¸€æ¬¡çš„æ”¶è´¹
 				Map timeMap =priceList.get(0);
 				Integer unit = (Integer)timeMap.get("unit");
 				if(unit!=null&&unit>0){
 					if(unit>60){
 						String t = "";
 						if(unit%60==0)
-							t = unit/60+"Ğ¡Ê±";
+							t = unit/60+"å°æ—¶";
 						else
-							t = unit/60+"Ğ¡Ê± "+unit%60+"·ÖÖÓ";
-						return timeMap.get("price")+"Ôª/"+t;
+							t = unit/60+"å°æ—¶ "+unit%60+"åˆ†é’Ÿ";
+						return timeMap.get("price")+"å…ƒ/"+t;
 					}else {
-						return timeMap.get("price")+"Ôª/"+unit+"·ÖÖÓ";
+						return timeMap.get("price")+"å…ƒ/"+unit+"åˆ†é’Ÿ";
 					}
 				}else {
-					return timeMap.get("price")+"Ôª/´Î";
+					return timeMap.get("price")+"å…ƒ/æ¬¡";
 				}
 			}
-			//·¢¶ÌĞÅ¸ø¹ÜÀíÔ±£¬Í¨¹ıÉèÖÃºÃ¼Û¸ñ
-		}else {//´Ó°´Ê±¶Î¼Û¸ñ²ßÂÔÖĞ·Ö¼ğ³öÈÕ¼äºÍÒ¹¼äÊÕ·Ñ²ßÂÔ
+			//å‘çŸ­ä¿¡ç»™ç®¡ç†å‘˜ï¼Œé€šè¿‡è®¾ç½®å¥½ä»·æ ¼
+		}else {//ä»æŒ‰æ—¶æ®µä»·æ ¼ç­–ç•¥ä¸­åˆ†æ‹£å‡ºæ—¥é—´å’Œå¤œé—´æ”¶è´¹ç­–ç•¥
 			if(priceList.size()>0){
 				//logger.error(priceList);
 				for(Map map : priceList){
@@ -944,52 +961,52 @@ public class ParkManageAction extends Action {
 						if(fprice>0)
 							price = fprice;
 					}
-					if(btime<etime){//ÈÕ¼ä 
+					if(btime<etime){//æ—¥é—´
 						if(bhour>=btime&&bhour<etime){
-							return price+"Ôª/"+map.get("unit")+"·ÖÖÓ";
+							return price+"å…ƒ/"+map.get("unit")+"åˆ†é’Ÿ";
 						}
 					}else {
 						if(bhour>=btime||bhour<etime){
-							return price+"Ôª/"+map.get("unit")+"·ÖÖÓ";
+							return price+"å…ƒ/"+map.get("unit")+"åˆ†é’Ÿ";
 						}
 					}
 				}
 			}
 		}
-		return "0.0Ôª/Ğ¡Ê±";
+		return "0.0å…ƒ/å°æ—¶";
 	}
-		
+
 	private String getCity(Integer ciyt) {
-	
+
 		Map<Integer,String> cities = new HashMap<Integer, String>();
-		cities.put(370200,  "ÇàµºÊĞ");
-		cities.put(210100,  "ÉòÑôÊĞ");
-		cities.put(210200,  "´óÁ¬ÊĞ");
-		cities.put(440100,  "¹ãÖİÊĞ");
-		cities.put(110105,  "±±¾©³¯ÑôÇø");
-		cities.put(410100,  "Ö£ÖİÊĞ");
-		cities.put(330700,  "Õã½­½ğ»ªÊĞ");
-		cities.put(610100,  "Î÷°²ÊĞ");
-		cities.put(120000,  "Ìì½òÊĞ");
-		cities.put(210102,  "ÉòÑôºÍÆ½Çø");
-		cities.put(110108,  "±±¾©º£µíÇø");
-		cities.put(310000,  "ÉÏº£ÊĞ");
-		cities.put(210000,  "ÁÉÄşÊ¡");
-		cities.put(110112,  "±±¾©Í¨ÖİÇø");
-		cities.put(410200,  "¿ª·âÊĞ");
-		cities.put(440300,  "ÉîÛÚÊĞ");
-		cities.put(500103,  "ÖØÇìÓåÖĞÇø");
-		cities.put(330100,  "º¼ÖİÊĞ");
-		cities.put(370100,  "¼ÃÄÏÊĞ");
-		cities.put(110000,  "±±¾©ÊĞ");
-		cities.put(350200,  "ÏÃÃÅÊĞ");
-		cities.put(210100,  "³¤´ºÊĞ");
-		cities.put(130100,  "Ê¯¼Ò×¯ÊĞ");
-		cities.put(330105,  "º¼Öİ¹°ÊûÇø");
+		cities.put(370200,  "é’å²›å¸‚");
+		cities.put(210100,  "æ²ˆé˜³å¸‚");
+		cities.put(210200,  "å¤§è¿å¸‚");
+		cities.put(440100,  "å¹¿å·å¸‚");
+		cities.put(110105,  "åŒ—äº¬æœé˜³åŒº");
+		cities.put(410100,  "éƒ‘å·å¸‚");
+		cities.put(330700,  "æµ™æ±Ÿé‡‘åå¸‚");
+		cities.put(610100,  "è¥¿å®‰å¸‚");
+		cities.put(120000,  "å¤©æ´¥å¸‚");
+		cities.put(210102,  "æ²ˆé˜³å’Œå¹³åŒº");
+		cities.put(110108,  "åŒ—äº¬æµ·æ·€åŒº");
+		cities.put(310000,  "ä¸Šæµ·å¸‚");
+		cities.put(210000,  "è¾½å®çœ");
+		cities.put(110112,  "åŒ—äº¬é€šå·åŒº");
+		cities.put(410200,  "å¼€å°å¸‚");
+		cities.put(440300,  "æ·±åœ³å¸‚");
+		cities.put(500103,  "é‡åº†æ¸ä¸­åŒº");
+		cities.put(330100,  "æ­å·å¸‚");
+		cities.put(370100,  "æµå—å¸‚");
+		cities.put(110000,  "åŒ—äº¬å¸‚");
+		cities.put(350200,  "å¦é—¨å¸‚");
+		cities.put(210100,  "é•¿æ˜¥å¸‚");
+		cities.put(130100,  "çŸ³å®¶åº„å¸‚");
+		cities.put(330105,  "æ­å·æ‹±å¢…åŒº");
 		return cities.get(ciyt);
 	}
 
-	//×¢²áÍ£³µ³¡¹ÜÀíÔ±ÕÊºÅ
+	//æ³¨å†Œåœè½¦åœºç®¡ç†å‘˜å¸å·
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Integer createAdmin(HttpServletRequest request){
 		Long time = System.currentTimeMillis()/1000;
@@ -1015,14 +1032,14 @@ public class ParkManageAction extends Action {
 		Integer navi = RequestUtil.getInteger(request, "navi", 0);
 		Integer epay = RequestUtil.getInteger(request, "epay", 0);
 		Integer monthlypay = RequestUtil.getInteger(request, "monthlypay", 0);
-		Integer isnight = RequestUtil.getInteger(request, "isnight", 0);//Ò¹ÍíÍ£³µ£¬0:Ö§³Ö£¬1²»Ö§³Ö
+		Integer isnight = RequestUtil.getInteger(request, "isnight", 0);//å¤œæ™šåœè½¦ï¼Œ0:æ”¯æŒï¼Œ1ä¸æ”¯æŒ
 		Integer car_type = RequestUtil.getInteger(request, "car_type", 0);
 		Double minprice_unit = RequestUtil.getDouble(request, "minprice_unit", 0.00);
 		Long comId = daService.getLong("SELECT nextval('seq_com_info_tb'::REGCLASS) AS newid",null);
-		
+
 		List<Map> sqlsList = new ArrayList<Map>();
 		Map comMap = new HashMap();
-		//Ìí¼Ó×Ô¶¯Éú³É³µ³¡16Î»ÃØÔ¿µÄÂß¼­
+		//æ·»åŠ è‡ªåŠ¨ç”Ÿæˆè½¦åœº16ä½ç§˜é’¥çš„é€»è¾‘
 		String ukey = StringUtils.createRandomCharData(16);
 		//String share_number =RequestUtil.processParams(request, "share_number");
 		String comsql = "insert into com_info_tb(id,company_name,address,mobile,phone,create_time," +
@@ -1033,14 +1050,14 @@ public class ParkManageAction extends Action {
 				nfc,etc,book,navi,monthlypay,isnight,epay,car_type,minprice_unit,ukey};
 		comMap.put("sql", comsql);
 		comMap.put("values", comvalues);
-		
+
 		sqlsList.add(comMap);
-		
+
 		boolean r =  daService.bathUpdate(sqlsList);
 		if(r){
 			if(city>0)
 				publicMethods.setCityCache(Long.valueOf(comId),city);
-			
+
 			if(etc == 2){
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("comid", comId);
@@ -1053,14 +1070,14 @@ public class ParkManageAction extends Action {
 			return -1;
 		}
 	}
-	
+
 	/*private int getShareNumber(Long comid,int shareNumber){
 		Long total = daService.getLong("select parking_total from com_info_tb where id =? ", new Object[]{comid});
 		if(total!=null&&total<shareNumber)
 			return total.intValue();
 		return shareNumber;
 	}*/
-	
+
 	public static void main(String[] args) {
 		try {
 			System.out.println(StringUtils.MD5(StringUtils.MD5("tcbtest")+"zldtingchebao201410092009"));
@@ -1069,7 +1086,7 @@ public class ParkManageAction extends Action {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private  void weixin(Map<String, Object> map){
 		BufferedReader reader = null;
 		String lineString=null;

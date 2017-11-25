@@ -36,11 +36,11 @@ public class PassManageAction extends Action {
 	private MongoDbUtils mongoDbUtils;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	private Logger logger = Logger.getLogger(PassManageAction.class);
-	
+
 	/*
-	 * Í¨µÀÉèÖÃ
+	 * é€šé“è®¾ç½®
 	 */
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
@@ -59,15 +59,17 @@ public class PassManageAction extends Action {
 			request.setAttribute("comid", comid);
 			return mapping.findForward("list");
 		}else if(action.equals("passquery")){
-			String sql = "select cp.*,cw.worksite_name from com_pass_tb cp,com_worksite_tb cw where cp.worksite_id=cw.id and cp.comid=?";
-			String countsql = "select count(1) from com_pass_tb where comid=?";
-			Long count = daService.getLong(countsql, new Object[]{comid});
+			//String sql = "select cp.*,cw.worksite_name from com_pass_tb cp,com_worksite_tb cw where cp.worksite_id=cw.id and cp.comid=?";
+			String sql = "select * from com_pass_tb  where comid=? and state= ? ";
+			String countsql = "select count(1) from com_pass_tb where comid=? and state=? ";
+			Long count = daService.getLong(countsql, new Object[]{comid,0});
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			List list = null;
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			List<Object> params = new ArrayList<Object>();
 			params.add(comid);
+			params.add(0);
 			if(count>0){
 				list = daService.getAll(sql+ " order by id desc",params, pageNum, pageSize);
 			}
@@ -129,7 +131,7 @@ public class PassManageAction extends Action {
 				}else{
 					logger.error("parkadmin or admin:"+operater+" edit comid:"+comid+" pass");
 				}
-				mongoDbUtils.saveLogs( request,0, 3, "ĞŞ¸ÄÁËÍ¨µÀ:"+passname);
+				mongoDbUtils.saveLogs( request,0, 3, "ä¿®æ”¹äº†é€šé“:"+passname);
 				AjaxUtil.ajaxOutput(response, "1");
 			}else{
 				AjaxUtil.ajaxOutput(response, "0");
@@ -149,8 +151,8 @@ public class PassManageAction extends Action {
 		}else if(action.equals("delete")){
 			String id =RequestUtil.processParams(request, "selids");
 			Map passMap =daService.getMap("select * from com_pass_tb where id =? ", new Object[]{Long.valueOf(id)});
-			String sql = "delete from com_pass_tb where id=?";
-			int r = daService.update(sql, new Object[]{Long.valueOf(id)});
+			String sql = "update  com_pass_tb set state=?  where id=?";
+			int r = daService.update(sql, new Object[]{1,Long.valueOf(id)});
 			if(r == 1){
 				if(publicMethods.isEtcPark(comid)){
 					int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_pass_tb",Long.valueOf(id),System.currentTimeMillis()/1000,2});
@@ -158,7 +160,7 @@ public class PassManageAction extends Action {
 				}else{
 					logger.error("parkadmin or admin:"+operater+" delete comid:"+comid+" pass");
 				}
-				mongoDbUtils.saveLogs( request,0, 4, "É¾³ıÁËÍ¨µÀ:"+passMap);
+				mongoDbUtils.saveLogs( request,0, 4, "åˆ é™¤äº†é€šé“:"+passMap);
 				AjaxUtil.ajaxOutput(response, "1");
 			}else{
 				AjaxUtil.ajaxOutput(response, "0");
@@ -189,7 +191,7 @@ public class PassManageAction extends Action {
 			}
 			Long count = daService.getLong("select count(1) from com_brake_tb where passid=?", new Object[]{passid});
 			if(count > 0){
-				//±à¼­
+				//ç¼–è¾‘
 				String sql = "update com_brake_tb set brake_name=?,serial=?,ip=? where passid=?";
 				int re = daService.update(sql, new Object[]{brake_name,serial,ip,passid});
 				if(re == 1){
@@ -198,7 +200,7 @@ public class PassManageAction extends Action {
 					AjaxUtil.ajaxOutput(response, "0");
 				}
 			}else{
-				//Ìí¼Ó
+				//æ·»åŠ 
 				String sql = "insert into com_brake_tb(passid,brake_name,serial,ip) values(?,?,?,?)";
 				int re = daService.update(sql, new Object[]{passid,brake_name,serial,ip});
 				if(re == 1){
@@ -207,16 +209,16 @@ public class PassManageAction extends Action {
 					AjaxUtil.ajaxOutput(response, "0");
 				}
 			}
-			mongoDbUtils.saveLogs( request,0, 2, "Ìí¼ÓÁËÍ¨Õ¢:"+brake_name);
+			mongoDbUtils.saveLogs( request,0, 2, "æ·»åŠ äº†é€šé—¸:"+brake_name);
 		}else if(action.equals("liftrod")){
-			//»ñÈ¡Í¨µÀÃû³Æ
+			//è·å–é€šé“åç§°
 			String passname = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "passname"));
-			//»ñÈ¡Í¨µÀ±àºÅ
+			//è·å–é€šé“ç¼–å·
 			String channelId = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "channel_id"));
-			//»ñÈ¡µÀÕ¢Ö¸Áî
+			//è·å–é“é—¸æŒ‡ä»¤
 			Integer channelOperate = RequestUtil.getInteger(request, "channel_operate", 4);
 			System.out.println(passname+channelId+channelOperate);
-			//·¢ËÍÏûÏ¢µ½ÊÕ·ÑÏµÍ³
+			//å‘é€æ¶ˆæ¯åˆ°æ”¶è´¹ç³»ç»Ÿ
 			HttpProxy httpProxy = new HttpProxy();
 			String url = "http://127.0.0.1/zld/sendmsgtopark.do?action=sendliftrodmsg";
 			Map<String, Object> params = new HashMap<String, Object>();
@@ -226,11 +228,11 @@ public class PassManageAction extends Action {
 			params.put("operate", channelOperate);
 			String result = httpProxy.doPostTwo(url, params);
 			System.out.println(result);
-			//·¢ËÍÏûÏ¢ºó²éÑ¯Êı¾İ¿âÊÇ·ñÍê³É²Ù×÷
+			//å‘é€æ¶ˆæ¯åæŸ¥è¯¢æ•°æ®åº“æ˜¯å¦å®Œæˆæ“ä½œ
 			Long state = -1L;
 			for(int i=0;i<30;i++){
 				Thread.sleep(100);
-				Map map = daService.getMap("select state from liftrod_info_tb where channel_id=? and operate=? and comid=?", 
+				Map map = daService.getMap("select state from liftrod_info_tb where channel_id=? and operate=? and comid=?",
 						new Object[]{channelId,channelOperate,String.valueOf(comid)});
 				if(map != null && !map.isEmpty()){
 					state = Long.valueOf(String.valueOf(map.get("state")));

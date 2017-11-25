@@ -3,15 +3,15 @@ package com.zld.pojo;
 import java.io.Serializable;
 
 public class StatsAccount implements Serializable {
-	//Í³¼Æ·ÖÀà
-	private long id = -1;//Í³¼Æ±àºÅ
-	//ÕËÄ¿Í³¼Æ
-	private double parkingFee = 0;//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-	private double prepayFee = 0;//Ô¤¸¶Í£³µ·Ñ
-	private double refundFee = 0;//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
-	private double addFee = 0;//Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-	private double pursueFee = 0;//×·½ÉÍ£³µ·Ñ
-	
+	//ç»Ÿè®¡åˆ†ç±»
+	private long id = -1;//ç»Ÿè®¡ç¼–å·
+	//è´¦ç›®ç»Ÿè®¡
+	private double parkingFee = 0;//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+	private double prepayFee = 0;//é¢„ä»˜åœè½¦è´¹
+	private double refundFee = 0;//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
+	private double addFee = 0;//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+	private double pursueFee = 0;//è¿½ç¼´åœè½¦è´¹
+
 	public double getParkingFee() {
 		return parkingFee;
 	}
@@ -54,5 +54,5 @@ public class StatsAccount implements Serializable {
 				+ ", prepayFee=" + prepayFee + ", refundFee=" + refundFee
 				+ ", addFee=" + addFee + ", pursueFee=" + pursueFee + "]";
 	}
-	
+
 }

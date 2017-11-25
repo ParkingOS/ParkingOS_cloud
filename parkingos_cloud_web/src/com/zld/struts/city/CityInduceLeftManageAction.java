@@ -21,7 +21,7 @@ import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 
 public class CityInduceLeftManageAction extends Action {
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -29,13 +29,13 @@ public class CityInduceLeftManageAction extends Action {
 	@Autowired
 	private CommonMethods commonMethods;
 
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -78,14 +78,14 @@ public class CityInduceLeftManageAction extends Action {
 				sql += " comid in ("+preParams+") ";
 				countSql += " comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				count = daService.getCount(countSql,params);
 				if(count>0){
 					list = daService.getAll(sql +" order by update_time desc ",params, pageNum, pageSize);
 				}
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
-		
+
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("query")){
 			String sql = "select*from remain_berth_tb where state=?  and ";
@@ -115,7 +115,7 @@ public class CityInduceLeftManageAction extends Action {
 				sql += " comid in ("+preParams+") ";
 				countSql += " comid in ("+preParams+")";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -127,10 +127,10 @@ public class CityInduceLeftManageAction extends Action {
 					list = daService.getAll(sql +" order by update_time desc ",params, pageNum, pageSize);
 				}
 			}
-		  
+
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
-		
+
 		}
 		return null;
 	}

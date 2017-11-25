@@ -32,14 +32,14 @@ public class CityBerthSegManageAction extends Action {
 	private CommonMethods commonMethods;
 	@Autowired
 	private MemcacheUtils memcacheUtils;
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//��¼���û�id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -47,13 +47,13 @@ public class CityBerthSegManageAction extends Action {
 			response.sendRedirect("login.do");
 			return null;
 		}
-		
+
 		if(cityid == null && groupid == null){
 			return null;
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("quickquery")){
@@ -83,7 +83,7 @@ public class CityBerthSegManageAction extends Action {
 				sql += " and comid in ("+preParams+") ";
 				countSql += " and comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				count = daService.getCount(countSql,params);
 				if(count>0){
 					list = daService.getAll(sql +" order by create_time desc ",params, pageNum, pageSize);
@@ -120,7 +120,7 @@ public class CityBerthSegManageAction extends Action {
 				sql += " and comid in ("+preParams+") ";
 				countSql += " and comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -142,13 +142,13 @@ public class CityBerthSegManageAction extends Action {
 			AjaxUtil.ajaxOutput(response, "" + r);
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			Long count = pgOnlyReadService.getLong("select count(id) from com_park_tb where berthsec_id=? and is_delete=? ", 
+			Long count = pgOnlyReadService.getLong("select count(id) from com_park_tb where berthsec_id=? and is_delete=? ",
 					new Object[]{id, 0});
 			if(count > 0){
 				AjaxUtil.ajaxOutput(response, "-2");
 				return null;
 			}
-			int r = daService.update("update com_berthsecs_tb set is_active=? where id=? ", 
+			int r = daService.update("update com_berthsecs_tb set is_active=? where id=? ",
 					new Object[]{1, id});
 			AjaxUtil.ajaxOutput(response, "" + r);
 		}else if(action.equals("getcityparks")){
@@ -173,7 +173,7 @@ public class CityBerthSegManageAction extends Action {
 				params.addAll(parks);
 				list = pgOnlyReadService.getAllMap(sql, params);
 			}
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"��ѡ��\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"请选择\"}";
 			if(list != null && !list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("company_name")+"\"}";
@@ -183,7 +183,7 @@ public class CityBerthSegManageAction extends Action {
 			AjaxUtil.ajaxOutput(response, result);
 		}else if(action.equals("getberthseg")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			Map<String, Object> berthsegMap = pgOnlyReadService.getMap("select berthsec_name from com_berthsecs_tb where id=? ", 
+			Map<String, Object> berthsegMap = pgOnlyReadService.getMap("select berthsec_name from com_berthsecs_tb where id=? ",
 					new Object[]{id});
 			AjaxUtil.ajaxOutput(response, berthsegMap.get("berthsec_name") +"" );
 		}else if(action.equals("tobindberth")){
@@ -216,7 +216,7 @@ public class CityBerthSegManageAction extends Action {
 					list = daService.getAll(sql +" order by c.id desc ",params, pageNum, pageSize);
 				}
 			}
-			
+
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("unbindberth")){
@@ -272,7 +272,7 @@ public class CityBerthSegManageAction extends Action {
 					list = daService.getAll(sql +" order by c.id desc ",params, pageNum, pageSize);
 				}
 			}
-			
+
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("bindberth")){
@@ -298,7 +298,7 @@ public class CityBerthSegManageAction extends Action {
 			}
 			AjaxUtil.ajaxOutput(response, "0");
 		}else if(action.equals("queryworker")){
-			String result = "-1_���շ�Ա�ϰ�";
+			String result = "-1_无收费员上班";
 			long id = RequestUtil.getLong(request,"id",-1L);
 			Map map = daService.getMap("select w.uid,u.nickname from parkuser_work_record_tb w,user_info_tb u where berthsec_id =? and " +
 					"end_time is null and w.uid = u.id and w.state=?",new Object[]{id,0});
@@ -316,7 +316,7 @@ public class CityBerthSegManageAction extends Action {
 			}
 			Long ntime = System.currentTimeMillis()/1000;
 			List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-			//���¹������е�ָ���Ĳ�λ����ǩ��
+			//更新工作组中的指定的泊位段已签退
 			Map<String, Object> workBerthSegSqlMap = new HashMap<String, Object>();
 			workBerthSegSqlMap.put("sql", "update work_berthsec_tb set state=? where berthsec_id=? and is_delete =? ");
 			workBerthSegSqlMap.put("values", new Object[]{0, id, 0});
@@ -326,17 +326,17 @@ public class CityBerthSegManageAction extends Action {
 			if(!off){
 				logoff_state = 1;
 			}
-			//ǩ�˲���
+			//签退操作
 			Map<String, Object> workRecordSqlMap = new HashMap<String, Object>();
 			workRecordSqlMap.put("sql", "update parkuser_work_record_tb set end_time=?,state=?,logoff_state=? where berthsec_id=? and state=?");
 			workRecordSqlMap.put("values", new Object[]{ntime, 1, logoff_state, id, 0});
 			bathSql.add(workRecordSqlMap);
-			//��Ϊ����
+			//标为离线
 			Map<String, Object> onlineSqlMap = new HashMap<String, Object>();
 			onlineSqlMap.put("sql", "update user_info_tb set online_flag=? where id=? ");
 			onlineSqlMap.put("values", new Object[]{21, uid});
 			bathSql.add(onlineSqlMap);
-			//����token
+			//更新token
 			Map<String, Object> map = daService.getMap("select token from user_session_tb where uin=? ", new Object[]{uid});
 			String oldtoken = (String)map.get("token");
 			String token = "zldtokenvoid"+System.currentTimeMillis();
@@ -360,7 +360,7 @@ public class CityBerthSegManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private int editBerthSeg(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		String uuid = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "uuid"));
@@ -370,12 +370,12 @@ public class CityBerthSegManageAction extends Action {
 		Double longitude = RequestUtil.getDouble(request, "longitude", 0d);
 		Double latitude = RequestUtil.getDouble(request, "latitude", 0d);
 		Integer is_active = RequestUtil.getInteger(request, "is_active", 0);
-		
-		int r = daService.update("update com_berthsecs_tb set uuid=?,berthsec_name=?,park_uuid=?,address=?,longitude=?,latitude=?,is_active=? where id=? ", 
+
+		int r = daService.update("update com_berthsecs_tb set uuid=?,berthsec_name=?,park_uuid=?,address=?,longitude=?,latitude=?,is_active=? where id=? ",
 				new Object[]{uuid, berthsec_name, park_uuid, address, longitude, latitude, is_active, id});
 		return r;
 	}
-	
+
 	private int createBerthSeg(HttpServletRequest request){
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		if(comid == -1){
@@ -388,12 +388,12 @@ public class CityBerthSegManageAction extends Action {
 		Double longitude = RequestUtil.getDouble(request, "longitude", 0d);
 		Double latitude = RequestUtil.getDouble(request, "latitude", 0d);
 		Integer is_active = RequestUtil.getInteger(request, "is_active", 0);
-		
-		int r = daService.update("insert into com_berthsecs_tb(uuid,berthsec_name,park_uuid,create_time,address,longitude,latitude,is_active,comid) values(?,?,?,?,?,?,?,?,?)", 
+
+		int r = daService.update("insert into com_berthsecs_tb(uuid,berthsec_name,park_uuid,create_time,address,longitude,latitude,is_active,comid) values(?,?,?,?,?,?,?,?,?)",
 				new Object[]{uuid, berthsec_name, park_uuid, System.currentTimeMillis()/1000, address, longitude, latitude, is_active, comid});
 		return r;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> segids = new ArrayList<Object>();
@@ -422,5 +422,5 @@ public class CityBerthSegManageAction extends Action {
 			}
 		}
 	}
-	
+
 }

@@ -39,21 +39,21 @@ public class CityUnOrderManageAction extends Action {
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
-	private CommonMethods commonMethods; 
+	private CommonMethods commonMethods;
 	@Autowired
 	private PublicMethods publicMethods;
 	@Autowired
 	private MongoDbUtils mongoDbUtils;
-	
+
 	private Logger logger = Logger.getLogger(CityUnOrderManageAction.class);
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -66,7 +66,7 @@ public class CityUnOrderManageAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		ExecutorService pool = ExecutorsUtil.getExecutorService();//»ñÈ¡Ïß³Ì³Ø
+		ExecutorService pool = ExecutorsUtil.getExecutorService();//è·å–çº¿ç¨‹æ± 
 		if(action.equals("")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Long today = TimeTools.getToDayBeginTime();
@@ -120,7 +120,7 @@ public class CityUnOrderManageAction extends Action {
 				sql += " and o.comid in ("+preParams+") ";
 				countSql += " and o.comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -144,7 +144,7 @@ public class CityUnOrderManageAction extends Action {
 				if(orderfield.equals("")){
 					orderfield = "create_time";
 				}
-				
+
 				if(orderby.equals("")){
 					orderby = " desc ";
 				}
@@ -178,10 +178,10 @@ public class CityUnOrderManageAction extends Action {
 			int ret = completezeroorder(request);
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}
-		
+
 		return null;
 	}
-	
+
 
 	private int completezeroorder(HttpServletRequest request){
 		int ret = 0;
@@ -192,7 +192,7 @@ public class CityUnOrderManageAction extends Action {
 				long etime = System.currentTimeMillis()/1000;
 				for (int i = 0; i < idsarr.length; i++) {
 					long id = Long.valueOf(idsarr[i]);
-					Map<String, Object> map = pgOnlyReadService.getMap("select comid,c_type,berthnumber from order_tb where id=? ", 
+					Map<String, Object> map = pgOnlyReadService.getMap("select comid,c_type,berthnumber from order_tb where id=? ",
 							new Object[]{id});
 					if(map == null || map.get("comid") == null){
 						continue;
@@ -203,21 +203,21 @@ public class CityUnOrderManageAction extends Action {
 					if(map.get("berthnumber") != null){
 						berthId = (Long)map.get("berthnumber");
 					}
-					Integer need_sync = 0;//Ô¤Ö§¸¶¶©µ¥ĞèÒªÍ¬²½µ½ÏßÏÂ  0:²»ĞèÒª
-					Integer pay_type = 1;//1:ÏÖ½ğÖ§¸¶
-					String log = "ºóÌ¨0Ôª½áËã·ÇÔÂ¿¨¶©µ¥£º";
+					Integer need_sync = 0;//é¢„æ”¯ä»˜è®¢å•éœ€è¦åŒæ­¥åˆ°çº¿ä¸‹  0:ä¸éœ€è¦
+					Integer pay_type = 1;//1:ç°é‡‘æ”¯ä»˜
+					String log = "åå°0å…ƒç»“ç®—éæœˆå¡è®¢å•ï¼š";
 					if(c_type == 5){
-						pay_type = 3;//3:°üÔÂ
-						log = "ºóÌ¨0Ôª½áËãÔÂ¿¨¶©µ¥£º";
+						pay_type = 3;//3:åŒ…æœˆ
+						log = "åå°0å…ƒç»“ç®—æœˆå¡è®¢å•ï¼š";
 					}
 					if(publicMethods.isEtcPark(comid)){
-						need_sync = 4;//4:ÏßÉÏ½áËãµÄ¶¼ĞèÒªÍ¬²½ÏÂÈ¥
-						log = "´ø±¾µØ·şÎñÆ÷µÄ" + log;
+						need_sync = 4;//4:çº¿ä¸Šç»“ç®—çš„éƒ½éœ€è¦åŒæ­¥ä¸‹å»
+						log = "å¸¦æœ¬åœ°æœåŠ¡å™¨çš„" + log;
 					}
 					List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-					//¸üĞÂ¶©µ¥
+					//æ›´æ–°è®¢å•
 					Map<String, Object> orderSqlMap = new HashMap<String, Object>();
-					//¸üĞÂ²´Î»
+					//æ›´æ–°æ³Šä½
 					Map<String, Object> berthSqlMap = new HashMap<String, Object>();
 					orderSqlMap.put("sql", "update order_tb set isclick=?,total=?,pay_type=?,end_time=?,state=?,need_sync=? " +
 							" where id=? and state=? ");
@@ -232,7 +232,7 @@ public class CityUnOrderManageAction extends Action {
 					if(b){
 						ret = 1;
 						mongoDbUtils.saveLogs( request,0, 6, log + id);
-						logger.error(log + id + ",½áËã·½Ê½pay_type:" + pay_type);
+						logger.error(log + id + ",ç»“ç®—æ–¹å¼pay_type:" + pay_type);
 					}
 				}
 			}
@@ -241,7 +241,7 @@ public class CityUnOrderManageAction extends Action {
 		}
 		return ret;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			Long ntime = System.currentTimeMillis()/1000;
@@ -251,7 +251,7 @@ public class CityUnOrderManageAction extends Action {
 			}
 		}
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		Integer parking_type = RequestUtil.getInteger(request, "parking_type_start", -1);
 		SqlInfo sqlInfo1 = null;
@@ -260,7 +260,7 @@ public class CityUnOrderManageAction extends Action {
 		}
 		return sqlInfo1;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo1(HttpServletRequest request){
 		String cid = RequestUtil.processParams(request, "cid");
 		SqlInfo sqlInfo1 = null;

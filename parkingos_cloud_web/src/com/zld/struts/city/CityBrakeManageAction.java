@@ -28,14 +28,14 @@ public class CityBrakeManageAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -48,7 +48,7 @@ public class CityBrakeManageAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("quickquery")){
@@ -77,7 +77,7 @@ public class CityBrakeManageAction extends Action {
 				sql += " comid in ("+preParams+") ";
 				countSql += " comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				count = pgOnlyReadService.getCount(countSql,params);
 				if(count>0){
 					list = pgOnlyReadService.getAll(sql +" order by id desc ",params, pageNum, pageSize);
@@ -113,7 +113,7 @@ public class CityBrakeManageAction extends Action {
 				sql += " comid in ("+preParams+") ";
 				countSql += " comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -137,17 +137,17 @@ public class CityBrakeManageAction extends Action {
 			int r = deleteBrake(request);
 			AjaxUtil.ajaxOutput(response, r + "");
 		}
-		
+
 		return null;
 	}
-	
+
 	private int deleteBrake(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "selids", -1L);
-		int r = daService.update("delete from com_brake_tb where id=? ", 
+		int r = daService.update("delete from com_brake_tb where id=? ",
 				new Object[]{id});
 		return r;
 	}
-	
+
 	private int editBrake(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
@@ -161,11 +161,11 @@ public class CityBrakeManageAction extends Action {
 		if(passid == -1){
 			return -2;
 		}
-		int r = daService.update("update com_brake_tb set comid=?,passid=?,brake_name=?,serial=?,ip=? where id=? ", 
+		int r = daService.update("update com_brake_tb set comid=?,passid=?,brake_name=?,serial=?,ip=? where id=? ",
 				new Object[]{comid, passid, brake_name, serial, ip, id});
 		return r;
 	}
-	
+
 	private int createBrake(HttpServletRequest request){
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		Long passid = RequestUtil.getLong(request, "passid", -1L);
@@ -182,7 +182,7 @@ public class CityBrakeManageAction extends Action {
 		int re = daService.update(sql, new Object[]{passid,brake_name,serial,ip,comid});
 		return re;
 	}
-	
+
 	private void setWorksite(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> passList = new ArrayList<Object>();
@@ -195,8 +195,8 @@ public class CityBrakeManageAction extends Action {
 					preParams += ",?";
 			}
 			List<Map<String, Object>> list2 = pgOnlyReadService.getAllMap("select worksite_id,id from com_pass_tb where id in ("+preParams+")", passList);
-			
-			
+
+
 			if(list != null && !list.isEmpty()){
 				for(Map<String, Object> map : list){
 					Long id = (Long)map.get("passid");

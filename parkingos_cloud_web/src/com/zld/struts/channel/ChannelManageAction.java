@@ -22,16 +22,16 @@ public class ChannelManageAction extends Action {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		if(uin == null){
 			response.sendRedirect("login.do");
 			return null;
 		}
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("quickquery")){
@@ -47,7 +47,7 @@ public class ChannelManageAction extends Action {
 		}else if(action.equals("create")){
 			String name = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "name"));
 			int ret = 0;
-			ret = daService.update("insert into org_channel_tb (name,state,create_time) values(?,?,?) ", 
+			ret = daService.update("insert into org_channel_tb (name,state,create_time) values(?,?,?) ",
 					new Object[]{name,0,System.currentTimeMillis()/1000});
 			AjaxUtil.ajaxOutput(response, ret+"");
 			return null;

@@ -14,9 +14,9 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 
 public class HttpProxy {
-	
+
 	/**
-	 * GET ÇëÇó£¬·µ»Ø×Ö·û
+	 * GET è¯·æ±‚ï¼Œè¿”å›žå­—ç¬¦
 	 * @param url
 	 * @return
 	 */
@@ -38,7 +38,7 @@ public class HttpProxy {
 		return null;
 	}
 	/**
-	 * POST ÇëÇó£¬·µ»Ø×Ö·û
+	 * POST è¯·æ±‚ï¼Œè¿”å›žå­—ç¬¦
 	 * @param url
 	 * @param params
 	 * @return
@@ -49,7 +49,7 @@ public class HttpProxy {
 		int state = 0;
 		String result = "";
 		try {
-			
+
 			NameValuePair[] pairs = new NameValuePair[params.size()];
 			int i = 0;
 			for(String key : params.keySet()){
@@ -57,8 +57,8 @@ public class HttpProxy {
 				i++;
 			}
 			post.setRequestBody( pairs);
-		    httpClient.setConnectionTimeout(1000*20);
-		    state = httpClient.executeMethod(post);
+			httpClient.setConnectionTimeout(1000*20);
+			state = httpClient.executeMethod(post);
 			if(state==HttpStatus.SC_OK){
 				result= post.getResponseBodyAsString();
 			}
@@ -71,7 +71,7 @@ public class HttpProxy {
 		}
 		return result;
 	}
-	
+
 	public  String doPostJson(String url,Map<String,Object> params){
 		HttpClient httpClient = new HttpClient();
 		PostMethod post = new PostMethod(url);
@@ -87,8 +87,8 @@ public class HttpProxy {
 //			post.setEntity(new StringEntity(entity));
 //			post.setHeader("Accept", "application/json");
 //			post.setHeader(, "application/json");
-		    httpClient.setConnectionTimeout(1000*20);
-		    state = httpClient.executeMethod(post);
+			httpClient.setConnectionTimeout(1000*20);
+			state = httpClient.executeMethod(post);
 			if(state==HttpStatus.SC_OK){
 				result= post.getResponseBodyAsString();
 			}
@@ -102,7 +102,7 @@ public class HttpProxy {
 		return result;
 	}
 	/**
-	 * POST2 ÇëÇó£¬·µ»Ø×Ö·û
+	 * POST2 è¯·æ±‚ï¼Œè¿”å›žå­—ç¬¦
 	 * @param url
 	 * @param params
 	 * @return
@@ -114,7 +114,7 @@ public class HttpProxy {
 		int state = 0;
 		String result = "";
 		try {
-			
+
 			NameValuePair[] pairs = new NameValuePair[params.size()];
 			int i = 0;
 			for(String key : params.keySet()){
@@ -122,20 +122,20 @@ public class HttpProxy {
 				i++;
 			}
 			post.setRequestBody( pairs);
-		    httpClient.setConnectionTimeout(50000);
-		    httpClient.getHttpConnectionManager().getParams().setSoTimeout(50000);
-		    state = httpClient.executeMethod(post);
+			httpClient.setConnectionTimeout(50000);
+			httpClient.getHttpConnectionManager().getParams().setSoTimeout(50000);
+			state = httpClient.executeMethod(post);
 			if(state==HttpStatus.SC_OK){
 				//result= post.getResponseBodyAsString();
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						post.getResponseBodyAsStream()));
-	            StringBuffer stringBuffer = new StringBuffer();
-	            String str = "";
-	            while ((str = br.readLine()) != null) {
-	                  stringBuffer.append(str);
-	            }
-	            String line = stringBuffer.toString();
-	            System.err.println(">>>>>>>>>>>>>>>>>>http doPost result:"+line);
+				StringBuffer stringBuffer = new StringBuffer();
+				String str = "";
+				while ((str = br.readLine()) != null) {
+					stringBuffer.append(str);
+				}
+				String line = stringBuffer.toString();
+				System.err.println(">>>>>>>>>>>>>>>>>>http doPost result:"+line);
 				result=line;
 			}
 			post.releaseConnection();

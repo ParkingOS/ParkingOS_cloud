@@ -4,19 +4,19 @@ import java.io.Serializable;
 
 public class SensorInfo implements Serializable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private String id;
-	private int status = 0;//0£ºÎŞ³µ 1£ºÓĞ³µ
-	private int x0 = 0;//³µ¼ìÆ÷³õÊ¼»¯X0
-	private int y0 = 0;//³µ¼ìÆ÷³õÊ¼»¯Y0
-	private int z0 = 0;//³µ¼ìÆ÷³õÊ¼»¯Z0
-	private int x = 0;//³µ¼ìÆ÷×îĞÂX
-	private int y = 0;//³µ¼ìÆ÷×îĞÂY
-	private int z = 0;//³µ¼ìÆ÷×îĞÂZ
-	private int rate = -1;//ÓĞ³µµÄ¸ÅÂÊÖµ
+	private int status = 0;//0ï¼šæ— è½¦ 1ï¼šæœ‰è½¦
+	private int x0 = 0;//è½¦æ£€å™¨åˆå§‹åŒ–X0
+	private int y0 = 0;//è½¦æ£€å™¨åˆå§‹åŒ–Y0
+	private int z0 = 0;//è½¦æ£€å™¨åˆå§‹åŒ–Z0
+	private int x = 0;//è½¦æ£€å™¨æœ€æ–°X
+	private int y = 0;//è½¦æ£€å™¨æœ€æ–°Y
+	private int z = 0;//è½¦æ£€å™¨æœ€æ–°Z
+	private int rate = -1;//æœ‰è½¦çš„æ¦‚ç‡å€¼
 	public String getId() {
 		return id;
 	}

@@ -26,7 +26,7 @@ import com.zld.utils.RequestUtil;
 public class MarketerPicsAction extends Action {
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(MarketerPicsAction.class);
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
@@ -41,7 +41,7 @@ public class MarketerPicsAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void downloadVisitPics (Long visitid,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		logger.error("download visitPics from mongodb....");
 		System.err.println("downloadVisitPics from mongodb file:visitid="+visitid);
@@ -51,7 +51,7 @@ public class MarketerPicsAction extends Action {
 			BasicDBObject document = new BasicDBObject();
 			BasicDBObject condation = new BasicDBObject();
 			document.put("visitid", visitid);
-			//按生成时间查最近的数据
+			//鎸夌敓鎴愭椂闂存煡鏈�杩戠殑鏁版嵁
 			condation.put("ctime", -1);
 			DBCursor objs = collection.find(document).sort(condation).limit(1);
 			DBObject obj = null;
@@ -71,13 +71,13 @@ public class MarketerPicsAction extends Action {
 			response.setHeader("Last-Modified", c.getTime().toString());
 			response.setContentLength(content.length);
 			response.setContentType("image/jpeg");
-		    OutputStream o = response.getOutputStream();
-		    o.write(content);
-		    o.flush();
-		    o.close();
-		    response.flushBuffer();
-		    //response.reset();
-		    System.out.println("mongdb over.....");
+			OutputStream o = response.getOutputStream();
+			o.write(content);
+			o.flush();
+			o.close();
+			response.flushBuffer();
+			//response.reset();
+			System.out.println("mongdb over.....");
 		}else {
 			AjaxUtil.ajaxOutput(response, "-1");
 		}

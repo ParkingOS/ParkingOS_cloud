@@ -1,38 +1,38 @@
 package com.zld.utils;
 
 public class ZLDType {
-	//³äÖµ
+	//å……å€¼
 	public final static Integer MONEY_RECARGE  =0;
-	//Ïû·Ñ
+	//æ¶ˆè´¹
 	public final static Integer MONEY_CONSUM   =1;
-	//ÌáÏÖ
+	//æç°
 	public final static Integer MONEY_WITHDRAW =2;
 
-	//×Ü¹ÜÀíÔ±
+	//æ€»ç®¡ç†å‘˜
 	public final static Integer ZLD_ADMIN_ROLE =0;
-	//Í£³µ³¡ºóÌ¨¹ÜÀíÔ±
+	//åœè½¦åœºåå°ç®¡ç†å‘˜
 	public final static Integer ZLD_PARKADMIN_ROLE =1;
-	//Í£³µ³¡ÊÕ·ÑÔ±
+	//åœè½¦åœºæ”¶è´¹å‘˜
 	public final static Integer ZLD_COLLECTOR_ROLE =2;
-	//Í£³µ³¡²ÆÎñ
+	//åœè½¦åœºè´¢åŠ¡
 	public final static Integer ZLD_ACCOUNTANT_ROLE =3;
-	//»áÔ±
+	//ä¼šå‘˜
 	public final static Integer ZLD_CAROWER_ROLE =4;
-	//ÊĞ³¡×¨Ô±
+	//å¸‚åœºä¸“å‘˜
 	public final static Integer ZLD_MARKETER =5;
-	//Â¼ÈëÔ±
+	//å½•å…¥å‘˜
 	public final static Integer ZLD_RECORDER =6;
-	//ÕæÀ´µç¿Í·ş
+	//çœŸæ¥ç”µå®¢æœ
 	public final static Integer ZLD_KEFU =7;
-	//ÕæÀ´µç²éÑ¯¿Í·ş
+	//çœŸæ¥ç”µæŸ¥è¯¢å®¢æœ
 	public final static Integer ZLD_QUERYKEFU =8;
-	//³µ³¡¹Ø¼üÈË
+	//è½¦åœºå…³é”®äºº
 	public final static Integer ZLD_KEYMEN =12;
-	//²¿ÃÅÖ÷¹Ü
+	//éƒ¨é—¨ä¸»ç®¡
 	public final static Integer ZLD_ZHUGUAN =11;
-	//²¿ÃÅÖ÷¹Ü
+	//éƒ¨é—¨ä¸»ç®¡
 	public final static Integer ZLD_CHECK =10;
-	//ÔÂ¿¨²Ù×÷Ô±
+	//æœˆå¡æ“ä½œå‘˜
 	public final static Integer ZLD_CARDOPERATOR =15;
-	
+
 }

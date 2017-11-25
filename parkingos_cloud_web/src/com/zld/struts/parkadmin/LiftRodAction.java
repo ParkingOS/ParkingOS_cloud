@@ -1,23 +1,5 @@
 package com.zld.struts.parkadmin;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -29,29 +11,36 @@ import com.zld.CustomDefind;
 import com.zld.impl.MongoClientFactory;
 import com.zld.impl.MongoDbUtils;
 import com.zld.service.DataBaseService;
-import com.zld.utils.ExportExcelUtil;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
-import com.zld.utils.TimeTools;
+import com.zld.utils.*;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.*;
 /**
- * ̧�˼�¼
+ * 抬杆记录
  * @author Administrator
  *
  */
 public class LiftRodAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
 	private MongoDbUtils mongoDbUtils;
-	
+
 	private Logger logger = Logger.getLogger(LiftRodAction.class);
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -71,7 +60,7 @@ public class LiftRodAction extends Action{
 		if(groupid != null && groupid > 0){
 			request.setAttribute("groupid", groupid);
 			if(comid == null || comid <= 0){
-				Map map = daService.getMap("select id,company_name from com_info_tb where groupid=? order by id limit ? ", 
+				Map map = daService.getMap("select id,company_name from com_info_tb where groupid=? order by id limit ? ",
 						new Object[]{groupid, 1});
 				logger.error("lift>>>comid:"+comid+",map:"+map);
 				if(map != null){
@@ -108,8 +97,8 @@ public class LiftRodAction extends Action{
 			String [] heards = null;
 			if(list!=null&&list.size()>0){
 				//setComName(list);
-				String [] f = new String[]{"id","uin","ctime","reason"};
-				heards = new String[]{"���","�շ�Ա","ʱ��","ԭ��"};
+				String [] f = new String[]{"id","liftrod_id","ctime","uin","out_channel_id","reason"};
+				heards = new String[]{"编号","抬杆编号","时间","收费员","通道","原因"};
 				Map<Integer, String> reasonMap = (Map)getLiftReason(comid, 1);
 				for(Map<String, Object> map : list){
 					List<String> values = new ArrayList<String>();
@@ -121,7 +110,7 @@ public class LiftRodAction extends Action{
 							if(reasonMap.get(key)!=null)
 								values.add(reasonMap.get(key));
 							else {
-								values.add("��");
+								values.add("无");
 							}
 						}else{
 							if("ctime".equals(field)){
@@ -138,7 +127,7 @@ public class LiftRodAction extends Action{
 					bodyList.add(values);
 				}
 			}
-			String fname = "̧�˼�¼" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
+			String fname = "抬杆记录" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
 			fname = StringUtils.encodingFileName(fname);
 			java.io.OutputStream os;
 			try {
@@ -147,7 +136,7 @@ public class LiftRodAction extends Action{
 						+ fname + ".xls");
 				response.setContentType("application/x-download");
 				os = response.getOutputStream();
-				ExportExcelUtil importExcel = new ExportExcelUtil("̧�˼�¼",
+				ExportExcelUtil importExcel = new ExportExcelUtil("抬杆记录",
 						heards, bodyList);
 				importExcel.createExcelFile(os);
 			} catch (IOException e) {
@@ -178,7 +167,7 @@ public class LiftRodAction extends Action{
 			}
 		}else if(action.equals("liftpicnew")){
 			String fileName = RequestUtil.getString(request, "filename");
-			//��ѯ��Ӧ��̧��ͼƬ
+			//查询对应的抬杆图片
 			if(fileName !=null && comid !=null){
 				Map map = daService.getMap("select * from carpic_tb where liftrod_id=? and comid=?", new Object[]{fileName,String.valueOf(comid)});
 				String content="";
@@ -189,28 +178,29 @@ public class LiftRodAction extends Action{
 						response.setDateHeader("Expires", System.currentTimeMillis()+12*60*60*1000);
 						response.setContentLength(picture.length);
 						response.setContentType("image/jpeg");
-					    OutputStream o = response.getOutputStream();
-					    o.write(picture);
-					    o.flush();
-					    o.close();
+						OutputStream o = response.getOutputStream();
+						o.write(picture);
+						o.flush();
+						o.close();
 					} catch (Base64DecodingException e) {
 						e.printStackTrace();
-						logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>base64�����쳣");
+						logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>base64调用异常");
 						response.sendRedirect("images/nopic.jpg");
 					}
 				}else{
-					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>û�в鵽��Ӧ��ͼƬ��"+fileName);
+					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>没有查到对应的图片！"+fileName);
 					response.sendRedirect("images/nopic.jpg");
 				}
 			}else{
-				logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>û�в鵽��Ӧ��ͼƬ��"+fileName);
+				logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>没有查到对应的图片！"+fileName);
 				response.sendRedirect("images/nopic.jpg");
 			}
 		}else if(action.equals("liftpicturenew")){
 			String fileName = RequestUtil.getString(request, "filename");
+			logger.error(fileName+","+comid);
 			if(fileName!=null && comid !=null){
 				DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
-				//����̧�˱�Ų�ѯ��mongodb�д���Ķ�Ӧ������
+				//根据抬杆编号查询出mongodb中存入的对应个表名
 //				Map map = daService.getMap("select * from lift_rod_tb where liftrod_id=? and comid=?", new Object[]{fileName,comid});
 				Map map = daService.getMap("select * from carpic_tb where liftrod_id=? and comid=?", new Object[]{fileName,String.valueOf(comid)});
 				String collectionName = "";
@@ -218,7 +208,7 @@ public class LiftRodAction extends Action{
 					collectionName = (String) map.get("liftpic_table_name");
 				}
 				if(collectionName==null||"".equals(collectionName)||"null".equals(collectionName)){
-					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>û�в鵽��Ӧ��ͼƬ��"+fileName);
+					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>没有查到对应的图片！"+fileName);
 					response.sendRedirect("images/nopic.jpg");
 					return null;
 				}
@@ -230,45 +220,45 @@ public class LiftRodAction extends Action{
 					DBObject obj  = collection.findOne(document);
 					if(obj == null){
 						AjaxUtil.ajaxOutput(response, "");
-						logger.error("ȡͼƬ����.....");
+						logger.error("取图片错误.....");
 					}
 					byte[] content = (byte[])obj.get("content");
-					logger.error("ȡͼƬ�ɹ�.....��С:"+content.length);
+					logger.error("取图片成功.....大小:"+content.length);
 					db.requestDone();
 					response.setDateHeader("Expires", System.currentTimeMillis()+12*60*60*1000);
 					response.setContentLength(content.length);
 					response.setContentType("image/jpeg");
-				    OutputStream o = response.getOutputStream();
-				    o.write(content);
-				    o.flush();
-				    o.close();
-				    System.out.println("mongdb over.....");
+					OutputStream o = response.getOutputStream();
+					o.write(content);
+					o.flush();
+					o.close();
+					System.out.println("mongdb over.....");
 				}else{
-					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>û�в鵽��Ӧ��ͼƬ��"+fileName);
+					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>没有查到对应的图片！"+fileName);
 					response.sendRedirect("images/nopic.jpg");
 				}
 			}else{
-				logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>û�в鵽��Ӧ��ͼƬ��"+fileName);
+				logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>没有查到对应的图片！"+fileName);
 				response.sendRedirect("images/nopic.jpg");
 			}
 		}else if(action.equals("getUids")){
-			
+
 		}else if(action.equals("getliftrodpic")){
-			//�޸Ĳ鿴ͼƬ�ӿ�
+			//修改查看图片接口
 			String liftrodId = RequestUtil.getString(request, "liftrodid");
-			logger.error(">>>>>>>>>>>>>>>>>>>>>>������Ϣ��ʾ��ѯ̧��ͼƬ�ӿڣ�getliftrodpic");
+			logger.error(">>>>>>>>>>>>>>>>>>>>>>订单信息显示查询抬杆图片接口：getliftrodpic>>>>comid:"+comid+",liftrodid:"+liftrodId);
 			String html = "<img src='liftrod.do?action=liftpicturenew&comid="+comid+"&filename="+liftrodId+"' id='p1' width='600px' height='600px'></img>";
 			request.setAttribute("html", html);
 			return mapping.findForward("liftrodpics");
 		}
-		
+
 		return null;
 	}
 	private Object getLiftReason(Long comid,int type) {
-		String reason = CustomDefind.getValue("LIFTRODREASON"+comid);
+		String reason = CustomDefind.getValue("LIFTRODREASON");
 		logger.error("lift>>>comid:"+comid+",reason:"+reason);
 		if(type==0){
-			String ret = "[{value_no:-1,value_name:\"\"},{value_no:100,value_name:\"ԭ��δѡ\"}";
+			String ret = "[{value_no:-1,value_name:\"\"},{value_no:100,value_name:\"原因未选\"}";
 			if(reason!=null){
 				String res[] = reason.split("\\|");
 				for(int i=0;i<res.length;i++){
@@ -310,10 +300,10 @@ public class LiftRodAction extends Action{
 		String sql = "select * from lift_rod_tb where comid=?  ";
 		String countSql = "select count(*) from lift_rod_tb where  comid=? " ;
 		SqlInfo base = new SqlInfo("1=1", new Object[]{comid});
-		
+
 		SqlInfo sqlInfo = RequestUtil.customSearch(request,"lift_rod");
 		List<Object> params =new ArrayList<Object>();
-		
+
 		if(sqlInfo!=null){
 			sqlInfo = SqlInfo.joinSqlInfo(base,sqlInfo, 2);
 			countSql+=" and "+ sqlInfo.getSql();
@@ -337,5 +327,5 @@ public class LiftRodAction extends Action{
 		}
 		return arrayList;
 	}
-	
+
 }

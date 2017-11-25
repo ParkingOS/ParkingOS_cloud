@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+</head>
+<script type="text/javascript">
+
+
+function upload(){
+	var f = document.getElementById('pic').value;
+	if(f==''){
+		alert("请先选择一个文件");
+		return ;
+	}else{
+		var fix = f.substring(f.lastIndexOf('.')+1,f.length);
+		if(fix!='xls'&&fix!='xlsx'){
+			alert("文件格式错误:*."+fix+"，请选择xls,xlsx等格式!");
+			return ;
+		}
+	}
+
+	var tourl = 'cityvip.do?action=inportexcel&r='+Math.random();
+//	alert(tourl);
+	document.getElementById('upform').action=tourl;	
+	document.getElementById('upform').submit();	
+}
+</script>
+
+<body>
+<div style='width:250px;margin:10px auto;font-size:12px;'>
+		请选择Excel文件，支持xls,xlsx等格式:
+  <form action="" method="post" id='upform' enctype="multipart/form-data">
+  <input type='file' name='pic' id='pic' /></br></br>
+ <div style='width:110px;float:left;'><input type='button' onclick='upload()' value='确认上传'/></div>
+  </form>
+</div>
+</body>
+</html>

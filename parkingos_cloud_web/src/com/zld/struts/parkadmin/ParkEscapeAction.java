@@ -36,12 +36,12 @@ import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 /**
- * Í£³µ³¡ºóÌ¨¹ÜÀíÔ±µÇÂ¼ºó£¬¹ÜÀíÔ±¹¤£¬Ô±¹¤·ÖÎªÊÕ·ÑÔ±ºÍ²ÆÎñ
+ * åœè½¦åœºåå°ç®¡ç†å‘˜ç™»å½•åï¼Œç®¡ç†å‘˜å·¥ï¼Œå‘˜å·¥åˆ†ä¸ºæ”¶è´¹å‘˜å’Œè´¢åŠ¡
  * @author Administrator
  *
  */
 public class ParkEscapeAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -52,7 +52,7 @@ public class ParkEscapeAction extends Action{
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -70,7 +70,7 @@ public class ParkEscapeAction extends Action{
 			comid = RequestUtil.getLong(request, "comid", 0L);
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		ExecutorService pool = ExecutorsUtil.getExecutorService();//»ñÈ¡Ïß³Ì³Ø
+		ExecutorService pool = ExecutorsUtil.getExecutorService();//è·å–çº¿ç¨‹æ± 
 		if(action.equals("")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Long today = TimeTools.getToDayBeginTime();
@@ -85,7 +85,7 @@ public class ParkEscapeAction extends Action{
 					" between ? and ? ";
 			String sumSql = "select sum(total) total,sum(prepay) prepay,sum(act_total) act_total,state from " +
 					" no_payment_tb where is_delete=? and end_time between ? and ? ";
-			
+
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
@@ -102,7 +102,7 @@ public class ParkEscapeAction extends Action{
 			List<Map<String, Object>> list = null;
 			Long count = 0L;
 			List<Map<String, Object>> sumList = null;
-			
+
 			ArrayList<Object> params = new ArrayList<Object>();
 			params.add(0);
 			params.add(b);
@@ -155,13 +155,13 @@ public class ParkEscapeAction extends Action{
 				count = future0.get();
 				list = future1.get();
 				sumList = future2.get();
-				
+
 				setBerthNum(list);
 				setParkUser(list);
 			}
-			Double atotal = 0d;//Ç··Ñ×Ü½ğ¶î
-			Double ptotal = 0d;//ÒÑ×·½É½ğ¶î
-			Double etotal = 0d;//Î´×·½É½ğ¶î
+			Double atotal = 0d;//æ¬ è´¹æ€»é‡‘é¢
+			Double ptotal = 0d;//å·²è¿½ç¼´é‡‘é¢
+			Double etotal = 0d;//æœªè¿½ç¼´é‡‘é¢
 			if(sumList != null && !sumList.isEmpty()){
 				for(Map<String, Object> map : sumList){
 					Integer state = (Integer)map.get("state");
@@ -177,15 +177,15 @@ public class ParkEscapeAction extends Action{
 					if(map.get("act_total") != null){
 						act_total = Double.valueOf(map.get("act_total") + "");
 					}
-					atotal += (total - prepay);//Ç··Ñ×Ü½ğ¶î
-					if(state == 0){//Î´×·½É½ğ¶î
+					atotal += (total - prepay);//æ¬ è´¹æ€»é‡‘é¢
+					if(state == 0){//æœªè¿½ç¼´é‡‘é¢
 						etotal = total - prepay;
-					}else if(state == 1){//ÒÑ×·½É½ğ¶î
+					}else if(state == 1){//å·²è¿½ç¼´é‡‘é¢
 						ptotal = act_total - prepay;
 					}
 				}
 			}
-			String res = "×ÜÇ··Ñ£º"+atotal+"Ôª£¬ÒÑ×·½É£º"+ptotal+"Ôª£¬Î´×·½É£º"+etotal+"Ôª";
+			String res = "æ€»æ¬ è´¹ï¼š"+atotal+"å…ƒï¼Œå·²è¿½ç¼´ï¼š"+ptotal+"å…ƒï¼Œæœªè¿½ç¼´ï¼š"+etotal+"å…ƒ";
 			String json = JsonUtil.anlysisMap3Json(list, pageNum, count, fieldsstr,"id",res);
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("recover")){
@@ -230,37 +230,37 @@ public class ParkEscapeAction extends Action{
 		}
 		return null;
 	}
-	
+
 	private void export(HttpServletResponse response, List<Map<String, Object>> list){
 		try {
 			if(list != null && !list.isEmpty()){
-				String heards[] = new String[]{"ËùÊô³µ³¡","ËùÊô²´Î»¶Î","²´Î»±àºÅ","¶©µ¥Éú³ÉÊ±¼ä","¶©µ¥½áËãÊ±¼ä","³µÅÆºÅ","³µÖ÷±àºÅ","¶©µ¥±àºÅ",
-						"¶©µ¥½ğ¶î","Ô¤¸¶½ğ¶î","Ç··Ñ½ğ¶î"};
+				String heards[] = new String[]{"æ‰€å±è½¦åœº","æ‰€å±æ³Šä½æ®µ","æ³Šä½ç¼–å·","è®¢å•ç”Ÿæˆæ—¶é—´","è®¢å•ç»“ç®—æ—¶é—´","è½¦ç‰Œå·","è½¦ä¸»ç¼–å·","è®¢å•ç¼–å·",
+						"è®¢å•é‡‘é¢","é¢„ä»˜é‡‘é¢","æ¬ è´¹é‡‘é¢"};
 				List<List<String>> bodyList = new ArrayList<List<String>>();
 				for(Map<String, Object> map : list){
 					List<String> valueList = new ArrayList<String>();
 					valueList.add(map.get("company_name") + "");
 					valueList.add(map.get("berthsec_name") + "");
-					
+
 					valueList.add(map.get("cid") + "");
 					valueList.add(map.get("ctime") + "");
 					valueList.add(map.get("etime") + "");
-					
+
 					valueList.add(map.get("car_number") + "");
 					valueList.add(map.get("uin") + "");
 					valueList.add(map.get("order_id") + "");
-					
+
 					valueList.add(map.get("total") + "");
 					valueList.add(map.get("prepay") + "");
 					valueList.add(map.get("overdue") + "");
 					bodyList.add(valueList);
 				}
-				String fname = "½úÖĞÌÓµ¥¼ÇÂ¼";
+				String fname = "æ™‹ä¸­é€ƒå•è®°å½•";
 				java.io.OutputStream os = response.getOutputStream();
 				response.reset();
 				response.setHeader("Content-disposition", "attachment; filename="
 						+ StringUtils.encodingFileName(fname) + ".xls");
-				ExportExcelUtil importExcel = new ExportExcelUtil("½úÖĞÌÓµ¥¼ÇÂ¼",
+				ExportExcelUtil importExcel = new ExportExcelUtil("æ™‹ä¸­é€ƒå•è®°å½•",
 						heards, bodyList);
 				importExcel.mulitHeadList = null;
 				Map<String, String> headInfoMap=new HashMap<String, String>();
@@ -276,37 +276,37 @@ public class ParkEscapeAction extends Action{
 	private void exportExcel(HttpServletResponse response, List<Map<String, Object>> list){
 		try {
 			if(list != null && !list.isEmpty()){
-				String heards[] = new String[]{"ËùÊô³µ³¡","ËùÊô²´Î»¶Î","²´Î»±àºÅ","½ø³¡Ê±¼ä"
-						,"³ö³¡Ê±¼ä"
-						,"³µÅÆºÅ"
-						//,"³µÖ÷±àºÅ","¶©µ¥±àºÅ",
-						//"¶©µ¥½ğ¶î","Ô¤¸¶½ğ¶î"
-						,"Ç··Ñ½ğ¶î"};
+				String heards[] = new String[]{"æ‰€å±è½¦åœº","æ‰€å±æ³Šä½æ®µ","æ³Šä½ç¼–å·","è¿›åœºæ—¶é—´"
+						,"å‡ºåœºæ—¶é—´"
+						,"è½¦ç‰Œå·"
+						//,"è½¦ä¸»ç¼–å·","è®¢å•ç¼–å·",
+						//"è®¢å•é‡‘é¢","é¢„ä»˜é‡‘é¢"
+						,"æ¬ è´¹é‡‘é¢"};
 				List<List<String>> bodyList = new ArrayList<List<String>>();
 				for(Map<String, Object> map : list){
 					List<String> valueList = new ArrayList<String>();
 					valueList.add(map.get("company_name") + "");
 					valueList.add(map.get("berthsec_name") + "");
-					
+
 					valueList.add(map.get("cid") + "");
 					valueList.add(map.get("ctime") + "");
 					valueList.add(map.get("etime") + "");
-					
+
 					valueList.add(map.get("car_number") + "");
 					//valueList.add(map.get("uin") + "");
 					//valueList.add(map.get("order_id") + "");
-					
+
 					//valueList.add(map.get("total") + "");
 					//valueList.add(map.get("prepay") + "");
 					valueList.add(map.get("overdue") + "");
 					bodyList.add(valueList);
 				}
-				String fname = "ÌÓµ¥¼ÇÂ¼";
+				String fname = "é€ƒå•è®°å½•";
 				java.io.OutputStream os = response.getOutputStream();
 				response.reset();
 				response.setHeader("Content-disposition", "attachment; filename="
 						+ StringUtils.encodingFileName(fname) + ".xls");
-				ExportExcelUtil importExcel = new ExportExcelUtil("ÌÓµ¥¼ÇÂ¼",
+				ExportExcelUtil importExcel = new ExportExcelUtil("é€ƒå•è®°å½•",
 						heards, bodyList);
 				importExcel.mulitHeadList = null;
 				Map<String, String> headInfoMap=new HashMap<String, String>();
@@ -332,7 +332,7 @@ public class ParkEscapeAction extends Action{
 				Long end_time = (Long)map.get("end_time");
 				map.put("ctime", TimeTools.getTime_yyyyMMdd_HHmmss(create_time * 1000));
 				map.put("etime", TimeTools.getTime_yyyyMMdd_HHmmss(end_time * 1000));
-				
+
 				Long comid = (Long)map.get("comid");
 				Long berthseg_id = (Long)map.get("berthseg_id");
 				Long berth_id = (Long)map.get("berth_id");
@@ -361,14 +361,14 @@ public class ParkEscapeAction extends Action{
 					}
 				}
 			}
-			
+
 			List<Map<String, Object>> parkList = pService.getAllMap("select id,company_name from " +
 					" com_info_tb where id in ("+park+")", parkIdList);
 			List<Map<String, Object>> berthSegList = pService.getAllMap("select id,berthsec_name from " +
 					" com_berthsecs_tb where id in ("+berthSeg+")", berthSegIdList);
 			List<Map<String, Object>> berthList = pService.getAllMap("select id,cid from " +
 					" com_park_tb where id in ("+berth+")", berthIdList);
-			
+
 			for(Map<String, Object> map : list){
 				Long comid = (Long)map.get("comid");
 				Long berthseg_id = (Long)map.get("berthseg_id");
@@ -397,7 +397,7 @@ public class ParkEscapeAction extends Action{
 			}
 		}
 	}
-	
+
 	private void setParkUser(List<Map<String, Object>> list){
 		try {
 			if(list != null && !list.isEmpty()){
@@ -429,12 +429,12 @@ public class ParkEscapeAction extends Action{
 						}
 					}
 				}
-			} 
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void setBerthNum(List<Map<String, Object>> list){
 		try {
 			if(list != null && !list.isEmpty()){
@@ -466,27 +466,27 @@ public class ParkEscapeAction extends Action{
 						}
 					}
 				}
-			} 
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private int Recover(HttpServletRequest request, Long groupId){
 		long  loginuin =Long.parseLong(request.getSession().getAttribute("loginuin")+"");
 		String ids =  AjaxUtil.decodeUTF8(RequestUtil.getString(request, "ids"));
 		Long curTime = System.currentTimeMillis()/1000;
 		String cids []= ids.split(",");
 		int ret=0;
-		logger.error("Recover  ºóÌ¨0Ôª½áËã£¬±àºÅ£º"+ids+",²Ù×÷ÈË£º"+loginuin+",groupid:"+groupId);
+		logger.error("Recover  åå°0å…ƒç»“ç®—ï¼Œç¼–å·ï¼š"+ids+",æ“ä½œäººï¼š"+loginuin+",groupid:"+groupId);
 		for(String id : cids){
 			if(Check.isLong(id))
 				ret=daService.update("update no_payment_tb set pursue_uid=?,pursue_time=?,state=?," +
-					"pursue_groupid=?,act_total=? where id=? ", 
-					new Object[]{loginuin, curTime, 1, groupId, 0d, Long.valueOf(id)});
-			logger.error("Recover ºóÌ¨0Ôª½áËã£¬±àºÅ£º"+id+",²Ù×÷½á¹û:"+ret);
+								"pursue_groupid=?,act_total=? where id=? ",
+						new Object[]{loginuin, curTime, 1, groupId, 0d, Long.valueOf(id)});
+			logger.error("Recover åå°0å…ƒç»“ç®—ï¼Œç¼–å·ï¼š"+id+",æ“ä½œç»“æœ:"+ret);
 		}
-		return ret; 
+		return ret;
 
 	}
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
@@ -494,11 +494,11 @@ public class ParkEscapeAction extends Action{
 		SqlInfo sqlInfo1 = null;
 		if(!cid.equals("")){
 			sqlInfo1 = new SqlInfo(" berth_id in (select id from com_park_tb where cid like ?)",
-					 new Object[]{"%" + cid + "%"});
+					new Object[]{"%" + cid + "%"});
 		}
 		return sqlInfo1;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo1(HttpServletRequest request){
 		String nickname = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "nickname"));
 		SqlInfo sqlInfo1 = null;
@@ -508,7 +508,7 @@ public class ParkEscapeAction extends Action{
 		}
 		return sqlInfo1;
 	}
-	
+
 	public List queryData(HttpServletRequest request,Long groupid ,Long cityid,Long comid) throws InterruptedException, ExecutionException{
 		String sql = "select *,(total-prepay) overdue from no_payment_tb where is_delete=? and " +
 				" state=?  ";
@@ -519,11 +519,11 @@ public class ParkEscapeAction extends Action{
 		SqlInfo sqlInfo2 = getSuperSqlInfo(request);
 		SqlInfo sqlinfo3 = getSuperSqlInfo1(request);
 		List<Map<String, Object>> list = null;
-		
+
 		ArrayList<Object> params = new ArrayList<Object>();
 		params.add(0);
 		params.add(0);
-		
+
 		List<Object> parks = new ArrayList<Object>();
 		if(groupid > 0){
 			sql += " and groupid =? ";
@@ -543,7 +543,7 @@ public class ParkEscapeAction extends Action{
 			}
 			sql += " and comid in ("+preParams+") ";
 			params.addAll(parks);
-			
+
 			//setParkUser(list);
 		}
 		if(sqlInfo != null){

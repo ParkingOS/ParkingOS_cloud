@@ -9,8 +9,8 @@ import java.util.TimeZone;
 import com.zld.service.DataBaseService;
 
 /**
- * Í£³µ³¡»º´æ
- * 
+ * åœè½¦åœºç¼“å­˜
+ *
  * @author Administrator
  */
 public class ParkingMap {
@@ -22,15 +22,15 @@ public class ParkingMap {
 	private static Long LastTime = System.currentTimeMillis()/1000;
 
 	/**
-	 * ÅÐ¶ÏÊÇ·ñÊÇÔÚ15·ÖÖÓºóÀ­À­
-	 * 
+	 * åˆ¤æ–­æ˜¯å¦æ˜¯åœ¨15åˆ†é’ŸåŽæ‹‰æ‹‰
+	 *
 	 * @param uin
 	 * @return
 	 */
 	public synchronized static boolean isCanRecordLaLa(Long uin) {
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 		int hour = calendar.get(Calendar.HOUR_OF_DAY);
-		if (hour >= 20 || hour < 7) {// 07-20¼ÆËãlala³É¼¨
+		if (hour >= 20 || hour < 7) {// 07-20è®¡ç®—lalaæˆç»©
 			return false;
 		}
 		Long time = System.currentTimeMillis() / 1000;
@@ -50,23 +50,23 @@ public class ParkingMap {
 	public synchronized static void setLastLalaTime(Long uin, Long time) {
 		LaLaMap.put(uin, time);
 	}
-	
+
 	public synchronized static void putParkName(Long id,String name){
 		PARKIDNAMEMAP.put(id, name);
 	}
-	
+
 	public static String getParkName(Long id){
 		return PARKIDNAMEMAP.get(id);
 	}
-	
+
 	public synchronized static void putUserName(Long id,String name){
 		USERIDNAMEMAP.put(id, name);
 	}
-	
+
 	public static String getUserName(Long id){
 		return USERIDNAMEMAP.get(id);
 	}
-	
+
 	public synchronized static void  putNfcUid(String uuid,Long uin){
 		NFCUINMAP.put(uuid, uin);
 	}
@@ -75,37 +75,37 @@ public class ParkingMap {
 		if(NFCUINMAP.size()==0||(nowTime-LastTime>5*60)){
 			LastTime=nowTime;
 			List<Map<String, Object>> list = dService.getAll("select nfc_uuid,uin from com_nfc_tb where uin>?",new Object[]{0});
-			System.err.println(">>>>>>>>>>>>>>>³õÊ¼»¯°ó¶¨NFCÓÃ»§Êý£º"+list.size());
+			System.err.println(">>>>>>>>>>>>>>>åˆå§‹åŒ–ç»‘å®šNFCç”¨æˆ·æ•°ï¼š"+list.size());
 			if(list!=null&&list.size()>0){
 				for(Map<String, Object> map : list){
 					NFCUINMAP.put(map.get("nfc_uuid")+"",(Long)map.get("uin"));
 				}
 			}
 		}
-		System.err.println(">>>>>>>>>>>>>>>°ó¶¨NFCÓÃ»§Êý£º"+NFCUINMAP.size());
+		System.err.println(">>>>>>>>>>>>>>>ç»‘å®šNFCç”¨æˆ·æ•°ï¼š"+NFCUINMAP.size());
 		return NFCUINMAP.get(uuid);
 	}
-	
-	
+
+
 	public static void clearMap(){
 		PARKIDNAMEMAP.clear();
 		USERIDNAMEMAP.clear();
 	}
 	/*
 	 * private static List<Map<String,Object>> parkingMap = null;
-	 * 
+	 *
 	 * public static List<Map<String,Object>> getAllParking(){ return
 	 * parkingMap; }
-	 * 
+	 *
 	 * public static Integer getParkingNumber(){ return parkingMap.size(); }
-	 * 
+	 *
 	 * public static void init(DataBaseService daService) { if(parkingMap!=null)
 	 * parkingMap.clear(); parkingMap=daService.getAll(
 	 * "select * from com_info_tb where state=? order by update_time desc",new
 	 * Object[]{0}); }
 	 *//**
-	 * ¸üÐÂ
-	 * 
+	 * æ›´æ–°
+	 *
 	 * @param parkMap
 	 */
 	/*
@@ -115,16 +115,16 @@ public class ParkingMap {
 	 * (Long)map.get("id"); if(id.intValue()==cid.intValue()){
 	 * parkingMap.remove(map); parkingMap.add(parkMap); break; } } }
 	 *//**
-	 * Ìí¼Ó
-	 * 
+	 * æ·»åŠ 
+	 *
 	 * @param parkMap
 	 */
 	/*
 	 * public static void addParkingMap(Map<String,Object> parkMap){
 	 * if(parkingMap==null||parkMap==null) return ; parkingMap.add(parkMap); }
 	 *//**
-	 * É¾³ý
-	 * 
+	 * åˆ é™¤
+	 *
 	 * @param comId
 	 */
 	/*

@@ -30,12 +30,12 @@ import com.zld.utils.SendMessage;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
 /**
- * ³µÖ÷¹ÜÀí£¨¿Í»§¹ÜÀí £© £¬ÔÚ×Ü¹ÜÀíÔ±ºóÌ¨
+ * è½¦ä¸»ç®¡ç†ï¼ˆå®¢æˆ·ç®¡ç† ï¼‰ ï¼Œåœ¨æ€»ç®¡ç†å‘˜åå°
  * @author Administrator
  *
  */
 public class CarOwerManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -44,16 +44,16 @@ public class CarOwerManageAction extends Action{
 	private LogService logService;
 	@Autowired
 	private PublicMethods publicMethods;
-	
+
 	private Logger logger = Logger.getLogger(CarOwerManageAction.class);
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
-		String kefu = RequestUtil.processParams(request, "kefu");//´Ó¶à¿Í·şÏµÍ³Ö±½ÓµÇÂ¼µÄ
+		String kefu = RequestUtil.processParams(request, "kefu");//ä»å¤šå®¢æœç³»ç»Ÿç›´æ¥ç™»å½•çš„
 		request.setAttribute("authid", request.getParameter("authid"));
 		if(comid==null && kefu.equals("")){
 			response.sendRedirect("login.do");
@@ -81,13 +81,13 @@ public class CarOwerManageAction extends Action{
 					"from user_info_tb u left join car_info_tb c on u.id=c.uin where auth_flag=? ";
 			List<Object> params = new ArrayList<Object>();
 			params.add(4);
-			
+
 			Long count = daService.getCount(countSql,params);
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			List list = null;//daService.getPage(sql, null, 1, 20);
-			
+
 			if(count>0){
 				list = daService.getAll(sql+" order by id desc",params, pageNum,pageSize);
 			}
@@ -95,7 +95,7 @@ public class CarOwerManageAction extends Action{
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
 		}else if(action.equals("queryunion")){
-			//²»°üº¬³µÅÆ²éÑ¯µÄsql
+			//ä¸åŒ…å«è½¦ç‰ŒæŸ¥è¯¢çš„sql
 			String sql = "select u.*,c.car_number from user_info_tb u " +
 					"left join car_info_tb c on u.id=c.uin where auth_flag=? and union_state>?";
 			String countSql = "select count(u.*) from user_info_tb u " +
@@ -121,7 +121,7 @@ public class CarOwerManageAction extends Action{
 				car_number = "%" + car_number + "%";
 				params.add(car_number);
 			}
-			
+
 			Long count= pService.getCount(countSql, params);
 			List list = null;
 			if(count>0){
@@ -132,7 +132,7 @@ public class CarOwerManageAction extends Action{
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
 		}else if(action.equals("queryunionupload")){
-			//²»°üº¬³µÅÆ²éÑ¯µÄsql
+			//ä¸åŒ…å«è½¦ç‰ŒæŸ¥è¯¢çš„sql
 			String sql = "select u.*,c.car_number from user_info_tb u " +
 					"left join car_info_tb c on c.uin = u.id "+
 					"left join user_profile_tb p on p.uin = u.id "+
@@ -146,7 +146,7 @@ public class CarOwerManageAction extends Action{
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
-		//	Double upMoney = StringUtils.formatDouble(CustomDefind.USERUPMONEY);
+			//	Double upMoney = StringUtils.formatDouble(CustomDefind.USERUPMONEY);
 			SqlInfo base = new SqlInfo("1=1", new Object[]{4,0,1});
 			SqlInfo sqlInfo = RequestUtil.customSearch(request,"user_info","u",new String[]{"car_number"});
 			String car_number = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "car_number"));
@@ -165,7 +165,7 @@ public class CarOwerManageAction extends Action{
 				car_number = "%" + car_number + "%";
 				params.add(car_number);
 			}
-			
+
 			Long count= pService.getCount(countSql, params);
 			List list = null;
 			if(count>0){
@@ -191,19 +191,19 @@ public class CarOwerManageAction extends Action{
 				}
 				List<Map<String, Object>> list = pService.getAll(
 						"select u.id,u.balance,c.car_number,p.auto_cash,p.limit_money " +
-						"from user_info_tb u " +
-						"left join car_info_tb c on c.uin=u.id " +
-						"left join user_profile_tb p on p.uin=u.id " +
-						"where u.id in ("+paramStr+") ",params) ;
+								"from user_info_tb u " +
+								"left join car_info_tb c on c.uin=u.id " +
+								"left join user_profile_tb p on p.uin=u.id " +
+								"where u.id in ("+paramStr+") ",params) ;
 				if(list!=null&&list.size()>0){
-					List<String> haveUpList = new ArrayList<String>();//»º´æ±¾´ÎÉÏ´«¹ıµÄ³µÅÆ£¬ÓĞµÄ³µÖ÷ÓĞÁ½¸öÏàÍ¬µÄ³µÅÆºÅ
+					List<String> haveUpList = new ArrayList<String>();//ç¼“å­˜æœ¬æ¬¡ä¸Šä¼ è¿‡çš„è½¦ç‰Œï¼Œæœ‰çš„è½¦ä¸»æœ‰ä¸¤ä¸ªç›¸åŒçš„è½¦ç‰Œå·
 					String url = CustomDefind.UNIONIP+"user/adduser";
 					for(Map<String, Object> map : list){
 						String carNumber = (String)map.get("car_number");
 						if(carNumber==null||haveUpList.contains(carNumber)
 								||carNumber.equals("")
-								||(carNumber.length()!=7&&carNumber.length()!=8)){//ÑéÖ¤³µÅÆÊÇ·ñ´«¹ı£¬»òÊÇ·ñÎª¿Õ£¬»òÊÇ·ñÊÇ7»ò8Î»
-							logger.error("²»ÉÏ´«ÁË£¬carnumber:"+carNumber+",uplist:"+haveUpList);;
+								||(carNumber.length()!=7&&carNumber.length()!=8)){//éªŒè¯è½¦ç‰Œæ˜¯å¦ä¼ è¿‡ï¼Œæˆ–æ˜¯å¦ä¸ºç©ºï¼Œæˆ–æ˜¯å¦æ˜¯7æˆ–8ä½
+							logger.error("ä¸ä¸Šä¼ äº†ï¼Œcarnumber:"+carNumber+",uplist:"+haveUpList);;
 							continue;
 						}
 						//String url = "https://127.0.0.1/api-web/user/adduser";
@@ -211,16 +211,16 @@ public class CarOwerManageAction extends Action{
 						Map<String, Object> paramMap = new HashMap<String, Object>();
 						paramMap.put("user_id", map.get("id"));
 						paramMap.put("plate_number", carNumber);
-						
-						//È¡ÓÃ»§ÉèÖÃµÄÏŞ¶î
+
+						//å–ç”¨æˆ·è®¾ç½®çš„é™é¢
 						Double balance = StringUtils.formatDouble(map.get("balance"));
 						Integer auto = (Integer)map.get("auto_cash");
 						Double limit  = StringUtils.formatDouble(map.get("limit_money"));
 						if(auto!=null){
-							if(auto==0)//²»×Ô¶¯Ö§¸¶£¬ÔÚ²´Á´µÄÏŞ¶îÎª0£¬
+							if(auto==0)//ä¸è‡ªåŠ¨æ”¯ä»˜ï¼Œåœ¨æ³Šé“¾çš„é™é¢ä¸º0ï¼Œ
 								balance=0.0;
 							else {
-								if(balance>limit)//ÉèÖÃÁË×Ô¶¯Ö§¸¶£¬µ«Óà¶î´óÓÚÁËÖ§¸¶ÏŞ¶î£¬°´Óà¶î´óĞ¡ÉèÖÃ
+								if(balance>limit)//è®¾ç½®äº†è‡ªåŠ¨æ”¯ä»˜ï¼Œä½†ä½™é¢å¤§äºäº†æ”¯ä»˜é™é¢ï¼ŒæŒ‰ä½™é¢å¤§å°è®¾ç½®
 									balance=limit;
 							}
 						}
@@ -260,9 +260,9 @@ public class CarOwerManageAction extends Action{
 					unUploadCount = list.size()-uploadCount;
 				}
 			}
-			AjaxUtil.ajaxOutput(response, "ÉÏ´«"+sids.length+"¸ö³µ³¡£¬³É¹¦"+uploadCount+"¸ö£¬Î´³É¹¦"+unUploadCount+"¸ö");
+			AjaxUtil.ajaxOutput(response, "ä¸Šä¼ "+sids.length+"ä¸ªè½¦åœºï¼ŒæˆåŠŸ"+uploadCount+"ä¸ªï¼ŒæœªæˆåŠŸ"+unUploadCount+"ä¸ª");
 		}else if(action.equals("query")){
-			//²»°üº¬³µÅÆ²éÑ¯µÄsql
+			//ä¸åŒ…å«è½¦ç‰ŒæŸ¥è¯¢çš„sql
 			String sql = "select u.*,c.car_number,c.pic_url1,c.pic_url2,c.is_auth isauth from user_info_tb u " +
 					"left join car_info_tb c on u.id=c.uin where auth_flag=? ";
 			String countSql = "select count(u.*) from user_info_tb u " +
@@ -273,9 +273,9 @@ public class CarOwerManageAction extends Action{
 			SqlInfo base = new SqlInfo("1=1", new Object[]{4});
 			SqlInfo sqlInfo = RequestUtil.customSearch(request,"user_info","u",new String[]{"car_number","pic_url1","pic_url2"});
 			String car_number = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "car_number"));
-			//ÊÇ·ñÓĞ³µÅÆ£¬0´ú±íÓĞ³µÅÆ
+			//æ˜¯å¦æœ‰è½¦ç‰Œï¼Œ0ä»£è¡¨æœ‰è½¦ç‰Œ
 			Integer hascarnum = RequestUtil.getInteger(request, "hascarnum_start", -1);
-			//Í£³µÈ¯
+			//åœè½¦åˆ¸
 			Integer ticket_state = RequestUtil.getInteger(request, "ticket_state_start", -1);
 			List<Object> params = null;
 			if(sqlInfo!=null){
@@ -359,7 +359,7 @@ public class CarOwerManageAction extends Action{
 					request.setAttribute("mobile", mobile);
 					request.setAttribute("list", list);
 				}
-				
+
 				return mapping.findForward("carlist");
 			}
 		}else if(action.equals("orderinfo")){
@@ -391,7 +391,7 @@ public class CarOwerManageAction extends Action{
 			paramssimp = paramssimp.substring(1);
 			List<Map<String, Object>> list = daService.getAllMap("select mobile from user_info_tb where id in("+paramssimp+")",params);
 			//System.out.println(list);
-			String mobiles="13860132164,15375242041,18510341966";//Èº·¢ÊÖ»úºÅ£¬×î¶à100¸ö£¬ÒÔ¿Õ¸ñ¸ô¿ª
+			String mobiles="13860132164,15375242041,18510341966";//ç¾¤å‘æ‰‹æœºå·ï¼Œæœ€å¤š100ä¸ªï¼Œä»¥ç©ºæ ¼éš”å¼€
 			int i=0;
 			if(list!=null&!list.isEmpty()){
 				for(Map<String, Object> map :list){
@@ -403,34 +403,34 @@ public class CarOwerManageAction extends Action{
 			//mobiles = mobiles.substring(1);
 			//mobiles = "15375242041,15801482643,15801270154,18511462902,13860132164,18510341966,13910181815,18201517240";
 			//mobiles = "15801482643";
-			new SendMessage().sendMultiMessage(mobiles, message+"¡¾Í£³µ±¦¡¿");
+			new SendMessage().sendMultiMessage(mobiles, message+"ã€åœè½¦å®ã€‘");
 			AjaxUtil.ajaxOutput(response, "1");
 		}else if(action.equals("deleteuser")){
 			String mobiles[] = request.getParameterValues("mobiles");
 			if(mobiles!=null&&mobiles.length>0){
 				for(String s : mobiles){
 					if(Check.checkMobile(s)){
-						//É¾³ı³µÅÆ
+						//åˆ é™¤è½¦ç‰Œ
 						int ret = daService.update("delete from car_info_Tb where uin = (select id from user_info_tb where mobile=? and auth_flag=?)", new Object[]{s,4});
-						logger.error(">>>>>>É¾³ı²âÊÔÕË»§:"+s+" ³µÅÆresult:"+ret);
-						//É¾³ıºì°ü
+						logger.error(">>>>>>åˆ é™¤æµ‹è¯•è´¦æˆ·:"+s+" è½¦ç‰Œresult:"+ret);
+						//åˆ é™¤çº¢åŒ…
 						ret = daService.update("delete from bonus_record_tb where mobile=? ",new Object[]{s});
-						logger.error(">>>>>>É¾³ı²âÊÔÕË»§:"+s+" ºì°üresult:"+ret);
-						 //É¾³ıÍ£³µÈ¯
+						logger.error(">>>>>>åˆ é™¤æµ‹è¯•è´¦æˆ·:"+s+" çº¢åŒ…result:"+ret);
+						//åˆ é™¤åœè½¦åˆ¸
 						ret = daService.update("delete from ticket_tb where uin = (select id from user_info_tb where mobile=? and auth_flag=?)", new Object[]{s,4});
-						logger.error(">>>>>>É¾³ı²âÊÔÕË»§:"+s+" Í£³µÈ¯result:"+ret);
-						//É¾³ı³µÖ÷
+						logger.error(">>>>>>åˆ é™¤æµ‹è¯•è´¦æˆ·:"+s+" åœè½¦åˆ¸result:"+ret);
+						//åˆ é™¤è½¦ä¸»
 						ret = daService.update("delete from user_info_tb where mobile=? ",new Object[]{s});
-					    logger.error(">>>>>>É¾³ı²âÊÔÕË»§:"+s+" ³µÖ÷result:"+ret);
-					    AjaxUtil.ajaxOutput(response, ret+"");
+						logger.error(">>>>>>åˆ é™¤æµ‹è¯•è´¦æˆ·:"+s+" è½¦ä¸»result:"+ret);
+						AjaxUtil.ajaxOutput(response, ret+"");
 					}
 				}
 			}
-		}else if(action.equals("auth")){//²éÑ¯ÒÑ»òÎ´ÉóºË³µÖ÷
+		}else if(action.equals("auth")){//æŸ¥è¯¢å·²æˆ–æœªå®¡æ ¸è½¦ä¸»
 			Integer type = RequestUtil.getInteger(request, "type", -1);
 			request.setAttribute("atype", type);
 			List<Object> params = new ArrayList<Object>();
-		
+
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
@@ -441,12 +441,12 @@ public class CarOwerManageAction extends Action{
 			String countSql = "select count(c.*) " +
 					"from car_info_tb  c left join user_info_tb u on u.id=c.uin where u.auth_flag=? and c.is_auth=?";
 			Long count = daService.getCount(countSql,params);
-			
+
 			List<Map<String, Object>> list = null;//daService.getPage(sql, null, 1, 20);
 			if(count>0){
 				list = daService.getAll(sql+" order by c.id desc, c.uin ",params, pageNum,pageSize);
 			}
-			
+
 			//String result = "{\"page\":1,\"total\":0,\"rows\": []}";
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
@@ -468,7 +468,7 @@ public class CarOwerManageAction extends Action{
 //				result = result.replace("datas", datas.replace("null", ""));
 //			}
 			return null;
-		//	request.setAttribute("datas", result);
+			//	request.setAttribute("datas", result);
 			//return mapping.findForward("authusers");
 		}else if(action.equals("preauthuser")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
@@ -490,7 +490,7 @@ public class CarOwerManageAction extends Action{
 			Integer isAuth = RequestUtil.getInteger(request, "isauth", -1);
 			String remark =AjaxUtil.decodeUTF8(RequestUtil.getString(request, "remark"));
 			String carNumber =AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number"));
-		//	System.out.println(carNumber);
+			//	System.out.println(carNumber);
 			Map carMap = null;
 			if(id==-1&&!carNumber.equals("")){
 				carMap = daService.getMap("select id,car_number from car_info_tb where car_number =?", new Object[]{carNumber});
@@ -499,54 +499,54 @@ public class CarOwerManageAction extends Action{
 				carMap = daService.getMap("select car_number from car_info_tb where id =?", new Object[]{id});
 			}
 			int ret =0;
-			logger.error(uin+","+id+",ÈÏÖ¤£¬isauth="+isAuth+",remark="+remark);
+			logger.error(uin+","+id+",è®¤è¯ï¼Œisauth="+isAuth+",remark="+remark);
 			if(carMap!=null&&!carMap.isEmpty()){
 				ret = daService.update("update car_info_tb set is_auth=? ,remark=? where id =? ", new Object[]{isAuth,remark,id});
-				logger.error(uin+","+id+",¸üĞÂ³µÅÆÈÏÖ¤×´Ì¬£¬isauth="+isAuth+",remark="+remark+",ret="+ret);
-				if(ret==1&&isAuth==1){//´¦ÀíĞÅÓÃ¶î¶È
+				logger.error(uin+","+id+",æ›´æ–°è½¦ç‰Œè®¤è¯çŠ¶æ€ï¼Œisauth="+isAuth+",remark="+remark+",ret="+ret);
+				if(ret==1&&isAuth==1){//å¤„ç†ä¿¡ç”¨é¢åº¦
 					Map userMap = daService.getMap("select is_auth from user_info_tb where id =? ", new Object[]{uin});
 					if(userMap!=null){
 						Integer is_auth = (Integer)userMap.get("is_auth");
-						if(is_auth==0){//µÚÒ»´ÎÑéÖ¤³µÅÆÍ¨¹ı£¬¼Ó30ÔªĞÅÓÃ¶î¶È£¬²¢±êÖ¾ÎªÒÑÈÏÖ¤³µÖ÷
+						if(is_auth==0){//ç¬¬ä¸€æ¬¡éªŒè¯è½¦ç‰Œé€šè¿‡ï¼ŒåŠ 30å…ƒä¿¡ç”¨é¢åº¦ï¼Œå¹¶æ ‡å¿—ä¸ºå·²è®¤è¯è½¦ä¸»
 							ret = daService.update("update user_info_Tb set is_auth=? ,credit_limit=? where id=? ", new Object[]{1,30,uin});
-							logger.error("³µÖ÷"+uin+"ÈÏÖ¤Í¨¹ı£¬·µ30ÔªµÄĞÅÓÃ¶î¶È¡£¡££º"+ret+",´¦ÀíÍÆ¼ö½±");
+							logger.error("è½¦ä¸»"+uin+"è®¤è¯é€šè¿‡ï¼Œè¿”30å…ƒçš„ä¿¡ç”¨é¢åº¦ã€‚ã€‚ï¼š"+ret+",å¤„ç†æ¨èå¥–");
 							//handlerecommend(uin);
 						}
 					}
-					//´¦Àí·µºì°ü
+					//å¤„ç†è¿”çº¢åŒ…
 					Long bid =daService.getkey("seq_order_ticket_tb");
 					String sql = "insert into order_ticket_tb (id,uin,order_id,money,bnum,ctime,exptime,bwords,type) values(?,?,?,?,?,?,?,?,?)";
 					Long ctime = System.currentTimeMillis()/1000;
 					Long exptime = ctime + 24*60*60;
-					Object []values = new Object[]{bid,uin,-1,36,21,ctime,exptime,"ÎÒÔÚÍ£³µ±¦ÉÏ´«ÁËĞĞÊ»Ö¤£¬Í¨¹ıÁËÈÏÖ¤£¬»ñµÃÁË1246ÌØÊâ²ßÂÔºì°üÒ»¸ö¡£ºÄÄÍĞÄ£¬É÷ÇÀ",3};
+					Object []values = new Object[]{bid,uin,-1,36,21,ctime,exptime,"æˆ‘åœ¨åœè½¦å®ä¸Šä¼ äº†è¡Œé©¶è¯ï¼Œé€šè¿‡äº†è®¤è¯ï¼Œè·å¾—äº†1246ç‰¹æ®Šç­–ç•¥çº¢åŒ…ä¸€ä¸ªã€‚è€—è€å¿ƒï¼Œæ…æŠ¢",3};
 					ret  = daService.update(sql,values);
 					if(ret != 1){
 						bid = -1L;
 					}
-					logger.error("³µÖ÷"+uin+"ÈÏÖ¤Í¨¹ı£¬·µºì°ü21/36¡£¡££º"+ret);
-					logService.insertUserMesg(1, uin, "¹§Ï²Äú»ñµÃÈÏÖ¤´óÀñ°ü", "ºì°üÌáĞÑ");
+					logger.error("è½¦ä¸»"+uin+"è®¤è¯é€šè¿‡ï¼Œè¿”çº¢åŒ…21/36ã€‚ã€‚ï¼š"+ret);
+					logService.insertUserMesg(1, uin, "æ­å–œæ‚¨è·å¾—è®¤è¯å¤§ç¤¼åŒ…", "çº¢åŒ…æé†’");
 					if(remark.equals(""))
-						remark="·ûºÏ¹æ·¶";
-					//sendMessage("¹§Ï²Äú³µÅÆ¡¾"+carMap.get("car_number")+"¡¿ÈÏÖ¤ÉóºËÍ¨¹ı", uin,remark,1, bid);
+						remark="ç¬¦åˆè§„èŒƒ";
+					//sendMessage("æ­å–œæ‚¨è½¦ç‰Œã€"+carMap.get("car_number")+"ã€‘è®¤è¯å®¡æ ¸é€šè¿‡", uin,remark,1, bid);
 				}else {
 					//if(!remark.equals(""))
-						//sendMessage("ÄúµÄ³µÅÆ¡¾"+carMap.get("car_number")+"¡¿Ã»ÓĞÍ¨¹ıÉóºË", uin,remark,0, -1L);
+					//sendMessage("æ‚¨çš„è½¦ç‰Œã€"+carMap.get("car_number")+"ã€‘æ²¡æœ‰é€šè¿‡å®¡æ ¸", uin,remark,0, -1L);
 				}
 			}
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}else if(action.equals("kefuauthuser")){
 			String mobile = RequestUtil.processParams(request, "mobile");
 			String carnumber = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "carnumber"));
-			logger.error("¿Í·ş´¦ÀíÕùÒé³µÅÆ£¬kefu handle disputed carnumber>>>mobile:"+mobile+",carnumber:"+carnumber+",kefu:"+kefu);
+			logger.error("å®¢æœå¤„ç†äº‰è®®è½¦ç‰Œï¼Œkefu handle disputed carnumber>>>mobile:"+mobile+",carnumber:"+carnumber+",kefu:"+kefu);
 			if(!mobile.equals("") && !carnumber.equals("") && !kefu.equals("")){
 				Map<String, Object> carMap = pService.getMap(
 						"select * from car_info_tb where car_number=? ",
 						new Object[] { carnumber });
-				
+
 				Map<String, Object> userMap = pService
 						.getMap("select * from user_info_tb where mobile=? and auth_flag=? ",
 								new Object[] { mobile, 4 });
-				
+
 				if(userMap != null){
 					Long id = (Long)userMap.get("id");
 					Integer is_auth = (Integer)userMap.get("is_auth");
@@ -554,73 +554,73 @@ public class CarOwerManageAction extends Action{
 						Long uin = (Long)carMap.get("uin");
 						if(uin.intValue() == id.intValue()){
 							AjaxUtil.ajaxOutput(response, "-3");
-							logger.error("¸Ã³µÅÆ±¾À´¾ÍÊôÓÚ¸ÃÊÖ»úºÅ,²»ÔÙ×ö´¦Àíkefu handle disputed carnumber>>>id:"+id+",uin:"+uin+",isauth:"+is_auth+",carnumber:"+carnumber+",kefu:"+kefu+",mobile:"+mobile);
+							logger.error("è¯¥è½¦ç‰Œæœ¬æ¥å°±å±äºè¯¥æ‰‹æœºå·,ä¸å†åšå¤„ç†kefu handle disputed carnumber>>>id:"+id+",uin:"+uin+",isauth:"+is_auth+",carnumber:"+carnumber+",kefu:"+kefu+",mobile:"+mobile);
 							return null;
 						}else{
-							logger.error("¸Ã³µÅÆ²»ÊôÓÚ¸ÃÊÖ»úºÅ,¿ªÊ¼´¦Àíkefu handle disputed carnumber>>>id:"+id+",uin:"+uin+",isauth:"+is_auth+",carnumber:"+carnumber+",kefu:"+kefu+",mobile:"+mobile);
+							logger.error("è¯¥è½¦ç‰Œä¸å±äºè¯¥æ‰‹æœºå·,å¼€å§‹å¤„ç†kefu handle disputed carnumber>>>id:"+id+",uin:"+uin+",isauth:"+is_auth+",carnumber:"+carnumber+",kefu:"+kefu+",mobile:"+mobile);
 							Long count = pService.getLong("select count(id) from car_info_tb where uin=? ",
-											new Object[] { id });
+									new Object[] { id });
 							if(count > 2){
 								AjaxUtil.ajaxOutput(response, "-5");
-								logger.error("¸ÄÊÖ»úºÅÒÑ¾­´æÔÚ3¸öÒÔÉÏ³µÅÆ,²»×÷´¦Àíkefu handle disputed carnumber>>>id:"+id+",uin:"+uin+",isauth:"+is_auth+",carnumber:"+carnumber+",kefu:"+kefu+",mobile:"+mobile+",count:"+count);
+								logger.error("æ”¹æ‰‹æœºå·å·²ç»å­˜åœ¨3ä¸ªä»¥ä¸Šè½¦ç‰Œ,ä¸ä½œå¤„ç†kefu handle disputed carnumber>>>id:"+id+",uin:"+uin+",isauth:"+is_auth+",carnumber:"+carnumber+",kefu:"+kefu+",mobile:"+mobile+",count:"+count);
 								return null;
 							}else{
 								List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-								
+
 								Map<String, Object> docarMap = new HashMap<String, Object>();
-								//Í£³µ³¡ÕË»§·µÏÖ
+								//åœè½¦åœºè´¦æˆ·è¿”ç°
 								docarMap.put("sql", "update car_info_tb set uin=?,remark=?,is_auth=? where car_number=? ");
 								docarMap.put("values", new Object[]{id,kefu,1,carnumber});
 								bathSql.add(docarMap);
-								
+
 								if(is_auth == 0){
 									Map<String, Object> douserMap = new HashMap<String, Object>();
-									//Í£³µ³¡ÕË»§·µÏÖ
+									//åœè½¦åœºè´¦æˆ·è¿”ç°
 									douserMap.put("sql", "update user_info_tb set is_auth=?,credit_limit=? where id=? ");
 									douserMap.put("values", new Object[]{1, 30, id});
 									bathSql.add(douserMap);
 								}
-								
+
 								Long ctime = System.currentTimeMillis()/1000;
 								Long exptime = ctime + 24*60*60;
 								Long bid =daService.getkey("seq_order_ticket_tb");
 								Map<String, Object> bonusMap = new HashMap<String, Object>();
-								//Í£³µ³¡ÕË»§·µÏÖ
+								//åœè½¦åœºè´¦æˆ·è¿”ç°
 								bonusMap.put("sql", "insert into order_ticket_tb (id,uin,order_id,money,bnum,ctime,exptime,bwords,type) values(?,?,?,?,?,?,?,?,?)");
-								bonusMap.put("values", new Object[]{bid,id,-1,36,21,ctime,exptime,"ÎÒÔÚÍ£³µ±¦ÉÏ´«ÁËĞĞÊ»Ö¤£¬Í¨¹ıÁËÈÏÖ¤£¬»ñµÃÁË1246ÌØÊâ²ßÂÔºì°üÒ»¸ö¡£ºÄÄÍĞÄ£¬É÷ÇÀ",3});
+								bonusMap.put("values", new Object[]{bid,id,-1,36,21,ctime,exptime,"æˆ‘åœ¨åœè½¦å®ä¸Šä¼ äº†è¡Œé©¶è¯ï¼Œé€šè¿‡äº†è®¤è¯ï¼Œè·å¾—äº†1246ç‰¹æ®Šç­–ç•¥çº¢åŒ…ä¸€ä¸ªã€‚è€—è€å¿ƒï¼Œæ…æŠ¢",3});
 								bathSql.add(bonusMap);
-								
+
 								boolean b = daService.bathUpdate(bathSql);
 								logger.error("kefu handle disputed carnumber>>>id:"+id+",uin:"+uin+",isauth:"+is_auth+",carnumber:"+carnumber+",mobile:"+mobile+",kefu:"+kefu+"b:"+b);
 								if(b){
-									logService.insertUserMesg(1, id, "¹§Ï²Äú»ñµÃÈÏÖ¤´óÀñ°ü", "ºì°üÌáĞÑ");
-									//sendMessage("¹§Ï²Äú³µÅÆ¡¾"+carMap.get("car_number")+"¡¿ÈÏÖ¤ÉóºËÍ¨¹ı", id,"·ûºÏ¹æ·¶",1, bid);
-									
+									logService.insertUserMesg(1, id, "æ­å–œæ‚¨è·å¾—è®¤è¯å¤§ç¤¼åŒ…", "çº¢åŒ…æé†’");
+									//sendMessage("æ­å–œæ‚¨è½¦ç‰Œã€"+carMap.get("car_number")+"ã€‘è®¤è¯å®¡æ ¸é€šè¿‡", id,"ç¬¦åˆè§„èŒƒ",1, bid);
+
 									if(is_auth == 0){
-										logger.error("¸ÃÊÖ»úºÅÔ­À´ÊÇÎ´ÈÏÖ¤£¬ÏÖÔÚÈÏÖ¤ÁË£¬´¦ÀíÍÆ¼öÂß¼­kefu handle disputed carnumber>>>id:"+id+",uin:"+uin+",isauth:"+is_auth+",carnumber:"+carnumber+",kefu:"+kefu+",mobile:"+mobile);
+										logger.error("è¯¥æ‰‹æœºå·åŸæ¥æ˜¯æœªè®¤è¯ï¼Œç°åœ¨è®¤è¯äº†ï¼Œå¤„ç†æ¨èé€»è¾‘kefu handle disputed carnumber>>>id:"+id+",uin:"+uin+",isauth:"+is_auth+",carnumber:"+carnumber+",kefu:"+kefu+",mobile:"+mobile);
 										//handlerecommend(id);
 									}
-									
-									logger.error("¸øÔ­À´µÄ³µÖ÷·¢ĞÅÏ¢ÌáÊ¾ÌîĞ´ÕæÊµ³µÅÆºÅkefu handle disputed carnumber>>>id:"+id+",uin:"+uin+",isauth:"+is_auth+",carnumber:"+carnumber+",kefu:"+kefu+",mobile:"+mobile);
+
+									logger.error("ç»™åŸæ¥çš„è½¦ä¸»å‘ä¿¡æ¯æç¤ºå¡«å†™çœŸå®è½¦ç‰Œå·kefu handle disputed carnumber>>>id:"+id+",uin:"+uin+",isauth:"+is_auth+",carnumber:"+carnumber+",kefu:"+kefu+",mobile:"+mobile);
 									sendMsgToPreUser(uin, carnumber);
-									
+
 									AjaxUtil.ajaxOutput(response, "1");
 									return null;
 								}
 							}
 						}
 					}else{
-						logger.error("¸Ã³µÅÆºÅÎ´×¢²á,²»×÷´¦Àíkefu handle disputed carnumber>>>mobile:"+mobile+",carnumber:"+carnumber+",kefu:"+kefu);
+						logger.error("è¯¥è½¦ç‰Œå·æœªæ³¨å†Œ,ä¸ä½œå¤„ç†kefu handle disputed carnumber>>>mobile:"+mobile+",carnumber:"+carnumber+",kefu:"+kefu);
 						AjaxUtil.ajaxOutput(response, "-4");
 						return null;
 					}
 				}else{
-					logger.error("¸ÃÊÖ»úºÅÎ´×¢²á,²»×÷´¦Àíkefu handle disputed carnumber>>>mobile:"+mobile+",carnumber:"+carnumber+",kefu:"+kefu);
+					logger.error("è¯¥æ‰‹æœºå·æœªæ³¨å†Œ,ä¸ä½œå¤„ç†kefu handle disputed carnumber>>>mobile:"+mobile+",carnumber:"+carnumber+",kefu:"+kefu);
 					AjaxUtil.ajaxOutput(response, "-2");
 					return null;
 				}
 			}
-			logger.error("ÊÖ»úºÅ¡¢³µÅÆºÅ¡¢¿Í·şĞÅÏ¢²»È«,²»×÷´¦Àíkefu handle disputed carnumber>>>mobile:"+mobile+",carnumber:"+carnumber+",kefu:"+kefu);
+			logger.error("æ‰‹æœºå·ã€è½¦ç‰Œå·ã€å®¢æœä¿¡æ¯ä¸å…¨,ä¸ä½œå¤„ç†kefu handle disputed carnumber>>>mobile:"+mobile+",carnumber:"+carnumber+",kefu:"+kefu);
 			AjaxUtil.ajaxOutput(response, "-1");
 		}else if(action.equals("deletecar")){
 			Long uin = RequestUtil.getLong(request, "uin", -1L);
@@ -629,7 +629,7 @@ public class CarOwerManageAction extends Action{
 			if(uin>0&&carnumber.length()>5){
 				r = daService.update("delete from car_info_tb where uin = ? and car_number = ? ",new Object[]{uin,carnumber});
 			}
-			if(r==1){//É¾³ıºó£¬Èç¹ûÒÑÍ¬²½µ½²´Á´£¬É¾³ıĞ©³µÅÆ
+			if(r==1){//åˆ é™¤åï¼Œå¦‚æœå·²åŒæ­¥åˆ°æ³Šé“¾ï¼Œåˆ é™¤äº›è½¦ç‰Œ
 				Map userMap = daService.getMap("select union_state from user_info_tb where id =? ", new Object[]{uin});
 				if(userMap!=null){
 					Integer unionState =(Integer)userMap.get("union_state");
@@ -638,25 +638,25 @@ public class CarOwerManageAction extends Action{
 					}
 				}
 			}
-			logger.error("ºóÌ¨¹ÜÀíÔ±½â³ı°ó¶¨³µÅÆ£º"+carnumber+",uin£º"+uin+",r£º"+r);
+			logger.error("åå°ç®¡ç†å‘˜è§£é™¤ç»‘å®šè½¦ç‰Œï¼š"+carnumber+",uinï¼š"+uin+",rï¼š"+r);
 			AjaxUtil.ajaxOutput(response,r+"");
 		}
 		return null;
 	}
-	
+
 	private void sendMsgToPreUser(Long uin, String carnumber){
 		Map<String, Object> userMap = pService.getMap("select * from user_info_tb where id=? ", new Object[]{uin});
 		if(userMap != null){
 			String mobile = (String)userMap.get("mobile");
-			String msg = "Í£³µ±¦ÓÃ»§ÄúºÃ£¬ÄúµÄ³µÅÆ"+carnumber+"¾­ÈÏÖ¤ÊôÓÚÆäËû³µÖ÷£¬ÇëÖØĞÂÉÏ´«ÄúµÄÕæÊµ³µÅÆ£¬ÈÏÖ¤Í¨¹ı¿ÉÏíÊÜ¸ü¶àÓÅ»İ¡¾Í£³µ±¦¡¿";
+			String msg = "åœè½¦å®ç”¨æˆ·æ‚¨å¥½ï¼Œæ‚¨çš„è½¦ç‰Œ"+carnumber+"ç»è®¤è¯å±äºå…¶ä»–è½¦ä¸»ï¼Œè¯·é‡æ–°ä¸Šä¼ æ‚¨çš„çœŸå®è½¦ç‰Œï¼Œè®¤è¯é€šè¿‡å¯äº«å—æ›´å¤šä¼˜æƒ ã€åœè½¦å®ã€‘";
 			SendMessage.sendMultiMessage(mobile, msg);
 		}
 	}
-	
+
 	private void handlerecommend(Long uin){
 		boolean isBlack = publicMethods.isBlackUser(uin);
 		if(!isBlack){
-			logger.error("¸Ã³µÖ÷²»ÔÚºÚÃûµ¥ÄÚ£¬uin:"+uin);
+			logger.error("è¯¥è½¦ä¸»ä¸åœ¨é»‘åå•å†…ï¼Œuin:"+uin);
 			Map<String, Object> userMap = pService.getMap("select * from user_info_tb where id=? ", new Object[]{uin});
 			if(userMap != null){
 				String openid = null;
@@ -672,110 +672,110 @@ public class CarOwerManageAction extends Action{
 				}
 				Long count = pService.getCount(sql, params);
 				if(count == 0){
-					logger.error("¸Ã³µÖ÷Ö®Ç°Ã»ÓĞ±»ÍÆ¼ö¹ıuin:"+uin+",openid:"+openid);
+					logger.error("è¯¥è½¦ä¸»ä¹‹å‰æ²¡æœ‰è¢«æ¨èè¿‡uin:"+uin+",openid:"+openid);
 					Map<String, Object> ticketMap = pService.getMap("select r.uin,r.create_time from ticket_tb t,reward_account_tb r where t.id=r.ticket_id and t.uin=? and t.type=? order by r.create_time limit ? ",
-									new Object[] { uin, 1, 1 });
+							new Object[] { uin, 1, 1 });
 					Long uid = -1L;
 					Long create_time = 0L;
 					if(ticketMap != null){
 						uid = (Long)ticketMap.get("uin");
 						create_time = (Long)ticketMap.get("create_time");
-						logger.error("×îÔçµÄÒ»±ÊÁìÈ¡×¨ÓÃÈ¯£¬uin:"+uin+",uid:"+uid+",create_time:"+create_time);
+						logger.error("æœ€æ—©çš„ä¸€ç¬”é¢†å–ä¸“ç”¨åˆ¸ï¼Œuin:"+uin+",uid:"+uid+",create_time:"+create_time);
 					}
 					Map<String, Object> bonusMap = pService
 							.getMap("select r.uin,o.ttime from order_ticket_detail_tb o,reward_account_tb r where o.otid=r.orderticket_id and o.uin=? and r.type=? and r.target=? order by o.ttime limit ? ",
 									new Object[] { uin, 1, 1, 1 });
 					if(bonusMap != null){
 						Long ttime = (Long)bonusMap.get("ttime");
-						logger.error("×îÔçµÄÒ»±ÊÁìÈ¡×¨ÓÃÈ¯ºì°ü£¬uin:"+uin+",uid:"+uid+",ttime:"+ttime);
+						logger.error("æœ€æ—©çš„ä¸€ç¬”é¢†å–ä¸“ç”¨åˆ¸çº¢åŒ…ï¼Œuin:"+uin+",uid:"+uid+",ttime:"+ttime);
 						if(ttime.intValue() < create_time.intValue()){
 							uid = (Long)bonusMap.get("uin");
-							logger.error("×îÔçµÄÊÇÁìÈ¡×¨ÓÃÈ¯ºì°ü£¬uin:"+uin+",uid:"+uid+",ttime:"+ttime);
+							logger.error("æœ€æ—©çš„æ˜¯é¢†å–ä¸“ç”¨åˆ¸çº¢åŒ…ï¼Œuin:"+uin+",uid:"+uid+",ttime:"+ttime);
 						}
 					}
-					
+
 					if(uid != -1){
-						logger.error("¿ªÊ¼³ö´¦ÀíÍÆ¼öÂß¼­£¬uin:"+uin+",uid:"+uid);
-						Double money = 5d;//Ä¬ÈÏ·µ5¿é
+						logger.error("å¼€å§‹å‡ºå¤„ç†æ¨èé€»è¾‘ï¼Œuin:"+uin+",uid:"+uid);
+						Double money = 5d;//é»˜è®¤è¿”5å—
 						Map uidMap =daService.getMap("select recommendquota from user_info_Tb where id =? and (auth_flag=? or auth_flag=?) and state=? ", new Object[]{uid,1,2, 0});
 						if(uidMap!=null){
 							money = Double.valueOf(uidMap.get("recommendquota") + "");
-							logger.error("¸ÃÊÕ·ÑÔ±µÄÍÆ¼ö½±¶î¶ÈÊÇ£º"+money+",uid:"+uid+",uin:"+uin);
-							
+							logger.error("è¯¥æ”¶è´¹å‘˜çš„æ¨èå¥–é¢åº¦æ˜¯ï¼š"+money+",uid:"+uid+",uin:"+uin);
+
 							List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
 							Long comId = -1L;
 							Map comMap = daService.getPojo("select comid from user_info_tb where id=? and state=? ",new Object[] {uid,0});
 							Map msetMap =null;
-							Integer giveMoneyTo = null;//²éÑ¯ÊÕ·ÑÉè¶¨ mtype:0:¹«Ë¾ÕË»§£¬1£º¸öÈËÕË»§'
+							Integer giveMoneyTo = null;//æŸ¥è¯¢æ”¶è´¹è®¾å®š mtype:0:å…¬å¸è´¦æˆ·ï¼Œ1ï¼šä¸ªäººè´¦æˆ·'
 							if(comMap!=null && comMap.get("comid") != null){
 								comId =(Long)comMap.get("comid");
 								if(!publicMethods.isBlackParkUser(comId, false)){
 									msetMap = daService.getPojo("select giveto from money_set_tb where comid=? and mtype=? ",
 											new Object[]{comId,4});
-									
+
 									if(msetMap!=null){
 										giveMoneyTo =(Integer)msetMap.get("giveto");
 									}
-									if(giveMoneyTo!=null&&giveMoneyTo==0){//·µÏÖ¸øÍ£³µ³¡ÕË»§
+									if(giveMoneyTo!=null&&giveMoneyTo==0){//è¿”ç°ç»™åœè½¦åœºè´¦æˆ·
 										Map<String, Object> comqlMap = new HashMap<String, Object>();
-										//Í£³µ³¡ÕË»§·µÏÖ
+										//åœè½¦åœºè´¦æˆ·è¿”ç°
 										comqlMap.put("sql", "update com_info_tb set total_money=total_money+?,money=money+?  where id=? ");
 										comqlMap.put("values", new Object[]{money,money,comId});
 										bathSql.add(comqlMap);
-										
-										//Ğ´ÈëÍ£³µ³¡ÕË»§Ã÷Ï¸
+
+										//å†™å…¥åœè½¦åœºè´¦æˆ·æ˜ç»†
 										Map<String, Object> parkAccountMap = new HashMap<String, Object>();
 										parkAccountMap.put("sql", "insert into park_account_tb(comid,amount,type,create_time,remark,uid,source) " +
 												"values(?,?,?,?,?,?,?)");
-										parkAccountMap.put("values", new Object[]{comId,money,0,System.currentTimeMillis()/1000,"ÍÆ¼ö½±Àø",uid,3});
+										parkAccountMap.put("values", new Object[]{comId,money,0,System.currentTimeMillis()/1000,"æ¨èå¥–åŠ±",uid,3});
 										bathSql.add(parkAccountMap);
-										logger.error("ÍÆ¼ö½±Àø¸øÍ£³µ³¡uin:"+uin+",uid:"+uid+",comid:"+comId);
-										
-									}else {//·µÏÖ¸øÊÕ·ÑÔ±ÕË»§
+										logger.error("æ¨èå¥–åŠ±ç»™åœè½¦åœºuin:"+uin+",uid:"+uid+",comid:"+comId);
+
+									}else {//è¿”ç°ç»™æ”¶è´¹å‘˜è´¦æˆ·
 										Map<String, Object> usersqlMap = new HashMap<String, Object>();
-										//ÊÕ·ÑÔ±ÕË»§·µÏÖ
+										//æ”¶è´¹å‘˜è´¦æˆ·è¿”ç°
 										usersqlMap.put("sql", "update user_info_tb set balance=balance+? where id=? ");
 										usersqlMap.put("values", new Object[]{money,uid});
 										bathSql.add(usersqlMap);
-										
-										//Ğ´ÈëÊÕ·ÑÔ±ÕË»§Ã÷Ï¸
+
+										//å†™å…¥æ”¶è´¹å‘˜è´¦æˆ·æ˜ç»†
 										Map<String, Object> parkuserAccountMap = new HashMap<String, Object>();
 										parkuserAccountMap.put("sql", "insert into parkuser_account_tb(uin,amount,type,create_time,remark,target) " +
 												"values(?,?,?,?,?,?)");
-										parkuserAccountMap.put("values", new Object[]{uid,money,0,System.currentTimeMillis()/1000,"ÍÆ¼ö½±Àø",3});
+										parkuserAccountMap.put("values", new Object[]{uid,money,0,System.currentTimeMillis()/1000,"æ¨èå¥–åŠ±",3});
 										bathSql.add(parkuserAccountMap);
-										
-										logger.error("ÍÆ¼ö½±Àø¸øÊÕ·ÑÔ±uin:"+uin+",uid:"+uid+",comid:"+comId);
+
+										logger.error("æ¨èå¥–åŠ±ç»™æ”¶è´¹å‘˜uin:"+uin+",uid:"+uid+",comid:"+comId);
 									}
-									//¸üĞÂÍÆ¼ö¼ÇÂ¼
+									//æ›´æ–°æ¨èè®°å½•
 									Map<String, Object> recomsqlMap = new HashMap<String, Object>();
 									recomsqlMap.put("sql", "insert into recommend_tb(pid,nid,type,state,create_time,openid,money) values(?,?,?,?,?,?,?)");
 									recomsqlMap.put("values", new Object[]{uid,uin,0,1,System.currentTimeMillis()/1000,openid,money});
 									bathSql.add(recomsqlMap);
-									
+
 									boolean b = daService.bathUpdate(bathSql);
-									logger.error("ÍÆ¼ö½±´¦Àí½á¹ûuin:"+uin+",uid:"+uid+",comid:"+comId+",b:"+b);
+									logger.error("æ¨èå¥–å¤„ç†ç»“æœuin:"+uin+",uid:"+uid+",comid:"+comId+",b:"+b);
 									if(b){
 										Long ntime = System.currentTimeMillis()/1000;
 										logService.insertParkUserMessage(comId,2,uid,userMap.get("mobile")+"",uin,money, "", 0,ntime,ntime+10,8);
-										logger.error("·¢ÏûÏ¢>>>uin:"+uin+",uid:"+uid+",comid:"+comId);
+										logger.error("å‘æ¶ˆæ¯>>>uin:"+uin+",uid:"+uid+",comid:"+comId);
 									}
 								}else{
-									logger.error("¸Ã³µ³¡ÔÚºÚÃûµ¥ÄÚ£¬ÍÆ¼ö½±È¡Ïûuin:"+uin+",uid:"+uid+"comid:"+comId);
+									logger.error("è¯¥è½¦åœºåœ¨é»‘åå•å†…ï¼Œæ¨èå¥–å–æ¶ˆuin:"+uin+",uid:"+uid+"comid:"+comId);
 								}
 							}else{
-								logger.error("Î´ÕÒµ½Õı³£×´Ì¬³µ³¡£¬uin:"+uin+",uid:"+uid);
+								logger.error("æœªæ‰¾åˆ°æ­£å¸¸çŠ¶æ€è½¦åœºï¼Œuin:"+uin+",uid:"+uid);
 							}
 						}else{
-							logger.error("Î´ÕÒµ½Õı³£×´Ì¬ÊÕ·ÑÔ±£¬uin:"+uin+",uid:"+uid);
+							logger.error("æœªæ‰¾åˆ°æ­£å¸¸çŠ¶æ€æ”¶è´¹å‘˜ï¼Œuin:"+uin+",uid:"+uid);
 						}
 					}
 				}else{
-					logger.error("¸Ã³µÖ÷Ö®Ç°±»ÍÆ¼ö¹ı,²»ÔÙ´¦Àíuin:"+uin+",openid:"+openid);
+					logger.error("è¯¥è½¦ä¸»ä¹‹å‰è¢«æ¨èè¿‡,ä¸å†å¤„ç†uin:"+uin+",openid:"+openid);
 				}
 			}
 		}else{
-			logger.error("¸Ã³µÖ÷ÔÚºÚÃûµ¥ÄÚ£¬uin:"+uin);
+			logger.error("è¯¥è½¦ä¸»åœ¨é»‘åå•å†…ï¼Œuin:"+uin);
 		}
 	}
 	/*
@@ -784,53 +784,53 @@ public class CarOwerManageAction extends Action{
 		if(userMap!=null){
 			String mobile = (String)userMap.get("mobile");
 			String openid = (String)userMap.get("wxp_openid");
-			if(!mobile.equals("")&&Check.checkMobile(mobile)){//ÊÖ»úºÅ²»Îª¿ÕÊ±£¬·¢¶ÌĞÅÍ¨Öª
+			if(!mobile.equals("")&&Check.checkMobile(mobile)){//æ‰‹æœºå·ä¸ä¸ºç©ºæ—¶ï¼Œå‘çŸ­ä¿¡é€šçŸ¥
 				if(type==1){
-					SendMessage.sendMultiMessage(mobile, content+" ¡¾Í£³µ±¦¡¿");
+					SendMessage.sendMultiMessage(mobile, content+" ã€åœè½¦å®ã€‘");
 				}else {
-					SendMessage.sendMultiMessage(mobile, content+"£¬Ô­Òò£º"+remark+" ¡¾Í£³µ±¦¡¿");
+					SendMessage.sendMultiMessage(mobile, content+"ï¼ŒåŸå› ï¼š"+remark+" ã€åœè½¦å®ã€‘");
 				}
 			}
 			if(openid!=null&&!openid.equals("")){
 				Map<String, String> baseinfo = new HashMap<String, String>();
-				String wxremark = "»Ø¸´'ÈÏÖ¤'£¬ÁË½âÈÏÖ¤ÏêÇé¡£";
+				String wxremark = "å›å¤'è®¤è¯'ï¼Œäº†è§£è®¤è¯è¯¦æƒ…ã€‚";
 				String wxremark_color = "#000000";
 				String url = "http://mp.weixin.qq.com/s?__biz=MzA4MTAxMzA2Mg==&mid=208679773&idx=1&sn=43d1fe06680c90efb11444f8b72bdff2#rd";
 				if(bonusid != -1){
-					wxremark = "¹§Ï²Äú»ñµÃÁË1246ÌØÊâ²ßÂÔºì°üÒ»¸ö£¬ºÄÄÍĞÄ£¬É÷ÇÀßÏ~~~";
+					wxremark = "æ­å–œæ‚¨è·å¾—äº†1246ç‰¹æ®Šç­–ç•¥çº¢åŒ…ä¸€ä¸ªï¼Œè€—è€å¿ƒï¼Œæ…æŠ¢å‘¦~~~";
 					wxremark_color = "#FF0000";
 					url = "http://"+Constants.WXPUBLIC_REDIRECTURL+"/zld/wxpublic.do?action=balancepayinfo&openid="+openid+"&bonusid="+bonusid+"&bonus_type=0&notice_type=4";
 				}
-				
+
 				baseinfo.put("url", url);
 				baseinfo.put("openid", openid);
 				baseinfo.put("top_color", "#000000");
 				baseinfo.put("templeteid", Constants.WXPUBLIC_AUDITRESULT_ID);
-				
+
 				List<Map<String, String>> orderinfo = new ArrayList<Map<String,String>>();
 				Map<String, String> keyword1 = new HashMap<String, String>();
 				keyword1.put("keyword", "first");
 				keyword1.put("value", content);
 				keyword1.put("color", "#000000");
-				
+
 				Map<String, String> keyword2 = new HashMap<String, String>();
 				keyword2.put("keyword", "keyword1");
 				if(type==0){
-					keyword2.put("value", "Ê§°Ü");
+					keyword2.put("value", "å¤±è´¥");
 					keyword2.put("color", "#FF0000");
 				}
 				else {
-					keyword2.put("value", "³É¹¦");
+					keyword2.put("value", "æˆåŠŸ");
 					keyword2.put("color", "#00FF00");
 				}
-				
-				
+
+
 				Map<String, String> keyword3 = new HashMap<String, String>();
 				keyword3.put("keyword", "keyword2");
 				if(type==0){
 					keyword3.put("value", remark);
 				}else {
-					keyword3.put("value", "·ûºÏ¹æ·¶");
+					keyword3.put("value", "ç¬¦åˆè§„èŒƒ");
 				}
 				keyword3.put("color", "#000000");
 				
@@ -851,7 +851,7 @@ public class CarOwerManageAction extends Action{
 			}
 		}
 	}*/
-	
+
 	private void setCarNumber(List list){
 		List<Object> uins = new ArrayList<Object>();
 		if(list!=null&&list.size()>0){
@@ -884,6 +884,6 @@ public class CarOwerManageAction extends Action{
 			}
 		}
 	}
-	
+
 
 }

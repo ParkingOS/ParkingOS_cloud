@@ -28,15 +28,15 @@ public class CityBerthManageAction extends Action {
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
-	private CommonMethods commonMethods; 
-	
+	private CommonMethods commonMethods;
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -114,7 +114,7 @@ public class CityBerthManageAction extends Action {
 				sql += " and (c.comid in ("+preParams+") ";
 				countSql += " and (c.comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				List<Object> berthseg = commonMethods.getBerthSeg(parks);
 				if(berthseg != null && !berthseg.isEmpty()){
 					preParams  ="";
@@ -124,20 +124,20 @@ public class CityBerthManageAction extends Action {
 						else
 							preParams += ",?";
 					}
-					
+
 					sql += " or berthsec_id in ("+preParams+") ";
 					countSql += " or berthsec_id in ("+preParams+") ";
 					params.addAll(berthseg);
 				}
 				sql += " ) ";
 				countSql += " ) ";
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
 					params.addAll(sqlInfo.getParams());
 				}
-				
+
 				count = daService.getCount(countSql,params);
 				if(count>0){
 					list = daService.getAll(sql +" order by c.id desc ",params, pageNum, pageSize);
@@ -153,18 +153,18 @@ public class CityBerthManageAction extends Action {
 			AjaxUtil.ajaxOutput(response, r + "");
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			Long count = pgOnlyReadService.getLong("select count(id) from com_park_tb where id=? and dici_id>? and is_delete=? ", 
+			Long count = pgOnlyReadService.getLong("select count(id) from com_park_tb where id=? and dici_id>? and is_delete=? ",
 					new Object[]{id, 0, 0});
 			if(count > 0){
 				AjaxUtil.ajaxOutput(response, "-2");
 				return null;
 			}
-			int r = daService.update("update com_park_tb set is_delete=? where id=? ", 
+			int r = daService.update("update com_park_tb set is_delete=? where id=? ",
 					new Object[]{1, id});
 			AjaxUtil.ajaxOutput(response, r + "");
 		}else if(action.equals("getdici")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			Map<String, Object> diciMap = pgOnlyReadService.getMap("select code from dici_tb where id=? ", 
+			Map<String, Object> diciMap = pgOnlyReadService.getMap("select code from dici_tb where id=? ",
 					new Object[]{id});
 			AjaxUtil.ajaxOutput(response, diciMap.get("code") + "");
 		}else if(action.equals("tobindsensor")){
@@ -206,20 +206,20 @@ public class CityBerthManageAction extends Action {
 					list = daService.getAll(sql +" order by operate_time desc ",params, pageNum, pageSize);
 				}
 			}
-			
+
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("bindsensor")){
 			Long berthid = RequestUtil.getLong(request, "berthid", -1L);
 			Long sensorid = RequestUtil.getLong(request, "id", -1L);
 			if(berthid > 0 && sensorid > 0){
-				Long r = pgOnlyReadService.getLong("select count(id) from com_park_tb where dici_id=? and id<>? and is_delete=? ", 
+				Long r = pgOnlyReadService.getLong("select count(id) from com_park_tb where dici_id=? and id<>? and is_delete=? ",
 						new Object[]{sensorid, berthid, 0});
 				if(r > 0){
 					AjaxUtil.ajaxOutput(response, "-2");
 					return null;
 				}
-				int re = daService.update("update com_park_tb set dici_id=? where id=? ", 
+				int re = daService.update("update com_park_tb set dici_id=? where id=? ",
 						new Object[]{sensorid, berthid});
 				AjaxUtil.ajaxOutput(response, re + "");
 				return null;
@@ -232,7 +232,7 @@ public class CityBerthManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private int editBerth(HttpServletRequest request, Long cityid, Long groupid){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		String cid = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "cid"));
@@ -245,11 +245,11 @@ public class CityBerthManageAction extends Action {
 		if(count < 0){
 			return count;
 		}
-		int r = daService.update("update com_park_tb set cid=?,address=?,longitude=?,latitude=? where id=? ", 
+		int r = daService.update("update com_park_tb set cid=?,address=?,longitude=?,latitude=? where id=? ",
 				new Object[]{cid, address, longitude, latitude, id});
 		return r;
 	}
-	
+
 	private int createBerth(HttpServletRequest request, Long cityid, Long groupid){
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		if(comid == -1){
@@ -264,13 +264,13 @@ public class CityBerthManageAction extends Action {
 		if(count < 0){
 			return count;
 		}
-		int r = daService.update("insert into com_park_tb(comid,cid,state,address,longitude,latitude,berthsec_id,create_time) values(?,?,?,?,?,?,?,?) ", 
+		int r = daService.update("insert into com_park_tb(comid,cid,state,address,longitude,latitude,berthsec_id,create_time) values(?,?,?,?,?,?,?,?) ",
 				new Object[]{comid, cid, 0, address, longitude, latitude, berthsegid, System.currentTimeMillis()/1000});
 		return r;
 	}
-	
+
 	private int checkBerth(Long berthid, String berth, Long comid){
-		Long count = pgOnlyReadService.getLong("select count(id) from com_park_tb where is_delete=? and id<>? and comid=? and cid=? ", 
+		Long count = pgOnlyReadService.getLong("select count(id) from com_park_tb where is_delete=? and id<>? and comid=? and cid=? ",
 				new Object[]{0, berthid, comid, berth});
 		if(count > 0){
 			return -2;

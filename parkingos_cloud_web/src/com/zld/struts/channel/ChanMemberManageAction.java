@@ -22,8 +22,8 @@ import com.zld.struts.parkadmin.MemberManageAction;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.StringUtils;
-/*ËµÃ÷£º³ÇÊĞÉÌ»§¡¢ÇşµÀ¡¢¼¯ÍÅµÄÈËÔ±¹ÜÀí²»ÄÜÔÚÒ»¸öÀàÀï´¦Àí£¬Èç¹ûÍ¬Ò»¸öÀà£¬³ÇÊĞÉÌ»§µÇÂ¼ÀïÓĞÈËÔ±¹ÜÀí£¬
-³ÇÊĞÉÌ»§µÄÔËÓª¼¯ÍÅ¹ÜÀíÀïÒ²ÓĞÈËÔ±¹ÜÀí£¬ÒòÎªÁ´½ÓµØÖ·ÏàÍ¬ÔÚÊÚÈ¨µÄÊ±ºò¾Í»á»ìÂÒ£¬ËùÒÔÔÚÃ¿Ò»¸ö×éÖ¯ÀàĞÍ¶¼ÓĞÒ»¸öÈËÔ±¹ÜÀíÀà*/
+/*è¯´æ˜ï¼šåŸå¸‚å•†æˆ·ã€æ¸ é“ã€é›†å›¢çš„äººå‘˜ç®¡ç†ä¸èƒ½åœ¨ä¸€ä¸ªç±»é‡Œå¤„ç†ï¼Œå¦‚æœåŒä¸€ä¸ªç±»ï¼ŒåŸå¸‚å•†æˆ·ç™»å½•é‡Œæœ‰äººå‘˜ç®¡ç†ï¼Œ
+åŸå¸‚å•†æˆ·çš„è¿è¥é›†å›¢ç®¡ç†é‡Œä¹Ÿæœ‰äººå‘˜ç®¡ç†ï¼Œå› ä¸ºé“¾æ¥åœ°å€ç›¸åŒåœ¨æˆæƒçš„æ—¶å€™å°±ä¼šæ··ä¹±ï¼Œæ‰€ä»¥åœ¨æ¯ä¸€ä¸ªç»„ç»‡ç±»å‹éƒ½æœ‰ä¸€ä¸ªäººå‘˜ç®¡ç†ç±»*/
 public class ChanMemberManageAction extends Action {
 	@Autowired
 	private DataBaseService daService;
@@ -33,13 +33,13 @@ public class ChanMemberManageAction extends Action {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
-		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//ÊÇ·ñÊÇ³¬¼¶¹ÜÀíÔ±
-		Integer isAdmin =(Integer)request.getSession().getAttribute("isadmin");//ÊÇ·ñÊÇ¹ÜÀíÔ±
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
-		Long roleid = (Long)request.getSession().getAttribute("loginroleid");//µÇÂ¼µÄÓÃ»§role_id
+		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//æ˜¯å¦æ˜¯è¶…çº§ç®¡ç†å‘˜
+		Integer isAdmin =(Integer)request.getSession().getAttribute("isadmin");//æ˜¯å¦æ˜¯ç®¡ç†å‘˜
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
+		Long roleid = (Long)request.getSession().getAttribute("loginroleid");//ç™»å½•çš„ç”¨æˆ·role_id
 		Long chanid = (Long)request.getSession().getAttribute("chanid");
 		request.setAttribute("authid", request.getParameter("authid"));
 		if(uin == null){
@@ -49,8 +49,8 @@ public class ChanMemberManageAction extends Action {
 		if(supperadmin == 1){
 			chanid = RequestUtil.getLong(request, "chanid", -1L);
 		}
-		Map<String, Object> adminRoleMap = daService.getMap("select * from user_role_tb where type=? and oid =(select id from zld_orgtype_tb where name like ? limit ? ) limit ? ", 
-				new Object[]{0, "%ÇşµÀ%", 1, 1});//²éÕÒÇşµÀ¹ÜÀíÔ±½ÇÉ«
+		Map<String, Object> adminRoleMap = daService.getMap("select * from user_role_tb where type=? and oid =(select id from zld_orgtype_tb where name like ? limit ? ) limit ? ",
+				new Object[]{0, "%æ¸ é“%", 1, 1});//æŸ¥æ‰¾æ¸ é“ç®¡ç†å‘˜è§’è‰²
 		if(adminRoleMap == null || chanid < 0){
 			return null;
 		}
@@ -85,11 +85,11 @@ public class ChanMemberManageAction extends Action {
 			params.add(0);
 			params.add(0);
 			params.add(adminRoleMap.get("oid"));
-			if(supperadmin == 1){//×Ü¹ÜÀíÔ±Ö»ÄÜ¿´µ½¹ÜÀíÔ±
+			if(supperadmin == 1){//æ€»ç®¡ç†å‘˜åªèƒ½çœ‹åˆ°ç®¡ç†å‘˜
 				sql += " and u.role_id = ? ";
 				countSql += " and u.role_id = ? ";
 				params.add(adminRoleMap.get("id"));
-			}else{//·Ç×Ü¹ÜÀíÔ±µÇÂ¼²»ÄÜ¿´µ½¹ÜÀíÔ±,ÇÒÖ»ÄÜ¿´µ½×Ô¼º´´½¨µÄ½ÇÉ«ÏÂµÄÈËÔ±
+			}else{//éæ€»ç®¡ç†å‘˜ç™»å½•ä¸èƒ½çœ‹åˆ°ç®¡ç†å‘˜,ä¸”åªèƒ½çœ‹åˆ°è‡ªå·±åˆ›å»ºçš„è§’è‰²ä¸‹çš„äººå‘˜
 				sql += " and u.role_id <> ? and adminid=? ";
 				countSql += " and u.role_id <> ? and adminid=? ";
 				params.add(adminRoleMap.get("id"));
@@ -126,11 +126,12 @@ public class ChanMemberManageAction extends Action {
 		}
 		return null;
 	}
-	
-	//×¢²áÍ£³µ³¡ÊÕ·ÑÔ±ÕÊºÅ
+
+	//æ³¨å†Œåœè½¦åœºæ”¶è´¹å‘˜å¸å·
 	@SuppressWarnings({ "rawtypes" })
 	private int createMember(HttpServletRequest request, Long chanid, Long creator_id){
-		String strid =RequestUtil.processParams(request, "strid");
+		//String strid =RequestUtil.processParams(request, "strid");
+		String strid = "";
 		String nickname =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "nickname"));
 		String phone =RequestUtil.processParams(request, "phone");
 		String mobile =RequestUtil.processParams(request, "mobile");
@@ -142,16 +143,21 @@ public class ChanMemberManageAction extends Action {
 		if(phone.equals("")) phone=null;
 		if(mobile.equals("")) mobile=null;
 		Long time = System.currentTimeMillis()/1000;
+		//æŸ¥è¯¢è¡¨ä¸­çš„ä¸»é”®
+		Long id = daService.getkey("seq_user_info_tb");
+		strid = String.valueOf(id);
+		//å®šä¹‰user_id
+		String userId = strid;
 		if(!commonMethods.checkStrid(strid))
 			return 0;
-		//ÓÃ»§±í
-		String sql="insert into user_info_tb (nickname,password,strid,reg_time,mobile,phone,chanid,role_id,auth_flag,creator_id) " +
-				"values (?,?,?,?,?,?,?,?,?,?)";
-		Object [] values= new Object[]{nickname,strid,strid,time,mobile,phone,chanid,role_id,-1,creator_id};
+		//ç”¨æˆ·è¡¨
+		String sql="insert into user_info_tb (id,nickname,password,strid,reg_time,mobile,phone,chanid,role_id,auth_flag,creator_id,user_id) " +
+				"values (?,?,?,?,?,?,?,?,?,?,?,?)";
+		Object [] values= new Object[]{id,nickname,strid,strid,time,mobile,phone,chanid,role_id,-1,creator_id,userId};
 		int r = daService.update(sql, values);
 		return r;
 	}
-	
+
 	private int editMember(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		String nickname =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "nickname"));
@@ -168,17 +174,17 @@ public class ChanMemberManageAction extends Action {
 		if(!commonMethods.checkStrid(strid, id)){
 			return -2;
 		}
-		int r = daService.update("update user_info_tb set nickname=?,strid=?,phone=?,mobile=?,role_id=? where id=? ", 
+		int r = daService.update("update user_info_tb set nickname=?,strid=?,phone=?,mobile=?,role_id=? where id=? ",
 				new Object[]{nickname, strid, phone, mobile, role_id, id});
 		return r;
 	}
-	
+
 	private int deleteMember(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "selids", -1L);
 		int r = daService.update("update user_info_tb set state=? where id=? ", new Object[]{1, id});
 		return r;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes" })
 	private String editPass(HttpServletRequest request){
 		String id =RequestUtil.processParams(request, "id");
@@ -194,13 +200,13 @@ public class ChanMemberManageAction extends Action {
 		}
 		String result = "0";
 		if(newPass.length()<6){
-			result = "ÃÜÂë³¤¶ÈĞ¡ÓÚ6Î»£¬ÇëÖØĞÂÊäÈë£¡";
+			result = "å¯†ç é•¿åº¦å°äº6ä½ï¼Œè¯·é‡æ–°è¾“å…¥ï¼";
 		}else if(newPass.equals(confirmPass)){
 			Object [] values = new Object[]{newPass,md5pass,Long.valueOf(id)};
 			int r = daService.update(sql, values);
 			result = r + "";
 		}else {
-			result = "Á½´ÎÃÜÂëÊäÈë²»Ò»ÖÂ£¬ÇëÖØĞÂÊäÈë£¡";
+			result = "ä¸¤æ¬¡å¯†ç è¾“å…¥ä¸ä¸€è‡´ï¼Œè¯·é‡æ–°è¾“å…¥ï¼";
 		}
 		return result;
 	}

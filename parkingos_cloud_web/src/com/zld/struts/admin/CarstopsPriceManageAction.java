@@ -20,28 +20,28 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 /**
- * ²´³µµã¼Û¸ñ¹ÜÀí£¬ÔÚ×Ü¹ÜÀíÔ±ºóÌ¨
+ * æ³Šè½¦ç‚¹ä»·æ ¼ç®¡ç†ï¼Œåœ¨æ€»ç®¡ç†å‘˜åå°
  * @author Administrator
  *
  */
 public class CarstopsPriceManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
-	
-	
+
+
 	/**
-	 * ¼Û¸ñ²ßÂÔ£º
-		    ÁÙÊ±Í£³µ£º38ÔªÊ×ÈıĞ¡Ê±£¬³¬³öºó10ÔªÒ»Ğ¡Ê±
-		    ³¤ÆÚÍ£³µ£º10ÔªÃ¿Ğ¡Ê±£¬40Ôª°üÌì
-	          ÓÅ»İ»î¶¯£º   
-		    ÁÙÊ±Í£³µ£ºÊ×´ÎÍ£³µ10ÔªÊ×3Ğ¡Ê±£¬³¬³öºóÃ¿Ğ¡Ê±10Ôª  
-		    ³¤ÆÚÍ£³µ£ºÃ¿ÖÜÊ×µ¥1ÔªÇ®
+	 * ä»·æ ¼ç­–ç•¥ï¼š
+	 ä¸´æ—¶åœè½¦ï¼š38å…ƒé¦–ä¸‰å°æ—¶ï¼Œè¶…å‡ºå10å…ƒä¸€å°æ—¶
+	 é•¿æœŸåœè½¦ï¼š10å…ƒæ¯å°æ—¶ï¼Œ40å…ƒåŒ…å¤©
+	 ä¼˜æƒ æ´»åŠ¨ï¼š
+	 ä¸´æ—¶åœè½¦ï¼šé¦–æ¬¡åœè½¦10å…ƒé¦–3å°æ—¶ï¼Œè¶…å‡ºåæ¯å°æ—¶10å…ƒ
+	 é•¿æœŸåœè½¦ï¼šæ¯å‘¨é¦–å•1å…ƒé’±
 	 */
 	private Logger logger = Logger.getLogger(CarstopsPriceManageAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -86,10 +86,10 @@ public class CarstopsPriceManageAction extends Action{
 			String resume = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "resume"));
 			Long ntime = System.currentTimeMillis()/1000;
 			int ret = daService.update("update carstops_price_tb set cid=?,utime=?,resume=?,first_price=?," +
-					"next_price=?,next_unit=?,top_price=?,fav_price=?,first_unit=?,fav_unit=?,type=? where id =?", 
+							"next_price=?,next_unit=?,top_price=?,fav_price=?,first_unit=?,fav_unit=?,type=? where id =?",
 					new Object[]{cid,ntime,resume,first_price,next_price,next_unit,top_price,fav_price,first_unit,fav_unit,type,id});
 			AjaxUtil.ajaxOutput(response, ret+"");
-			
+
 		}else if(action.equals("create")){
 			Double first_price = RequestUtil.getDouble(request, "first_price", 0d);
 			Double next_price = RequestUtil.getDouble(request, "next_price", 0d);
@@ -104,7 +104,7 @@ public class CarstopsPriceManageAction extends Action{
 			String loginUser = (String)request.getSession().getAttribute("nickname");
 			Long ntime = System.currentTimeMillis()/1000;
 			int ret = daService.update("insert into carstops_price_tb (cid,ctime,utime,creator,resume,first_price,next_price,next_unit," +
-					"top_price,fav_price,first_unit,fav_unit,type) values(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+							"top_price,fav_price,first_unit,fav_unit,type) values(?,?,?,?,?,?,?,?,?,?,?,?,?)",
 					new Object[]{cid,ntime,ntime,loginUser,resume,first_price,next_price,next_unit,top_price,fav_price,first_unit,fav_unit,type});
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}else if(action.equals("delete")){
@@ -113,7 +113,7 @@ public class CarstopsPriceManageAction extends Action{
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}else if(action.equals("getcids")){
 			List<Map> tradsList = daService.getAll("select id,name from car_stops_tb where state =? ",new Object[]{0});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("name")+"\"}";
@@ -124,5 +124,5 @@ public class CarstopsPriceManageAction extends Action{
 		}
 		return null;
 	}
-	
+
 }

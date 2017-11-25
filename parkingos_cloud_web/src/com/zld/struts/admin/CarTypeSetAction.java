@@ -1,28 +1,27 @@
 package com.zld.struts.admin;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.zld.AjaxUtil;
 import com.zld.impl.MongoDbUtils;
 import com.zld.impl.PublicMethods;
 import com.zld.service.DataBaseService;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.logging.Logger;
 
 
 /**
- * ≥µ–Õ…Ë∂®
+ * ËΩ¶ÂûãËÆæÂÆö
  * @author Administrator
  *
  */
@@ -36,7 +35,7 @@ public class CarTypeSetAction extends Action{
 	private MongoDbUtils mongoDbUtils;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
@@ -55,59 +54,69 @@ public class CarTypeSetAction extends Action{
 			request.setAttribute("comid", request.getParameter("comid"));
 			return mapping.findForward("list");
 		}else if(action.equals("query")){
-			String sql = "select * from car_type_tb where comid=?  ";
+			String sql = "select * from car_type_tb where comid=? and is_delete=?   ";
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			//System.out.println(sqlInfo);
-			List list = daService.getAll(sql+" order by sort,id desc",new Object[]{comid});
+			List list = daService.getAll(sql+" order by sort,id desc",new Object[]{comid,0});
 			int count =0;
 			if(list!=null)
 				count = list.size();
 			String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
+			Logger.getAnonymousLogger(json);
 			return null;
-		}else if(action.equals("create")){//ÃÌº”≥µ–Õ
+		}else if(action.equals("create")){//Ê∑ªÂä†ËΩ¶Âûã
 			String name = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "name"));
 			Integer sort = RequestUtil.getInteger(request, "sort", 0);
 			int result=0;
+			String carType = RequestUtil.getString(request,"caytyp_id");
+			String cartypeId = comid+""+new Random().nextInt(1000000);
+			Long ntime = System.currentTimeMillis()/1000;
 			try {
 				Long nextid = daService.getLong(
 						"SELECT nextval('seq_car_type_tb'::REGCLASS) AS newid", null);
-				result = daService.update("insert into car_type_tb (id,comid,name,sort)" +
-							" values(?,?,?,?)",
-							new Object[]{nextid,comid,name,sort});
+				result = daService.update("insert into car_type_tb (id,comid,name,sort,cartype_id,create_time,update_time,is_delete)" +
+								" values(?,?,?,?,?,?,?,?)",
+						new Object[]{nextid,comid,name,sort,cartypeId,ntime,ntime,0});
 				if(result==1&&publicMethods.isEtcPark(comid)){
-					daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"car_type_tb",nextid,System.currentTimeMillis()/1000,0});
+					daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)",
+                            new Object[]{comid,"car_type_tb",nextid,System.currentTimeMillis()/1000,0});
 				}
-				if(result==1)
-					mongoDbUtils.saveLogs(request, 0, 2, "ÃÌº”¡À≥µ–Õ(≥µ≥°±‡∫≈:"+comid+")£∫"+name);
+				if(result==1){
+				    String content = "Ê∑ªÂä†‰∫ÜËΩ¶Âûã(ËΩ¶Âú∫ÁºñÂè∑";
+				    content+=comid;
+				    content+="):";
+				    content+=name;
+                    mongoDbUtils.saveLogs(request, 0, 2, content);
+                }
 			} catch (Exception e) {
 				if(e.getMessage().indexOf("car_type_tb_comid_mtype_key")!=-1)
 					result=-2;
-				//e.printStackTrace();
+				e.printStackTrace();
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("edit")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			String name = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "name"));
 			Integer sort = RequestUtil.getInteger(request, "sort", 0);
-			int	result = daService.update("update car_type_tb set name =?,sort=? where id=?",
-					new Object[]{name,sort,id});
+			int	result = daService.update("update car_type_tb set name =?,sort=?,update_time=? where id=?",
+					new Object[]{name,sort,System.currentTimeMillis()/1000,id});
 			if(result==1&&publicMethods.isEtcPark(comid)){
 				daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"car_type_tb",id,System.currentTimeMillis()/1000,1});
 			}
 			if(result==1)
-				mongoDbUtils.saveLogs(request, 0, 3, "–ﬁ∏ƒ¡À≥µ–Õ(≥µ≥°±‡∫≈:"+comid+")£∫"+name);
+				mongoDbUtils.saveLogs(request, 0, 3, "‰øÆÊîπ‰∫ÜËΩ¶Âûã(ËΩ¶Âú∫ÁºñÂè∑:"+comid+"):"+name);
 			AjaxUtil.ajaxOutput(response, ""+result);
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			Map carMap = daService.getMap("select * from  car_type_tb  where id=?",	new Object[]{id});
-			int	result = daService.update("delete from  car_type_tb  where id=?",
-					new Object[]{id});
+			int	result = daService.update("update   car_type_tb set is_delete=?  where id=?",
+					new Object[]{1,id});
 			if(result==1&&publicMethods.isEtcPark(comid)){
 				daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"car_type_tb",id,System.currentTimeMillis()/1000,2});
 			}
-			if(result==1)
-				mongoDbUtils.saveLogs(request, 0, 4, "…æ≥˝¡À≥µ–Õ(≥µ≥°±‡∫≈:"+comid+")£∫"+carMap);
+//			if(result==1)
+//				mongoDbUtils.saveLogs(request, 0, 4, "Âà†Èô§‰∫ÜËΩ¶Âûã(ËΩ¶Âú∫ÁºñÂè∑:"+comid+")Ôºö"+carMap);
 			AjaxUtil.ajaxOutput(response, ""+result);
 		}else if(action.equals("setusecartype")){
 			Integer carType = RequestUtil.getInteger(request, "cartype", 0);
@@ -119,10 +128,10 @@ public class CarTypeSetAction extends Action{
 			int	result = daService.update("update com_info_tb set car_type =? where id=?",
 					new Object[]{carType,comid});
 			if(result==1&&publicMethods.isEtcPark(comid)){
-				daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_info_tb",comid,System.currentTimeMillis()/1000,1});
+				daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate,state) values(?,?,?,?,?,?)", new Object[]{comid,"com_info_tb",comid,System.currentTimeMillis()/1000,1,1});
 			}
 			if(result==1)
-				mongoDbUtils.saveLogs(request, 0, 3, "…Ë÷√¡À≥µ≥° «∑Ò«¯∑÷¥Û–°≥µ(≥µ≥°±‡∫≈:"+comid+")£∫"+carType+",--0:≤ª«¯∑÷£¨1£∫«¯∑÷");
+				mongoDbUtils.saveLogs(request, 0, 3, "ËÆæÁΩÆ‰∫ÜËΩ¶Âú∫ÊòØÂê¶Âå∫ÂàÜÂ§ßÂ∞èËΩ¶(ËΩ¶Âú∫ÁºñÂè∑:"+comid+"):"+carType);
 			AjaxUtil.ajaxOutput(response, ""+result);
 		}else if(action.equals("getname")){
 			Long passid = RequestUtil.getLong(request, "passid", -1L);
@@ -136,5 +145,5 @@ public class CarTypeSetAction extends Action{
 		}
 		return null;
 	}
-	
+
 }

@@ -1,37 +1,27 @@
 package com.zld.impl;
 
 
+import com.mongodb.*;
+import com.zld.utils.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.bson.types.ObjectId;
-import org.springframework.stereotype.Service;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.Bytes;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.QueryOperators;
-import com.mongodb.WriteResult;
-import com.zld.utils.StringUtils;
-
 /**
- * ²Ù×÷MongoDb
+ * æ“ä½œMongoDb
  * @author Laoyao
  * @date 20131025
  */
 @Service
 public class MongoDbUtils {
-	
+
 	private Logger logger = Logger.getLogger(MongoDbUtils.class);
-	
+
 	public List<String> getParkPicUrls(Long uin,String dbName){
 		List<String> result =new ArrayList<String>();
 		DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");//
@@ -43,7 +33,7 @@ public class MongoDbUtils {
 		}
 		return result;
 	}
-	
+
 	public List<String> getOrderPicUrls(String dbName,BasicDBObject condition){
 		List<String> result =new ArrayList<String>();
 		DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");//
@@ -77,17 +67,12 @@ public class MongoDbUtils {
 		db.requestDone();
 		return (byte[])obj.get("content");
 	}
-	
+
 	/**
 	 * add 20160106 by yao
-	 * @param comId ³µ³¡±àºÅ 0Í£³µ±¦£¬ÆäËüÎª³µ³¡
-	 * @param uin
-	 * @param itype 0²Ù×÷ÈÕÖ¾
-	 * @param otype 0µÇÂ¼£¬1ÍË³ö£¬2Ìí¼Ó£¬3ĞŞ¸Ä£¬4É¾³ı 5µ¼³ö 6½áËã
-	 * @param uri
+	 * @param itype 0æ“ä½œæ—¥å¿—
+	 * @param otype 0ç™»å½•ï¼Œ1é€€å‡ºï¼Œ2æ·»åŠ ï¼Œ3ä¿®æ”¹ï¼Œ4åˆ é™¤ 5å¯¼å‡º 6ç»“ç®—
 	 * @param content
-	 * @param time
-	 * @param ip
 	 * @return
 	 */
 	public String saveLogs(HttpServletRequest request, Integer itype,Integer otype,String content){
@@ -97,10 +82,10 @@ public class MongoDbUtils {
 			Long comid = (Long)request.getSession().getAttribute("comid");
 			Long cityid = (Long)request.getSession().getAttribute("cityid");
 			Long groupid = (Long)request.getSession().getAttribute("groupid");
-			
+
 			DB mydb = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
 			mydb.requestStart();
-			
+
 			DBCollection collection = mydb.getCollection("zld_logs");
 			//  DBCollection collection = mydb.getCollection("records_test");
 			BasicDBObject object = new BasicDBObject();
@@ -114,10 +99,10 @@ public class MongoDbUtils {
 			object.put("content", content);
 			object.put("time", System.currentTimeMillis()/1000);
 			object.put("ip", ip);
-			//¿ªÊ¼ÊÂÎñ
+			//å¼€å§‹äº‹åŠ¡
 			mydb.requestStart();
 			WriteResult result = collection.insert(object);
-			//½áÊøÊÂÎñ
+			//ç»“æŸäº‹åŠ¡
 			mydb.requestDone();
 			return result.toString();
 		} catch (Exception e) {
@@ -126,7 +111,7 @@ public class MongoDbUtils {
 		return "";
 	}
 	/**
-	 * ²éÑ¯¼ÇÂ¼Êı
+	 * æŸ¥è¯¢è®°å½•æ•°
 	 * @param dbName
 	 * @param conditions
 	 * @return
@@ -145,7 +130,7 @@ public class MongoDbUtils {
 		return count;
 	}
 	/**
-	 * ·ÖÒ³²éÑ¯
+	 * åˆ†é¡µæŸ¥è¯¢
 	 * @param dbName
 	 * @param conditions
 	 * @param sort
@@ -158,7 +143,7 @@ public class MongoDbUtils {
 		DBCollection mdb = mydb.getCollection(dbName);
 		DBCursor dbCursor =null;
 		mydb.requestStart();
-		if(pageSize==0){//²»·ÖÒ³
+		if(pageSize==0){//ä¸åˆ†é¡µ
 			if(conditions!=null&&!conditions.isEmpty()){
 				dbCursor = mdb.find(conditions).sort(sort);  ;
 			}else {
@@ -172,98 +157,98 @@ public class MongoDbUtils {
 			}
 		}
 		mydb.requestDone();
-		List<Map<String, Object>> retMaps = new ArrayList<Map<String, Object>>();  
+		List<Map<String, Object>> retMaps = new ArrayList<Map<String, Object>>();
 		while(dbCursor.hasNext()){
-			Map<String, Object> map = parseRet(dbCursor.next());  
-        	retMaps.add(map);
+			Map<String, Object> map = parseRet(dbCursor.next());
+			retMaps.add(map);
 		}
 		return retMaps;
 	}
 	/**
-	 * ·â×°³ÉMap
+	 * å°è£…æˆMap
 	 * @param dbObject
 	 * @return
 	 */
-	 private Map<String, Object> parseRet(DBObject dbObject){
-	    Map<String, Object> retMap= new HashMap<String, Object>();
-	    for(String key : dbObject.keySet()){
-	    	retMap.put(key, dbObject.get(key));
-	    }
-	    return retMap;
+	private Map<String, Object> parseRet(DBObject dbObject){
+		Map<String, Object> retMap= new HashMap<String, Object>();
+		for(String key : dbObject.keySet()){
+			retMap.put(key, dbObject.get(key));
+		}
+		return retMap;
 	}
-	
-	/** 
-     * ·ÖÒ³Ê¾Àı
-     * @param page 
-     * @param pageSize 
-     * @return 
-     */  
-    public List<Map<String, Object>> pageList(int page,int pageSize){  
-    	DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");//
+
+	/**
+	 * åˆ†é¡µç¤ºä¾‹
+	 * @param page
+	 * @param pageSize
+	 * @return
+	 */
+	public List<Map<String, Object>> pageList(int page,int pageSize){
+		DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");//
 		DBCollection mdb = db.getCollection("parkuser_pics");
-          
-        DBCursor limit = mdb.find().skip((page - 1) * 10).sort(new BasicDBObject()).limit(pageSize);    
-        List<Map<String, Object>> retMaps = new ArrayList<Map<String, Object>>();  
-        while (limit.hasNext()) {  
-        	Map<String, Object> map = parseRet(limit.next());  
-        	retMaps.add(map);  
-        }  
-        return retMaps;  
-    }  
-    
- 
-    
-    //²éÑ¯Ê¾Àı
-    public void query() {
-        //²éÑ¯ËùÓĞ
-        //queryAll();
-    	DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");//
-    	DBCollection users = db.getCollection("parkuser_pics");
-        //²éÑ¯id = 4de73f7acd812d61b4626a77
-        print("find id = 4de73f7acd812d61b4626a77: " + users.find(new BasicDBObject("_id", new ObjectId("4de73f7acd812d61b4626a77"))).toArray());
-        
-        //²éÑ¯age = 24
-        print("find age = 24: " + users.find(new BasicDBObject("age", 24)).toArray());
-        
-        //²éÑ¯age >= 24
-        print("find age >= 24: " + users.find(new BasicDBObject("age", new BasicDBObject("$gte", 24))).toArray());
-        print("find age <= 24: " + users.find(new BasicDBObject("age", new BasicDBObject("$lte", 24))).toArray());
-        
-        print("²éÑ¯age!=25£º" + users.find(new BasicDBObject("age", new BasicDBObject("$ne", 25))).toArray());
-        print("²éÑ¯age in 25/26/27£º" + users.find(new BasicDBObject("age", new BasicDBObject(QueryOperators.IN, new int[] { 25, 26, 27 }))).toArray());
-        print("²éÑ¯age not in 25/26/27£º" + users.find(new BasicDBObject("age", new BasicDBObject(QueryOperators.NIN, new int[] { 25, 26, 27 }))).toArray());
-        print("²éÑ¯age exists ÅÅĞò£º" + users.find(new BasicDBObject("age", new BasicDBObject(QueryOperators.EXISTS, true))).toArray());
-        
-        print("Ö»²éÑ¯ageÊôĞÔ£º" + users.find(null, new BasicDBObject("age", true)).toArray());
-        print("Ö»²éÊôĞÔ£º" + users.find(null, new BasicDBObject("age", true), 0, 2).toArray());
-        print("Ö»²éÊôĞÔ£º" + users.find(null, new BasicDBObject("age", true), 0, 2, Bytes.QUERYOPTION_NOTIMEOUT).toArray());
-        
-        //Ö»²éÑ¯Ò»ÌõÊı¾İ£¬¶àÌõÈ¥µÚÒ»Ìõ
-        print("findOne: " + users.findOne());
-        print("findOne: " + users.findOne(new BasicDBObject("age", 26)));
-        print("findOne: " + users.findOne(new BasicDBObject("age", 26), new BasicDBObject("name", true)));
-        
-        //²éÑ¯ĞŞ¸Ä¡¢É¾³ı
-        print("findAndRemove ²éÑ¯age=25µÄÊı¾İ£¬²¢ÇÒÉ¾³ı: " + users.findAndRemove(new BasicDBObject("age", 25)));
-        
-        //²éÑ¯age=26µÄÊı¾İ£¬²¢ÇÒĞŞ¸ÄnameµÄÖµÎªAbc
-        print("findAndModify: " + users.findAndModify(new BasicDBObject("age", 26), new BasicDBObject("name", "Abc")));
-        print("findAndModify: " + users.findAndModify(
-            new BasicDBObject("age", 28), //²éÑ¯age=28µÄÊı¾İ
-            new BasicDBObject("name", true), //²éÑ¯nameÊôĞÔ
-            new BasicDBObject("age", true), //°´ÕÕageÅÅĞò
-            false, //ÊÇ·ñÉ¾³ı£¬true±íÊ¾É¾³ı
-            new BasicDBObject("name", "Abc"), //ĞŞ¸ÄµÄÖµ£¬½«nameĞŞ¸Ä³ÉAbc
-            true, 
-            true));
-        
-        DBCursor cur = users.find();
-        while (cur.hasNext()) {
-            print(cur.next());
-        }
-    }
-    //´òÓ¡
-    private void print (Object value){
-    	System.out.println(value.toString());
-    }
+
+		DBCursor limit = mdb.find().skip((page - 1) * 10).sort(new BasicDBObject()).limit(pageSize);
+		List<Map<String, Object>> retMaps = new ArrayList<Map<String, Object>>();
+		while (limit.hasNext()) {
+			Map<String, Object> map = parseRet(limit.next());
+			retMaps.add(map);
+		}
+		return retMaps;
+	}
+
+
+
+	//æŸ¥è¯¢ç¤ºä¾‹
+	public void query() {
+		//æŸ¥è¯¢æ‰€æœ‰
+		//queryAll();
+		/*DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");//
+		DBCollection users = db.getCollection("parkuser_pics");
+		//æŸ¥è¯¢id = 4de73f7acd812d61b4626a77
+		print("find id = 4de73f7acd812d61b4626a77: " + users.find(new BasicDBObject("_id", new ObjectId("4de73f7acd812d61b4626a77"))).toArray());
+
+		//æŸ¥è¯¢age = 24
+		print("find age = 24: " + users.find(new BasicDBObject("age", 24)).toArray());
+
+		//æŸ¥è¯¢age >= 24
+		print("find age >= 24: " + users.find(new BasicDBObject("age", new BasicDBObject("$gte", 24))).toArray());
+		print("find age <= 24: " + users.find(new BasicDBObject("age", new BasicDBObject("$lte", 24))).toArray());
+
+		print("æŸ¥è¯¢age!=25ï¼š" + users.find(new BasicDBObject("age", new BasicDBObject("$ne", 25))).toArray());
+		print("æŸ¥è¯¢age in 25/26/27ï¼š" + users.find(new BasicDBObject("age", new BasicDBObject(QueryOperators.IN, new int[] { 25, 26, 27 }))).toArray());
+		print("æŸ¥è¯¢age not in 25/26/27ï¼š" + users.find(new BasicDBObject("age", new BasicDBObject(QueryOperators.NIN, new int[] { 25, 26, 27 }))).toArray());
+		print("æŸ¥è¯¢age exists æ’åºï¼š" + users.find(new BasicDBObject("age", new BasicDBObject(QueryOperators.EXISTS, true))).toArray());
+
+		print("åªæŸ¥è¯¢ageå±æ€§ï¼š" + users.find(null, new BasicDBObject("age", true)).toArray());
+		print("åªæŸ¥å±æ€§ï¼š" + users.find(null, new BasicDBObject("age", true), 0, 2).toArray());
+		print("åªæŸ¥å±æ€§ï¼š" + users.find(null, new BasicDBObject("age", true), 0, 2, Bytes.QUERYOPTION_NOTIMEOUT).toArray());
+
+		//åªæŸ¥è¯¢ä¸€æ¡æ•°æ®ï¼Œå¤šæ¡å»ç¬¬ä¸€æ¡
+		print("findOne: " + users.findOne());
+		print("findOne: " + users.findOne(new BasicDBObject("age", 26)));
+		print("findOne: " + users.findOne(new BasicDBObject("age", 26), new BasicDBObject("name", true)));
+
+		//æŸ¥è¯¢ä¿®æ”¹ã€åˆ é™¤
+		print("findAndRemove æŸ¥è¯¢age=25çš„æ•°æ®ï¼Œå¹¶ä¸”åˆ é™¤: " + users.findAndRemove(new BasicDBObject("age", 25)));
+
+		//æŸ¥è¯¢age=26çš„æ•°æ®ï¼Œå¹¶ä¸”ä¿®æ”¹nameçš„å€¼ä¸ºAbc
+		print("findAndModify: " + users.findAndModify(new BasicDBObject("age", 26), new BasicDBObject("name", "Abc")));
+		print("findAndModify: " + users.findAndModify(
+				new BasicDBObject("age", 28), //æŸ¥è¯¢age=28çš„æ•°æ®
+				new BasicDBObject("name", true), //æŸ¥è¯¢nameå±æ€§
+				new BasicDBObject("age", true), //æŒ‰ç…§ageæ’åº
+				false, //æ˜¯å¦åˆ é™¤ï¼Œtrueè¡¨ç¤ºåˆ é™¤
+				new BasicDBObject("name", "Abc"), //ä¿®æ”¹çš„å€¼ï¼Œå°†nameä¿®æ”¹æˆAbc
+				true,
+				true));
+
+		DBCursor cur = users.find();
+		while (cur.hasNext()) {
+			print(cur.next());
+		}*/
+	}
+	//æ‰“å°
+	private void print (Object value){
+		System.out.println(value.toString());
+	}
 }

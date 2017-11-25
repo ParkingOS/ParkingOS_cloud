@@ -30,15 +30,15 @@ public class CityBigOrderManageAction extends Action {
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
-	private CommonMethods commonMethods; 
-	
+	private CommonMethods commonMethods;
+
 	@SuppressWarnings({ "rawtypes", "unused", "unchecked" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µ«¬ºµƒ”√ªßid
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ÁôªÂΩïÁöÑÁî®Êà∑id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -51,7 +51,7 @@ public class CityBigOrderManageAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		ExecutorService pool = ExecutorsUtil.getExecutorService();//ªÒ»°œﬂ≥Ã≥ÿ
+		ExecutorService pool = ExecutorsUtil.getExecutorService();//Ëé∑ÂèñÁ∫øÁ®ãÊ±†
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("query")){
@@ -94,7 +94,7 @@ public class CityBigOrderManageAction extends Action {
 				sql += " and o.comid in ("+preParams+") ";
 				countSql += " and o.comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -129,10 +129,10 @@ public class CityBigOrderManageAction extends Action {
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 		}
-		
+
 		return null;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			Long ntime = System.currentTimeMillis()/1000;
@@ -142,7 +142,7 @@ public class CityBigOrderManageAction extends Action {
 			}
 		}
 	}
-	
+
 	private void getCollector(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> idList = new ArrayList<Object>();
@@ -156,7 +156,7 @@ public class CityBigOrderManageAction extends Action {
 						preParams += ",?";
 				}
 			}
-			
+
 			List<Map<String, Object>> rlist = pgOnlyReadService.getAllMap("select id,nickname from user_info_tb where id in ("
 					+ preParams + ") ", idList);
 			if(rlist != null && !rlist.isEmpty()){
@@ -172,7 +172,7 @@ public class CityBigOrderManageAction extends Action {
 			}
 		}
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		String cid = RequestUtil.processParams(request, "cid");
 		SqlInfo sqlInfo1 = null;

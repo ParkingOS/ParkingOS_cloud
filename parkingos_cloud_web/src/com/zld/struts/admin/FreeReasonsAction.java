@@ -21,7 +21,7 @@ import com.zld.utils.RequestUtil;
 
 
 /**
- * ³µĞÍÉè¶¨
+ * è½¦å‹è®¾å®š
  * @author Administrator
  *
  */
@@ -33,10 +33,10 @@ public class FreeReasonsAction extends Action{
 	private PublicMethods publicMethods;
 	@Autowired
 	private MongoDbUtils mongoDbUtils;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
@@ -62,7 +62,7 @@ public class FreeReasonsAction extends Action{
 			String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
-		}else if(action.equals("create")){//Ìí¼ÓÕÊºÅ
+		}else if(action.equals("create")){//æ·»åŠ å¸å·
 			String name = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "name"));
 			Integer sort = RequestUtil.getInteger(request, "sort", 0);
 			int result=0;
@@ -70,13 +70,13 @@ public class FreeReasonsAction extends Action{
 				Long nextid = daService.getLong(
 						"SELECT nextval('seq_free_reasons_tb'::REGCLASS) AS newid", null);
 				result = daService.update("insert into free_reasons_tb (id,comid,name,sort)" +
-							" values(?,?,?,?)",
-							new Object[]{nextid,comid,name,sort});
+								" values(?,?,?,?)",
+						new Object[]{nextid,comid,name,sort});
 				if(result==1&&publicMethods.isEtcPark(comid)){
 					daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"free_reasons_tb",nextid,System.currentTimeMillis()/1000,0});
 				}
 				if(result==1)
-					mongoDbUtils.saveLogs(request, 0, 2, "Ìí¼ÓÁË³µ³¡£¨"+comid+"£©Ãâ·ÑÔ­Òò:"+name+",±àºÅ£º"+nextid);
+					mongoDbUtils.saveLogs(request, 0, 2, "æ·»åŠ äº†è½¦åœºï¼ˆ"+comid+"ï¼‰å…è´¹åŸå› :"+name+",ç¼–å·ï¼š"+nextid);
 			} catch (Exception e) {
 				if(e.getMessage().indexOf("free_reasons_tb_comid_mtype_key")!=-1)
 					result=-2;
@@ -93,7 +93,7 @@ public class FreeReasonsAction extends Action{
 				daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"free_reasons_tb",id,System.currentTimeMillis()/1000,1});
 			}
 			if(result==1)
-				mongoDbUtils.saveLogs(request, 0, 3, "ĞŞ¸ÄÁË³µ³¡£¨"+comid+"£©Ãâ·ÑÔ­Òò,±àºÅ£º"+id);
+				mongoDbUtils.saveLogs(request, 0, 3, "ä¿®æ”¹äº†è½¦åœºï¼ˆ"+comid+"ï¼‰å…è´¹åŸå› ,ç¼–å·ï¼š"+id);
 			AjaxUtil.ajaxOutput(response, ""+result);
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
@@ -104,10 +104,10 @@ public class FreeReasonsAction extends Action{
 				daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"free_reasons_tb",id,System.currentTimeMillis()/1000,2});
 			}
 			if(result==1)
-				mongoDbUtils.saveLogs(request, 0, 4, "É¾³ıÁË³µ³¡£¨"+comid+"£©Ãâ·ÑÔ­Òò:"+freeMap);
+				mongoDbUtils.saveLogs(request, 0, 4, "åˆ é™¤äº†è½¦åœºï¼ˆ"+comid+"ï¼‰å…è´¹åŸå› :"+freeMap);
 			AjaxUtil.ajaxOutput(response, ""+result);
 		}
 		return null;
 	}
-	
+
 }

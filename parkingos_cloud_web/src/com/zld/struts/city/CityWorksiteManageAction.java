@@ -31,19 +31,19 @@ public class CityWorksiteManageAction extends Action {
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
-	private CommonMethods commonMethods; 
+	private CommonMethods commonMethods;
 	@Autowired
 	private PublicMethods publicMethods;
 	@Autowired
 	private MongoDbUtils mongoDbUtils;
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -56,7 +56,7 @@ public class CityWorksiteManageAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("quickquery")){
@@ -86,7 +86,7 @@ public class CityWorksiteManageAction extends Action {
 				sql += " and comid in ("+preParams+") ";
 				countSql += " and comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				count = daService.getCount(countSql,params);
 				if(count>0){
 					list = daService.getAll(sql +" order by id desc ",params, pageNum, pageSize);
@@ -122,7 +122,7 @@ public class CityWorksiteManageAction extends Action {
 				sql += " and comid in ("+preParams+") ";
 				countSql += " and comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -145,30 +145,30 @@ public class CityWorksiteManageAction extends Action {
 			int r = deleteWorksite(request);
 			AjaxUtil.ajaxOutput(response, r + "");
 		}
-		
+
 		return null;
 	}
-	
+
 	private int deleteWorksite(HttpServletRequest request){
 		Long id =RequestUtil.getLong(request, "selids", -1L);
-		Map<String, Object> worksiteMap = pgOnlyReadService.getMap("select comid from com_worksite_tb where id=? ", 
+		Map<String, Object> worksiteMap = pgOnlyReadService.getMap("select comid from com_worksite_tb where id=? ",
 				new Object[]{id});
 		Long comid = -1L;
 		if(worksiteMap.get("comid") != null){
 			comid = (Long)worksiteMap.get("comid");
 		}
-		int r = daService.update("update com_worksite_tb set state=? where id=? ", 
+		int r = daService.update("update com_worksite_tb set state=? where id=? ",
 				new Object[]{1, id});
 		if(r == 1){
 			if(publicMethods.isEtcPark(comid)){
-				int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", 
+				int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)",
 						new Object[]{comid,"com_worksite_tb",Long.valueOf(id),System.currentTimeMillis()/1000,2});
 			}
-			mongoDbUtils.saveLogs( request,0, 4, "É¾³ıÁË¹¤×÷Õ¾,±àºÅ£º"+id);
+			mongoDbUtils.saveLogs( request,0, 4, "åˆ é™¤äº†å·¥ä½œç«™,ç¼–å·ï¼š"+id);
 		}
 		return r;
 	}
-	
+
 	private int editWorksite(HttpServletRequest request){
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		if(comid == -1){
@@ -177,18 +177,18 @@ public class CityWorksiteManageAction extends Action {
 		Long id =RequestUtil.getLong(request, "id", -1L);
 		String worksite_name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "worksite_name"));
 		String description = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "description"));
-		Integer net_type = RequestUtil.getInteger(request, "net_type", 0);//Ä¬ÈÏÊÇÍøÂç×´¿öÊÇ0£ºÁ÷Á¿
+		Integer net_type = RequestUtil.getInteger(request, "net_type", 0);//é»˜è®¤æ˜¯ç½‘ç»œçŠ¶å†µæ˜¯0ï¼šæµé‡
 		String sql = "update com_worksite_tb set worksite_name=?,description=?,net_type=?,comid=? where id=?";
 		int r = daService.update(sql, new Object[]{worksite_name,description,net_type,comid,id});
 		if(r == 1){
 			if(publicMethods.isEtcPark(comid)){
 				int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_worksite_tb",id,System.currentTimeMillis()/1000,1});
 			}
-			mongoDbUtils.saveLogs( request,0, 3, "ĞŞ¸ÄÁË¹¤×÷Õ¾£¨±àºÅ£º"+id+"£©£º"+worksite_name);
+			mongoDbUtils.saveLogs( request,0, 3, "ä¿®æ”¹äº†å·¥ä½œç«™ï¼ˆç¼–å·ï¼š"+id+"ï¼‰ï¼š"+worksite_name);
 		}
 		return r;
 	}
-	
+
 	private int createWorksite(HttpServletRequest request){
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		if(comid == -1){
@@ -196,7 +196,7 @@ public class CityWorksiteManageAction extends Action {
 		}
 		String worksite_name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "worksite_name"));
 		String description = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "description"));
-		Integer net_type = RequestUtil.getInteger(request, "net_type", 0);//Ä¬ÈÏÊÇÍøÂç×´¿öÊÇ0£ºÁ÷Á¿
+		Integer net_type = RequestUtil.getInteger(request, "net_type", 0);//é»˜è®¤æ˜¯ç½‘ç»œçŠ¶å†µæ˜¯0ï¼šæµé‡
 		if(worksite_name.equals("")) worksite_name = null;
 		if(description.equals("")) description = null;
 		Map<String, Object> map = new HashMap<String, Object>();

@@ -30,7 +30,7 @@ public class PaymentAnlysisAction extends Action {
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µ«¬ºµƒ”√ªßid
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ÁôªÂΩïÁöÑÁî®Êà∑id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -41,10 +41,10 @@ public class PaymentAnlysisAction extends Action {
 			response.sendRedirect("login.do");
 			return null;
 		}
-		
+
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			request.setAttribute("btime", df2.format(System.currentTimeMillis()));
@@ -62,7 +62,7 @@ public class PaymentAnlysisAction extends Action {
 			int count = 0;
 			String btime = RequestUtil.processParams(request, "btime");
 			//String etime = RequestUtil.processParams(request, "etime");
-			if(btime.equals("")) 
+			if(btime.equals(""))
 				btime = nowtime;
 			if(groupid==-1){
 				groupid= RequestUtil.getLong(request, "groupid", -1L);
@@ -94,23 +94,23 @@ public class PaymentAnlysisAction extends Action {
 				sql += " c.comid in ("+preParams+") ";
 				params.addAll(parks);
 				list = pgOnlyReadService.getAllMap(sql,params);
-			    if(list!=null&&!list.isEmpty()){
-			    	for(Map<String, Object> map:list){
-			    		double nopayment=StringUtils.formatDouble(map.get("nopayment"));
-			    		double payment=StringUtils.formatDouble(map.get("payment"));
-			    	    if(nopayment==0){
-			    	    	map.put("percent", 0);			    	    
-			    	    }else {
-			    	    	map.put("percent",StringUtils.formatDouble((payment/(payment+nopayment))*100));	
+				if(list!=null&&!list.isEmpty()){
+					for(Map<String, Object> map:list){
+						double nopayment=StringUtils.formatDouble(map.get("nopayment"));
+						double payment=StringUtils.formatDouble(map.get("payment"));
+						if(nopayment==0){
+							map.put("percent", 0);
+						}else {
+							map.put("percent",StringUtils.formatDouble((payment/(payment+nopayment))*100));
 						}
-			    
-			    	}
-			    }
+
+					}
+				}
 				if(list != null && !list.isEmpty()){
 					count = list.size();
 				}
 			}
-			
+
 			Double nopayment = 0.0;
 			Double payment = 0.0;
 			if(list != null && !list.isEmpty()){
@@ -119,11 +119,11 @@ public class PaymentAnlysisAction extends Action {
 					payment += StringUtils.formatDouble(map.get("payment"));
 				}
 			}
-			String res = "◊‹Œ¥Ω…Ω∂Ó£∫"+nopayment+"£¨“—◊∑Ω…Ω∂Ó£∫"+payment;
-			
+			String res = "ÊÄªÊú™Áº¥ÈáëÈ¢ùÔºö"+nopayment+"ÔºåÂ∑≤ËøΩÁº¥ÈáëÈ¢ùÔºö"+payment;
+
 			//setList(list);
 			String json = JsonUtil.anlysisMap2Json(list,1,count, fieldsstr,"comid",res);
-			
+
 			//json = StringUtils.createJson(list);
 			AjaxUtil.ajaxOutput(response, json);
 		}
@@ -140,7 +140,7 @@ public class PaymentAnlysisAction extends Action {
 			String btime = RequestUtil.processParams(request, "btime");
 			String operate = RequestUtil.getString(request, "operate");
 			//String etime = RequestUtil.processParams(request, "etime");
-			if(btime.equals("")) 
+			if(btime.equals(""))
 				btime = nowtime;
 			Long e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(btime+" 23:59:59");
 			List<Object> params = new ArrayList<Object>();
@@ -168,32 +168,32 @@ public class PaymentAnlysisAction extends Action {
 				sql += " c.comid in ("+preParams+") ";
 				params.addAll(parks);
 				list = pgOnlyReadService.getAllMap(sql,params);
-			    if(list!=null&&!list.isEmpty()){
-			    	for(Map<String, Object> map:list){
-			    		double nopayment=StringUtils.formatDouble(map.get("nopayment"));
-			    		double payment=StringUtils.formatDouble(map.get("payment"));
-			    	    if(nopayment==0){
-			    	    	map.put("percent", 0);			    	    
-			    	    }else {
-			    	    	map.put("percent",StringUtils.formatDouble((payment/(payment+nopayment))*100));	
+				if(list!=null&&!list.isEmpty()){
+					for(Map<String, Object> map:list){
+						double nopayment=StringUtils.formatDouble(map.get("nopayment"));
+						double payment=StringUtils.formatDouble(map.get("payment"));
+						if(nopayment==0){
+							map.put("percent", 0);
+						}else {
+							map.put("percent",StringUtils.formatDouble((payment/(payment+nopayment))*100));
 						}
-			    
-			    	}
-			    	
-			    }
+
+					}
+
+				}
 				if(list != null && !list.isEmpty()){
 					count = list.size();
 				}
 			}
-			
-			
-			
-			
+
+
+
+
 			String json = StringUtils.createJson(list);
 			//AjaxUtil.ajaxOutput(response, json);
 			if(operate.equals("")){
 				request.setAttribute("btime", df2.format(System.currentTimeMillis()));
-	
+
 				//request.setAttribute("etime",  df2.format(System.currentTimeMillis()));
 				request.setAttribute("json", json);
 				return mapping.findForward("icon");
@@ -201,10 +201,10 @@ public class PaymentAnlysisAction extends Action {
 				AjaxUtil.ajaxOutput(response, json);
 			}
 		}
-		
+
 		return null;
 	}
-	
 
-	
+
+
 }

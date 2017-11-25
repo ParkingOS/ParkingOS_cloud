@@ -37,17 +37,17 @@ import com.zld.utils.RequestUtil;
 public class CarPicsUploadAction extends Action {
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(CarPicsUploadAction.class);
 	/*
-	 * ÉÏ´«ÕÕÅÆÍ¼Æ¬
+	 * ä¸Šä¼ ç…§ç‰Œå›¾ç‰‡
 	 */
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
 		Long orderid = RequestUtil.getLong(request, "orderid", -1L);
 		String orderidlocal = RequestUtil.getString(request, "orderid");
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
-		//typeÇø·ÖÊÇÈë¿Ú»¹ÊÇ³ö¿Ú£¬Èë¿ÚÎª0£¬³ö¿ÚÎª1
+		//typeåŒºåˆ†æ˜¯å…¥å£è¿˜æ˜¯å‡ºå£ï¼Œå…¥å£ä¸º0ï¼Œå‡ºå£ä¸º1
 		Long type = RequestUtil.getLong(request, "type", -1L);
 		if(comid==-1){
 			AjaxUtil.ajaxOutput(response, "-1");
@@ -58,9 +58,9 @@ public class CarPicsUploadAction extends Action {
 			String rightbottom = RequestUtil.processParams(request, "rightbottom");
 			String width = RequestUtil.processParams(request, "width");
 			String height = RequestUtil.processParams(request, "height");
-			Long preorderid = RequestUtil.getLong(request, "preorderid", -1L);//Î´½áËãµÄ¶©µ¥id
+			Long preorderid = RequestUtil.getLong(request, "preorderid", -1L);//æœªç»“ç®—çš„è®¢å•id
 			String result = uploadCarPics2Mongodb(request, comid, orderid, lefttop, rightbottom,width,height,type);
-			//°Ñ¸ÃÕÕÆ¬×÷ÎªÎ´½áËã¶©µ¥µÄ³ö¿ÚÕÕÆ¬
+			//æŠŠè¯¥ç…§ç‰‡ä½œä¸ºæœªç»“ç®—è®¢å•çš„å‡ºå£ç…§ç‰‡
 			if(preorderid != -1){
 				result = uploadCarPics2Mongodb(request, comid, preorderid, lefttop, rightbottom, width, height, 1L);
 			}
@@ -77,23 +77,24 @@ public class CarPicsUploadAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void getpictureNew(String orderidlocal, Long comid, String typeStr,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+							   HttpServletRequest request, HttpServletResponse response) throws Exception {
 		logger.error("getpictureNew from mongodb....");
-		logger.error("getpictureNew from mongodb file:orderid="+orderidlocal+"type="+typeStr);
+		logger.error("getpictureNew from mongodb file:orderid="+orderidlocal+"type="+typeStr+",comid:"+comid);
 		if(orderidlocal!=null && typeStr !=null){
 			long currentnum = RequestUtil.getLong(request, "currentnum",-1L);
 			DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");//
-			//¸ù¾İ¶©µ¥±àºÅ²éÑ¯³ömongodbÖĞ´æÈëµÄ¶ÔÓ¦¸ö±íÃû
+			//æ ¹æ®è®¢å•ç¼–å·æŸ¥è¯¢å‡ºmongodbä¸­å­˜å…¥çš„å¯¹åº”ä¸ªè¡¨å
 //			Map map = daService.getMap("select * from order_tb where order_id_local=? and comid=?", new Object[]{orderidlocal,comid});
 			Map map = daService.getMap("select * from carpic_tb where order_id=? and comid=?", new Object[]{orderidlocal,String.valueOf(comid)});
+			logger.error(map);
 			String collectionName = "";
 			if(map !=null && !map.isEmpty()){
 				collectionName = (String) map.get("carpic_table_name");
 			}
 			if(collectionName==null||"".equals(collectionName)||"null".equals(collectionName)){
-				logger.error(">>>>>>>>>>>>>²éÑ¯Í¼Æ¬´íÎó........");
+				logger.error(">>>>>>>>>>>>>æŸ¥è¯¢å›¾ç‰‡é”™è¯¯........");
 				response.sendRedirect("http://sysimages.tq.cn/images/webchat_101001/common/kefu.png");
 				return;
 			}
@@ -110,20 +111,20 @@ public class CarPicsUploadAction extends Action {
 				DBObject obj  = collection.findOne(document);
 				if(obj == null){
 					AjaxUtil.ajaxOutput(response, "");
-					logger.error("È¡Í¼Æ¬´íÎó.....");
+					logger.error("å–å›¾ç‰‡é”™è¯¯.....");
 					return;
 				}
 				byte[] content = (byte[])obj.get("content");
-				logger.error("È¡Í¼Æ¬³É¹¦.....´óĞ¡:"+content.length);
+				logger.error("å–å›¾ç‰‡æˆåŠŸ.....å¤§å°:"+content.length);
 				db.requestDone();
 				response.setDateHeader("Expires", System.currentTimeMillis()+12*60*60*1000);
 				response.setContentLength(content.length);
 				response.setContentType("image/jpeg");
-			    OutputStream o = response.getOutputStream();
-			    o.write(content);
-			    o.flush();
-			    o.close();
-			    System.out.println("mongdb over.....");
+				OutputStream o = response.getOutputStream();
+				o.write(content);
+				o.flush();
+				o.close();
+				System.out.println("mongdb over.....");
 			}else{
 				response.sendRedirect("http://sysimages.tq.cn/images/webchat_101001/common/kefu.png");
 			}
@@ -133,19 +134,19 @@ public class CarPicsUploadAction extends Action {
 	}
 
 	/**
-	 * ¶ÁÈ¡Í¼Æ¬µÄĞÂ½Ó¿Ú
+	 * è¯»å–å›¾ç‰‡çš„æ–°æ¥å£
 	 * @param orderid
 	 * @param comid
 	 * @param request
 	 * @param response
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void getpicture(String orderid, Long comid,String typeStr,
-			HttpServletRequest request, HttpServletResponse response) throws IOException {
+							HttpServletRequest request, HttpServletResponse response) throws IOException {
 		logger.error("getpicture from db....");
 		logger.error("getpicture from db file:orderidLocal="+orderid+"comid="+comid);
 		if(orderid!=null && comid !=null){
-			//²éÑ¯Êı¾İ¿âÖĞ´æ·ÅµÄµÄÍ¼Æ¬
+			//æŸ¥è¯¢æ•°æ®åº“ä¸­å­˜æ”¾çš„çš„å›¾ç‰‡
 			Map map = daService.getMap("select * from carpic_tb where order_id=? and comid=? and park_order_type=? ", new Object[]{orderid,String.valueOf(comid),typeStr});
 			String content="";
 			if(map !=null && !map.isEmpty()){
@@ -155,17 +156,17 @@ public class CarPicsUploadAction extends Action {
 					response.setDateHeader("Expires", System.currentTimeMillis()+12*60*60*1000);
 					response.setContentLength(picture.length);
 					response.setContentType("image/jpeg");
-				    OutputStream o = response.getOutputStream();
-				    o.write(picture);
-				    o.flush();
-				    o.close();
+					OutputStream o = response.getOutputStream();
+					o.write(picture);
+					o.flush();
+					o.close();
 				} catch (Base64DecodingException e) {
 					e.printStackTrace();
-					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>base64µ÷ÓÃÒì³£");
+					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>base64è°ƒç”¨å¼‚å¸¸");
 					response.sendRedirect("http://sysimages.tq.cn/images/webchat_101001/common/kefu.png");
 				}
 			}else{
-				logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>Ã»ÓĞ²éµ½¶ÔÓ¦µÄÍ¼Æ¬£¡"+orderid);
+				logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>æ²¡æœ‰æŸ¥åˆ°å¯¹åº”çš„å›¾ç‰‡ï¼"+orderid);
 				response.sendRedirect("http://sysimages.tq.cn/images/webchat_101001/common/kefu.png");
 			}
 		}else {
@@ -176,15 +177,15 @@ public class CarPicsUploadAction extends Action {
 	private String uploadCarPics2Mongodb (HttpServletRequest request,Long comid,Long orderid,String lefttop,String rightbottom,String width,String height,Long type) throws Exception{
 		logger.error("begin upload picture....");
 		Map<String, String> extMap = new HashMap<String, String>();
-	    extMap.put(".jpg", "image/jpeg");
-	    extMap.put(".jpeg", "image/jpeg");
-	    extMap.put(".png", "image/png");
-	    extMap.put(".gif", "image/gif");
-		request.setCharacterEncoding("UTF-8"); // ÉèÖÃ´¦ÀíÇëÇó²ÎÊıµÄ±àÂë¸ñÊ½
-		DiskFileItemFactory  factory = new DiskFileItemFactory(); // ½¨Á¢FileItemFactory¶ÔÏó
+		extMap.put(".jpg", "image/jpeg");
+		extMap.put(".jpeg", "image/jpeg");
+		extMap.put(".png", "image/png");
+		extMap.put(".gif", "image/gif");
+		request.setCharacterEncoding("UTF-8"); // è®¾ç½®å¤„ç†è¯·æ±‚å‚æ•°çš„ç¼–ç æ ¼å¼
+		DiskFileItemFactory  factory = new DiskFileItemFactory(); // å»ºç«‹FileItemFactoryå¯¹è±¡
 		factory.setSizeThreshold(16*4096*1024);
 		ServletFileUpload upload = new ServletFileUpload(factory);
-		// ·ÖÎöÇëÇó£¬²¢µÃµ½ÉÏ´«ÎÄ¼şµÄFileItem¶ÔÏó
+		// åˆ†æè¯·æ±‚ï¼Œå¹¶å¾—åˆ°ä¸Šä¼ æ–‡ä»¶çš„FileItemå¯¹è±¡
 		upload.setSizeMax(16*4096*1024);
 		List<FileItem> items = null;
 		try {
@@ -193,13 +194,13 @@ public class CarPicsUploadAction extends Action {
 			e.printStackTrace();
 			return "-1";
 		}
-		String filename = ""; // ÉÏ´«ÎÄ¼ş±£´æµ½·şÎñÆ÷µÄÎÄ¼şÃû
-		InputStream is = null; // µ±Ç°ÉÏ´«ÎÄ¼şµÄInputStream¶ÔÏó
-		// Ñ­»·´¦ÀíÉÏ´«ÎÄ¼ş
+		String filename = ""; // ä¸Šä¼ æ–‡ä»¶ä¿å­˜åˆ°æœåŠ¡å™¨çš„æ–‡ä»¶å
+		InputStream is = null; // å½“å‰ä¸Šä¼ æ–‡ä»¶çš„InputStreamå¯¹è±¡
+		// å¾ªç¯å¤„ç†ä¸Šä¼ æ–‡ä»¶
 		String comId = "";
 		String orderId = "";
 		for (FileItem item : items){
-			// ´¦ÀíÆÕÍ¨µÄ±íµ¥Óò
+			// å¤„ç†æ™®é€šçš„è¡¨å•åŸŸ
 			if (item.isFormField()){
 				if(item.getFieldName().equals("comid")){
 					if(!item.getString().equals(""))
@@ -209,14 +210,14 @@ public class CarPicsUploadAction extends Action {
 						orderId = item.getString("UTF-8");
 					}
 				}
-				
-			}else if (item.getName() != null && !item.getName().equals("")){// ´¦ÀíÉÏ´«ÎÄ¼ş
-				// ´Ó¿Í»§¶Ë·¢ËÍ¹ıÀ´µÄÉÏ´«ÎÄ¼şÂ·¾¶ÖĞ½ØÈ¡ÎÄ¼şÃû
+
+			}else if (item.getName() != null && !item.getName().equals("")){// å¤„ç†ä¸Šä¼ æ–‡ä»¶
+				// ä»å®¢æˆ·ç«¯å‘é€è¿‡æ¥çš„ä¸Šä¼ æ–‡ä»¶è·¯å¾„ä¸­æˆªå–æ–‡ä»¶å
 				logger.error(item.getName());
 				filename = item.getName().substring(
 						item.getName().lastIndexOf("\\")+1);
-				is = item.getInputStream(); // µÃµ½ÉÏ´«ÎÄ¼şµÄInputStream¶ÔÏó
-				
+				is = item.getInputStream(); // å¾—åˆ°ä¸Šä¼ æ–‡ä»¶çš„InputStreamå¯¹è±¡
+
 			}
 		}
 		if(comid==null&&(comId.equals("")||!Check.isLong(comId)))
@@ -224,26 +225,26 @@ public class CarPicsUploadAction extends Action {
 		if(orderid == null && (orderId.equals("") || !Check.isLong(orderId))){
 			return "-1";
 		}
-		String file_ext =filename.substring(filename.lastIndexOf(".")).toLowerCase();// À©Õ¹Ãû
+		String file_ext =filename.substring(filename.lastIndexOf(".")).toLowerCase();// æ‰©å±•å
 		String picurl = comid + "_" +orderid+ "_" + System.currentTimeMillis()/1000 + file_ext;
-		BufferedInputStream in = null;  
+		BufferedInputStream in = null;
 		ByteArrayOutputStream byteout =null;
-	    try {
-	    	in = new BufferedInputStream(is);   
-	    	byteout = new ByteArrayOutputStream(1024);        	       
-		      
-	 	    byte[] temp = new byte[1024];        
-	 	    int bytesize = 0;        
-	 	    while ((bytesize = in.read(temp)) != -1) {        
-	 	          byteout.write(temp, 0, bytesize);        
-	 	    }        
-	 	      
-	 	    byte[] content = byteout.toByteArray(); 
-	 	    DB mydb = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
-		    mydb.requestStart();
-			  
-		    DBCollection collection = mydb.getCollection("car_inout_pics");
-		    logger.error("mongodb>>>>>>>>>>>´æÈë car_inout_pics±í");  
+		try {
+			in = new BufferedInputStream(is);
+			byteout = new ByteArrayOutputStream(1024);
+
+			byte[] temp = new byte[1024];
+			int bytesize = 0;
+			while ((bytesize = in.read(temp)) != -1) {
+				byteout.write(temp, 0, bytesize);
+			}
+
+			byte[] content = byteout.toByteArray();
+			DB mydb = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
+			mydb.requestStart();
+
+			DBCollection collection = mydb.getCollection("car_inout_pics");
+			logger.error("mongodb>>>>>>>>>>>å­˜å…¥ car_inout_picsè¡¨");
 			BasicDBObject document = new BasicDBObject();
 			document.put("comid",  comid);
 			document.put("orderid", orderid);
@@ -252,27 +253,27 @@ public class CarPicsUploadAction extends Action {
 			document.put("type", extMap.get(file_ext));
 			document.put("content", content);
 			document.put("filename", picurl);
-			  //¿ªÊ¼ÊÂÎñ
+			//å¼€å§‹äº‹åŠ¡
 			mydb.requestStart();
 			collection.insert(document);
-			  //½áÊøÊÂÎñ
+			//ç»“æŸäº‹åŠ¡
 			mydb.requestDone();
-			in.close();        
-		    is.close();
-		    byteout.close();
-		    List<Object> params = new ArrayList<Object>();
-		    params.add(orderid);
-		    params.add(type);
-		    String sql = "select count(*) from car_picturs_tb where orderid=? and pictype=?";
-		    Long count = 0L;
-		    count = daService.getCount(sql, params);
-		    if(count > 0){
-		    	sql = "update car_picturs_tb set create_time=?,lefttop=?,rightbottom=?,width=?,height=? where orderid=? and pictype=?";
-		    	daService.update(sql, new Object[]{System.currentTimeMillis()/1000,lefttop,rightbottom,width,height,orderid,type});
-		    }else{
-		    	sql = "insert into car_picturs_tb(orderid,pictype,create_time,lefttop,rightbottom,width,height) values(?,?,?,?,?,?,?)";
-		    	daService.update(sql, new Object[]{orderid,type,System.currentTimeMillis()/1000,lefttop,rightbottom,width,height});
-		    }
+			in.close();
+			is.close();
+			byteout.close();
+			List<Object> params = new ArrayList<Object>();
+			params.add(orderid);
+			params.add(type);
+			String sql = "select count(*) from car_picturs_tb where orderid=? and pictype=?";
+			Long count = 0L;
+			count = daService.getCount(sql, params);
+			if(count > 0){
+				sql = "update car_picturs_tb set create_time=?,lefttop=?,rightbottom=?,width=?,height=? where orderid=? and pictype=?";
+				daService.update(sql, new Object[]{System.currentTimeMillis()/1000,lefttop,rightbottom,width,height,orderid,type});
+			}else{
+				sql = "insert into car_picturs_tb(orderid,pictype,create_time,lefttop,rightbottom,width,height) values(?,?,?,?,?,?,?)";
+				daService.update(sql, new Object[]{orderid,type,System.currentTimeMillis()/1000,lefttop,rightbottom,width,height});
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "-1";
@@ -284,10 +285,10 @@ public class CarPicsUploadAction extends Action {
 			if(is!=null)
 				is.close();
 		}
-	  
+
 		return "1";
 	}
-	
+
 	private void downloadCarPics (Long orderid,Long type,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		logger.error("download from mongodb....");
 		logger.error("downloadCarPics from mongodb file:orderid="+orderid+"type="+type);
@@ -305,24 +306,24 @@ public class CarPicsUploadAction extends Action {
 			if(obj==null){
 				collection = db.getCollection("car_hd_pics");
 				obj  = collection.findOne(document);
-				logger.error("mongodb>>>>>>>>>>>car_inout_pics±íÖĞÃ»ÓĞ£¬´Ócar_hd_pics±íÖĞ²éÑ¯"+obj);
+				logger.error("mongodb>>>>>>>>>>>car_inout_picsè¡¨ä¸­æ²¡æœ‰ï¼Œä»car_hd_picsè¡¨ä¸­æŸ¥è¯¢"+obj);
 			}
 			if(obj == null){
 				AjaxUtil.ajaxOutput(response, "");
-				logger.error("È¡Í¼Æ¬´íÎó.....");
+				logger.error("å–å›¾ç‰‡é”™è¯¯.....");
 				return;
 			}
 			byte[] content = (byte[])obj.get("content");
-			logger.error("È¡Í¼Æ¬³É¹¦.....´óĞ¡:"+content.length);
+			logger.error("å–å›¾ç‰‡æˆåŠŸ.....å¤§å°:"+content.length);
 			db.requestDone();
 			response.setDateHeader("Expires", System.currentTimeMillis()+12*60*60*1000);
 			response.setContentLength(content.length);
 			response.setContentType("image/jpeg");
-		    OutputStream o = response.getOutputStream();
-		    o.write(content);
-		    o.flush();
-		    o.close();
-		    System.out.println("mongdb over.....");
+			OutputStream o = response.getOutputStream();
+			o.write(content);
+			o.flush();
+			o.close();
+			System.out.println("mongdb over.....");
 		}else {
 			response.sendRedirect("http://sysimages.tq.cn/images/webchat_101001/common/kefu.png");
 		}

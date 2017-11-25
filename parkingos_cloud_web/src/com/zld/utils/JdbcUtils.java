@@ -10,7 +10,7 @@ import org.apache.commons.jxpath.JXPathContext;
 public class JdbcUtils {
 	@SuppressWarnings("unchecked")
 	public static List createObject(Class<?> c,List<Map<String, String>> resultList) throws Exception{
-		
+
 		List list= new ArrayList();
 		for(Map<String, String> m : resultList){
 			Iterator<String> keys = m.keySet().iterator();
@@ -18,7 +18,7 @@ public class JdbcUtils {
 			JXPathContext jxpcontext = JXPathContext.newContext(t);
 			while(keys.hasNext()){
 				String key = keys.next().toLowerCase();
-				if(key.equals("my_rownum"))//ÅÅ³ý·ÖÒ³×Ö¶Î
+				if(key.equals("my_rownum"))//æŽ’é™¤åˆ†é¡µå­—æ®µ
 					continue;
 				try {
 					jxpcontext.setValue(key, m.get(key.toUpperCase()));

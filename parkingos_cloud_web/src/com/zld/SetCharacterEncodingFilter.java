@@ -13,7 +13,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**◊÷∑˚±‡¬Îπ˝¬À**/
+/**Â≠óÁ¨¶ÁºñÁ†ÅËøáÊª§**/
 public class SetCharacterEncodingFilter implements Filter {
 
 
@@ -32,9 +32,9 @@ public class SetCharacterEncodingFilter implements Filter {
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
                          FilterChain chain)
-	throws IOException, ServletException {
-    	 HttpServletRequest request = (HttpServletRequest) servletRequest;
- 		HttpServletResponse response = (HttpServletResponse) servletResponse;
+            throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
         if (ignore || (request.getCharacterEncoding() == null)) {
             String encoding = selectEncoding(request);
             if (encoding != null)
@@ -46,7 +46,7 @@ public class SetCharacterEncodingFilter implements Filter {
 
     public void init(FilterConfig filterConfig) throws ServletException {
 
-	this.filterConfig = filterConfig;
+        this.filterConfig = filterConfig;
         this.encoding = filterConfig.getInitParameter("encoding");
         String value = filterConfig.getInitParameter("ignore");
         if (value == null)

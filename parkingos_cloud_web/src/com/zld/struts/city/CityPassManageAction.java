@@ -31,21 +31,21 @@ public class CityPassManageAction extends Action {
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
-	private CommonMethods commonMethods; 
+	private CommonMethods commonMethods;
 	@Autowired
 	private MemcacheUtils memcacheUtils;
 	@Autowired
 	private PublicMethods publicMethods;
 	@Autowired
 	private MongoDbUtils mongoDbUtils;
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -58,7 +58,7 @@ public class CityPassManageAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("quickquery")){
@@ -88,7 +88,7 @@ public class CityPassManageAction extends Action {
 				sql += " and comid in ("+preParams+") ";
 				countSql += " and comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				count = pgOnlyReadService.getCount(countSql,params);
 				if(count>0){
 					list = pgOnlyReadService.getAll(sql +" order by id desc ",params, pageNum, pageSize);
@@ -124,7 +124,7 @@ public class CityPassManageAction extends Action {
 				sql += " and comid in ("+preParams+") ";
 				countSql += " and comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -148,16 +148,16 @@ public class CityPassManageAction extends Action {
 			AjaxUtil.ajaxOutput(response, r + "");
 		}else if(action.equals("getworksitename")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			Map<String, Object> map = pgOnlyReadService.getMap("select worksite_name from com_worksite_tb where id=? ", 
+			Map<String, Object> map = pgOnlyReadService.getMap("select worksite_name from com_worksite_tb where id=? ",
 					new Object[]{id});
 			AjaxUtil.ajaxOutput(response, map.get("worksite_name")+"");
 		}
 		return null;
 	}
-	
+
 	private int deletePass(HttpServletRequest request){
 		Long id =RequestUtil.getLong(request, "selids", -1L);
-		Map<String, Object> passMap =pgOnlyReadService.getMap("select * from com_pass_tb where id =? ", 
+		Map<String, Object> passMap =pgOnlyReadService.getMap("select * from com_pass_tb where id =? ",
 				new Object[]{id});
 		Long comid = -1L;
 		if(passMap != null && passMap.get("comid") != null){
@@ -166,14 +166,14 @@ public class CityPassManageAction extends Action {
 		int r = daService.update("update com_pass_tb set state=? where id=?", new Object[]{1, id});
 		if(r == 1){
 			if(publicMethods.isEtcPark(comid)){
-				int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", 
+				int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)",
 						new Object[]{comid,"com_pass_tb",Long.valueOf(id),System.currentTimeMillis()/1000,2});
 			}
-			mongoDbUtils.saveLogs( request,0, 4, "删除了通道:"+passMap);
+			mongoDbUtils.saveLogs( request,0, 4, "鍒犻櫎浜嗛�氶亾:"+passMap);
 		}
 		return r;
 	}
-	
+
 	private int editPass(HttpServletRequest request){
 		Long id =RequestUtil.getLong(request, "id", -1L);
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
@@ -196,11 +196,11 @@ public class CityPassManageAction extends Action {
 			if(publicMethods.isEtcPark(comid)){
 				int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_pass_tb",id,System.currentTimeMillis()/1000,1});
 			}
-			mongoDbUtils.saveLogs( request,0, 3, "修改了通道:"+passname);
+			mongoDbUtils.saveLogs( request,0, 3, "淇敼浜嗛�氶亾:"+passname);
 		}
 		return r;
 	}
-	
+
 	private int createPass(HttpServletRequest request){
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		String passname = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "passname"));
@@ -225,7 +225,7 @@ public class CityPassManageAction extends Action {
 		Long result = commonMethods.createPass(request, map);
 		if(result > 0)
 			return 1;
-		else 
+		else
 			return 0;
 	}
 }

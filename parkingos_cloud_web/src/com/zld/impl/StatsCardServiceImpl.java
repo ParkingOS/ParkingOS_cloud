@@ -26,9 +26,9 @@ import com.zld.utils.SqlInfo;
 public class StatsCardServiceImpl implements StatsCardService {
 	@Autowired
 	private PgOnlyReadService readService;
-	
+
 	Logger logger = Logger.getLogger(StatsCardServiceImpl.class);
-	
+
 	@Override
 	public StatsCardResp statsCard(StatsReq req) {
 		//logger.error(req.toString());
@@ -37,30 +37,30 @@ public class StatsCardServiceImpl implements StatsCardService {
 			long startTime = req.getStartTime();
 			long endTime = req.getEndTime();
 			List<Object> idList = req.getIdList();
-			int type = req.getType();//0£º°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ 1£º°´³µ³¡±àºÅÍ³¼Æ 2£º°´²´Î»¶Î±àºÅ²éÑ¯ 3£º°´²´Î»²éÑ¯
+			int type = req.getType();//0ï¼šæŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡ 1ï¼šæŒ‰è½¦åœºç¼–å·ç»Ÿè®¡ 2ï¼šæŒ‰æ³Šä½æ®µç¼–å·æŸ¥è¯¢ 3ï¼šæŒ‰æ³Šä½æŸ¥è¯¢
 			if(startTime <= 0
 					|| endTime <= 0
 					|| idList == null
 					|| idList.isEmpty()){
 				resp.setResult(-1);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
 			String column = null;
 			if(type == 0){
-				column = "uid";//°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ
+				column = "uid";//æŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡
 			}else if(type == 1){
-				column = "comid";//°´³µ³¡±àºÅÍ³¼Æ
+				column = "comid";//æŒ‰è½¦åœºç¼–å·ç»Ÿè®¡
 			}else if(type == 2){
-				column = "berthseg_id";//°´²´Î»¶Î±àºÅÍ³¼Æ
+				column = "berthseg_id";//æŒ‰æ³Šä½æ®µç¼–å·ç»Ÿè®¡
 			}else if(type == 3){
-				column = "berth_id";//°´²´Î»±àºÅÍ³¼Æ
+				column = "berth_id";//æŒ‰æ³Šä½ç¼–å·ç»Ÿè®¡
 			}else if(type == 4){
 				column = "groupid";
 			}
 			if(column == null){
 				resp.setResult(-1);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
 			String preParams = "";
@@ -72,7 +72,7 @@ public class StatsCardServiceImpl implements StatsCardService {
 				}
 			}
 			List<Object> params = new ArrayList<Object>();
-			params.add(0);//×´Ì¬Õı³£
+			params.add(0);//çŠ¶æ€æ­£å¸¸
 			params.add(startTime);
 			params.add(endTime);
 			params.addAll(idList);
@@ -81,21 +81,21 @@ public class StatsCardServiceImpl implements StatsCardService {
 					" in ("+preParams+") group by " + column + ",charge_type,consume_type,type ";
 			List<Map<String, Object>> list = readService.getAllMap(sql, params);
 			if(list != null && !list.isEmpty()){
-				List<Object> existIds = new ArrayList<Object>();//ÁĞ±íÒÑ´æÔÚµÄÖ÷¼ü
+				List<Object> existIds = new ArrayList<Object>();//åˆ—è¡¨å·²å­˜åœ¨çš„ä¸»é”®
 				List<StatsCard> cards = new ArrayList<StatsCard>();
 				for(Map<String, Object> map : list){
 					Long id = (Long)map.get(column);
 					Double summoney = Double.valueOf(map.get("summoney") + "");
 					Long count = (Long)map.get("ccount");
-					Integer charge_type = (Integer)map.get("charge_type");//³äÖµ·½Ê½£º0£ºÏÖ½ğ³äÖµ 1£ºÎ¢ĞÅ¹«ÖÚºÅ³äÖµ 2£ºÎ¢ĞÅ¿Í»§¶Ë³äÖµ 3£ºÖ§¸¶±¦³äÖµ 4£ºÔ¤Ö§¸¶ÍË¿î 5£º¶©µ¥ÍË¿î
-					Integer consume_type = (Integer)map.get("consume_type");//Ïû·Ñ·½Ê½ 0£ºÖ§¸¶Í£³µ·Ñ£¨·ÇÔ¤¸¶£© 1£ºÔ¤¸¶Í£³µ·Ñ 2£º²¹½ÉÍ£³µ·Ñ  3£º×·½ÉÍ£³µ·Ñ
-					Integer cardType = (Integer)map.get("type");//£¨¿¨Æ¬µÄÉúÃüÖÜÆÚ£©0£º³äÖµ 1£ºÏû·Ñ 2£º¿ª¿¨£¨¿¨Æ¬³õÊ¼»¯£¬´ËÊ±µÄ¿¨Æ¬»¹²»ÄÜÊ¹ÓÃ£© 3£º¼¤»î¿¨Æ¬£¨´ËÊ±¿¨Æ¬·½¿ÉÊ¹ÓÃ£© 4£º°ó¶¨ÓÃ»§ 5£º×¢Ïú¿¨Æ¬
-					
+					Integer charge_type = (Integer)map.get("charge_type");//å……å€¼æ–¹å¼ï¼š0ï¼šç°é‡‘å……å€¼ 1ï¼šå¾®ä¿¡å…¬ä¼—å·å……å€¼ 2ï¼šå¾®ä¿¡å®¢æˆ·ç«¯å……å€¼ 3ï¼šæ”¯ä»˜å®å……å€¼ 4ï¼šé¢„æ”¯ä»˜é€€æ¬¾ 5ï¼šè®¢å•é€€æ¬¾
+					Integer consume_type = (Integer)map.get("consume_type");//æ¶ˆè´¹æ–¹å¼ 0ï¼šæ”¯ä»˜åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰ 1ï¼šé¢„ä»˜åœè½¦è´¹ 2ï¼šè¡¥ç¼´åœè½¦è´¹  3ï¼šè¿½ç¼´åœè½¦è´¹
+					Integer cardType = (Integer)map.get("type");//ï¼ˆå¡ç‰‡çš„ç”Ÿå‘½å‘¨æœŸï¼‰0ï¼šå……å€¼ 1ï¼šæ¶ˆè´¹ 2ï¼šå¼€å¡ï¼ˆå¡ç‰‡åˆå§‹åŒ–ï¼Œæ­¤æ—¶çš„å¡ç‰‡è¿˜ä¸èƒ½ä½¿ç”¨ï¼‰ 3ï¼šæ¿€æ´»å¡ç‰‡ï¼ˆæ­¤æ—¶å¡ç‰‡æ–¹å¯ä½¿ç”¨ï¼‰ 4ï¼šç»‘å®šç”¨æˆ· 5ï¼šæ³¨é”€å¡ç‰‡
+
 					StatsCard card = null;
 					if(existIds.contains(id)){
 						for(StatsCard statsCard : cards){
 							long statsId = statsCard.getId();
-							if(id.intValue() == statsId){//²éÕÒÆ¥ÅäµÄÖ÷¼ü
+							if(id.intValue() == statsId){//æŸ¥æ‰¾åŒ¹é…çš„ä¸»é”®
 								card = statsCard;
 								break;
 							}
@@ -104,44 +104,44 @@ public class StatsCardServiceImpl implements StatsCardService {
 						existIds.add(id);
 						card = new StatsCard();
 						card.setId(id);
-						cards.add(card);//ĞÂÌí¼Ó
+						cards.add(card);//æ–°æ·»åŠ 
 					}
 					switch (cardType) {
-					case 0://³äÖµ
-						if(charge_type == 0){//ÏÖ½ğ³äÖµ
-							card.setChargeCashFee(summoney);
-						}else if(charge_type == 4){//Ô¤¸¶ÍË¿î
-							card.setRefundFee(summoney);
-						}
-						break;
-					case 1://Ïû·Ñ
-						if(consume_type == 0){//Ö§¸¶Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-							card.setParkingFee(summoney);
-						}else if(consume_type == 1){//Ô¤¸¶Í£³µ·Ñ
-							card.setPrepayFee(summoney);
-						}else if(consume_type == 2){//²¹½ÉÍ£³µ·Ñ
-							card.setAddFee(summoney);
-						}else if(consume_type == 3){//×·½ÉÍ£³µ·Ñ
-							card.setPursueFee(summoney);
-						}
-						break;
-					case 2://¿ª¿¨
-						card.setRegFee(summoney);
-						card.setRegCount(count);
-						break;
-					case 3://¼¤»î¿¨Æ¬
-						card.setActFee(summoney);
-						card.setActCount(count);
-						break;
-					case 4://¿¨Æ¬°ó¶¨ÓÃ»§
-						card.setBindCount(count);
-						break;
-					case 5://×¢Ïú¿¨Æ¬
-						card.setReturnFee(summoney);
-						card.setReturnCount(count);
-						break;
-					default:
-						break;
+						case 0://å……å€¼
+							if(charge_type == 0){//ç°é‡‘å……å€¼
+								card.setChargeCashFee(summoney);
+							}else if(charge_type == 4){//é¢„ä»˜é€€æ¬¾
+								card.setRefundFee(summoney);
+							}
+							break;
+						case 1://æ¶ˆè´¹
+							if(consume_type == 0){//æ”¯ä»˜åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+								card.setParkingFee(summoney);
+							}else if(consume_type == 1){//é¢„ä»˜åœè½¦è´¹
+								card.setPrepayFee(summoney);
+							}else if(consume_type == 2){//è¡¥ç¼´åœè½¦è´¹
+								card.setAddFee(summoney);
+							}else if(consume_type == 3){//è¿½ç¼´åœè½¦è´¹
+								card.setPursueFee(summoney);
+							}
+							break;
+						case 2://å¼€å¡
+							card.setRegFee(summoney);
+							card.setRegCount(count);
+							break;
+						case 3://æ¿€æ´»å¡ç‰‡
+							card.setActFee(summoney);
+							card.setActCount(count);
+							break;
+						case 4://å¡ç‰‡ç»‘å®šç”¨æˆ·
+							card.setBindCount(count);
+							break;
+						case 5://æ³¨é”€å¡ç‰‡
+							card.setReturnFee(summoney);
+							card.setReturnCount(count);
+							break;
+						default:
+							break;
 					}
 				}
 				resp.setCards(cards);
@@ -151,7 +151,7 @@ public class StatsCardServiceImpl implements StatsCardService {
 			e.printStackTrace();
 		}
 		resp.setResult(-1);
-		resp.setErrmsg("ÏµÍ³´íÎó");
+		resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		return resp;
 	}
 
@@ -161,40 +161,40 @@ public class StatsCardServiceImpl implements StatsCardService {
 		//logger.error(req.toString());
 		AccountResp resp = new AccountResp();
 		try {
-			ExecutorService pool = ExecutorsUtil.getExecutorService();//»ñÈ¡Ïß³Ì³Ø
+			ExecutorService pool = ExecutorsUtil.getExecutorService();//è·å–çº¿ç¨‹æ± 
 			long startTime = req.getStartTime();
 			long endTime = req.getEndTime();
 			long id = req.getId();
 			int pageNum = req.getPageNum();
 			int pageSize = req.getPageSize();
-			int type = req.getType();//0£º°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ 1£º°´³µ³¡±àºÅÍ³¼Æ 2£º°´²´Î»¶Î±àºÅ²éÑ¯ 3£º°´²´Î»²éÑ¯
+			int type = req.getType();//0ï¼šæŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡ 1ï¼šæŒ‰è½¦åœºç¼–å·ç»Ÿè®¡ 2ï¼šæŒ‰æ³Šä½æ®µç¼–å·æŸ¥è¯¢ 3ï¼šæŒ‰æ³Šä½æŸ¥è¯¢
 			SqlInfo sqlInfo = req.getSqlInfo();
 			if(startTime <= 0
 					|| endTime <= 0
 					|| id <= 0){
 				resp.setResult(-1);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
 			String column = null;
 			if(type == 0){
-				column = "uid";//°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ
+				column = "uid";//æŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡
 			}else if(type == 1){
-				column = "comid";//°´³µ³¡±àºÅÍ³¼Æ
+				column = "comid";//æŒ‰è½¦åœºç¼–å·ç»Ÿè®¡
 			}else if(type == 2){
-				column = "berthseg_id";//°´²´Î»¶Î±àºÅÍ³¼Æ
+				column = "berthseg_id";//æŒ‰æ³Šä½æ®µç¼–å·ç»Ÿè®¡
 			}else if(type == 3){
-				column = "berth_id";//°´²´Î»±àºÅÍ³¼Æ
+				column = "berth_id";//æŒ‰æ³Šä½ç¼–å·ç»Ÿè®¡
 			}else if(type == 4){
 				column = "groupid";
 			}
 			if(column == null){
 				resp.setResult(-1);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
 			ArrayList<Object> params = new ArrayList<Object>();
-			params.add(0);//×´Ì¬Õı³£
+			params.add(0);//çŠ¶æ€æ­£å¸¸
 			params.add(startTime);
 			params.add(endTime);
 			params.add(id);
@@ -222,7 +222,7 @@ public class StatsCardServiceImpl implements StatsCardService {
 			e.printStackTrace();
 		}
 		resp.setResult(-1);
-		resp.setErrmsg("ÏµÍ³´íÎó");
+		resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		return resp;
 	}
 

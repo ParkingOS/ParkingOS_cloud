@@ -14,7 +14,7 @@ import com.zld.utils.TimeTools;
 
 
 /**
- * memcached¹¤¾ß£¬¹ºÂò°üÔÂ²úÆ·£¬Ö§¸¶¶©µ¥£¬²éÑ¯³µÅÆºÅÂë 
+ * memcachedå·¥å…·ï¼Œè´­ä¹°åŒ…æœˆäº§å“ï¼Œæ”¯ä»˜è®¢å•ï¼ŒæŸ¥è¯¢è½¦ç‰Œå·ç 
  * @author Administrator
  *
  */
@@ -22,9 +22,9 @@ import com.zld.utils.TimeTools;
 @Repository
 public class MemcacheUtils {
 
-	
+
 	private Logger logger = Logger.getLogger(MemcacheUtils.class);
-	
+
 	@SuppressWarnings("rawtypes")
 	@Autowired
 	private CacheXMemcache cacheXMemcache;
@@ -37,7 +37,7 @@ public class MemcacheUtils {
 		}
 		return null;
 	}
-	
+
 	public String get(String key) {
 		try {
 			return (String) cacheXMemcache.get(key, String.class);
@@ -46,7 +46,7 @@ public class MemcacheUtils {
 		}
 		return null;
 	}
-	
+
 	public boolean set(String key, Object value) {
 		try {
 			return cacheXMemcache.setCached(key, value);
@@ -55,7 +55,7 @@ public class MemcacheUtils {
 		}
 		return false;
 	}
-	
+
 	public boolean delete(String key) {
 		try {
 			return cacheXMemcache.delete(key);
@@ -64,26 +64,26 @@ public class MemcacheUtils {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Ìí¼Ó·Ö²¼Ê½Ëø
-	 * add·½·¨£¬³É¹¦·µ»Øtrue£¬µ±Êı¾İÒÑ¾­´æÔÚÊ±£¬·µ»Øfalse£¬Ó¦ÓÃÓÚ·Ö²¼Ê½Ëø
+	 * æ·»åŠ åˆ†å¸ƒå¼é”
+	 * addæ–¹æ³•ï¼ŒæˆåŠŸè¿”å›trueï¼Œå½“æ•°æ®å·²ç»å­˜åœ¨æ—¶ï¼Œè¿”å›falseï¼Œåº”ç”¨äºåˆ†å¸ƒå¼é”
 	 * @param key
 	 * @return
 	 */
-	public boolean addLock(String key){//´æ»î2Ãë
+	public boolean addLock(String key){//å­˜æ´»2ç§’
 		try {
 			byte[] b = new byte[0];
 			return cacheXMemcache.addCached(key, b, 300);
 		} catch (Exception e) {
 			logger.error(e);
 		}
-		return true;//µ±»º´æÅ×³öÒì³£Ê±£¬·µ»Øtrue£¬²»Ê¹ÓÃ·Ö²¼Ê½Ëø
+		return true;//å½“ç¼“å­˜æŠ›å‡ºå¼‚å¸¸æ—¶ï¼Œè¿”å›trueï¼Œä¸ä½¿ç”¨åˆ†å¸ƒå¼é”
 	}
 	/**
-	 * Ìí¼Ó·Ö²¼Ê½Ëø
-	 * @param key Ëø±êÖ¾
-	 * @param exp ÉúÃüÖÜÆÚ
+	 * æ·»åŠ åˆ†å¸ƒå¼é”
+	 * @param key é”æ ‡å¿—
+	 * @param exp ç”Ÿå‘½å‘¨æœŸ
 	 * @return
 	 */
 	public boolean addLock(String key, int exp){
@@ -93,10 +93,10 @@ public class MemcacheUtils {
 		} catch (Exception e) {
 			logger.error(e);
 		}
-		return true;//µ±»º´æÅ×³öÒì³£Ê±£¬·µ»Øtrue£¬²»Ê¹ÓÃ·Ö²¼Ê½Ëø
+		return true;//å½“ç¼“å­˜æŠ›å‡ºå¼‚å¸¸æ—¶ï¼Œè¿”å›trueï¼Œä¸ä½¿ç”¨åˆ†å¸ƒå¼é”
 	}
 	/**
-	 * É¾³ı·Ö²¼Ê½Ëø£¬ËäÈ»ÉèÖÃÁËËøµÄÉúÃüÖÜÆÚÊÇ2Ãë£¬µ«ÊÇÈÔ½¨ÒéÔÚfinallyÀïµ÷ÓÃ
+	 * åˆ é™¤åˆ†å¸ƒå¼é”ï¼Œè™½ç„¶è®¾ç½®äº†é”çš„ç”Ÿå‘½å‘¨æœŸæ˜¯2ç§’ï¼Œä½†æ˜¯ä»å»ºè®®åœ¨finallyé‡Œè°ƒç”¨
 	 * @param key
 	 * @return
 	 */
@@ -111,9 +111,9 @@ public class MemcacheUtils {
 		}
 		return false;
 	}
-	
+
 	public  String doStringCache(String key,
-			String map,String updateFlag) {
+								 String map,String updateFlag) {
 		final String map2 = map;
 		return (String) cacheXMemcache.doCachedTask(new CachedTask<String>(key, updateFlag) {
 			public String run() {
@@ -121,10 +121,10 @@ public class MemcacheUtils {
 			}
 		});
 	}
-	
-	
+
+
 	public   Map<Long ,Long> doMapLongLongCache(String key,
-			Map<Long ,Long> map,String updateFlag) {
+												Map<Long ,Long> map,String updateFlag) {
 		final Map<Long ,Long> map2 = map;
 		return (Map<Long ,Long>) cacheXMemcache.doCachedTask(new CachedTask<Map<Long ,Long>>(key, updateFlag) {
 			public Map<Long ,Long> run() {
@@ -132,9 +132,9 @@ public class MemcacheUtils {
 			}
 		});
 	}
-	/*Ö§¸¶Ê¹ÓÃÈ¯»º´æ  ,key = usetickets_times**/
+	/*æ”¯ä»˜ä½¿ç”¨åˆ¸ç¼“å­˜  ,key = usetickets_times**/
 	public   Map<Long ,String> doMapLongStringCache(String key,
-			Map<Long ,String> map,String updateFlag) {
+													Map<Long ,String> map,String updateFlag) {
 		final Map<Long ,String> map2 = map;
 		return (Map<Long ,String>) cacheXMemcache.doCachedTask(new CachedTask<Map<Long ,String>>(key, updateFlag) {
 			public Map<Long ,String> run() {
@@ -142,9 +142,9 @@ public class MemcacheUtils {
 			}
 		});
 	}
-	
+
 	/**
-	 * @param Ğ´ÈëÊÕ·ÑÔ±token
+	 * @param å†™å…¥æ”¶è´¹å‘˜token
 	 * @return
 	 */
 	public  Map<String,String > doMapStringStringCache(String key,Map<String,String > value,String updateFlag) {
@@ -156,10 +156,10 @@ public class MemcacheUtils {
 		});
 	}
 
-	
+
 
 	/**
-	 * @param Ğ´ÈëÏÂÒ»¸öºì°üË÷Òı
+	 * @param å†™å…¥ä¸‹ä¸€ä¸ªçº¢åŒ…ç´¢å¼•
 	 * @return
 	 */
 	public  Integer doIntegerCache(String key,Integer value,String updateFlag) {
@@ -170,8 +170,8 @@ public class MemcacheUtils {
 			}
 		});
 	}
-	
-	/*Ö§¸¶·µÏÖ»º´æ£¬Í¬Ò»³µ³¡£¬Í¬Ò»³µÖ÷Ã¿ÌìÖ»ÄÜÒ»¸ö·µÏÖ3´Î  ,key = backmoney_times**/
+
+	/*æ”¯ä»˜è¿”ç°ç¼“å­˜ï¼ŒåŒä¸€è½¦åœºï¼ŒåŒä¸€è½¦ä¸»æ¯å¤©åªèƒ½ä¸€ä¸ªè¿”ç°3æ¬¡  ,key = backmoney_times**/
 	/*@SuppressWarnings("unchecked")
 	public   Map<String ,String> doBackMoneyCache(String key,
 			Map<String ,String> map,String updateFlag) {
@@ -184,7 +184,7 @@ public class MemcacheUtils {
 	}*/
 
 	/**
-	 * @param ºÚÃûµ¥
+	 * @param é»‘åå•
 	 * @return
 	 */
 	/*@SuppressWarnings("unchecked")
@@ -196,10 +196,10 @@ public class MemcacheUtils {
 			}
 		});
 	}*/
-	
-	
+
+
 	/**
-	 * @param ºÚÃûµ¥
+	 * @param é»‘åå•
 	 * @return
 	 */
 	public  List<Long> doListLongCache(String key,List<Long> value,String updateFlag) {
@@ -211,7 +211,7 @@ public class MemcacheUtils {
 		});
 	}
 	/**
-	 * @param ÊÕ·ÑÔ±ÏûÏ¢¿ª¹Ø
+	 * @param æ”¶è´¹å‘˜æ¶ˆæ¯å¼€å…³
 	 * @return
 	 */
 	/*@SuppressWarnings("unchecked")
@@ -224,7 +224,7 @@ public class MemcacheUtils {
 		});
 	}*/
 	/**
-	 * @param Í£³µ³¡·µÏÖ»º´æ £¬¼ÃÄÏ³µ³¡10%·µÏÖ
+	 * @param åœè½¦åœºè¿”ç°ç¼“å­˜ ï¼Œæµå—è½¦åœº10%è¿”ç°
 	 * @return
 	 */
 	public  Map<Long, Integer> doMapLongIntegerCache(String key,Map<Long, Integer> map,String updateFlag) {
@@ -244,13 +244,13 @@ public class MemcacheUtils {
 			}
 		});
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**
-	 * @param ¶ÁÈ¡ÏÂÒ»¸öºì°üË÷Òı
+	 * @param è¯»å–ä¸‹ä¸€ä¸ªçº¢åŒ…ç´¢å¼•
 	 * @return
 	 */
 	public Integer readGetHBonusCache(){
@@ -258,9 +258,9 @@ public class MemcacheUtils {
 		logger.error(">>>>hbonus_index:"+values);
 		return values;
 	}
-	
+
 	/**
-	 * @param uin£º³µÖ÷ÕË»§.Ò»ÌìÖ»ÄÜÓÃÒ»ÕÅÈ¯
+	 * @param uinï¼šè½¦ä¸»è´¦æˆ·.ä¸€å¤©åªèƒ½ç”¨ä¸€å¼ åˆ¸
 	 * @return
 	 */
 	public boolean readUseTicketCache(Long uin){
@@ -269,7 +269,7 @@ public class MemcacheUtils {
 		//logger.error(">>>>read>>> uin:"+uin+",map:"+ map);
 		if(map!=null&&map.get(uin)!=null){
 			String values = map.get(uin);
-			logger.error(">>>Í£³µÈ¯Ê¹ÓÃ´ÎÊı £ºcache value:"+values+",uin:"+uin+",today:"+todayLong);
+			logger.error(">>>åœè½¦åˆ¸ä½¿ç”¨æ¬¡æ•° ï¼šcache value:"+values+",uin:"+uin+",today:"+todayLong);
 			Long tLong = Long.valueOf(values.split("_")[0]);
 			Integer times = Integer.valueOf(values.split("_")[1]);
 			if(todayLong.intValue()==tLong.intValue()&&times>0)
@@ -278,7 +278,7 @@ public class MemcacheUtils {
 		return true;
 	}
 	/**
-	 * @param uin£º³µÖ÷ÕË»§
+	 * @param uinï¼šè½¦ä¸»è´¦æˆ·
 	 * @return
 	 */
 	public void updateUseTicketCache(Long uin){
@@ -288,7 +288,7 @@ public class MemcacheUtils {
 		if(map!=null){
 			if(map.get(uin)!=null){
 				String values = map.get(uin);
-				
+
 				Long tLong = Long.valueOf(values.split("_")[0]);
 				Integer times = Integer.valueOf(values.split("_")[1]);
 				if(tLong.intValue()==todayLong.intValue())
@@ -296,22 +296,22 @@ public class MemcacheUtils {
 				else {
 					map.put(uin, todayLong+"_"+1);
 				}
-				logger.error(">>>¸üĞÂÍ£³µÈ¯Ê¹ÓÃ´ÎÊı»º´æ  £ºcache value:"+map.get(uin));
+				logger.error(">>>æ›´æ–°åœè½¦åˆ¸ä½¿ç”¨æ¬¡æ•°ç¼“å­˜  ï¼šcache value:"+map.get(uin));
 			}else {
 				map.put(uin, todayLong+"_"+1);
-				logger.error(">>>Í£³µÈ¯»º´æÊ×´ÎÊ¹ÓÃ£º"+uin);
+				logger.error(">>>åœè½¦åˆ¸ç¼“å­˜é¦–æ¬¡ä½¿ç”¨ï¼š"+uin);
 			}
-			//logger.error(">>>Í£³µÈ¯»º´æ´æÈë £º"+map);
+			//logger.error(">>>åœè½¦åˆ¸ç¼“å­˜å­˜å…¥ ï¼š"+map);
 		}else {
 			map = new HashMap<Long, String>();
 			map.put(uin, todayLong+"_"+1);
-			logger.error(">>>Í£³µÈ¯»º´æÊ×´ÎÊ¹ÓÃ£º"+uin);
+			logger.error(">>>åœè½¦åˆ¸ç¼“å­˜é¦–æ¬¡ä½¿ç”¨ï¼š"+uin);
 		}
 		doMapLongStringCache("usetickets_times", map, "update");
 	}
-	
+
 	/**
-	 * Ã¿Ìì×î¸ßµÄ²¹Ìù¶î¶ÈÊÇ3000
+	 * æ¯å¤©æœ€é«˜çš„è¡¥è´´é¢åº¦æ˜¯3000
 	 * @return
 	 */
 	public Double readAllowanceCache(){
@@ -323,9 +323,9 @@ public class MemcacheUtils {
 		}
 		return allmoney;
 	}
-	
+
 	/**
-	 * ¸üĞÂÃ¿ÈÕ²¹ÌùÉÏÏŞ»º´æ
+	 * æ›´æ–°æ¯æ—¥è¡¥è´´ä¸Šé™ç¼“å­˜
 	 * @param money
 	 */
 	public void updateAllowanceCache(Double money){
@@ -336,22 +336,22 @@ public class MemcacheUtils {
 				Double allowance = Double.valueOf(map.get(today) + "");
 				allowance += money;
 				map.put(today, allowance + "");
-				logger.error(">>>¸üĞÂÃ¿ÈÕ²¹ÌùÉÏÏŞ»º´æ  £ºcache value:"+allowance+",today:"+today+",money:"+money);
+				logger.error(">>>æ›´æ–°æ¯æ—¥è¡¥è´´ä¸Šé™ç¼“å­˜  ï¼šcache value:"+allowance+",today:"+today+",money:"+money);
 			}else {
 				map.put(today, money+"");
-				logger.error(">>>½ñÈÕÊ×´Î»º´æ£º"+money+",today:"+today);
+				logger.error(">>>ä»Šæ—¥é¦–æ¬¡ç¼“å­˜ï¼š"+money+",today:"+today);
 			}
-			//logger.error(">>>Í£³µÈ¯»º´æ´æÈë £º"+map);
+			//logger.error(">>>åœè½¦åˆ¸ç¼“å­˜å­˜å…¥ ï¼š"+map);
 		}else {
 			map = new HashMap<Long, String>();
 			map.put(today, money + "");
-			logger.error("´´½¨²¹ÌùÉÏÏŞ»º´æ£º"+money+",today:"+today);
+			logger.error("åˆ›å»ºè¡¥è´´ä¸Šé™ç¼“å­˜ï¼š"+money+",today:"+today);
 		}
 		doMapLongStringCache("allowance_money", map, "update");
 	}
-	
+
 	/**
-	 * °´ÕÕÃ¿¸ö³µ³¡¶©µ¥Á¿¸üĞÂÃ¿ÈÕ²¹Ìù»º´æ
+	 * æŒ‰ç…§æ¯ä¸ªè½¦åœºè®¢å•é‡æ›´æ–°æ¯æ—¥è¡¥è´´ç¼“å­˜
 	 * @param money
 	 */
 	public void updateAllowCacheByPark(Long comid,Double money){
@@ -361,18 +361,18 @@ public class MemcacheUtils {
 		if(map != null){
 			if(map.get(comid) != null){
 				String info = map.get(comid);
-				Long time = Long.valueOf(info.split("_")[0]);//Ê±¼ä
+				Long time = Long.valueOf(info.split("_")[0]);//æ—¶é—´
 				if(time.intValue() == today.intValue()){
-					Double allow = Double.valueOf(info.split("_")[1]);//½ñÈÕ¸Ã³µ³¡²¹Ìù
+					Double allow = Double.valueOf(info.split("_")[1]);//ä»Šæ—¥è¯¥è½¦åœºè¡¥è´´
 					allow += money;
 					map.put(comid, today + "_" + allow);
 				}else{
 					map.put(comid, today + "_" + money);
 				}
-				logger.error("°´³µ³¡¸üĞÂÃ¿ÈÕ²¹Ìù»º´ætime:"+time+"comid:"+comid);
+				logger.error("æŒ‰è½¦åœºæ›´æ–°æ¯æ—¥è¡¥è´´ç¼“å­˜time:"+time+"comid:"+comid);
 			}else{
 				map.put(comid, today + "_" + money);
-				logger.error("°´³µ³¡²¹Ìù»º´æÊ×´ÎÊ¹ÓÃ"+"comid:"+comid);
+				logger.error("æŒ‰è½¦åœºè¡¥è´´ç¼“å­˜é¦–æ¬¡ä½¿ç”¨"+"comid:"+comid);
 			}
 		}else{
 			map = new HashMap<Long, String>();
@@ -380,9 +380,9 @@ public class MemcacheUtils {
 		}
 		doMapLongStringCache("allow_park_money", map, "update");
 	}
-	
+
 	/**
-	 * ¶ÁÈ¡Ã¿¸ö³µ³¡µÄ²¹Ìù½ğ¶î
+	 * è¯»å–æ¯ä¸ªè½¦åœºçš„è¡¥è´´é‡‘é¢
 	 * @return
 	 */
 	public Double readAllowCacheByPark(Long comid){
@@ -391,20 +391,20 @@ public class MemcacheUtils {
 		Map<Long ,String> map = doMapLongStringCache("allow_park_money", null, null);
 		if( map != null && map.get(comid) != null){
 			String info = map.get(comid);
-			Long time = Long.valueOf(info.split("_")[0]);//Ê±¼ä
+			Long time = Long.valueOf(info.split("_")[0]);//æ—¶é—´
 			if(time.intValue() == today.intValue()){
-				allow = Double.valueOf(info.split("_")[1]);//½ñÈÕ¸Ã³µ³¡²¹Ìù
+				allow = Double.valueOf(info.split("_")[1]);//ä»Šæ—¥è¯¥è½¦åœºè¡¥è´´
 			}
 		}
 		return allow;
 	}
-	
+
 	/**
-	 * ¶ÁÈ¡Ã¿¸ö³µ³¡µÄ²¹Ìù½ğ¶î
+	 * è¯»å–æ¯ä¸ªè½¦åœºçš„è¡¥è´´é‡‘é¢
 	 * @return
 	 */
 	public Double readAllowLimitCacheByPark(Long comid){
-		Double limit = null;//³õÊ¼ÖµÉèÎªnull£¬ÓÃÓÚÇø·ÖÎŞ»º´æºÍ²¹ÌùÉÏÏŞÎª0
+		Double limit = null;//åˆå§‹å€¼è®¾ä¸ºnullï¼Œç”¨äºåŒºåˆ†æ— ç¼“å­˜å’Œè¡¥è´´ä¸Šé™ä¸º0
 		Map<Long ,String> map = doMapLongStringCache("allow_park_limit", null, null);
 		if( map != null && !map.isEmpty()){
 			if(map.get(comid) != null){
@@ -415,8 +415,8 @@ public class MemcacheUtils {
 		}
 		return limit;
 	}
-	
-	/*Ö§¸¶·µÈ¯»º´æ£¬Í¬Ò»³µÖ÷Ã¿ÌìÖ»ÄÜ·µ3´Î  ,key = backtickets_times**/
+
+	/*æ”¯ä»˜è¿”åˆ¸ç¼“å­˜ï¼ŒåŒä¸€è½¦ä¸»æ¯å¤©åªèƒ½è¿”3æ¬¡  ,key = backtickets_times**/
 	/*@SuppressWarnings("unchecked")
 	public   Map<Long ,String> doBackTicketCache(String key,
 			Map<Long ,String> map,String updateFlag) {
@@ -428,7 +428,7 @@ public class MemcacheUtils {
 		});
 	}*/
 	/**
-	 * @param uin£º³µÖ÷ÕË»§
+	 * @param uinï¼šè½¦ä¸»è´¦æˆ·
 	 * @return
 	 */
 	public boolean readBackTicketCache(Long uin){
@@ -437,7 +437,7 @@ public class MemcacheUtils {
 		//logger.error(">>>>read>>> uin:"+uin+",map:"+ map);
 		if(map!=null&&map.get(uin)!=null){
 			String values = map.get(uin);
-			logger.error(">>>Í£³µÈ¯·µÈ¯´ÎÊı  £ºcache value:"+values+",uin:"+uin+",today:"+todayLong);
+			logger.error(">>>åœè½¦åˆ¸è¿”åˆ¸æ¬¡æ•°  ï¼šcache value:"+values+",uin:"+uin+",today:"+todayLong);
 			Long tLong = Long.valueOf(values.split("_")[0]);
 			Integer times = Integer.valueOf(values.split("_")[1]);
 			if(todayLong.intValue()==tLong.intValue()&&times>0)
@@ -445,9 +445,9 @@ public class MemcacheUtils {
 		}
 		return true;
 	}
-	
+
 	/**
-	 * @param uin£º³µÖ÷ÕË»§
+	 * @param uinï¼šè½¦ä¸»è´¦æˆ·
 	 * @return
 	 */
 	public void updateBackTicketCache(Long uin){
@@ -457,7 +457,7 @@ public class MemcacheUtils {
 		if(map!=null){
 			if(map.get(uin)!=null){
 				String values = map.get(uin);
-				
+
 				Long tLong = Long.valueOf(values.split("_")[0]);
 				Integer times = Integer.valueOf(values.split("_")[1]);
 				if(tLong.intValue()==todayLong.intValue())
@@ -465,22 +465,22 @@ public class MemcacheUtils {
 				else {
 					map.put(uin, todayLong+"_"+1);
 				}
-				logger.error(">>>¸üĞÂÍ£³µÈ¯·µÈ¯´ÎÊı»º´æ  £º"+map.get(uin));
+				logger.error(">>>æ›´æ–°åœè½¦åˆ¸è¿”åˆ¸æ¬¡æ•°ç¼“å­˜  ï¼š"+map.get(uin));
 			}else {
 				map.put(uin, todayLong+"_"+1);
-				logger.error(">>>Í£³µÈ¯»º·µÈ¯´æÊ×´ÎÊ¹ÓÃ£º"+uin);
+				logger.error(">>>åœè½¦åˆ¸ç¼“è¿”åˆ¸å­˜é¦–æ¬¡ä½¿ç”¨ï¼š"+uin);
 			}
-			//logger.error(">>>Í£³µÈ¯·µÈ¯´ÎÊı»º´æ±£´æ£º"+map);
+			//logger.error(">>>åœè½¦åˆ¸è¿”åˆ¸æ¬¡æ•°ç¼“å­˜ä¿å­˜ï¼š"+map);
 		}else {
 			map = new HashMap<Long, String>();
 			map.put(uin, todayLong+"_"+1);
-			logger.error(">>>Í£³µÈ¯»º·µÈ¯´æÊ×´ÎÊ¹ÓÃ£º"+uin);
+			logger.error(">>>åœè½¦åˆ¸ç¼“è¿”åˆ¸å­˜é¦–æ¬¡ä½¿ç”¨ï¼š"+uin);
 		}
 		doMapLongStringCache("backtickets_times", map, "update");
 	}
 
 	/**
-	 * @param park_uin£º³µ³¡_³µÖ÷ÕË»§
+	 * @param park_uinï¼šè½¦åœº_è½¦ä¸»è´¦æˆ·
 	 * @return
 	 */
 	public boolean readBackMoneyCache(String park_uin){
@@ -489,17 +489,17 @@ public class MemcacheUtils {
 		//logger.error(">>>>read>>> park_uin:"+park_uin+",map:"+ map);
 		if(map!=null&&map.get(park_uin)!=null){
 			String values = map.get(park_uin);
-			logger.error(">>>Í£³µ·µÏÖ´ÎÊı  £ºcache value:"+values+",park_uin:"+park_uin+",today:"+todayLong);
+			logger.error(">>>åœè½¦è¿”ç°æ¬¡æ•°  ï¼šcache value:"+values+",park_uin:"+park_uin+",today:"+todayLong);
 			Long tLong = Long.valueOf(values.split("_")[0]);
 			Integer times = Integer.valueOf(values.split("_")[1]);
 			//if(todayLong.intValue()==tLong.intValue()&&times>2)
-			if(todayLong.intValue()==tLong.intValue()&&times>0)//Í¬Ò»³µ³¡Í¬Ò»³µÖ÷Ö»·µÒ»´ÎÁ½Ôª
+			if(todayLong.intValue()==tLong.intValue()&&times>0)//åŒä¸€è½¦åœºåŒä¸€è½¦ä¸»åªè¿”ä¸€æ¬¡ä¸¤å…ƒ
 				return false;
 		}
 		return true;
 	}
 	/**
-	 * @param park_uin£º³µ³¡_³µÖ÷ÕË»§
+	 * @param park_uinï¼šè½¦åœº_è½¦ä¸»è´¦æˆ·
 	 * @return
 	 */
 	public void updateBackMoneyCache(String park_uin){
@@ -509,7 +509,7 @@ public class MemcacheUtils {
 		if(map!=null){
 			if(map.get(park_uin)!=null){
 				String values = map.get(park_uin);
-				logger.error(">>>Í£³µ·µÏÖ´ÎÊı  £ºcache value:"+values+",park_uin:"+park_uin+",today:"+todayLong);
+				logger.error(">>>åœè½¦è¿”ç°æ¬¡æ•°  ï¼šcache value:"+values+",park_uin:"+park_uin+",today:"+todayLong);
 				Long tLong = Long.valueOf(values.split("_")[0]);
 				Integer times = Integer.valueOf(values.split("_")[1]);
 				if(tLong.intValue()==todayLong.intValue())
@@ -517,16 +517,16 @@ public class MemcacheUtils {
 				else {
 					map.put(park_uin, todayLong+"_"+1);
 				}
-				logger.error(">>>¸üĞÂÍ£³µ·µÏÖ´ÎÊı»º´æ  £ºcache value:"+map.get(park_uin));
+				logger.error(">>>æ›´æ–°åœè½¦è¿”ç°æ¬¡æ•°ç¼“å­˜  ï¼šcache value:"+map.get(park_uin));
 			}else {
 				map.put(park_uin, todayLong+"_"+1);
-				logger.error(">>>Í£³µ·µÏÖÈ¯´æÊ×´ÎÊ¹ÓÃ£º"+park_uin);
+				logger.error(">>>åœè½¦è¿”ç°åˆ¸å­˜é¦–æ¬¡ä½¿ç”¨ï¼š"+park_uin);
 			}
-			//logger.error(">>>Í£³µ·µÏÖÈ¯»º´æ±£´æ£º"+map);
+			//logger.error(">>>åœè½¦è¿”ç°åˆ¸ç¼“å­˜ä¿å­˜ï¼š"+map);
 		}else {
 			map = new HashMap<String, String>();
 			map.put(park_uin, todayLong+"_"+1);
-			logger.error(">>>Í£³µ·µÏÖÈ¯´æÊ×´ÎÊ¹ÓÃ£º"+park_uin);
+			logger.error(">>>åœè½¦è¿”ç°åˆ¸å­˜é¦–æ¬¡ä½¿ç”¨ï¼š"+park_uin);
 		}
 		doMapStringStringCache("backmoney_times", map, "update");
 	}
@@ -544,11 +544,11 @@ public class MemcacheUtils {
 		}
 		return "notoken";
 	}
-	
+
 	public String setWeixinToken(String token){
 		return doStringCache("zld_weixin_token", (System.currentTimeMillis()/1000)+"_"+token, "update");
 	}
-	
+
 	public String getWXPublicToken(){
 		String weixinToken = doStringCache("zld_wxpublic_token", null, null);
 		if(weixinToken!=null){
@@ -562,11 +562,11 @@ public class MemcacheUtils {
 		}
 		return "notoken";
 	}
-	
+
 	public String setWXPublicToken(String token){
 		return doStringCache("zld_wxpublic_token", (System.currentTimeMillis()/1000)+"_"+token, "update");
 	}
-	
+
 	public String getJsapi_ticket(){
 		String jsapi_ticket = doStringCache("zld_wxpublic_jsapi_ticket", null, null);
 		if(jsapi_ticket!=null){
@@ -580,28 +580,28 @@ public class MemcacheUtils {
 		}
 		return "no_jsapi_ticket";
 	}
-	
+
 	public String setJsapi_ticket(String ticket){
 		return doStringCache("zld_wxpublic_jsapi_ticket", (System.currentTimeMillis()/1000)+"_"+ticket, "update");
 	}
-	
+
 	public Long getUinUuid(String uuid){
 		Map<String,Long> uinUuidMap = doMapStringLongCache("uuid_uin_map", null, null);
 		if(uinUuidMap!=null){
-			System.err.println(">>>>>>>>>>>>ËÙÍ¨¿¨ÓÃ»§Êı£º"+uinUuidMap.size());
+			System.err.println(">>>>>>>>>>>>é€Ÿé€šå¡ç”¨æˆ·æ•°ï¼š"+uinUuidMap.size());
 			return uinUuidMap.get(uuid);
 		}else {
 			return -1L;
 		}
 	}
-	
+
 	public void setUinUuid(Map<String,Long> uinUuidMap){
 		doMapStringLongCache("uuid_uin_map", uinUuidMap, "update");
 	}
-	
-	
+
+
 	/**
-	 * @param ¶ÁÈ¡½ÚÈÕºì°ü¿ª¹Ø
+	 * @param è¯»å–èŠ‚æ—¥çº¢åŒ…å¼€å…³
 	 * @return
 	 */
 	public String readHBonusCache(){
@@ -609,10 +609,10 @@ public class MemcacheUtils {
 		logger.error(">>>>hbonus_swith:"+values);
 		return values;
 	}
-	
+
 
 	/**
-	 * @param Ğ´Èë½ÚÈÕºì°ü¿ª¹Ø
+	 * @param å†™å…¥èŠ‚æ—¥çº¢åŒ…å¼€å…³
 	 * @return
 	 */
 	/*@SuppressWarnings("unchecked")
@@ -624,7 +624,7 @@ public class MemcacheUtils {
 			}
 		});
 	}*/
-	
 
-	
+
+
 }

@@ -35,14 +35,14 @@ public class CollectByParkAnlysisAction extends Action {
 	private CommonMethods commonMethods;
 	@Autowired
 	private StatsAccountFacade accountFacade;
-	
+
 	private Logger logger = Logger.getLogger(CollectByParkAnlysisAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		request.setAttribute("authid", request.getParameter("authid"));
@@ -94,13 +94,13 @@ public class CollectByParkAnlysisAction extends Action {
 				sql += " and id in ("+preParams+") ";
 				countSql += " and id in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo != null) {
 					countSql += " and "+ sqlInfo.getSql();
 					sql += " and "+sqlInfo.getSql();
 					params.addAll(sqlInfo.getParams());
 				}
-				
+
 				count = pgOnlyReadService.getCount(countSql, params);
 				if(count > 0){
 					list = pgOnlyReadService.getAll(sql, params, pageNum, pageSize);
@@ -112,7 +112,7 @@ public class CollectByParkAnlysisAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void setList(List<Map<String, Object>> userList, Long startTime, Long endTime){
 		try {
 			if(userList != null && !userList.isEmpty()){
@@ -134,22 +134,22 @@ public class CollectByParkAnlysisAction extends Action {
 						double cashRefundFee = accountClass.getCashRefundFee();
 						double cashAddFee = accountClass.getCashAddFee();
 						double cashPursueFee = accountClass.getCashPursueFee();
-						
+
 						double ePayParkingFee = accountClass.getePayParkingFee();
 						double ePayPrepayFee = accountClass.getePayPrepayFee();
 						double ePayRefundFee = accountClass.getePayRefundFee();
 						double ePayAddFee = accountClass.getePayAddFee();
 						double ePayPursueFee = accountClass.getePayPursueFee();
-						
+
 						double cardParkingFee = accountClass.getCardParkingFee();
 						double cardPrepayFee = accountClass.getCardPrepayFee();
 						double cardRefundFee = accountClass.getCardRefundFee();
 						double cardAddFee = accountClass.getCardAddFee();
 						double cardPursueFee = accountClass.getCardPursueFee();
-						
+
 						double escapeFee = accountClass.getEscapeFee();
 						double sensorOrderFee = accountClass.getSensorOrderFee();
-						
+
 						double cashCustomFee = StringUtils.formatDouble(cashParkingFee + cashPrepayFee + cashAddFee - cashRefundFee);
 						double epayCustomFee = StringUtils.formatDouble(ePayParkingFee + ePayPrepayFee + ePayAddFee - ePayRefundFee);
 						double cardCustomFee = StringUtils.formatDouble(cardParkingFee + cardPrepayFee + cardAddFee - cardRefundFee);
@@ -159,8 +159,8 @@ public class CollectByParkAnlysisAction extends Action {
 						double totalFee = StringUtils.formatDouble(cashTotalFee + ePayTotalFee + cardTotalFee);
 						double allTotalFee = StringUtils.formatDouble(totalFee + escapeFee);
 						double totalPursueFee = StringUtils.formatDouble(cashPursueFee + ePayPursueFee + cardPursueFee);
-						
-						
+
+
 						for(Map<String, Object> infoMap : userList){
 							Long userId = (Long)infoMap.get("id");
 							if(id == userId.intValue()){

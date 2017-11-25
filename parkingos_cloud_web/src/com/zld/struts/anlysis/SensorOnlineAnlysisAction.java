@@ -25,10 +25,10 @@ public class SensorOnlineAnlysisAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	public ActionForward execute(ActionMapping mapping,ActionForm form, 
-			HttpServletRequest request,HttpServletResponse response) throws Exception{
+	public ActionForward execute(ActionMapping mapping,ActionForm form,
+								 HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -90,7 +90,7 @@ public class SensorOnlineAnlysisAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		try {
 			if(list != null && !list.isEmpty()){

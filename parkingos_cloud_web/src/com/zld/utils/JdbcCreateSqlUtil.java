@@ -11,8 +11,8 @@ public class JdbcCreateSqlUtil {
 	private String [] fields;
 	private Object[] values;
 	private String join;
-	private String tbaleAlia="";//Êı¾İ¿â±íÃû
-	
+	private String tbaleAlia="";//æ•°æ®åº“è¡¨å
+
 
 	public String getJoin() {
 		return join;
@@ -20,7 +20,7 @@ public class JdbcCreateSqlUtil {
 	public void setJoin(String join) {
 		this.join = join;
 	}
-	
+
 	public JdbcCreateSqlUtil() {
 
 	}
@@ -31,16 +31,16 @@ public class JdbcCreateSqlUtil {
 		this.tbaleAlia = tbaleAlia;
 	}
 	/**
-	 * 
-	 * @param fieldLists Éú³ÉÌõ¼şµÄĞÅÏ¢
-	 * @param orFieldlists Éú³É»òÌõ¼şµÄĞÅÏ¢
-	 * @param fields ĞÂ½¨»ò¸üĞÂ×Ö¶Î
-	 * @param values ĞÂ½¨»ò¸üĞÂ×Ö¶Î¶ÔÓ¦µÄÖµ
-	 * @param argTypes ĞÂ½¨»ò¸üĞÂ×Ö¶Î¶ÔÓ¦µÄÖµ¶ÔÓ¦µÄÀàĞÍ 3,double 4,int|long 12,string 93,date
+	 *
+	 * @param fieldLists ç”Ÿæˆæ¡ä»¶çš„ä¿¡æ¯
+	 * @param orFieldlists ç”Ÿæˆæˆ–æ¡ä»¶çš„ä¿¡æ¯
+	 * @param fields æ–°å»ºæˆ–æ›´æ–°å­—æ®µ
+	 * @param values æ–°å»ºæˆ–æ›´æ–°å­—æ®µå¯¹åº”çš„å€¼
+	 * @param argTypes æ–°å»ºæˆ–æ›´æ–°å­—æ®µå¯¹åº”çš„å€¼å¯¹åº”çš„ç±»å‹ 3,double 4,int|long 12,string 93,date
 	 */
 	public JdbcCreateSqlUtil(List<JdbcFieldUtils> fieldLists,
-			List<List<JdbcFieldUtils>> orFieldlists, String[] fields,
-			Object[] values) {
+							 List<List<JdbcFieldUtils>> orFieldlists, String[] fields,
+							 Object[] values) {
 		super();
 		this.fieldLists = fieldLists;
 		this.orFieldlists = orFieldlists;
@@ -51,9 +51,9 @@ public class JdbcCreateSqlUtil {
 
 
 	/**
-	 * Éú³ÉĞÂ½¨Óï¾ä
+	 * ç”Ÿæˆæ–°å»ºè¯­å¥
 	 */
-	
+
 	public SqlInfo createInsertSql(String table){
 		if (fields == null || values == null
 				|| (fields.length != values.length))
@@ -75,9 +75,9 @@ public class JdbcCreateSqlUtil {
 		SqlInfo upsqlInfo = new SqlInfo(insertFields, values);
 		return upsqlInfo;
 	}
-	
+
 	/**
-	 * ¹ıÂËÖµÎª¡°¡±
+	 * è¿‡æ»¤å€¼ä¸ºâ€œâ€
 	 * @param values
 	 * @return
 	 */
@@ -93,13 +93,13 @@ public class JdbcCreateSqlUtil {
 				}
 			}else
 				vObjects[i]=o;
-			
+
 		}
 		return vObjects;
 	}
-	
+
 	/**
-	 * Éú³É¸üĞÂÓï¾ä
+	 * ç”Ÿæˆæ›´æ–°è¯­å¥
 	 * @return
 	 */
 	public SqlInfo CreateUpdateSql() {
@@ -128,20 +128,20 @@ public class JdbcCreateSqlUtil {
 					SqlInfo info=preCreateSearchSql(" or ", subList);
 					if(orSqlInfo!=null)
 						orSqlInfo = SqlInfo.joinSqlInfo(orSqlInfo, info, 2);
-					else 
+					else
 						orSqlInfo = info;
 				}
 			}
-			// ºÏ²¢sql
+			// åˆå¹¶sql
 			if (orSqlInfo != null) {
 				sqlInfo = SqlInfo.joinSqlInfo(upsqlInfo, orSqlInfo, 2);
 			}
 		}
 		return upsqlInfo;
 	}
-	
+
 	/**
-	 * Éú³É¸üĞÂÓï¾ä
+	 * ç”Ÿæˆæ›´æ–°è¯­å¥
 	 * @return
 	 */
 	public SqlInfo CreateUpdateSql(String table) {
@@ -170,20 +170,20 @@ public class JdbcCreateSqlUtil {
 					SqlInfo info=preCreateSearchSql(" or ", subList);
 					if(orSqlInfo!=null)
 						orSqlInfo = SqlInfo.joinSqlInfo(orSqlInfo, info, 2);
-					else 
+					else
 						orSqlInfo = info;
 				}
 			}
-			// ºÏ²¢sql
+			// åˆå¹¶sql
 			if (orSqlInfo != null) {
 				sqlInfo = SqlInfo.joinSqlInfo(upsqlInfo, orSqlInfo, 2);
 			}
 		}
 		return upsqlInfo;
 	}
-	
+
 	/**
-	 * Éú³É²éÑ¯Óï¾ä
+	 * ç”ŸæˆæŸ¥è¯¢è¯­å¥
 	 * @return
 	 */
 	public SqlInfo CreateSearchSql() {
@@ -202,7 +202,7 @@ public class JdbcCreateSqlUtil {
 					}
 				}
 			}
-			// ºÏ²¢sql
+			// åˆå¹¶sql
 			if (orSqlInfo != null) {
 				sqlInfo = SqlInfo.joinSqlInfo(sqlInfo, orSqlInfo, 2);
 			}
@@ -316,82 +316,82 @@ public class JdbcCreateSqlUtil {
 			tbaleAlia += ".";
 		}
 		switch (jfu.getOperate()) {
-		case JdbcTypeOperate.OPER_EQ:
-			subSql = tbaleAlia+jfu.getFieldName() + " = ? ";
-			break;
-		case JdbcTypeOperate.OPER_NE:
-			subSql = tbaleAlia+jfu.getFieldName() + " <> ? ";
-			break;
-		case JdbcTypeOperate.OPER_LT:
-			subSql = tbaleAlia+jfu.getFieldName() + " < ? ";
-			break;
-		case JdbcTypeOperate.OPER_GT:
-			subSql = tbaleAlia+jfu.getFieldName() + " > ? ";
-			break;
-		case JdbcTypeOperate.OPER_LE:
-			subSql = tbaleAlia+jfu.getFieldName() + " <= ? ";
-			break;
-		case JdbcTypeOperate.OPER_GE:
-			subSql = tbaleAlia+jfu.getFieldName() + " >= ? ";
-			break;
-		case JdbcTypeOperate.OPER_BT:
-			subSql = tbaleAlia+jfu.getFieldName() + " between ? and ? ";
-			break;
-		case JdbcTypeOperate.OPER_NU:
-			subSql = tbaleAlia+jfu.getFieldName() + "  is null ";
-			break;
-		case JdbcTypeOperate.OPER_NN:
-			subSql = tbaleAlia+jfu.getFieldName() + " is not null ";
-			break;
-		case JdbcTypeOperate.OPER_LK:
-		case JdbcTypeOperate.OPER_RLK:
-		case JdbcTypeOperate.OPER_LLK:
-			subSql = tbaleAlia+jfu.getFieldName() + " like ? ";
-			break;
-		case JdbcTypeOperate.OPER_NLK:
-			subSql = tbaleAlia+jfu.getFieldName() + " not like ? ";
-			break;
-		case JdbcTypeOperate.OPER_IN:
-			int size = jfu.getValueList().size();
-			String vs = "";
-			for (int i = 0; i < size; i++) {
-				if (i == 0)
-					vs += "?";
-				else {
-					vs += ",?";
+			case JdbcTypeOperate.OPER_EQ:
+				subSql = tbaleAlia+jfu.getFieldName() + " = ? ";
+				break;
+			case JdbcTypeOperate.OPER_NE:
+				subSql = tbaleAlia+jfu.getFieldName() + " <> ? ";
+				break;
+			case JdbcTypeOperate.OPER_LT:
+				subSql = tbaleAlia+jfu.getFieldName() + " < ? ";
+				break;
+			case JdbcTypeOperate.OPER_GT:
+				subSql = tbaleAlia+jfu.getFieldName() + " > ? ";
+				break;
+			case JdbcTypeOperate.OPER_LE:
+				subSql = tbaleAlia+jfu.getFieldName() + " <= ? ";
+				break;
+			case JdbcTypeOperate.OPER_GE:
+				subSql = tbaleAlia+jfu.getFieldName() + " >= ? ";
+				break;
+			case JdbcTypeOperate.OPER_BT:
+				subSql = tbaleAlia+jfu.getFieldName() + " between ? and ? ";
+				break;
+			case JdbcTypeOperate.OPER_NU:
+				subSql = tbaleAlia+jfu.getFieldName() + "  is null ";
+				break;
+			case JdbcTypeOperate.OPER_NN:
+				subSql = tbaleAlia+jfu.getFieldName() + " is not null ";
+				break;
+			case JdbcTypeOperate.OPER_LK:
+			case JdbcTypeOperate.OPER_RLK:
+			case JdbcTypeOperate.OPER_LLK:
+				subSql = tbaleAlia+jfu.getFieldName() + " like ? ";
+				break;
+			case JdbcTypeOperate.OPER_NLK:
+				subSql = tbaleAlia+jfu.getFieldName() + " not like ? ";
+				break;
+			case JdbcTypeOperate.OPER_IN:
+				int size = jfu.getValueList().size();
+				String vs = "";
+				for (int i = 0; i < size; i++) {
+					if (i == 0)
+						vs += "?";
+					else {
+						vs += ",?";
+					}
 				}
-			}
-			subSql = tbaleAlia+jfu.getFieldName() + " in(" + vs + ") ";
-			break;
-		case JdbcTypeOperate.OPER_NIN:
-			int s = jfu.getValueList().size();
-			String v = "";
-			for (int i = 0; i < s; i++) {
-				if (i == 0)
-					v += "?";
-				else {
-					v += ",?";
+				subSql = tbaleAlia+jfu.getFieldName() + " in(" + vs + ") ";
+				break;
+			case JdbcTypeOperate.OPER_NIN:
+				int s = jfu.getValueList().size();
+				String v = "";
+				for (int i = 0; i < s; i++) {
+					if (i == 0)
+						v += "?";
+					else {
+						v += ",?";
+					}
 				}
-			}
-			subSql = tbaleAlia+jfu.getFieldName() + " not in(" + v + ") ";
-			break;
-		default:
-			break;
+				subSql = tbaleAlia+jfu.getFieldName() + " not in(" + v + ") ";
+				break;
+			default:
+				break;
 		}
 		return subSql;
 	}
 	/**
-	 * 
+	 *
 	 * @param subSql
 	 * @param valueList
 	 * @param argTypes
-	 * @param join Á¬½Ó·û£¬and|or
+	 * @param join è¿æ¥ç¬¦ï¼Œand|or
 	 * @return
 	 */
 	private SqlInfo createSqlByList(List<String> subSql,
-			List<Object> valueList, List<Integer> argTypes, String join) {
+									List<Object> valueList, List<Integer> argTypes, String join) {
 		StringBuffer sbBuffer = new StringBuffer();
-		//Á¬³Ésql
+		//è¿æˆsql
 		String subJoin =this.join;
 		if(this.join==null)
 			subJoin = join;
@@ -405,7 +405,7 @@ public class JdbcCreateSqlUtil {
 				}
 			}
 		}
-		//Öµ¼¯ºÏ×ªÎªÊı×é
+		//å€¼é›†åˆè½¬ä¸ºæ•°ç»„
 		Object[] values = new Object[valueList.size()];
 		for (int j = 0; j < valueList.size(); j++) {
 			values[j] = valueList.get(j);

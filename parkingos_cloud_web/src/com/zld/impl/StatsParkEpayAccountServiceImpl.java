@@ -25,7 +25,7 @@ import com.zld.utils.SqlInfo;
 public class StatsParkEpayAccountServiceImpl implements StatsAccountService {
 	@Autowired
 	private PgOnlyReadService readService;
-	
+
 	Logger logger = Logger.getLogger(StatsParkEpayAccountServiceImpl.class);
 	@Override
 	public StatsAccountResp statsAccount(StatsReq req) {
@@ -35,30 +35,30 @@ public class StatsParkEpayAccountServiceImpl implements StatsAccountService {
 			long startTime = req.getStartTime();
 			long endTime = req.getEndTime();
 			List<Object> idList = req.getIdList();
-			int type = req.getType();//0£º°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ 1£º°´³µ³¡±àºÅÍ³¼Æ 2£º°´²´Î»¶Î±àºÅ²éÑ¯ 3£º°´²´Î»²éÑ¯
+			int type = req.getType();//0ï¼šæŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡ 1ï¼šæŒ‰è½¦åœºç¼–å·ç»Ÿè®¡ 2ï¼šæŒ‰æ³Šä½æ®µç¼–å·æŸ¥è¯¢ 3ï¼šæŒ‰æ³Šä½æŸ¥è¯¢
 			if(startTime <= 0
 					|| endTime <= 0
 					|| idList == null
 					|| idList.isEmpty()){
 				resp.setResult(-1);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
 			String column = null;
 			if(type == 0){
-				column = "uid";//°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ
+				column = "uid";//æŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡
 			}else if(type == 1){
-				column = "comid";//°´³µ³¡±àºÅÍ³¼Æ
+				column = "comid";//æŒ‰è½¦åœºç¼–å·ç»Ÿè®¡
 			}else if(type == 2){
-				column = "berthseg_id";//°´²´Î»¶Î±àºÅÍ³¼Æ
+				column = "berthseg_id";//æŒ‰æ³Šä½æ®µç¼–å·ç»Ÿè®¡
 			}else if(type == 3){
-				column = "berth_id";//°´²´Î»±àºÅÍ³¼Æ
+				column = "berth_id";//æŒ‰æ³Šä½ç¼–å·ç»Ÿè®¡
 			}else if(type == 4){
 				column = "groupid";
 			}
 			if(column == null){
 				resp.setResult(-1);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
 			String preParams = "";
@@ -73,29 +73,29 @@ public class StatsParkEpayAccountServiceImpl implements StatsAccountService {
 			params.add(0);
 			params.add(startTime);
 			params.add(endTime);
-			params.add(0);//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-			params.add(7);//×·½ÉÍ£³µ·Ñ
-			params.add(8);//³µÖ÷Ô¤¸¶Í£³µ·Ñ
-			params.add(9);//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
-			params.add(10);//Ô¤¸¶²¹½É£¨Ô¤¸¶½ğ¶î²»×ã£©
+			params.add(0);//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+			params.add(7);//è¿½ç¼´åœè½¦è´¹
+			params.add(8);//è½¦ä¸»é¢„ä»˜åœè½¦è´¹
+			params.add(9);//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
+			params.add(10);//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜é‡‘é¢ä¸è¶³ï¼‰
 			params.addAll(idList);
 			String sql = "select sum(amount) summoney,source,"+column+" from park_account_tb where " +
 					" is_delete=? and create_time between ? and ? and source in (?,?,?,?,?) " +
 					" and "+column+" in ("+preParams+") group by "+column+",source ";
 			List<Map<String, Object>> list = readService.getAllMap(sql, params);
 			if(list != null && !list.isEmpty()){
-				List<Object> existIds = new ArrayList<Object>();//ÁĞ±íÒÑ´æÔÚµÄÖ÷¼ü
+				List<Object> existIds = new ArrayList<Object>();//åˆ—è¡¨å·²å­˜åœ¨çš„ä¸»é”®
 				List<StatsAccount> accounts = new ArrayList<StatsAccount>();
 				for(Map<String, Object> map : list){
 					Long id = (Long)map.get(column);
 					Integer source = (Integer)map.get("source");
 					Double summoney = Double.valueOf(map.get("summoney") + "");
-					
+
 					StatsAccount account = null;
 					if(existIds.contains(id)){
 						for(StatsAccount statsAccount : accounts){
 							long statsId = statsAccount.getId();
-							if(id.intValue() == statsId){//²éÕÒÆ¥ÅäµÄÖ÷¼ü
+							if(id.intValue() == statsId){//æŸ¥æ‰¾åŒ¹é…çš„ä¸»é”®
 								account = statsAccount;
 								break;
 							}
@@ -104,26 +104,26 @@ public class StatsParkEpayAccountServiceImpl implements StatsAccountService {
 						existIds.add(id);
 						account = new StatsAccount();
 						account.setId(id);
-						accounts.add(account);//ĞÂÌí¼Ó
+						accounts.add(account);//æ–°æ·»åŠ 
 					}
 					switch (source) {
-					case 0://Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-						account.setParkingFee(summoney);
-						break;
-					case 7://×·½ÉÍ£³µ·Ñ
-						account.setPursueFee(summoney);
-						break;
-					case 8://Ô¤¸¶Í£³µ·Ñ
-						account.setPrepayFee(summoney);
-						break;
-					case 9://Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
-						account.setRefundFee(summoney);
-						break;
-					case 10://Ô¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©
-						account.setAddFee(summoney);
-						break;
-					default:
-						break;
+						case 0://åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+							account.setParkingFee(summoney);
+							break;
+						case 7://è¿½ç¼´åœè½¦è´¹
+							account.setPursueFee(summoney);
+							break;
+						case 8://é¢„ä»˜åœè½¦è´¹
+							account.setPrepayFee(summoney);
+							break;
+						case 9://é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
+							account.setRefundFee(summoney);
+							break;
+						case 10://é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰
+							account.setAddFee(summoney);
+							break;
+						default:
+							break;
 					}
 				}
 				resp.setAccounts(accounts);
@@ -133,7 +133,7 @@ public class StatsParkEpayAccountServiceImpl implements StatsAccountService {
 			e.printStackTrace();
 		}
 		resp.setResult(-1);
-		resp.setErrmsg("ÏµÍ³´íÎó");
+		resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		return resp;
 	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -142,11 +142,11 @@ public class StatsParkEpayAccountServiceImpl implements StatsAccountService {
 		//logger.error(req.toString());
 		AccountResp resp = new AccountResp();
 		try {
-			ExecutorService pool = ExecutorsUtil.getExecutorService();//»ñÈ¡Ïß³Ì³Ø
+			ExecutorService pool = ExecutorsUtil.getExecutorService();//è·å–çº¿ç¨‹æ± 
 			long startTime = req.getStartTime();
 			long endTime = req.getEndTime();
 			long id = req.getId();
-			int type = req.getType();//0£º°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ 1£º°´³µ³¡±àºÅÍ³¼Æ 2£º°´²´Î»¶Î±àºÅ²éÑ¯ 3£º°´²´Î»²éÑ¯
+			int type = req.getType();//0ï¼šæŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡ 1ï¼šæŒ‰è½¦åœºç¼–å·ç»Ÿè®¡ 2ï¼šæŒ‰æ³Šä½æ®µç¼–å·æŸ¥è¯¢ 3ï¼šæŒ‰æ³Šä½æŸ¥è¯¢
 			int pageNum = req.getPageNum();
 			int pageSize = req.getPageSize();
 			SqlInfo sqlInfo = req.getSqlInfo();
@@ -154,35 +154,35 @@ public class StatsParkEpayAccountServiceImpl implements StatsAccountService {
 					|| endTime <= 0
 					|| id <= 0){
 				resp.setResult(-1);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
 			String column = null;
 			if(type == 0){
-				column = "uid";//°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ
+				column = "uid";//æŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡
 			}else if(type == 1){
-				column = "comid";//°´³µ³¡±àºÅÍ³¼Æ
+				column = "comid";//æŒ‰è½¦åœºç¼–å·ç»Ÿè®¡
 			}else if(type == 2){
-				column = "berthseg_id";//°´²´Î»¶Î±àºÅÍ³¼Æ
+				column = "berthseg_id";//æŒ‰æ³Šä½æ®µç¼–å·ç»Ÿè®¡
 			}else if(type == 3){
-				column = "berth_id";//°´²´Î»±àºÅÍ³¼Æ
+				column = "berth_id";//æŒ‰æ³Šä½ç¼–å·ç»Ÿè®¡
 			}else if(type == 4){
 				column = "groupid";
 			}
 			if(column == null){
 				resp.setResult(-1);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
 			ArrayList<Object> params = new ArrayList<Object>();
 			params.add(0);
 			params.add(startTime);
 			params.add(endTime);
-			params.add(0);//Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-			params.add(7);//×·½ÉÍ£³µ·Ñ
-			params.add(8);//³µÖ÷Ô¤¸¶Í£³µ·Ñ
-			params.add(9);//Ô¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©
-			params.add(10);//Ô¤¸¶²¹½É£¨Ô¤¸¶½ğ¶î²»×ã£©
+			params.add(0);//åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+			params.add(7);//è¿½ç¼´åœè½¦è´¹
+			params.add(8);//è½¦ä¸»é¢„ä»˜åœè½¦è´¹
+			params.add(9);//é¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰
+			params.add(10);//é¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜é‡‘é¢ä¸è¶³ï¼‰
 			params.add(id);
 			String sql = "select * from park_account_tb where is_delete=? and create_time " +
 					" between ? and ? and source in (?,?,?,?,?) and "+column+"=? ";
@@ -208,7 +208,7 @@ public class StatsParkEpayAccountServiceImpl implements StatsAccountService {
 			e.printStackTrace();
 		}
 		resp.setResult(-1);
-		resp.setErrmsg("ÏµÍ³´íÎó");
+		resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		return resp;
 	}
 }

@@ -22,13 +22,13 @@ public class CityInducedMonitorAction extends Action {
 
 	@Autowired
 	private PgOnlyReadService onlyReadService;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		//String target = null;
@@ -54,32 +54,32 @@ public class CityInducedMonitorAction extends Action {
 			String ret ="[";
 			if(result!=null&&!result.isEmpty()){
 				for(Map<String, Object> map : result){
-				    if((map.get("longitude"))!=null && (map.get("latitude"))!=null){
+					if((map.get("longitude"))!=null && (map.get("latitude"))!=null){
 						String  type="";
 						if(Integer.parseInt(map.get("type").toString())==1){
-							type="¶ş¼¶ÓÕµ¼ÆÁ";
+							type="äºŒçº§è¯±å¯¼å±";
 						} else if (Integer.parseInt(map.get("type").toString())==3) {
-							type="Èı¼¶ÓÕµ¼ÆÁ";
+							type="ä¸‰çº§è¯±å¯¼å±";
 						}
-						String data=getIduceData((Long)map.get("id"),request);//"[{\"total\":1,\"parklist\":[{\"id\":20427,\"parkname\":\"ÇàÄê¶«Â·\",\"induce_id\":11,\"remain\":18,\"total\":58}],\"error\":null,\"success\":true}]";
-						ret +="["+(Double.valueOf(map.get("longitude")+ ""))+ ","+ (Double.valueOf(map.get("latitude") + "")) +",\"µØÖ·:"+map.get("address")+"\",\"ÓÕµ¼Ãû³Æ:"+map.get("name")+"\",\"¹ã¸æĞÅÏ¢:"+map.get("ad")+"\",\""+map.get("type")+"\",\""+map.get("id")+"\","+data+"],";
-	                }
+						String data=getIduceData((Long)map.get("id"),request);//"[{\"total\":1,\"parklist\":[{\"id\":20427,\"parkname\":\"é’å¹´ä¸œè·¯\",\"induce_id\":11,\"remain\":18,\"total\":58}],\"error\":null,\"success\":true}]";
+						ret +="["+(Double.valueOf(map.get("longitude")+ ""))+ ","+ (Double.valueOf(map.get("latitude") + "")) +",\"åœ°å€:"+map.get("address")+"\",\"è¯±å¯¼åç§°:"+map.get("name")+"\",\"å¹¿å‘Šä¿¡æ¯:"+map.get("ad")+"\",\""+map.get("type")+"\",\""+map.get("id")+"\","+data+"],";
+					}
 				}
 				if(ret.endsWith(","))
 					ret = ret.substring(0,ret.length()-1);
 				return ret+"]";
 			}
-			
+
 		}
 		return "[]";
 	}
-	   private String getIduceData(Long id,HttpServletRequest request) {
-			String sql = "select * from induce_tb  where cityid=? and is_delete=? and id=?";
-			Long Cityid = (Long)request.getSession().getAttribute("cityid");
-			Map<String, Object> induceMap = onlyReadService.getMap(sql, new Object[]{Cityid,0,id});
-			String did = (String)induceMap.get("did");
-			String result = new HttpProxy().doGet("http://s.tingchebao.com/zld/induceinfo.do?action=parkinfo&did="+did);
-			return result;
-		}
+	private String getIduceData(Long id,HttpServletRequest request) {
+		String sql = "select * from induce_tb  where cityid=? and is_delete=? and id=?";
+		Long Cityid = (Long)request.getSession().getAttribute("cityid");
+		Map<String, Object> induceMap = onlyReadService.getMap(sql, new Object[]{Cityid,0,id});
+		String did = (String)induceMap.get("did");
+		String result = new HttpProxy().doGet("http://s.tingchebao.com/zld/induceinfo.do?action=parkinfo&did="+did);
+		return result;
+	}
 
 }

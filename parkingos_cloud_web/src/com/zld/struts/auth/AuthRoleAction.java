@@ -23,7 +23,7 @@ import com.zld.utils.StringUtils;
 
 
 /**
- * È¨ÏŞ¹ÜÀí---ÉèÖÃ½ÇÉ«È¨ÏŞ
+ * æƒé™ç®¡ç†---è®¾ç½®è§’è‰²æƒé™
  * @author Gecko
  *
  */
@@ -33,24 +33,24 @@ public class AuthRoleAction extends Action {
 	private DataBaseService daService;
 	@Autowired
 	private MongoDbUtils mongoDbUtils;
-			
+
 	private Logger logger = Logger.getLogger(AuthRoleAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
 		String target = null;
 		if(action.equals("editauthrole")){
 			Long roleId = RequestUtil.getLong(request, "roleid", -1L);
 			Long oid = RequestUtil.getLong(request, "oid", -1L);
-			//²éÑ¯ËùÈ¨ÏŞ
+			//æŸ¥è¯¢æ‰€æƒé™
 			List<Map<String, Object>> allAuthsList = daService.getAll("select id,pid,nname as name,sub_auth from auth_tb " +
 					"where state =? and oid=? order by id ",new Object[]{0,oid});
-			//²é×Ô¼ºÈ¨ÏŞ
+			//æŸ¥è‡ªå·±æƒé™
 			List<Map<String, Object>> ownAuthsList = daService.getAll("select auth_id,ar.sub_auth,pid from auth_role_tb ar" +
 					" left join auth_tb at on ar.auth_id= at.id where role_id =? ",new Object[]{roleId});
-			//²é½ÇÉ«Ãû³Æ
+			//æŸ¥è§’è‰²åç§°
 			Map userRoleMap = daService.getMap("select role_name from user_role_tb where id=? ", new Object[]{roleId});
 			String own = StringUtils.createJson(ownAuthsList);
 			request.setAttribute("rolename",userRoleMap.get("role_name"));
@@ -81,9 +81,9 @@ public class AuthRoleAction extends Action {
 					aMap.put(Long.valueOf(a), "");
 				}
 			}
-			
+
 			int ret = daService.update("delete from auth_role_tb where role_id=?", new Object[]{roleid});
-			logger.error("-----> authrole£¬roleid:"+roleid+":Ô­È¨ÏŞÉ¾³ı£¬ret:"+ret);
+			logger.error("-----> authroleï¼Œroleid:"+roleid+":åŸæƒé™åˆ é™¤ï¼Œret:"+ret);
 			String sql = "insert into auth_role_tb (role_id,auth_id,sub_auth) values(?,?,?)";
 			List<Object[]>lists = new ArrayList<Object[]>();
 			for(Long key :aMap.keySet()){
@@ -91,13 +91,13 @@ public class AuthRoleAction extends Action {
 				lists.add(values);
 			}
 			ret = daService.bathInsert(sql, lists, new int []{4,4,12});
-			logger.error("-----> authrole£¬roleid:"+roleid+":¸üĞÂÈ¨ÏŞ£¬ret:"+ret);
+			logger.error("-----> authroleï¼Œroleid:"+roleid+":æ›´æ–°æƒé™ï¼Œret:"+ret);
 			if(ret>0){
 				ret = 1;
-				mongoDbUtils.saveLogs(request, 0, 3, "ĞŞ¸ÄÁË½ÇÉ«È¨ÏŞ:"+roleid);
+				mongoDbUtils.saveLogs(request, 0, 3, "ä¿®æ”¹äº†è§’è‰²æƒé™:"+roleid);
 			}
 			AjaxUtil.ajaxOutput(response, ret+"");
-			
+
 			return null;
 		}
 		return mapping.findForward(target);

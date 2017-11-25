@@ -3,13 +3,13 @@ package com.zld.pojo;
 import java.io.Serializable;
 
 public class RegCardReq implements Serializable {
-	private String nfc_uuid;//¿¨Æ¬ÄÚÖÃµÄÎ¨Ò»Ó²¼ş±àºÅ
-	private String cardNo;//¿¨ÃæºÅ£¨Ó¡ÔÚ¿¨ÃæÉÏµÄ±àºÅ£©
-	private Long regId = -1L;//¿ª¿¨ÈËÕËºÅ
-	private Double money = 100d;//³õÊ¼»¯½ğ¶î
-	private Long groupId = -1L;//ÔËÓª¼¯ÍÅ±àºÅ
-	private String cardName;//¿¨Æ¬Ãû³Æ
-	private String device;//¿ª¿¨Éè±¸
+	private String nfc_uuid;//å¡ç‰‡å†…ç½®çš„å”¯ä¸€ç¡¬ä»¶ç¼–å·
+	private String cardNo;//å¡é¢å·ï¼ˆå°åœ¨å¡é¢ä¸Šçš„ç¼–å·ï¼‰
+	private Long regId = -1L;//å¼€å¡äººè´¦å·
+	private Double money = 100d;//åˆå§‹åŒ–é‡‘é¢
+	private Long groupId = -1L;//è¿è¥é›†å›¢ç¼–å·
+	private String cardName;//å¡ç‰‡åç§°
+	private String device;//å¼€å¡è®¾å¤‡
 	private Long curTime = System.currentTimeMillis()/1000;
 	public String getNfc_uuid() {
 		return nfc_uuid;
@@ -56,7 +56,7 @@ public class RegCardReq implements Serializable {
 	public void setDevice(String device) {
 		this.device = device;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "RegCardReq [nfc_uuid=" + nfc_uuid + ", cardNo=" + cardNo

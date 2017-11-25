@@ -29,13 +29,13 @@ public class CityAlertManageAction extends Action {
 	private DataBaseService daService;
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null || cityid == null){
@@ -69,7 +69,7 @@ public class CityAlertManageAction extends Action {
 
 			List<Object> params = new ArrayList<Object>();
 			params.add(cityid);
-				
+
 			if(sqlInfo!=null){
 				countSql+=" and "+ sqlInfo.getSql();
 				sql +=" and "+sqlInfo.getSql();
@@ -92,7 +92,7 @@ public class CityAlertManageAction extends Action {
 			}
 			List<Map<String, Object>> list  = pgOnlyReadService.getAll(sql +" order by create_time desc ",params, 0, 0);
 			if(list!=null&&!list.isEmpty()){
-				String heards[] = new String[]{"±àºÅ","À´Ô´","×´Ì¬","ÀàĞÍ","ÄÚÈİ","´¦ÀíÊ±¼ä","´¦ÀíÈË"};
+				String heards[] = new String[]{"ç¼–å·","æ¥æº","çŠ¶æ€","ç±»å‹","å†…å®¹","å¤„ç†æ—¶é—´","å¤„ç†äºº"};
 				List<List<String>> bodyList = new ArrayList<List<String>>();
 				for(Map<String, Object> map : list){
 					List<String> valueList = new ArrayList<String>();
@@ -101,25 +101,25 @@ public class CityAlertManageAction extends Action {
 					Integer state = (Integer)map.get("state");
 					if(state!=null){
 						switch (state) {
-						case 0:
-							valueList.add("ĞÂ½¨");
-							break;
-						case 1:
-							valueList.add("ÒÑÉóºË");
-							break;
-						case 2:
-							valueList.add("ÒÑ·¢²¼");
-							break;
-						case 3:
-							valueList.add("ÒÑÈ¡Ïû");
-							break;
-						default:
-							break;
+							case 0:
+								valueList.add("æ–°å»º");
+								break;
+							case 1:
+								valueList.add("å·²å®¡æ ¸");
+								break;
+							case 2:
+								valueList.add("å·²å‘å¸ƒ");
+								break;
+							case 3:
+								valueList.add("å·²å–æ¶ˆ");
+								break;
+							default:
+								break;
 						}
 					}else {
 						valueList.add("");
 					}
-					valueList.add(map.get("type")+"¼¶");
+					valueList.add(map.get("type")+"çº§");
 					valueList.add(map.get("content")+"");
 					Long htime = (Long)map.get("handle_time");
 					if(htime!=null){
@@ -130,7 +130,7 @@ public class CityAlertManageAction extends Action {
 					valueList.add(map.get("handle_user")+"");
 					bodyList.add(valueList);
 				}
-				String fname = "¸æ¾¯ĞÅÏ¢" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
+				String fname = "å‘Šè­¦ä¿¡æ¯" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
 				fname = StringUtils.encodingFileName(fname);
 				java.io.OutputStream os;
 				try {
@@ -138,7 +138,7 @@ public class CityAlertManageAction extends Action {
 					response.reset();
 					response.setHeader("Content-disposition", "attachment; filename="
 							+ fname + ".xls");
-					ExportExcelUtil importExcel = new ExportExcelUtil("¸æ¾¯ĞÅÏ¢",
+					ExportExcelUtil importExcel = new ExportExcelUtil("å‘Šè­¦ä¿¡æ¯",
 							heards, bodyList);
 					importExcel.createExcelFile(os);
 				} catch (IOException e) {
@@ -151,7 +151,7 @@ public class CityAlertManageAction extends Action {
 			String source = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "source"));
 			if(cityid > 0){
 				int r = daService.update("insert into com_alert_tb (source,type,state,create_time,content,cityid)" +
-						"values(?,?,?,?,?,?)", 
+								"values(?,?,?,?,?,?)",
 						new Object[]{source,type,0,System.currentTimeMillis()/1000,content,cityid});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -166,7 +166,7 @@ public class CityAlertManageAction extends Action {
 			Long updateUid = (Long)request.getSession().getAttribute("loginuin");
 
 			if(groupid > 0){
-				int r = daService.update("update com_alert_tb set pda=?,state=?,groupid=?,uid=?,update_user=?,update_time=? where id=? ", 
+				int r = daService.update("update com_alert_tb set pda=?,state=?,groupid=?,uid=?,update_user=?,update_time=? where id=? ",
 						new Object[]{pda, state, groupid, uid,updateUid,System.currentTimeMillis()/1000,id});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -175,10 +175,10 @@ public class CityAlertManageAction extends Action {
 		}else if(action.equals("send")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			Long deleteUid = (Long)request.getSession().getAttribute("loginuin");
-			int r = daService.update("update com_alert_tb set state=?,handle_user=?,handle_time=? where id=? ", 
+			int r = daService.update("update com_alert_tb set state=?,handle_user=?,handle_time=? where id=? ",
 					new Object[]{2,deleteUid,System.currentTimeMillis()/1000, id});
 			/**
-			 * ´¦Àí·¢²¼Âß¼­..........
+			 * å¤„ç†å‘å¸ƒé€»è¾‘..........
 			 */
 			AjaxUtil.ajaxOutput(response, r + "");
 		}

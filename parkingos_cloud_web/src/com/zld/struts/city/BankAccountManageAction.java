@@ -24,16 +24,16 @@ public class BankAccountManageAction extends Action {
 	private DataBaseService daService;
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
-		Integer type = RequestUtil.getInteger(request, "type", 0);//ÕË»§ÀàĞÍ 0:¹«Ë¾£¬1¸öÈË 2¶Ô¹«
+		Integer type = RequestUtil.getInteger(request, "type", 0);//è´¦æˆ·ç±»å‹ 0:å…¬å¸ï¼Œ1ä¸ªäºº 2å¯¹å…¬
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null){
 			response.sendRedirect("login.do");
@@ -70,10 +70,10 @@ public class BankAccountManageAction extends Action {
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 		}
-		
+
 		return null;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		Integer state = RequestUtil.getInteger(request, "state_start", -1);
 		SqlInfo sqlInfo1 = null;

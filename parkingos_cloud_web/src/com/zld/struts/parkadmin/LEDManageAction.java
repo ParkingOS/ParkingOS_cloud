@@ -31,11 +31,11 @@ public class LEDManageAction extends Action {
 	private MongoDbUtils mongoDbUtils;
 	private Logger logger = Logger.getLogger(LEDManageAction.class);
 	/*
-	 * LEDÉèÖÃ
+	 * LEDè®¾ç½®
 	 */
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -69,7 +69,7 @@ public class LEDManageAction extends Action {
 		}else if(action.equals("getworksites")){
 			String sql = "select * from com_worksite_tb where comid=?";
 			List<Map> list = daService.getAll(sql, new Object[]{comid});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"},";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"},";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+="{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("worksite_name")+"\"},";
@@ -89,10 +89,10 @@ public class LEDManageAction extends Action {
 			String ledport = RequestUtil.processParams(request, "ledport");
 			Long passid = RequestUtil.getLong(request, "passid", -1L);
 			Long ledid = RequestUtil.getLong(request, "id", -1L);
-			if(passid == -1 || ledid == -1){  
+			if(passid == -1 || ledid == -1){
 				return null;
 			}
-			//±à¼­
+			//ç¼–è¾‘
 			String sql = "update com_led_tb set ledip=?,ledport=?,passid=? where id=?";
 			int re = daService.update(sql, new Object[]{ledip,ledport,passid,ledid});
 			if(re == 1){

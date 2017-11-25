@@ -22,13 +22,13 @@ import com.zld.utils.SqlInfo;
 public class ServerAsyncManageAction extends Action{
 	@Autowired
 	private PgOnlyReadService readService;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		if (uin == null) {
 			response.sendRedirect("logging.do");
@@ -40,11 +40,11 @@ public class ServerAsyncManageAction extends Action{
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
-			SqlInfo sqlInfo = RequestUtil.customSearch(request,"sync_info_pool_tb");	
+			SqlInfo sqlInfo = RequestUtil.customSearch(request,"sync_info_pool_tb");
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			List<Object> params = new ArrayList<Object>();
 			String sql = "select * from sync_info_pool_tb ";
-			String countSql = "select count(*) from sync_info_pool_tb"; 
+			String countSql = "select count(*) from sync_info_pool_tb";
 			if(sqlInfo!=null){
 				countSql+=" where "+ sqlInfo.getSql();
 				sql +=" where "+sqlInfo.getSql();
@@ -61,7 +61,7 @@ public class ServerAsyncManageAction extends Action{
 		}
 		return null;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		try {
 			Long curTime = System.currentTimeMillis()/1000;
@@ -110,7 +110,7 @@ public class ServerAsyncManageAction extends Action{
 						}
 					}
 				}
-				
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

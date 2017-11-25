@@ -19,7 +19,7 @@ import com.zld.service.StatsOrderService;
 public class StatsSensorOrderServiceImpl implements StatsOrderService {
 	@Autowired
 	private PgOnlyReadService readService;
-	
+
 	Logger logger = Logger.getLogger(StatsSensorOrderServiceImpl.class);
 	@Override
 	public StatsOrderResp statsOrder(StatsReq req) {
@@ -29,30 +29,30 @@ public class StatsSensorOrderServiceImpl implements StatsOrderService {
 			long startTime = req.getStartTime();
 			long endTime = req.getEndTime();
 			List<Object> idList = req.getIdList();
-			int type = req.getType();//0£º°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ 1£º°´³µ³¡±àºÅÍ³¼Æ 2£º°´²´Î»¶Î±àºÅ²éÑ¯ 3£º°´²´Î»²éÑ¯
+			int type = req.getType();//0ï¼šæŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡ 1ï¼šæŒ‰è½¦åœºç¼–å·ç»Ÿè®¡ 2ï¼šæŒ‰æ³Šä½æ®µç¼–å·æŸ¥è¯¢ 3ï¼šæŒ‰æ³Šä½æŸ¥è¯¢
 			if(startTime <= 0
 					|| endTime <= 0
 					|| idList == null
 					|| idList.isEmpty()){
 				resp.setResult(-1);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
 			String column = null;
 			if(type == 0){
-				column = "out_uid";//°´ÊÕ·ÑÔ±±àºÅÍ³¼Æ
+				column = "out_uid";//æŒ‰æ”¶è´¹å‘˜ç¼–å·ç»Ÿè®¡
 			}else if(type == 1){
-				column = "comid";//°´³µ³¡±àºÅÍ³¼Æ
+				column = "comid";//æŒ‰è½¦åœºç¼–å·ç»Ÿè®¡
 			}else if(type == 2){
-				column = "berthseg_id";//°´²´Î»¶Î±àºÅÍ³¼Æ
+				column = "berthseg_id";//æŒ‰æ³Šä½æ®µç¼–å·ç»Ÿè®¡
 			}else if(type == 3){
-				column = "dici_id";//°´²´Î»±àºÅÍ³¼Æ
+				column = "dici_id";//æŒ‰æ³Šä½ç¼–å·ç»Ÿè®¡
 			}else if(type == 4){
 				column = "groupid";
 			}
 			if(column == null){
 				resp.setResult(-1);
-				resp.setErrmsg("²ÎÊı´íÎó");
+				resp.setErrmsg("å‚æ•°é”™è¯¯");
 				return resp;
 			}
 			String preParams = "";
@@ -64,8 +64,8 @@ public class StatsSensorOrderServiceImpl implements StatsOrderService {
 				}
 			}
 			List<Object> params = new ArrayList<Object>();
-			params.add(0);//×´Ì¬Õı³£
-			params.add(1);//ÒÑ½áËã
+			params.add(0);//çŠ¶æ€æ­£å¸¸
+			params.add(1);//å·²ç»“ç®—
 			params.add(startTime);
 			params.add(endTime);
 			params.addAll(idList);
@@ -78,7 +78,7 @@ public class StatsSensorOrderServiceImpl implements StatsOrderService {
 				for(Map<String, Object> map : list){
 					Long id = (Long)map.get(column);
 					Double summoney = Double.valueOf(map.get("summoney") + "");
-					
+
 					StatsOrder order = new StatsOrder();
 					order.setId(id);
 					order.setSensorFee(summoney);
@@ -91,7 +91,7 @@ public class StatsSensorOrderServiceImpl implements StatsOrderService {
 			e.printStackTrace();
 		}
 		resp.setResult(-1);
-		resp.setErrmsg("ÏµÍ³´íÎó");
+		resp.setErrmsg("ç³»ç»Ÿé”™è¯¯");
 		return resp;
 	}
 	@Override

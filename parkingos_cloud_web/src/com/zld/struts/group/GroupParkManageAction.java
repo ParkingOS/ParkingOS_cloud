@@ -22,7 +22,7 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.TimeTools;
-//·ÏÆú
+//åºŸå¼ƒ
 public class GroupParkManageAction extends Action {
 	@Autowired
 	private DataBaseService daService;
@@ -30,21 +30,21 @@ public class GroupParkManageAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		if(uin==null || groupid == null){
 			response.sendRedirect("login.do");
 			return null;
 		}
-		
+
 		if(action.equals("")){
 			request.setAttribute("groupid", groupid);
 			return mapping.findForward("list");
@@ -135,22 +135,22 @@ public class GroupParkManageAction extends Action {
 					new Object[]{comid});
 			String info="";
 			if(parkMap!=null)
-				info ="Ãû³Æ£º"+parkMap.get("company_name")+"£¬µØÖ·£º"+parkMap.get("address")+"<br/>´´½¨Ê±¼ä£º"
-			+TimeTools.getTime_yyyyMMdd_HHmm((Long)parkMap.get("create_time")*1000)+"£¬³µÎ»×ÜÊı£º"+parkMap.get("parking_total")
-			+"£¬·ÖÏí³µÎ»£º"+parkMap.get("share_number")+"£¬¾­Î³¶È£º("+parkMap.get("longitude")+","+parkMap.get("latitude")+")";
+				info ="åç§°ï¼š"+parkMap.get("company_name")+"ï¼Œåœ°å€ï¼š"+parkMap.get("address")+"<br/>åˆ›å»ºæ—¶é—´ï¼š"
+						+TimeTools.getTime_yyyyMMdd_HHmm((Long)parkMap.get("create_time")*1000)+"ï¼Œè½¦ä½æ€»æ•°ï¼š"+parkMap.get("parking_total")
+						+"ï¼Œåˆ†äº«è½¦ä½ï¼š"+parkMap.get("share_number")+"ï¼Œç»çº¬åº¦ï¼š("+parkMap.get("longitude")+","+parkMap.get("latitude")+")";
 			request.setAttribute("parkinfo", info);
 			return mapping.findForward("set");
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "selids", -1L);
-			int r = daService.update("update com_info_tb set state=? where id=? ", 
+			int r = daService.update("update com_info_tb set state=? where id=? ",
 					new Object[]{1, id});
 			AjaxUtil.ajaxOutput(response, r + "");
 		}
-		
+
 		return null;
 	}
-	
-	//×¢²áÍ£³µ³¡
+
+	//æ³¨å†Œåœè½¦åœº
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Integer editPark(HttpServletRequest request){
 		Long comid = RequestUtil.getLong(request, "id", -1L);
@@ -169,8 +169,8 @@ public class GroupParkManageAction extends Action {
 		int r = daService.update(sql, new Object[]{company, address, phone, mcompany, parking_total, time, state, etc, areaid, comid});
 		return r;
 	}
-	
-	//×¢²áÍ£³µ³¡
+
+	//æ³¨å†Œåœè½¦åœº
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Integer createPark(HttpServletRequest request, Long groupid){
 		Long areaid = RequestUtil.getLong(request, "areaid", -1L);

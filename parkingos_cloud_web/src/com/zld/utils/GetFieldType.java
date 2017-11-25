@@ -1,9 +1,5 @@
 package com.zld.utils;
 
-import javax.activation.FileDataSource;
-
-import com.sun.accessibility.internal.resources.accessibility;
-
 public class GetFieldType {
 	
 	public static Integer getFieldType(String table ,String field){
@@ -138,10 +134,39 @@ public class GetFieldType {
 			return getSyncServer(field);
 		}else if(table.equals("org_group_tb")){
 			return org_group_tb(field);
+		}else if(table.equals("card_renew")){
+			return cardRenew(field);
+		}else if(table.equals("monitor_info_tb")){
+			return getMonitorInfoFieldType(field);
 		}
 		return 12;
 	}
-	
+	private static Integer getMonitorInfoFieldType(String field) {
+		if(field.equals("channel_id")
+				|| field.equals("channel_name")
+				|| field.equals("play_src")
+				|| field.equals("comid")){
+			return 12;
+		}else if(field.equals("net_status")
+				|| field.equals("is_show")
+				|| field.equals("show_order")){
+			return 3;
+		}else
+			return 4;
+	}
+	private static Integer cardRenew(String field) {
+		if(field.equals("id")
+				|| field.equals("buy_month")){
+			return 4;
+		}else if(field.equals("create_time")||
+				field.equals("update_time")
+				|| field.equals("pay_time")
+				|| field.equals("limit_time")){
+			return 93;
+		}else
+			return 12;
+	}
+
 	private static Integer org_group_tb(String field) {
 		if(field.equals("name")
 				|| field.equals("address")){
@@ -607,9 +632,11 @@ public class GetFieldType {
 	}
 	
 	private static Integer getLiftRodFieldType(String field) {
-		if(field.equals("img"))
-			return 12;
-		return 4;
+		if(field.equals("id")||field.equals("uin")||field.equals("comid"))
+			return 4;
+		else if(field.equals("ctime")||field.equals("update_time"))
+			return 93;
+		return 12;
 	}
 
 	private static Integer getComParkFieldType(String field) {
@@ -731,7 +758,7 @@ public class GetFieldType {
 			return 93;
 		else if(field.equals("total"))
 			return 3;
-		else if(field.equals("name")||field.equals("address")||field.equals("p_lot"))
+		else if(field.equals("name")||field.equals("address")||field.equals("p_lot")||field.equals("car_number"))
 			return 12;
 		else 
 			return 4;
@@ -834,12 +861,11 @@ public class GetFieldType {
 	private static Integer getOrderFieldType(String field) {
 		if(field.equals("end_time")||field.equals("create_time")){
 			return 93;
-		}else if(field.equals("total")){
+		}else if(field.equals("total")||field.equals("amount")){
 			return 3;
-		}else if(field.equals("car_number")){
+		}else if(field.equals("car_number")||field.equals("c_type")||
+				field.equals("in_passid")||field.equals("out_passid")||field.equals("order_id_local")){
 			return 12;
-		}else if(field.equals("amount")){
-			return 3;
 		}else 
 			return 4;
 	}

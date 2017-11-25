@@ -29,8 +29,8 @@ public class Base64forjs {
 			-1, -1 };
 
 	/**
-	 * ½âÃÜ
-	 * 
+	 * è§£å¯†
+	 *
 	 * @param str
 	 * @return
 	 */

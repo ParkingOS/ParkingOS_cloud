@@ -29,14 +29,14 @@ public class CityInduceModuleAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null){
@@ -64,7 +64,7 @@ public class CityInduceModuleAction extends Action {
 			params.add(induce_id);
 			params.add(0);
 			count = pgOnlyReadService.getCount(countSql,params);
-			if(count>0){//按照正序排序
+			if(count>0){//鎸夌収姝ｅ簭鎺掑簭
 				list = pgOnlyReadService.getAll(sql +" order by create_time ",params, pageNum, pageSize);
 			}
 			getBindParks(list);
@@ -92,7 +92,7 @@ public class CityInduceModuleAction extends Action {
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			Long moduleid = RequestUtil.getLong(request, "moduleid", -1L);
-			Map<String, Object> map = pgOnlyReadService.getMap("select induce_id from induce_module_tb where id=? ", 
+			Map<String, Object> map = pgOnlyReadService.getMap("select induce_id from induce_module_tb where id=? ",
 					new Object[]{moduleid});
 			if(map != null){
 				Long induce_id = (Long)map.get("induce_id");
@@ -114,13 +114,13 @@ public class CityInduceModuleAction extends Action {
 					sql += " and id in ("+preParams+") ";
 					countSql += " and id in ("+preParams+") ";
 					params.addAll(parks);
-					
+
 					count = pgOnlyReadService.getCount(countSql,params);
 					if(count>0){
 						list = pgOnlyReadService.getAll(sql +" order by id desc ",params, pageNum, pageSize);
 					}
 				}
-				
+
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
@@ -140,7 +140,7 @@ public class CityInduceModuleAction extends Action {
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			Long moduleid = RequestUtil.getLong(request, "moduleid", -1L);
-			Map<String, Object> map = pgOnlyReadService.getMap("select induce_id from induce_module_tb where id=? ", 
+			Map<String, Object> map = pgOnlyReadService.getMap("select induce_id from induce_module_tb where id=? ",
 					new Object[]{moduleid});
 			if(map != null){
 				Long induce_id = (Long)map.get("induce_id");
@@ -163,13 +163,13 @@ public class CityInduceModuleAction extends Action {
 					sql += " and c.id in ("+preParams+") ";
 					countSql += " and c.id in ("+preParams+") ";
 					params.addAll(parks);
-					
+
 					count = pgOnlyReadService.getCount(countSql,params);
 					if(count>0){
 						list = pgOnlyReadService.getAll(sql +" order by p.sort nulls last ",params, pageNum, pageSize);
 					}
 				}
-				
+
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
@@ -185,23 +185,23 @@ public class CityInduceModuleAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private int setModuleSort(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		Integer sort = RequestUtil.getInteger(request, "sort", 0);
-		int r = daService.update("update induce_module_tb set sort=? where id=? ", 
+		int r = daService.update("update induce_module_tb set sort=? where id=? ",
 				new Object[]{sort, id});
 		return r;
 	}
-	
+
 	private int setSort(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		Integer sort = RequestUtil.getInteger(request, "sort", 0);
-		int r = daService.update("update induce_park_tb set sort=? where id=? ", 
+		int r = daService.update("update induce_park_tb set sort=? where id=? ",
 				new Object[]{sort, id});
 		return r;
 	}
-	
+
 	private void getBindParks(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> params = new ArrayList<Object>();
@@ -214,7 +214,7 @@ public class CityInduceModuleAction extends Action {
 				else
 					preParams += ",?";
 			}
-			
+
 			List<Map<String, Object>> rList = pgOnlyReadService.getAllMap("select count(id) pcount,module_id from induce_park_tb where " +
 					" module_id in ("+preParams+") group by module_id ", params);
 			if(rList != null && !rList.isEmpty()){
@@ -231,7 +231,7 @@ public class CityInduceModuleAction extends Action {
 			}
 		}
 	}
-	
+
 	private int unbindpark(HttpServletRequest request){
 		Long moduleid = RequestUtil.getLong(request, "moduleid", -1L);
 		String ids = RequestUtil.processParams(request, "id");
@@ -254,11 +254,11 @@ public class CityInduceModuleAction extends Action {
 		}
 		return 0;
 	}
-	
+
 	private int bindpark(HttpServletRequest request){
 		Long moduleid = RequestUtil.getLong(request, "moduleid", -1L);
 		String ids = RequestUtil.processParams(request, "id");
-		Map<String, Object> map = pgOnlyReadService.getMap("select induce_id from induce_module_tb where id=? ", 
+		Map<String, Object> map = pgOnlyReadService.getMap("select induce_id from induce_module_tb where id=? ",
 				new Object[]{moduleid});
 		if(map != null && !ids.equals("")){
 			Long induce_id = (Long)map.get("induce_id");
@@ -274,7 +274,7 @@ public class CityInduceModuleAction extends Action {
 						preParams ="?";
 					else
 						preParams += ",?";
-					
+
 					Object[] values2 = new Object[]{induce_id, comid, moduleid};
 					anlyList.add(values2);
 				}
@@ -283,20 +283,20 @@ public class CityInduceModuleAction extends Action {
 				if(count > 0){
 					return -2;
 				}
-				int r = daService.bathInsert("insert into induce_park_tb(induce_id,comid,module_id) values(?,?,?) ", 
+				int r = daService.bathInsert("insert into induce_park_tb(induce_id,comid,module_id) values(?,?,?) ",
 						anlyList, new int[]{4,4,4});
 				if(r > 0){
 					return 1;
 				}
 			}
 		}
-		
+
 		return -1;
 	}
-	
+
 	private int deleteModule(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
-		Long count = pgOnlyReadService.getLong("select count(id) from induce_park_tb where module_id=? ", 
+		Long count = pgOnlyReadService.getLong("select count(id) from induce_park_tb where module_id=? ",
 				new Object[]{id});
 		if(count > 0){
 			return -2;
@@ -305,7 +305,7 @@ public class CityInduceModuleAction extends Action {
 				new Object[]{1, id});
 		return r;
 	}
-	
+
 	private int editModule(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
@@ -313,7 +313,7 @@ public class CityInduceModuleAction extends Action {
 				new Object[]{name, id});
 		return r;
 	}
-	
+
 	private int createModule(HttpServletRequest request){
 		Long ntime = System.currentTimeMillis()/1000;
 		Long induce_id = RequestUtil.getLong(request, "induce_id", -1L);

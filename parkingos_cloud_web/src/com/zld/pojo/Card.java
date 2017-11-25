@@ -4,24 +4,24 @@ import java.io.Serializable;
 
 public class Card implements Serializable {
 	private Long id = -1L;
-	private String nfc_uuid;//¿¨Æ¬ÄÚÖÃµÄÎ¨Ò»±àºÅ
-	private Long comid = -1L;//·¢ĞĞ¿¨Æ¬µÄ³µ³¡±àºÅ
-	private Long create_time;//¿ª¿¨Ê±¼ä
-	private Integer state = 0;//-- 0¼¤»î£¬1Ëø¶¨£¬2ÍË¿¨
-	private Integer use_times;//Ê¹ÓÃ´ÎÊı
-	private Long uin = -1L;//¿¨Æ¬ËùÊô³µÖ÷ÕË»§
-	private Long uid = -1L;//¿ª¿¨²Ù×÷ÈË±àºÅ
-	private Long update_time;//¿¨Æ¬ĞÅÏ¢¸üĞÂÊ±¼ä
-	private Long nid = 0L;//É¨ÃèNFCµÄ¶şÎ¬ÂëºÅ
-	private String qrcode;//¿¨Æ¬¶şÎ¬Âë
-	private Integer type;//¿¨Æ¬ÀàĞÍ0£ºNFC  1£ºµç×Ó±êÇ©
-	private String card_name;//¿¨Æ¬Ãû³Æ
-	private String device;//¿ª¿¨Éè±¸
-	private Integer is_delete = 0;//0£ºÕı³£ 1£ºÒÑÉ¾³ı
-	private Double balance = 0d;//Óà¶î
-	private String card_number;//¿¨ÃæºÅ£¨Ó¡ÔÚ¿¨ÃæÉÏµÄ±àºÅ£©
-	private Long tenant_id = -1L;//³ÇÊĞÉÌ»§±àºÅ
-	private Long group_id = -1L;//ÔËÓª¼¯ÍÅ±àºÅ
+	private String nfc_uuid;//å¡ç‰‡å†…ç½®çš„å”¯ä¸€ç¼–å·
+	private Long comid = -1L;//å‘è¡Œå¡ç‰‡çš„è½¦åœºç¼–å·
+	private Long create_time;//å¼€å¡æ—¶é—´
+	private Integer state = 0;//-- 0æ¿€æ´»ï¼Œ1é”å®šï¼Œ2é€€å¡
+	private Integer use_times;//ä½¿ç”¨æ¬¡æ•°
+	private Long uin = -1L;//å¡ç‰‡æ‰€å±è½¦ä¸»è´¦æˆ·
+	private Long uid = -1L;//å¼€å¡æ“ä½œäººç¼–å·
+	private Long update_time;//å¡ç‰‡ä¿¡æ¯æ›´æ–°æ—¶é—´
+	private Long nid = 0L;//æ‰«æNFCçš„äºŒç»´ç å·
+	private String qrcode;//å¡ç‰‡äºŒç»´ç 
+	private Integer type;//å¡ç‰‡ç±»å‹0ï¼šNFC  1ï¼šç”µå­æ ‡ç­¾
+	private String card_name;//å¡ç‰‡åç§°
+	private String device;//å¼€å¡è®¾å¤‡
+	private Integer is_delete = 0;//0ï¼šæ­£å¸¸ 1ï¼šå·²åˆ é™¤
+	private Double balance = 0d;//ä½™é¢
+	private String card_number;//å¡é¢å·ï¼ˆå°åœ¨å¡é¢ä¸Šçš„ç¼–å·ï¼‰
+	private Long tenant_id = -1L;//åŸå¸‚å•†æˆ·ç¼–å·
+	private Long group_id = -1L;//è¿è¥é›†å›¢ç¼–å·
 	public Long getId() {
 		return id;
 	}
@@ -163,5 +163,5 @@ public class Card implements Serializable {
 				+ ", balance=" + balance + ", card_number=" + card_number
 				+ ", tenant_id=" + tenant_id + ", group_id=" + group_id + "]";
 	}
-	
+
 }

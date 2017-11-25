@@ -23,7 +23,7 @@ import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.ZLDType;
 /**
- * 总管理员   停车场注册修改删除等
+ * 鎬荤鐞嗗憳   鍋滆溅鍦烘敞鍐屼慨鏀瑰垹闄ょ瓑
  * @author Administrator
  *
  */
@@ -35,7 +35,7 @@ public class MarketerParkManageAction extends Action {
 	private PublicMethods publicMethods;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Integer state = RequestUtil.getInteger(request, "state", 0);
@@ -97,7 +97,7 @@ public class MarketerParkManageAction extends Action {
 			}else {
 				AjaxUtil.ajaxOutput(response, "0");
 			}
-		}else if(action.equals("edit")){	
+		}else if(action.equals("edit")){
 			String company =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "company_name"));
 			String address =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
 			String phone =RequestUtil.processParams(request, "phone");
@@ -166,7 +166,7 @@ public class MarketerParkManageAction extends Action {
 			else {
 				AjaxUtil.ajaxOutput(response, "0");
 			}
-		}else if(action.equals("localdata")){//地区信息
+		}else if(action.equals("localdata")){//鍦板尯淇℃伅
 			AjaxUtil.ajaxOutput(response,GetLocalCode.getLocalData());
 		}else if(action.equals("getlocalbycode")){
 			Integer code = RequestUtil.getInteger(request, "code", 0);
@@ -194,7 +194,7 @@ public class MarketerParkManageAction extends Action {
 		}else if(action.equals("getbizs")){
 			List<Map> tradsList = daService.getAll("select * from bizcircle_tb where state =?",
 					new Object[]{0});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"请选择\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"璇烽�夋嫨\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("name")+"\"}";
@@ -206,10 +206,10 @@ public class MarketerParkManageAction extends Action {
 		return null;
 	}
 
-	//注册停车场管理员帐号
+	//娉ㄥ唽鍋滆溅鍦虹鐞嗗憳甯愬彿
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Integer createAdmin(HttpServletRequest request){
-	
+
 		Long time = System.currentTimeMillis()/1000;
 		String company =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "company_name"));
 		System.out.println(company);
@@ -231,7 +231,7 @@ public class MarketerParkManageAction extends Action {
 		Integer navi = RequestUtil.getInteger(request, "navi", 0);
 		Integer monthlypay = RequestUtil.getInteger(request, "monthlypay", 0);
 		Long comId = daService.getLong("SELECT nextval('seq_com_info_tb'::REGCLASS) AS newid",null);
-		
+
 		List<Map> sqlsList = new ArrayList<Map>();
 		Map comMap = new HashMap();
 		//String share_number =RequestUtil.processParams(request, "share_number");
@@ -244,7 +244,7 @@ public class MarketerParkManageAction extends Action {
 		comMap.put("sql", comsql);
 		comMap.put("values", comvalues);
 		sqlsList.add(comMap);
-		
+
 		boolean r =  daService.bathUpdate(sqlsList);
 		if(r){
 			if(city>0)

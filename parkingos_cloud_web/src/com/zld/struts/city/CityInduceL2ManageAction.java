@@ -30,14 +30,14 @@ public class CityInduceL2ManageAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µ«¬ºµƒ”√ªßid
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ÁôªÂΩïÁöÑÁî®Êà∑id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null){
@@ -49,7 +49,7 @@ public class CityInduceL2ManageAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		Integer type = RequestUtil.getInteger(request, "type", 0);
-		
+
 		if(action.equals("")){
 			request.setAttribute("type", type);
 			return mapping.findForward("list");
@@ -120,13 +120,13 @@ public class CityInduceL2ManageAction extends Action {
 			Long induce_id = RequestUtil.getLong(request, "induce_id", -1L);
 			Long comid = RequestUtil.getLong(request, "comid", -1L);
 			if(induce_id > 0 && comid > 0){
-				Long count = pgOnlyReadService.getLong("select count(id) from induce_park_tb where induce_id=? and comid=? ", 
+				Long count = pgOnlyReadService.getLong("select count(id) from induce_park_tb where induce_id=? and comid=? ",
 						new Object[]{induce_id, comid});
 				if(count > 0){
-					AjaxUtil.ajaxOutput(response, "“—æ≠ÃÌº”∏√≥µ≥°");
+					AjaxUtil.ajaxOutput(response, "Â∑≤ÁªèÊ∑ªÂä†ËØ•ËΩ¶Âú∫");
 					return null;
 				}
-				int r = daService.update("insert into induce_park_tb(induce_id,comid) values(?,?)", 
+				int r = daService.update("insert into induce_park_tb(induce_id,comid) values(?,?)",
 						new Object[]{induce_id, comid});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -172,10 +172,10 @@ public class CityInduceL2ManageAction extends Action {
 			request.setAttribute("induce_id", induce_id);
 			return mapping.findForward("modulelist");
 		}
-		
+
 		return null;
 	}
-	
+
 	private int editAd(HttpServletRequest request, Long updator_id){
 		Long induce_id = RequestUtil.getLong(request, "induce_id", -1L);
 		String ad = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "ad"));
@@ -196,12 +196,12 @@ public class CityInduceL2ManageAction extends Action {
 		if(induce_id < 0){
 			return -1;
 		}
-		Map<String, Object> map = pgOnlyReadService.getMap("select * from induce_ad_tb where induce_id=? ", 
+		Map<String, Object> map = pgOnlyReadService.getMap("select * from induce_ad_tb where induce_id=? ",
 				new Object[]{induce_id});
 		int r = 0;
 		if(map != null){
 			Integer isactive = (Integer)map.get("isactive");
-			if(isactive == 1){//“—∑¢≤º
+			if(isactive == 1){//Â∑≤ÂèëÂ∏É
 				String his_ad = null;
 				if(map.get("ad") != null){
 					his_ad = (String)map.get("ad");
@@ -250,16 +250,16 @@ public class CityInduceL2ManageAction extends Action {
 					}
 				}
 			}
-			r = daService.update("update induce_ad_tb set ad=?,begin_time=?,end_time=?,update_time=?,isactive=?,updator_id=? where induce_id=? ", 
+			r = daService.update("update induce_ad_tb set ad=?,begin_time=?,end_time=?,update_time=?,isactive=?,updator_id=? where induce_id=? ",
 					new Object[]{ad, btime, etime, ntime, isactive, updator_id, induce_id});
 		}else{
-			r = daService.update("insert into induce_ad_tb(induce_id,ad,begin_time,end_time,create_time,updator_id) values(?,?,?,?,?,?)", 
+			r = daService.update("insert into induce_ad_tb(induce_id,ad,begin_time,end_time,create_time,updator_id) values(?,?,?,?,?,?)",
 					new Object[]{induce_id, ad, btime, etime, ntime, updator_id});
 		}
-		
+
 		return r;
 	}
-	
+
 	private int bathPublish(HttpServletRequest request, Long publishor){
 		String ids = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "ids"));
 		if(ids.equals("")){
@@ -283,12 +283,12 @@ public class CityInduceL2ManageAction extends Action {
 			else
 				preParams += ",?";
 		}
-		
+
 		List<Map<String, Object>> nopubList = pgOnlyReadService.getAllMap("select * from induce_ad_tb where isactive=? and induce_id in ("+preParams+") ", params1);
 		if(nopubList == null || nopubList.isEmpty()){
 			return -2;
 		}
-		
+
 		int r = daService.update("update induce_ad_tb set isactive=?,publish_time=? where isactive=? and induce_id in ("+preParams+") ", params2);
 		if(r > 0){
 			List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
@@ -305,7 +305,7 @@ public class CityInduceL2ManageAction extends Action {
 		}
 		return 0;
 	}
-	
+
 	private int publish(HttpServletRequest request, Long publishor){
 		Long induce_id = RequestUtil.getLong(request, "induce_id", -1L);
 		if(induce_id < 0){
@@ -318,7 +318,7 @@ public class CityInduceL2ManageAction extends Action {
 		induceSqlMap.put("sql", "update induce_ad_tb set isactive=?,publish_time=? where induce_id=? ");
 		induceSqlMap.put("values", new Object[]{1, ntime, induce_id});
 		bathSql.add(induceSqlMap);
-		Map<String, Object> induceMap = pgOnlyReadService.getMap("select * from induce_ad_tb where induce_id=? ", 
+		Map<String, Object> induceMap = pgOnlyReadService.getMap("select * from induce_ad_tb where induce_id=? ",
 				new Object[]{induce_id});
 		if(induceMap == null){
 			return -1;
@@ -332,7 +332,7 @@ public class CityInduceL2ManageAction extends Action {
 		}
 		return 0;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		Integer comid = RequestUtil.getInteger(request, "comid_start", -1);
 		SqlInfo sqlInfo1 = null;
@@ -341,14 +341,14 @@ public class CityInduceL2ManageAction extends Action {
 		}
 		return sqlInfo1;
 	}
-	
+
 	private int deleteInduce(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
-		int r = daService.update("update induce_tb set is_delete=? where id=? ", 
+		int r = daService.update("update induce_tb set is_delete=? where id=? ",
 				new Object[]{1, id});
 		return r;
 	}
-	
+
 	private int editInduce(HttpServletRequest request, Long updator_id){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
@@ -361,17 +361,17 @@ public class CityInduceL2ManageAction extends Action {
 		if(latitude == 0d) latitude = null;
 		if(did.equals("")) did = null;
 		if(did != null && !did.equals("")){
-			Long count = pgOnlyReadService.getLong("select count(id) from induce_tb where is_delete=? and did=? and id<>? ", 
+			Long count = pgOnlyReadService.getLong("select count(id) from induce_tb where is_delete=? and did=? and id<>? ",
 					new Object[]{0, did, id});
 			if(count > 0){
 				return -2;
 			}
 		}
-		int r = daService.update("update induce_tb set name=?,longitude=?,latitude=?,address=?,update_time=?,updator_id=?,did=? where id=? ", 
+		int r = daService.update("update induce_tb set name=?,longitude=?,latitude=?,address=?,update_time=?,updator_id=?,did=? where id=? ",
 				new Object[]{name, longitude, latitude, address, ntime, updator_id, did, id});
 		return r;
 	}
-	
+
 	private int createInduce(HttpServletRequest request, Long cityid, Long creator_id){
 		String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
 		Integer type = RequestUtil.getInteger(request, "type", 2);
@@ -384,7 +384,7 @@ public class CityInduceL2ManageAction extends Action {
 		if(latitude == 0d) latitude = null;
 		if(did.equals("")) did = null;
 		if(did != null && !did.equals("")){
-			Long count = pgOnlyReadService.getLong("select count(id) from induce_tb where is_delete=? and did=? ", 
+			Long count = pgOnlyReadService.getLong("select count(id) from induce_tb where is_delete=? and did=? ",
 					new Object[]{0, did});
 			if(count > 0){
 				return -2;
@@ -406,7 +406,7 @@ public class CityInduceL2ManageAction extends Action {
 		}
 		return 0;
 	}
-	
+
 	private void setList2(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> creatorids = new ArrayList<Object>();
@@ -418,7 +418,7 @@ public class CityInduceL2ManageAction extends Action {
 				else
 					preParams += ",?";
 			}
-			
+
 			List<Map<String, Object>> list2 = pgOnlyReadService.getAllMap("select id,nickname from user_info_tb where id in ("+preParams+")", creatorids);
 			if(list2 != null && !list2.isEmpty()){
 				for(Map<String, Object> map : list){
@@ -434,7 +434,7 @@ public class CityInduceL2ManageAction extends Action {
 			}
 		}
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> creators = new ArrayList<Object>();
@@ -451,7 +451,7 @@ public class CityInduceL2ManageAction extends Action {
 				else
 					preParams += ",?";
 			}
-			
+
 			List<Map<String, Object>> list2 = pgOnlyReadService.getAllMap("select id,nickname from user_info_tb where id in ("+preParams+")", creators);
 			if(list2 != null && !list2.isEmpty()){
 				for(Map<String, Object> map : list){
@@ -465,7 +465,7 @@ public class CityInduceL2ManageAction extends Action {
 					}
 				}
 			}
-			
+
 			list2 = pgOnlyReadService.getAllMap("select id,nickname from user_info_tb where id in ("+preParams+")", updators);
 			if(list2 != null && !list2.isEmpty()){
 				for(Map<String, Object> map : list){
@@ -479,7 +479,7 @@ public class CityInduceL2ManageAction extends Action {
 					}
 				}
 			}
-			
+
 
 			list2 = pgOnlyReadService.getAllMap("select induce_id,count(id) hcount from induce_ad_history_tb where induce_id in ("+preParams+") group by induce_id ", induceids);
 			if(list2 != null && !list2.isEmpty()){

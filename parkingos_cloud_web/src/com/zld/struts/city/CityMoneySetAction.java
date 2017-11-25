@@ -27,10 +27,10 @@ public class CityMoneySetAction extends Action {
 	private CommonMethods commonMethods;
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long operater = (Long)request.getSession().getAttribute("loginuin");
@@ -44,7 +44,7 @@ public class CityMoneySetAction extends Action {
 			return null;
 		}
 		if(cityid == null) cityid = -1L;
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("query")){
@@ -72,7 +72,7 @@ public class CityMoneySetAction extends Action {
 				sql += " comid in ("+preParams+") ";
 				countSql += " comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -85,7 +85,7 @@ public class CityMoneySetAction extends Action {
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
-		}else if(action.equals("create")){//Ìí¼ÓÕÊºÅ
+		}else if(action.equals("create")){//æ·»åŠ å¸å·
 			Integer mtype = RequestUtil.getInteger(request, "mtype", 0);
 			Integer giveto = RequestUtil.getInteger(request, "giveto", 0);
 			Long comid = RequestUtil.getLong(request, "comid", -1L);
@@ -93,7 +93,7 @@ public class CityMoneySetAction extends Action {
 				AjaxUtil.ajaxOutput(response, "-1");
 				return null;
 			}
-			Long count = daService.getLong("select count(id) from money_set_tb where comid=? and mtype=? ", 
+			Long count = daService.getLong("select count(id) from money_set_tb where comid=? and mtype=? ",
 					new Object[]{comid, mtype});
 			if(count > 0){
 				AjaxUtil.ajaxOutput(response, "-2");
@@ -111,7 +111,7 @@ public class CityMoneySetAction extends Action {
 				AjaxUtil.ajaxOutput(response, "-1");
 				return null;
 			}
-			Long count = daService.getLong("select count(id) from money_set_tb where comid=? and mtype=? and id<>? ", 
+			Long count = daService.getLong("select count(id) from money_set_tb where comid=? and mtype=? and id<>? ",
 					new Object[]{comid, mtype ,id});
 			if(count > 0){
 				AjaxUtil.ajaxOutput(response, "-2");

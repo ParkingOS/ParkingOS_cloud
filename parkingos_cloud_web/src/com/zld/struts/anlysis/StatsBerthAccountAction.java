@@ -35,14 +35,14 @@ public class StatsBerthAccountAction extends Action {
 	private StatsAccountFacade accountFacade;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	private Logger logger = Logger.getLogger(StatsBerthAccountAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		if(uin == null){
@@ -68,7 +68,7 @@ public class StatsBerthAccountAction extends Action {
 			String etime = RequestUtil.processParams(request, "etime");
 			Long b = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(btime) + 24 * 60 *60;
 			Long e = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime) + 24 * 60 *60;
-			if(groupid == -1){//³ÇÊĞÉÌ»§ÒªÇó¿É°´ÕÕÔËÓª¼¯ÍÅÉ¸²é
+			if(groupid == -1){//åŸå¸‚å•†æˆ·è¦æ±‚å¯æŒ‰ç…§è¿è¥é›†å›¢ç­›æŸ¥
 				groupid = RequestUtil.getLong(request, "groupid", -1L);
 			}
 			SqlInfo sqlInfo = RequestUtil.customSearch(request, "com_park");
@@ -98,7 +98,7 @@ public class StatsBerthAccountAction extends Action {
 				countSql += " and comid in ("+preParams+") ";
 				sumSql += " and comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo != null) {
 					countSql += " and "+ sqlInfo.getSql();
 					sql += " and "+sqlInfo.getSql();
@@ -106,7 +106,7 @@ public class StatsBerthAccountAction extends Action {
 					params.addAll(sqlInfo.getParams());
 				}
 				count = pgOnlyReadService.getCount(countSql,params);
-				
+
 				if(count > 0){
 					List<Map<String, Object>> berthList = pgOnlyReadService.getAllMap(sumSql, params);
 					res = setTitle(berthList, b, e);
@@ -114,13 +114,13 @@ public class StatsBerthAccountAction extends Action {
 					setList(list, b, e);
 				}
 			}
-			
+
 			String json = JsonUtil.anlysisMap2Json(list, pageNum, count, fieldsstr, "id", res);
 			AjaxUtil.ajaxOutput(response, json);
 		}
 		return null;
 	}
-	
+
 	private String setTitle(List<Map<String, Object>> list, Long startTime, Long endTime){
 		double cashTotalFee = 0;
 		double ePayTotalFee = 0;
@@ -142,7 +142,7 @@ public class StatsBerthAccountAction extends Action {
 				params.add(endTime);
 				params.addAll(idList);
 				params.add(1);
-				
+
 				String sql = "select sum(prepay_cash) as prepay_cash," +
 						"sum(add_cash) as add_cash,sum(refund_cash) as refund_cash,sum(pursue_cash) as pursue_cash,sum(pfee_cash) as pfee_cash," +
 						"sum(prepay_epay) as prepay_epay,sum(add_epay) as add_epay,sum(refund_epay) as refund_epay,sum(pursue_epay) as pursue_epay," +
@@ -152,22 +152,22 @@ public class StatsBerthAccountAction extends Action {
 						" type=? ";
 				Map<String, Object> infoMap = pgOnlyReadService.getMap(sql, params);
 				if(infoMap != null && !infoMap.isEmpty()){
-					Double cashPrepayFee = 0d;//ÏÖ½ğÔ¤Ö§¸¶
-					Double cashAddFee = 0d;//ÏÖ½ğ²¹½É
-					Double cashRefundFee = 0d;//ÏÖ½ğÍË¿î
-					Double cashPursueFee = 0d;//ÏÖ½ğ×·½É
-					Double cashParkingFee = 0d;//ÏÖ½ğÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
-					Double ePayPrepayFee = 0d;//µç×ÓÔ¤Ö§¸¶
-					Double ePayAddFee = 0d;//µç×Ó²¹½É
-					Double ePayRefundFee = 0d;//µç×ÓÍË¿î
-					Double ePayPursueFee = 0d;//µç×Ó×·½É
-					Double ePayParkingFee = 0d;//µç×ÓÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
-					Double escapeFee = 0d;//ÌÓµ¥Î´×·½ÉµÄÍ£³µ·Ñ
-					Double cardPrepayFee = 0d;//Ë¢¿¨Ô¤Ö§¸¶
-					Double cardAddFee = 0d;//Ë¢¿¨²¹½É
-					Double cardRefundFee = 0d;//Ë¢¿¨ÍË¿î
-					Double cardPursueFee = 0d;//Ë¢¿¨×·½É
-					Double cardParkingFee = 0d;//Ë¢¿¨Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
+					Double cashPrepayFee = 0d;//ç°é‡‘é¢„æ”¯ä»˜
+					Double cashAddFee = 0d;//ç°é‡‘è¡¥ç¼´
+					Double cashRefundFee = 0d;//ç°é‡‘é€€æ¬¾
+					Double cashPursueFee = 0d;//ç°é‡‘è¿½ç¼´
+					Double cashParkingFee = 0d;//ç°é‡‘åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+					Double ePayPrepayFee = 0d;//ç”µå­é¢„æ”¯ä»˜
+					Double ePayAddFee = 0d;//ç”µå­è¡¥ç¼´
+					Double ePayRefundFee = 0d;//ç”µå­é€€æ¬¾
+					Double ePayPursueFee = 0d;//ç”µå­è¿½ç¼´
+					Double ePayParkingFee = 0d;//ç”µå­åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+					Double escapeFee = 0d;//é€ƒå•æœªè¿½ç¼´çš„åœè½¦è´¹
+					Double cardPrepayFee = 0d;//åˆ·å¡é¢„æ”¯ä»˜
+					Double cardAddFee = 0d;//åˆ·å¡è¡¥ç¼´
+					Double cardRefundFee = 0d;//åˆ·å¡é€€æ¬¾
+					Double cardPursueFee = 0d;//åˆ·å¡è¿½ç¼´
+					Double cardParkingFee = 0d;//åˆ·å¡åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 					if(infoMap.get("prepay_cash") != null){
 						cashPrepayFee = Double.valueOf(infoMap.get("prepay_cash") + "");
 					}
@@ -213,7 +213,7 @@ public class StatsBerthAccountAction extends Action {
 					if(infoMap.get("pfee_card") != null){
 						cardParkingFee = Double.valueOf(infoMap.get("pfee_card") + "");
 					}
-					
+
 					double cashCustomFee = StringUtils.formatDouble(cashParkingFee + cashPrepayFee + cashAddFee - cashRefundFee);
 					double epayCustomFee = StringUtils.formatDouble(ePayParkingFee + ePayPrepayFee + ePayAddFee - ePayRefundFee);
 					double cardCustomFee = StringUtils.formatDouble(cardParkingFee + cardPrepayFee + cardAddFee - cardRefundFee);
@@ -227,10 +227,10 @@ public class StatsBerthAccountAction extends Action {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String res = "Í£³µ·Ñ-->ÏÖ½ğÖ§¸¶£º"+cashTotalFee+"Ôª£¬µç×ÓÖ§¸¶£º"+ePayTotalFee+"Ôª£¬¿¨Æ¬Ö§¸¶£º"+cardTotalFee+"Ôª";
+		String res = "åœè½¦è´¹-->ç°é‡‘æ”¯ä»˜ï¼š"+cashTotalFee+"å…ƒï¼Œç”µå­æ”¯ä»˜ï¼š"+ePayTotalFee+"å…ƒï¼Œå¡ç‰‡æ”¯ä»˜ï¼š"+cardTotalFee+"å…ƒ";
 		return res;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list, Long startTime, Long endTime){
 		try {
 			if(list != null && !list.isEmpty()){
@@ -248,8 +248,8 @@ public class StatsBerthAccountAction extends Action {
 					infoMap.put("escapeFee", 0);
 					infoMap.put("allTotalFee", 0);
 				}
-				
-				
+
+
 				List<Object> idList = new ArrayList<Object>();
 				String preParam = "";
 				for(Map<String, Object> map : list){
@@ -264,23 +264,23 @@ public class StatsBerthAccountAction extends Action {
 				if(incomeList != null && !incomeList.isEmpty()){
 					for(Map<String, Object> infoMap : incomeList){
 						Long id = (Long)infoMap.get("id");
-						Double cashPrepayFee = Double.valueOf(infoMap.get("prepay_cash") + "");//ÏÖ½ğÔ¤Ö§¸¶
-						Double cashAddFee = Double.valueOf(infoMap.get("add_cash") + "");//ÏÖ½ğ²¹½É
-						Double cashRefundFee = Double.valueOf(infoMap.get("refund_cash") + "");//ÏÖ½ğÍË¿î
-						Double cashPursueFee = Double.valueOf(infoMap.get("pursue_cash") + "");//ÏÖ½ğ×·½É
-						Double cashParkingFee = Double.valueOf(infoMap.get("pfee_cash") + "");//ÏÖ½ğÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
-						Double ePayPrepayFee = Double.valueOf(infoMap.get("prepay_epay") + "");//µç×ÓÔ¤Ö§¸¶
-						Double ePayAddFee = Double.valueOf(infoMap.get("add_epay") + "");//µç×Ó²¹½É
-						Double ePayRefundFee = Double.valueOf(infoMap.get("refund_epay") + "");//µç×ÓÍË¿î
-						Double ePayPursueFee = Double.valueOf(infoMap.get("pursue_epay") + "");//µç×Ó×·½É
-						Double ePayParkingFee = Double.valueOf(infoMap.get("pfee_epay") + "");//µç×ÓÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
-						Double escapeFee = Double.valueOf(infoMap.get("escape") + "");//ÌÓµ¥Î´×·½ÉµÄÍ£³µ·Ñ
-						Double cardPrepayFee = Double.valueOf(infoMap.get("prepay_card") + "");//Ë¢¿¨Ô¤Ö§¸¶
-						Double cardAddFee = Double.valueOf(infoMap.get("add_card") + "");//Ë¢¿¨²¹½É
-						Double cardRefundFee = Double.valueOf(infoMap.get("refund_card") + "");//Ë¢¿¨ÍË¿î
-						Double cardPursueFee = Double.valueOf(infoMap.get("pursue_card") + "");//Ë¢¿¨×·½É
-						Double cardParkingFee = Double.valueOf(infoMap.get("pfee_card") + "");//Ë¢¿¨Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-						
+						Double cashPrepayFee = Double.valueOf(infoMap.get("prepay_cash") + "");//ç°é‡‘é¢„æ”¯ä»˜
+						Double cashAddFee = Double.valueOf(infoMap.get("add_cash") + "");//ç°é‡‘è¡¥ç¼´
+						Double cashRefundFee = Double.valueOf(infoMap.get("refund_cash") + "");//ç°é‡‘é€€æ¬¾
+						Double cashPursueFee = Double.valueOf(infoMap.get("pursue_cash") + "");//ç°é‡‘è¿½ç¼´
+						Double cashParkingFee = Double.valueOf(infoMap.get("pfee_cash") + "");//ç°é‡‘åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+						Double ePayPrepayFee = Double.valueOf(infoMap.get("prepay_epay") + "");//ç”µå­é¢„æ”¯ä»˜
+						Double ePayAddFee = Double.valueOf(infoMap.get("add_epay") + "");//ç”µå­è¡¥ç¼´
+						Double ePayRefundFee = Double.valueOf(infoMap.get("refund_epay") + "");//ç”µå­é€€æ¬¾
+						Double ePayPursueFee = Double.valueOf(infoMap.get("pursue_epay") + "");//ç”µå­è¿½ç¼´
+						Double ePayParkingFee = Double.valueOf(infoMap.get("pfee_epay") + "");//ç”µå­åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+						Double escapeFee = Double.valueOf(infoMap.get("escape") + "");//é€ƒå•æœªè¿½ç¼´çš„åœè½¦è´¹
+						Double cardPrepayFee = Double.valueOf(infoMap.get("prepay_card") + "");//åˆ·å¡é¢„æ”¯ä»˜
+						Double cardAddFee = Double.valueOf(infoMap.get("add_card") + "");//åˆ·å¡è¡¥ç¼´
+						Double cardRefundFee = Double.valueOf(infoMap.get("refund_card") + "");//åˆ·å¡é€€æ¬¾
+						Double cardPursueFee = Double.valueOf(infoMap.get("pursue_card") + "");//åˆ·å¡è¿½ç¼´
+						Double cardParkingFee = Double.valueOf(infoMap.get("pfee_card") + "");//åˆ·å¡åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+
 						double cashCustomFee = StringUtils.formatDouble(cashParkingFee + cashPrepayFee + cashAddFee - cashRefundFee);
 						double epayCustomFee = StringUtils.formatDouble(ePayParkingFee + ePayPrepayFee + ePayAddFee - ePayRefundFee);
 						double cardCustomFee = StringUtils.formatDouble(cardParkingFee + cardPrepayFee + cardAddFee - cardRefundFee);
@@ -289,7 +289,7 @@ public class StatsBerthAccountAction extends Action {
 						double cardTotalFee = StringUtils.formatDouble(cardPursueFee + cardCustomFee);
 						double totalFee = StringUtils.formatDouble(cashTotalFee + ePayTotalFee + cardTotalFee);
 						double allTotalFee = StringUtils.formatDouble(totalFee + escapeFee);
-						
+
 						for(Map<String, Object> map : list){
 							Long berthId = (Long)map.get("id");
 							if(berthId.intValue() == id.intValue()){

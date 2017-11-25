@@ -7,10 +7,10 @@ import org.json.JSONObject;
 
 
 /**
- * json�Ĺ�����
+ * json的工具类
  */
 public class JsonUtil {
-	
+
 	public static String Map2Json(List mapList ,int page,long total,String fieldsstr,String id) {
 		String json = "{\"page\":1,\"total\":0,\"rows\":[]}";
 		if(mapList != null && !mapList.isEmpty()) {
@@ -49,11 +49,11 @@ public class JsonUtil {
 					}
 				}else if(fieldName.equals("auth_flag")){
 					if(_filedStr.equals("2"))
-						_filedStr="�շ�Ա";
+						_filedStr="收费员";
 					else if(_filedStr.equals("3"))
-						_filedStr="����";
+						_filedStr="财务";
 					else if(_filedStr.equals("5"))
-						_filedStr="�г�רԱ";
+						_filedStr="市场专员";
 				}else if(fieldName.equals("duration")){
 					Long start = (Long)map.get("create_time");
 					Long end = (Long)map.get("end_time");
@@ -69,15 +69,108 @@ public class JsonUtil {
 //						}
 //					}
 				}
-				if(j == fieldsstrArray.length -1)
+//				else if(fieldName.equals("describe")){
+//					_filedStr = StringUtils.createJsonSingleQuotes(map);
+//				}
+				if(j == fieldsstrArray.length -1){
 					json.append("\""+ _filedStr +"\"");
-				else
+				}else{
 					json.append("\""+ _filedStr +"\",");
+				}
 			}
 		}
 		return json.toString();
 	}
-	
+
+	/**
+	 * 忽略单引号操作
+	 * @param mapList
+	 * @param page
+	 * @param total
+	 * @param fieldsstr
+	 * @param id
+	 * @return
+	 */
+	public static String Map2JsonSingleIgnore(List mapList ,int page,long total,String fieldsstr,String id) {
+		String json = "{\"page\":1,\"total\":0,\"rows\":[]}";
+		if(mapList != null && !mapList.isEmpty()) {
+			StringBuffer sb = new StringBuffer("");
+			sb.append("{\"page\":"+ page +",\"total\":"+total+",\"rows\": [");
+			if(!"".equals(fieldsstr)) {
+				String[] fieldsstrArray = fieldsstr.split("\\_\\_");
+				for (int i = 0; i < mapList.size(); i++) {
+					if(i != 0)
+						sb.append(",");
+					sb.append(Map2JsonSingleIgnore((Map)mapList.get(i), fieldsstrArray,id) + "]}");
+				}
+			}
+			sb.append("]}");
+			json = sb.toString();
+		}
+		return json;
+	}
+
+	/**
+	 * 忽略单引号替换
+	 * @param map
+	 * @param fieldsstrArray
+	 * @param id
+	 * @return
+	 */
+	public static String Map2JsonSingleIgnore(Map map,String[] fieldsstrArray,String id) {
+		StringBuffer json = new StringBuffer("");
+		if(map != null) {
+			json.append("{\"id\":\""+map.get(id)+"\",\"cell\":[");
+			for (int j = 0; j < fieldsstrArray.length; j++) {
+				String fieldName = fieldsstrArray[j];
+				String _filedStr = "";
+				Object _filedObject = map.get(fieldName);
+				_filedStr = _filedObject==null?"":_filedObject.toString();
+				_filedStr = _filedStr.trim().replace("\"", "").replace("\n", "").replace("\r", "");
+				if((fieldName.equals("limitday")||fieldName.equals("distru_date")||fieldName.equals("heartbeat")
+						||fieldName.equals("limit_day")||fieldName.indexOf("time")!=-1)
+						&&Check.isLong(_filedStr)){
+					if(_filedStr.length()>5){//
+						_filedStr = TimeTools.getTime_yyyyMMdd_HHmmss(Long.valueOf(_filedStr)*1000);
+						if(fieldName.equals("limitday")&&_filedStr.length()>10)
+							_filedStr = _filedStr.substring(0,10);
+					}
+				}else if(fieldName.equals("auth_flag")){
+					if(_filedStr.equals("2"))
+						_filedStr="收费员";
+					else if(_filedStr.equals("3"))
+						_filedStr="财务";
+					else if(_filedStr.equals("5"))
+						_filedStr="市场专员";
+				}else if(fieldName.equals("duration")){
+					Long start = (Long)map.get("create_time");
+					Long end = (Long)map.get("end_time");
+					if(start!=null&&end!=null)
+						_filedStr=StringUtils.getTimeString(start, end);
+					//map.put("duration", StringUtils.getTimeString(start, end));
+//					if(start!=null&&end!=null){
+//						Long duration = StringUtils.getHour(Long.valueOf(start+""),Long.valueOf(end+""));
+//						_filedStr=duration+"";
+//						Object price = map.get("price");
+//						if(price!=null){
+//							map.put("total", Math.round(Double.valueOf(price+"")*Double.valueOf(duration))+".00");
+//						}
+//					}
+				}
+//				else if(fieldName.equals("describe")){
+//					_filedStr = StringUtils.createJsonSingleQuotes(map);
+//				}
+				if(j == fieldsstrArray.length -1){
+					json.append("\""+ _filedStr +"\"");
+				}else{
+					json.append("\""+ _filedStr +"\",");
+				}
+			}
+		}
+		return json.toString();
+	}
+
+
 	public static String anlysisMap2Json(List mapList ,int page,long total,String fieldsstr,String id,String money) {
 		String json = "{\"page\":1,\"total\":0,\"money\":\""+money+"\",\"rows\":[]}";
 		if(mapList != null && !mapList.isEmpty()) {
@@ -96,7 +189,7 @@ public class JsonUtil {
 		}
 		return json;
 	}
-	
+
 	public static String anlysisMap3Json(List mapList ,int page,long total,String fieldsstr,String id,String money) {
 		String json = "{\"page\":1,\"total\":0,\"summary\":\""+money+"\",\"rows\":[]}";
 		if(mapList != null && !mapList.isEmpty()) {
@@ -116,7 +209,7 @@ public class JsonUtil {
 		return json;
 	}
 	/**
-	 * json����
+	 * json分析
 	 * @param rescontent
 	 * @param key
 	 * @return
@@ -132,9 +225,9 @@ public class JsonUtil {
 		}
 		return v;
 	}
-	
+
 	/**
-	 * json����
+	 * json分析
 	 * @param rescontent
 	 * @param key
 	 * @return
@@ -150,7 +243,7 @@ public class JsonUtil {
 		}
 		return v;
 	}
-	
+
 	public static String AuthMap2Json(List mapList ,int page,long total,String fieldsstr,String id) {
 		String json = "{\"page\":1,\"total\":0,\"rows\":[]}";
 		if(mapList != null && !mapList.isEmpty()) {
@@ -169,7 +262,7 @@ public class JsonUtil {
 		}
 		return json;
 	}
-	
+
 	public static String AuthMap2Json(Map map,String[] fieldsstrArray,String id) {
 		StringBuffer json = new StringBuffer("");
 		if(map != null) {
@@ -202,7 +295,7 @@ public class JsonUtil {
 		}
 		return json.toString();
 	}
-	
+
 	public  static String createJson( List<Map<String, Object>> data) {
 		String json = "[";
 		int i=0;
@@ -234,7 +327,7 @@ public class JsonUtil {
 				i++;
 				j=0;
 			}
-			
+
 		}
 		json +="]";
 		return json;
@@ -259,6 +352,32 @@ public class JsonUtil {
 				}
 			}
 			j++;
+		}
+		json +="}";
+		return json;
+	}
+	public  static String createJsonforMap( Map<String, Object> data) {
+		String json = "{";
+		int j=0;
+		for(String key : data.keySet()){
+			if(j!=0){
+				json +=",";
+				j=0;
+			}
+			Object v = data.get(key);
+			if(v!=null){
+				if(v instanceof List){
+					v=createJson((List<Map<String, Object>>)v);
+					json +="\""+key+"\":"+v+"";
+				}else if(v instanceof Map){
+					v = createJson((Map<String, Object>)v);
+					json +="\""+key+"\":"+v+"";
+				}else {
+					v = v.toString().trim();
+					json +="\""+key+"\":\""+v+"\"";
+				}
+				j++;
+			}
 		}
 		json +="}";
 		return json;

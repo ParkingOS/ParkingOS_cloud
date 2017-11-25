@@ -31,7 +31,7 @@ public class BerthTrendAnlysisAction extends Action {
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -49,7 +49,7 @@ public class BerthTrendAnlysisAction extends Action {
 			Long today = TimeTools.getToDayBeginTime();
 			request.setAttribute("btime", df2.format(today*1000));
 			request.setAttribute("etime",  df2.format(System.currentTimeMillis()));
-			//***********************获取车场泊位总数*****************************//
+			//***********************鑾峰彇杞﹀満娉婁綅鎬绘暟*****************************//
 			Long asum = 0L;
 			Long usum = 0L;
 			Map<String, Object> map = commonMethods.getBerthCount(groupid, cityid);

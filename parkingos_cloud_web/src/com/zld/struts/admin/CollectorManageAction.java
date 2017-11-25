@@ -29,12 +29,12 @@ import com.zld.utils.SendMessage;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.TimeTools;
 /**
- * ÊÕ·ÑÔ±¹ÜÀí£¬ÔÚ×Ü¹ÜÀíÔ±ºóÌ¨
+ * æ”¶è´¹å‘˜ç®¡ç†ï¼Œåœ¨æ€»ç®¡ç†å‘˜åå°
  * @author Administrator
  *
  */
 public class CollectorManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -45,7 +45,7 @@ public class CollectorManageAction extends Action{
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -55,7 +55,7 @@ public class CollectorManageAction extends Action{
 			return null;
 		}
 		Map userMap = (Map) request.getSession().getAttribute("userinfo");
-		//µÇÂ¼ÕßID
+		//ç™»å½•è€…ID
 		Long ownerId = (Long)userMap.get("id");
 		if(action.equals("")){
 			return mapping.findForward("list");
@@ -97,7 +97,7 @@ public class CollectorManageAction extends Action{
 				values = base.getValues();
 				params = base.getParams();
 			}
-			//ÍÆ¼öÉóºËÍ¨¹ıµÄ
+			//æ¨èå®¡æ ¸é€šè¿‡çš„
 			if(recommend != -1){
 				sql += " and collector_auditor is not null ";
 				countSql += " and collector_auditor is not null ";
@@ -125,7 +125,7 @@ public class CollectorManageAction extends Action{
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			Integer state = RequestUtil.getInteger(request, "state", 0);
-			if(state==0)//0¿ÉÓÃ£¬1½ûÓÃ£¬Îª0Ê±ÊÇÒª¸ÄÎª½ûÓÃ£¬Îª1Ê±ÊÇÒª¸ÄÎª½ûÓÃ£¬ÔÚÕâÀï·´×ª Ò»ÏÂ¡£
+			if(state==0)//0å¯ç”¨ï¼Œ1ç¦ç”¨ï¼Œä¸º0æ—¶æ˜¯è¦æ”¹ä¸ºç¦ç”¨ï¼Œä¸º1æ—¶æ˜¯è¦æ”¹ä¸ºç¦ç”¨ï¼Œåœ¨è¿™é‡Œåè½¬ ä¸€ä¸‹ã€‚
 				state=1;
 			else if(state==1)
 				state=0;
@@ -133,7 +133,7 @@ public class CollectorManageAction extends Action{
 			Object [] values = new Object[]{state,Long.valueOf(id)};
 			int result = daService.update(sql, values);
 			if(result==1&&state==1)
-				logService.updateSysLog(comid,request.getSession().getAttribute("loginuin")+"","½ûÓÃÁËÍ£³µ³¡ÈËÔ±,±àºÅ£º"+id, 204);
+				logService.updateSysLog(comid,request.getSession().getAttribute("loginuin")+"","ç¦ç”¨äº†åœè½¦åœºäººå‘˜,ç¼–å·ï¼š"+id, 204);
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("delcollector")){
 			Long id = RequestUtil.getLong(request, "selids", -1L);
@@ -152,7 +152,7 @@ public class CollectorManageAction extends Action{
 				}
 			}
 			return mapping.findForward("cominfo");
-			
+
 		}else if(action.equals("sendmesg")){
 			String ids =  AjaxUtil.decodeUTF8(RequestUtil.getString(request, "ids"));
 			String message = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "message"));
@@ -165,7 +165,7 @@ public class CollectorManageAction extends Action{
 			}
 			paramssimp = paramssimp.substring(1);
 			List<Map<String, Object>> list = daService.getAllMap("select mobile from user_info_tb where id in("+paramssimp+")",params);
-			String mobiles="13860132164,15375242041,18510341966";//Èº·¢ÊÖ»úºÅ£¬×î¶à100¸ö£¬ÒÔ¿Õ¸ñ¸ô¿ª
+			String mobiles="13860132164,15375242041,18510341966";//ç¾¤å‘æ‰‹æœºå·ï¼Œæœ€å¤š100ä¸ªï¼Œä»¥ç©ºæ ¼éš”å¼€
 			int i=0;
 			if(list!=null&!list.isEmpty()){
 				for(Map<String, Object> map :list){
@@ -174,7 +174,7 @@ public class CollectorManageAction extends Action{
 						break;
 				}
 			}
-			new SendMessage().sendMultiMessage(mobiles, message+"¡¾Í£³µ±¦¡¿");
+			new SendMessage().sendMultiMessage(mobiles, message+"ã€åœè½¦å®ã€‘");
 			AjaxUtil.ajaxOutput(response, "1");
 		}else if(action.equals("withdraw")){
 			String sql = "select t.*,c.company_name comname,r.role_name from user_info_tb t left join com_info_tb c on t.comid=c.id left join user_role_tb r on t.auth_flag=r.id where (t.auth_flag=? or t.auth_flag=?) and comid>0 ";
@@ -195,7 +195,7 @@ public class CollectorManageAction extends Action{
 			int count1 = list!=null?list.size():0;
 			String json = JsonUtil.Map2Json(list,pageNum,count1, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
-		}else if(action.equals("validateuser")){//µÈÉóºËÍ£³µÔ±
+		}else if(action.equals("validateuser")){//ç­‰å®¡æ ¸åœè½¦å‘˜
 			return mapping.findForward("vusers");
 		}else if(action.equals("vquery")){
 			String sql = "select * from user_info_tb where (state=? or state=? or state=? or state=?) and (auth_flag=? or auth_flag=?) ";
@@ -205,10 +205,10 @@ public class CollectorManageAction extends Action{
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			SqlInfo sqlInfo = RequestUtil.customSearch(request,"user_info");
 			List<Object> params = new ArrayList<Object>();
-			params.add(2);//ĞÂÔö
-			params.add(3);//´ı²¹³ä
-			params.add(4);//´ı¸ú½ø
-			params.add(5);//ÎŞ¼ÛÖµ
+			params.add(2);//æ–°å¢
+			params.add(3);//å¾…è¡¥å……
+			params.add(4);//å¾…è·Ÿè¿›
+			params.add(5);//æ— ä»·å€¼
 			params.add(1);
 			params.add(2);
 			if(sqlInfo!=null){
@@ -233,18 +233,18 @@ public class CollectorManageAction extends Action{
 				return null;
 			}
 			request.setAttribute("uin", id);
-			//È¡ÉóºËÍ¼Æ¬
+			//å–å®¡æ ¸å›¾ç‰‡
 			List<String> files = new ArrayList<String>();
 			try {
 				files = mongoDbUtils.getParkPicUrls(id,"parkuser_pics");
 			} catch (Exception e) {
 				// TODO: handle exception
-				logger.error("»ñÈ¡ÉóºËÍ¼Æ¬Òì³£", e);
+				logger.error("è·å–å®¡æ ¸å›¾ç‰‡å¼‚å¸¸", e);
 				AjaxUtil.ajaxOutput(response, "-1");
 			}
 			System.err.println(files);
 			request.setAttribute("pics", files);
-			
+
 			String nickname = "";
 			Integer ustate = 2;
 			Map<String, Object> map = daService.getMap("select * from user_info_tb where id=? ", new Object[]{id});
@@ -257,16 +257,16 @@ public class CollectorManageAction extends Action{
 				}
 				ustate = (Integer)map.get("state");
 			}
-			//È¡³µ³¡ĞÅÏ¢
+			//å–è½¦åœºä¿¡æ¯
 			Map<String, Object> comMap = daService.getPojo("select c.* from com_info_tb c,user_info_tb u where u.comid=c.id and u.id=?",new Object[]{id});
 			StringBuffer comBuffer = new StringBuffer("[");
 			if(comMap != null){
 				Long comId = (Long)comMap.get("id");
 				if(comId == 1){
 					Long newComId = daService.getLong("SELECT nextval('seq_com_info_tb'::REGCLASS) AS newid",null);
-					//Ä¬ÈÏ³µ³¡
+					//é»˜è®¤è½¦åœº
 					for (String  key : comMap.keySet()) {
-						if(key.equals("id")){//ÏÈ°Ñcomid´«¹ıÈ¥£¬Ò³ÃæµÄÔ­Òò
+						if(key.equals("id")){//å…ˆæŠŠcomidä¼ è¿‡å»ï¼Œé¡µé¢çš„åŸå› 
 							comBuffer.append("{\"name\":\""+key+"\",\"value\":\""+newComId+"\"},");
 						}else{
 							comBuffer.append("{\"name\":\""+key+"\",\"value\":\"\"},");
@@ -287,15 +287,15 @@ public class CollectorManageAction extends Action{
 				AjaxUtil.ajaxOutput(response, "-1");
 				return null;
 			}
-			//³µ³¡ÒÑ´æÔÚÊ±ÓÃÓÚÌîĞ´ÒÑ´æÔÚµÄ³µ³¡ID
+			//è½¦åœºå·²å­˜åœ¨æ—¶ç”¨äºå¡«å†™å·²å­˜åœ¨çš„è½¦åœºID
 			comBuffer.append("{\"name\":\"comid\",\"value\":\"\"},");
-			//Ìí¼ÓÊÕ·ÑÔ±ĞÕÃû
+			//æ·»åŠ æ”¶è´¹å‘˜å§“å
 			comBuffer.append("{\"name\":\"nickname\",\"value\":\""+nickname+"\"},");
-			//Ìí¼ÓÉóºË×Ö¶Î,Ä¬ÈÏÎ´ÉóºË
+			//æ·»åŠ å®¡æ ¸å­—æ®µ,é»˜è®¤æœªå®¡æ ¸
 			comBuffer.append("{\"name\":\"ustate\",\"value\":\""+ustate+"\"},");
-			//ÊÕ·ÑÔ±±¸×¢
+			//æ”¶è´¹å‘˜å¤‡æ³¨
 			comBuffer.append("{\"name\":\"visit_content\",\"value\":\"\"},");
-			
+
 			String result = comBuffer.toString();
 			result = result.substring(0,result.length()-1)+"]";
 			request.setAttribute("cominfo", result);
@@ -314,19 +314,19 @@ public class CollectorManageAction extends Action{
 			response.setContentLength(content.length);
 			response.setContentType("image/jpeg");
 			System.err.println(content.length);
-		    OutputStream o = response.getOutputStream();
-		    o.write(content);
-		    o.flush();
-		    o.close();
-		    response.flushBuffer();
+			OutputStream o = response.getOutputStream();
+			o.write(content);
+			o.flush();
+			o.close();
+			response.flushBuffer();
 		}else if(action.equals("checkcollector")){
 			Long uin = RequestUtil.getLong(request, "uin", -1L);
 			if(uin == -1){
 				AjaxUtil.ajaxOutput(response, "-1");
 			}
-			//ÒÑ´æÔÚ³µ³¡µÄid
+			//å·²å­˜åœ¨è½¦åœºçš„id
 			Long comId = RequestUtil.getLong(request, "comid", -1L);
-			//³µ³¡²»´æÔÚ£¬´´½¨³µ³¡
+			//è½¦åœºä¸å­˜åœ¨ï¼Œåˆ›å»ºè½¦åœº
 			Long id =RequestUtil.getLong(request, "id", -1L);
 			String company_name =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "company_name"));
 			String nickname =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "nickname"));
@@ -338,32 +338,32 @@ public class CollectorManageAction extends Action{
 			Integer stop_type = RequestUtil.getInteger(request, "stop_type", 0);
 			String record_number = RequestUtil.processParams(request, "record_number");
 			Integer epay = RequestUtil.getInteger(request, "epay", 0);
-			
-			//±¸×¢
+
+			//å¤‡æ³¨
 			String visit_content = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "visit_content"));
-			//ÊĞ³¡×¨Ô±
+			//å¸‚åœºä¸“å‘˜
 			Long uid = RequestUtil.getLong(request, "uid", -1L);
-			
-			//ÉóºË×´Ì¬,Ä¬ÈÏÎ´ÉóºË
+
+			//å®¡æ ¸çŠ¶æ€,é»˜è®¤æœªå®¡æ ¸
 			Integer ustate = RequestUtil.getInteger(request, "ustate", 2);
 			if(company_name.equals("")) company_name = null;
 			if(nickname.equals("")) nickname = null;
 			if(address.equals("")) address = null;
 			if(mcompany.equals("")) mcompany = null;
 			if(record_number.equals("")) record_number = null;
-			//±»ÍÆ¼öµÄÊÕ·ÑÔ±ĞÅÏ¢
+			//è¢«æ¨èçš„æ”¶è´¹å‘˜ä¿¡æ¯
 			Map<String, Object> nusermap = new HashMap<String, Object>();
 			nusermap = daService.getMap("select * from user_info_tb where id=?", new Object[]{uin});
 			if(nusermap != null){
 				Integer state = (Integer)nusermap.get("state");
-				//ÒÑÉóºË
+				//å·²å®¡æ ¸
 				if(state == 0){
 					AjaxUtil.ajaxOutput(response, "-2");
 				}
 			}else{
 				AjaxUtil.ajaxOutput(response, "-1");
 			}
-			//state=5ÎŞ¼ÛÖµ£¬²»´´½¨³µ³¡£¬²»·µÏÖ
+			//state=5æ— ä»·å€¼ï¼Œä¸åˆ›å»ºè½¦åœºï¼Œä¸è¿”ç°
 			if(ustate == 5){
 				int result = daService.update("update user_info_tb set state=? where id=?", new Object[]{5,uin});
 				if(!visit_content.equals("") && result == 1){
@@ -372,66 +372,66 @@ public class CollectorManageAction extends Action{
 				AjaxUtil.ajaxOutput(response, result + "");
 				return null;
 			}
-			
+
 			List<Map<String , Object>> sqlMaps = new ArrayList<Map<String,Object>>();
 			if(comId != -1){
-				//³µ³¡ÒÑ´æÔÚ£¬°ÑÊÕ·ÑÔ±¼ÓÈëÒÑ´æÔÚµÄ³µ³¡
-				logger.error ("³µ³¡ÒÑ´æÔÚ£¬¼ÓÈëÒÑ´æÔÚµÄ³µ³¡²¢·µÏÖ...");
-				//ÌîĞ´ÈËÔ±ĞÅÏ¢
+				//è½¦åœºå·²å­˜åœ¨ï¼ŒæŠŠæ”¶è´¹å‘˜åŠ å…¥å·²å­˜åœ¨çš„è½¦åœº
+				logger.error ("è½¦åœºå·²å­˜åœ¨ï¼ŒåŠ å…¥å·²å­˜åœ¨çš„è½¦åœºå¹¶è¿”ç°...");
+				//å¡«å†™äººå‘˜ä¿¡æ¯
 				Map<String, Object> nusersqlMap = new HashMap<String, Object>();
 				nusersqlMap.put("sql", "update user_info_tb set comid=?,nickname=?,state=?,auth_flag=?,collector_auditor=? where id=? ");
 				nusersqlMap.put("values", new Object[]{comId,nickname,0,2,ownerId,uin});
 				sqlMaps.add(nusersqlMap);
 			}else if(id != -1){
 				Long ncomid = (Long)nusermap.get("comid");
-				if(ncomid == 1){//´ıÉóºË£¬Î´±£´æ¹ı
+				if(ncomid == 1){//å¾…å®¡æ ¸ï¼Œæœªä¿å­˜è¿‡
 					Long count = daService.getLong("select count(*) from com_info_tb where longitude=? and latitude=?",
 							new Object[]{longitude,latitude});
-					if(count > 0){//¾­Î³¶ÈÖØ¸´ÁË
+					if(count > 0){//ç»çº¬åº¦é‡å¤äº†
 						AjaxUtil.ajaxOutput(response, "-3");
 						return null;
 					}
-					//³µ³¡ÉóºË×´Ì¬
+					//è½¦åœºå®¡æ ¸çŠ¶æ€
 					Integer cstate = 2;
 					if(ustate == 0){
 						cstate = 0;
 					}
 					Map<String, Object> comsqlMap = new HashMap<String, Object>();
 					comsqlMap.put("sql", "insert into com_info_tb(id,company_name,address,create_time,parking_total,longitude,latitude,stop_type,record_number,mcompany,epay,uid,state) values(?,?,?,?,?,?,?,?,?,?,?,?,?)");
-					comsqlMap.put("values", new Object[]{id,company_name,address,System.currentTimeMillis()/1000,parking_total,longitude,latitude,stop_type,record_number,mcompany,epay,uid,cstate});//com_info_tb :state 0¿ÉÓÃ£¬2´ıÉóºË
+					comsqlMap.put("values", new Object[]{id,company_name,address,System.currentTimeMillis()/1000,parking_total,longitude,latitude,stop_type,record_number,mcompany,epay,uid,cstate});//com_info_tb :state 0å¯ç”¨ï¼Œ2å¾…å®¡æ ¸
 					sqlMaps.add(comsqlMap);
-					
-					//ÌîĞ´ÈËÔ±ĞÅÏ¢
+
+					//å¡«å†™äººå‘˜ä¿¡æ¯
 					Map<String, Object> nusersqlMap = new HashMap<String, Object>();
 					nusersqlMap.put("sql", "update user_info_tb set comid=?,nickname=?,state=?,collector_auditor=?,auth_flag=? where id=? ");
 					nusersqlMap.put("values", new Object[]{id,nickname,ustate,ownerId,2,uin});
 					sqlMaps.add(nusersqlMap);
-				}else{//´ıÉóºË£¬±£´æ¹ı£¨´´½¨¹ı³µ³¡£©
-					//³µ³¡ÉóºË×´Ì¬
+				}else{//å¾…å®¡æ ¸ï¼Œä¿å­˜è¿‡ï¼ˆåˆ›å»ºè¿‡è½¦åœºï¼‰
+					//è½¦åœºå®¡æ ¸çŠ¶æ€
 					Integer cstate = 2;
 					if(ustate == 0){
 						cstate = 0;
 					}
 					Long count = daService.getLong("select count(*) from com_info_tb where longitude=? and latitude=? and id<>? ",
 							new Object[]{longitude,latitude,id});
-					if(count > 0){//¾­Î³¶ÈÖØ¸´ÁË
+					if(count > 0){//ç»çº¬åº¦é‡å¤äº†
 						AjaxUtil.ajaxOutput(response, "-3");
 						return null;
 					}
-					
+
 					Map<String, Object> comsqlMap = new HashMap<String, Object>();
 					comsqlMap.put("sql", "update com_info_tb set company_name=?,address=?,parking_total=?,longitude=?,latitude=?,stop_type=?,record_number=?,mcompany=?,epay=?,uid=?,state=? where id=?");
-					comsqlMap.put("values", new Object[]{company_name,address,parking_total,longitude,latitude,stop_type,record_number,mcompany,epay,uid,cstate,id});//com_info_tb :state 0¿ÉÓÃ£¬2´ıÉóºË
+					comsqlMap.put("values", new Object[]{company_name,address,parking_total,longitude,latitude,stop_type,record_number,mcompany,epay,uid,cstate,id});//com_info_tb :state 0å¯ç”¨ï¼Œ2å¾…å®¡æ ¸
 					sqlMaps.add(comsqlMap);
-					
-					//ÌîĞ´ÈËÔ±ĞÅÏ¢
+
+					//å¡«å†™äººå‘˜ä¿¡æ¯
 					Map<String, Object> nusersqlMap = new HashMap<String, Object>();
 					nusersqlMap.put("sql", "update user_info_tb set nickname=?,state=?,collector_auditor=? where id=? ");
 					nusersqlMap.put("values", new Object[]{nickname,ustate,ownerId,uin});
 					sqlMaps.add(nusersqlMap);
 				}
 				if(!visit_content.equals("")){
-					//Ğ´±¸×¢¼ÇÂ¼
+					//å†™å¤‡æ³¨è®°å½•
 					Map<String, Object> visitsqlMap = new HashMap<String, Object>();
 					visitsqlMap.put("sql", "insert into visit_info_tb(uid,contacts,state,create_time,visit_content) values(?,?,?,?,?)");
 					visitsqlMap.put("values", new Object[]{uid,uin,0,System.currentTimeMillis()/1000,visit_content});
@@ -441,11 +441,11 @@ public class CollectorManageAction extends Action{
 			String pmsg = "";
 			String pmobile = "";
 			String nmobile = "";
-			String nmsg = "¹§Ï²Äú"+nickname+"£¬ÄúÒÑ¾­Í¨¹ıÉóºË£¬ÄúµÄÕËºÅÊÇ£º"+uin+"£¬ÃÜÂëÊÇ:"+nusermap.get("password")+"¡¾Í£³µ±¦¡¿";
+			String nmsg = "æ­å–œæ‚¨"+nickname+"ï¼Œæ‚¨å·²ç»é€šè¿‡å®¡æ ¸ï¼Œæ‚¨çš„è´¦å·æ˜¯ï¼š"+uin+"ï¼Œå¯†ç æ˜¯:"+nusermap.get("password")+"ã€åœè½¦å®ã€‘";
 			if(nusermap.get("mobile") != null){
 				nmobile = (String)nusermap.get("mobile");
 			}
-			//ÉóºËÍ¨¹ı£¬¸øÍÆ¼öÈË·µÏÖ
+			//å®¡æ ¸é€šè¿‡ï¼Œç»™æ¨èäººè¿”ç°
 			if(nusermap.get("recom_code") != null && (comId != -1 || (comId == -1 && ustate == 0)) && false){//2016-09-07
 				Long pid = (Long)nusermap.get("recom_code");
 				Map<String, Object> pusermap = daService.getMap("select * from user_info_tb where id=?", new Object[]{pid});
@@ -454,48 +454,48 @@ public class CollectorManageAction extends Action{
 					Double recharge = 0.00d;
 					Long auth_flag = (Long)pusermap.get("auth_flag");
 					if(auth_flag == 4){
-						//³µÖ÷ÍÆ¼öµÄÊÕ·ÑÔ±£¬·µÊ£ÓàµÄ25Ôª
+						//è½¦ä¸»æ¨èçš„æ”¶è´¹å‘˜ï¼Œè¿”å‰©ä½™çš„25å…ƒ
 						recharge = 25.00d;
 						newbalance += recharge;
-						//³µÖ÷ÕË»§Ã÷Ï¸
+						//è½¦ä¸»è´¦æˆ·æ˜ç»†
 						Map<String, Object> puserAccountsqlMap = new HashMap<String, Object>();
 						puserAccountsqlMap.put("sql", "insert into user_account_tb(uin,amount,type,create_time,remark,pay_type) values(?,?,?,?,?,?)");
-						puserAccountsqlMap.put("values", new Object[]{pid,recharge,0,System.currentTimeMillis()/1000,"ÍÆ¼öµÄÊÕ·ÑÔ±ÉóºËÍ¨¹ı£¬·µÏÖ",8});
+						puserAccountsqlMap.put("values", new Object[]{pid,recharge,0,System.currentTimeMillis()/1000,"æ¨èçš„æ”¶è´¹å‘˜å®¡æ ¸é€šè¿‡ï¼Œè¿”ç°",8});
 						sqlMaps.add(puserAccountsqlMap);
-						
+
 						Map<String, Object> puserMessagelMap = new HashMap<String, Object>();
 						puserMessagelMap.put("sql", "insert into user_message_tb(type,ctime,uin,title,content) values(?,?,?,?,?)");
-						puserMessagelMap.put("values", new Object[]{6,System.currentTimeMillis()/1000,pid,"ÍÆ¼öÌáĞÑ","ÄúÍÆ¼öµÄÊÕ·ÑÔ±"+nickname+"³É¹¦Í¨¹ıÉóºË£¬Äú»ñµÃ25Ôª½±Àø¡£"});
+						puserMessagelMap.put("values", new Object[]{6,System.currentTimeMillis()/1000,pid,"æ¨èæé†’","æ‚¨æ¨èçš„æ”¶è´¹å‘˜"+nickname+"æˆåŠŸé€šè¿‡å®¡æ ¸ï¼Œæ‚¨è·å¾—25å…ƒå¥–åŠ±ã€‚"});
 						sqlMaps.add(puserMessagelMap);
-						
-						
+
+
 					}else if(auth_flag == 1 || auth_flag == 2){
-						//³µ³¡ÍÆ¼öµÄÊÕ·ÑÔ±£¬·µ30Ôª
+						//è½¦åœºæ¨èçš„æ”¶è´¹å‘˜ï¼Œè¿”30å…ƒ
 						recharge = 30.00d;
 						newbalance += recharge;
-						//ÊÕ·ÑÔ±ÕË»§Ã÷Ï¸
+						//æ”¶è´¹å‘˜è´¦æˆ·æ˜ç»†
 						Map<String, Object> puserAccountsqlMap = new HashMap<String, Object>();
 						puserAccountsqlMap.put("sql", "insert into parkuser_account_tb(uin,amount,type,create_time,remark,target) values(?,?,?,?,?,?)");
-						puserAccountsqlMap.put("values", new Object[]{pid,recharge,0,System.currentTimeMillis()/1000,"ÍÆ¼öµÄÊÕ·ÑÔ±ÉóºËÍ¨¹ı£¬·µÏÖ",3});
+						puserAccountsqlMap.put("values", new Object[]{pid,recharge,0,System.currentTimeMillis()/1000,"æ¨èçš„æ”¶è´¹å‘˜å®¡æ ¸é€šè¿‡ï¼Œè¿”ç°",3});
 						sqlMaps.add(puserAccountsqlMap);
-						
+
 						Map<String, Object> puserMessagelMap = new HashMap<String, Object>();
 						puserMessagelMap.put("sql", "insert into parkuser_message_tb(type,ctime,uin,title,content) values(?,?,?,?,?)");
-						puserMessagelMap.put("values", new Object[]{6,System.currentTimeMillis()/1000,pid,"ÍÆ¼öÌáĞÑ","ÄúÍÆ¼öµÄÊÕ·ÑÔ±"+nickname+"³É¹¦Í¨¹ıÉóºË£¬Äú»ñµÃ30Ôª½±Àø¡£"});
+						puserMessagelMap.put("values", new Object[]{6,System.currentTimeMillis()/1000,pid,"æ¨èæé†’","æ‚¨æ¨èçš„æ”¶è´¹å‘˜"+nickname+"æˆåŠŸé€šè¿‡å®¡æ ¸ï¼Œæ‚¨è·å¾—30å…ƒå¥–åŠ±ã€‚"});
 						sqlMaps.add(puserMessagelMap);
-						
+
 					}
-					
+
 					Map<String, Object> recomsqlMap = new HashMap<String, Object>();
 					recomsqlMap.put("sql", "update recommend_tb set state=? where pid=? and nid=? ");
 					recomsqlMap.put("values", new Object[]{1,pid,uin});
 					sqlMaps.add(recomsqlMap);
-					
+
 					Map<String, Object> pusersqlMap = new HashMap<String, Object>();
 					pusersqlMap.put("sql", "update user_info_tb set balance=? where id=? ");
 					pusersqlMap.put("values", new Object[]{newbalance,pid});
 					sqlMaps.add(pusersqlMap);
-					pmsg = "Í£³µ±¦Ğ¡»ï°éÄúºÃ£¬ÄúÍÆ¼öµÄÊÕ·ÑÔ±"+nickname+"ÒÑÉóºËÍ¨¹ı£¬"+recharge+"ÔªÒÑµ½ÕÊ¡¾Í£³µ±¦¡¿";
+					pmsg = "åœè½¦å®å°ä¼™ä¼´æ‚¨å¥½ï¼Œæ‚¨æ¨èçš„æ”¶è´¹å‘˜"+nickname+"å·²å®¡æ ¸é€šè¿‡ï¼Œ"+recharge+"å…ƒå·²åˆ°å¸ã€åœè½¦å®ã€‘";
 					if(pusermap.get("mobile") != null){
 						pmobile = (String)pusermap.get("mobile");
 					}
@@ -504,7 +504,7 @@ public class CollectorManageAction extends Action{
 			boolean b = daService.bathUpdate(sqlMaps);
 			if(b){
 				AjaxUtil.ajaxOutput(response, "1");
-				if(comId != -1 || (comId == -1 && ustate == 0)){//ÉóºËÍ¨¹ı·¢¶ÌĞÅ
+				if(comId != -1 || (comId == -1 && ustate == 0)){//å®¡æ ¸é€šè¿‡å‘çŸ­ä¿¡
 					if(!nmobile.equals("")){
 						SendMessage.sendMessage(nmobile, nmsg);
 					}
@@ -590,7 +590,7 @@ public class CollectorManageAction extends Action{
 			if(id!=-1&&state!=-1){
 				ret = daService.update("update collector_account_pic_tb set state =? where id =? ", new Object[]{state,id});
 			}
-			logger.error("±à¼­ÕË»§½á¹û £º"+ret);
+			logger.error("ç¼–è¾‘è´¦æˆ·ç»“æœ ï¼š"+ret);
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}else if(action.equals("editquota")){
 			String id =RequestUtil.processParams(request, "id");
@@ -605,8 +605,8 @@ public class CollectorManageAction extends Action{
 		}
 		return null;
 	}
-	
-	//ÌáÏÖ¹ıµÄÊÕ·ÑÔ±
+
+	//æç°è¿‡çš„æ”¶è´¹å‘˜
 	private List<Map<String, Object>> setList(List<Map<String, Object>> list){
 		List<Map<String, Object>> list2 = new ArrayList<Map<String,Object>>();
 		List<Object> uins = new ArrayList<Object>();
@@ -644,7 +644,7 @@ public class CollectorManageAction extends Action{
 		}
 		return list2;
 	}
-	
+
 	class ListSort implements Comparator<Map<String, Object>>{
 
 		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
@@ -655,6 +655,6 @@ public class CollectorManageAction extends Action{
 			if(b2 == null) b2 = 0L;
 			return b2.compareTo(b1);
 		}
-		
+
 	}
 }

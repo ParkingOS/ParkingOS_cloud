@@ -27,11 +27,11 @@ public class ShopTicketAnlysisAction extends Action {
 	private DataBaseService daService;
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
-	
+
 	private Logger logger = Logger.getLogger(ShopTicketAnlysisAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -94,7 +94,7 @@ public class ShopTicketAnlysisAction extends Action {
 			String sql = "select * from ticket_tb where shop_id=? and create_time between ? and ? and type=? order by create_time desc ";
 			String sqlcount = "select count(*) from ticket_tb where shop_id=? and create_time between ? and ? and type=? ";
 			Integer ttype = 3;
-			if(type.equals("e")){//¼õÃâÈ¯
+			if(type.equals("e")){//å‡å…åˆ¸
 				ttype = 4;
 			}
 			params.add(shop_id);
@@ -110,7 +110,7 @@ public class ShopTicketAnlysisAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list,Long b, Long e, Integer type){
 		if(list != null && !list.isEmpty()){
 			for(Map<String, Object> map : list){
@@ -119,13 +119,13 @@ public class ShopTicketAnlysisAction extends Action {
 						.getAll("select sum(money) ptotal,count(*) pcount,sum(bmoney) dtotal,sum(umoney) dmoney,state from ticket_tb where shop_id=? and create_time between ? and ? and type=? group by state order by state ",
 								new Object[] { id, b ,e ,type });
 				Long allptotal = 0L;
-				Long uuptotal = 0l;//Î´Ê¹ÓÃµÄ¼õÃâÈ¯×Ü¶î
+				Long uuptotal = 0l;//æœªä½¿ç”¨çš„å‡å…åˆ¸æ€»é¢
 				Long allpcount = 0L;
-				Long uupcount = 0L;//Î´Ê¹ÓÃµÄ¼õÃâÈ¯ÕÅÊı
-				Long uptotal = 0L;//ÒÑÊ¹ÓÃµÄ¼õÃâÈ¯µÄ×Ü¶î
-				Long upcount = 0L;//ÒÑÊ¹ÓÃµÄ¼õÃâÈ¯µÄÕÅÊı
-				Double dmoney = 0d;//Êµ¼Ê¼õÃâÈ¯µÖ¿ÛµÄ½ğ¶î
-				Double dtotal = 0d;//Êµ¼ÊÊ¹ÓÃµÄ¼õÃâÈ¯µÄ¶î¶È£¨Ğ¡Ê±£©
+				Long uupcount = 0L;//æœªä½¿ç”¨çš„å‡å…åˆ¸å¼ æ•°
+				Long uptotal = 0L;//å·²ä½¿ç”¨çš„å‡å…åˆ¸çš„æ€»é¢
+				Long upcount = 0L;//å·²ä½¿ç”¨çš„å‡å…åˆ¸çš„å¼ æ•°
+				Double dmoney = 0d;//å®é™…å‡å…åˆ¸æŠµæ‰£çš„é‡‘é¢
+				Double dtotal = 0d;//å®é™…ä½¿ç”¨çš„å‡å…åˆ¸çš„é¢åº¦ï¼ˆå°æ—¶ï¼‰
 				for(Map<String, Object> map2 : list2){
 					Integer state = (Integer)map2.get("state");
 					if(state == 0){
@@ -154,7 +154,7 @@ public class ShopTicketAnlysisAction extends Action {
 						map.put("allptotal", allptotal);
 						map.put("uuptotal", uuptotal);
 						map.put("uptotal", uptotal);
-						
+
 						map.put("uplimit", map.get("ticket_limit"));
 					}else if(type == 4){
 						map.put("uplimit", map.get("ticketfree_limit"));

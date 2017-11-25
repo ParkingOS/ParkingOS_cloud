@@ -10,8 +10,7 @@ import net.sf.json.JSONObject;
 public class GetTableFields {
 
 	/**
-	 * È¡µÃ±í¸ñ×Ö¶Î
-	 * @param tqbleName
+	 * å–å¾—è¡¨æ ¼å­—æ®µ
 	 * @param type
 	 * @return
 	 */
@@ -23,26 +22,26 @@ public class GetTableFields {
 		}
 		return null;
 	}
-	
+
 	private static String getComInfoQueryFields(){
 		List<TableFields> list = new ArrayList<TableFields>();
 		List<NoList> typeList = new ArrayList<NoList>();
-		typeList.add(new NoList("-1", "È«²¿"));
-		typeList.add(new NoList("0", "¸¶·Ñ"));
-		typeList.add(new NoList("1", "Ãâ·Ñ"));
+		typeList.add(new NoList("-1", "å…¨éƒ¨"));
+		typeList.add(new NoList("0", "ä»˜è´¹"));
+		typeList.add(new NoList("1", "å…è´¹"));
 		List<NoList> parkTypeList = new ArrayList<NoList>();
-		parkTypeList.add(new NoList("-1", "È«²¿"));
-		parkTypeList.add(new NoList("0", "µØÃæ"));
-		parkTypeList.add(new NoList("1", "µØÏÂ"));
-		parkTypeList.add(new NoList("2", "Õ¼µÀ"));
-		list.add(new TableFields("±àºÅ", "id", "", "text", 50, null, false, false, false, false, true,null));
-		list.add(new TableFields("Ãû³Æ", "company_name", "", "text", 200, null, false, false, false, false, true,null));
-		list.add(new TableFields("³µ³¡ÀàĞÍ", "type", "", "select", 50, null, false, false, false, false, true,typeList));
-		list.add(new TableFields("µÇÂ¼ÕÊºÅ", "strid", "", "text", 50, null, false, false, false, false, false,null));
-		list.add(new TableFields("ÏêÏ¸µØÖ·", "address", "", "text", 50, null, false, false, false, false, true,null));
-		list.add(new TableFields("µç»°", "phone", "", "text", 50, null, false, false, false, false, true,null));
-		list.add(new TableFields("ÊÖ»ú", "moblie", "", "text", 50, null, false, false, false, false, true,null));
-		list.add(new TableFields("ÁªÏµÈË", "nickname", "", "text", 50, null, false, false, false, false, false,null));
+		parkTypeList.add(new NoList("-1", "å…¨éƒ¨"));
+		parkTypeList.add(new NoList("0", "åœ°é¢"));
+		parkTypeList.add(new NoList("1", "åœ°ä¸‹"));
+		parkTypeList.add(new NoList("2", "å é“"));
+		list.add(new TableFields("ç¼–å·", "id", "", "text", 50, null, false, false, false, false, true,null));
+		list.add(new TableFields("åç§°", "company_name", "", "text", 200, null, false, false, false, false, true,null));
+		list.add(new TableFields("è½¦åœºç±»å‹", "type", "", "select", 50, null, false, false, false, false, true,typeList));
+		list.add(new TableFields("ç™»å½•å¸å·", "strid", "", "text", 50, null, false, false, false, false, false,null));
+		list.add(new TableFields("è¯¦ç»†åœ°å€", "address", "", "text", 50, null, false, false, false, false, true,null));
+		list.add(new TableFields("ç”µè¯", "phone", "", "text", 50, null, false, false, false, false, true,null));
+		list.add(new TableFields("æ‰‹æœº", "moblie", "", "text", 50, null, false, false, false, false, true,null));
+		list.add(new TableFields("è”ç³»äºº", "nickname", "", "text", 50, null, false, false, false, false, false,null));
 		Map<String, List<TableFields>> map = new HashMap<String, List<TableFields>>();
 		map.put("root", list);
 		JSONObject json= JSONObject.fromObject(map);

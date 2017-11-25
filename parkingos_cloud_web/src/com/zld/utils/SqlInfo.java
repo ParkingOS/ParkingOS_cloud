@@ -6,17 +6,17 @@ import java.util.List;
 
 
 /**
- * sqlĞÅÏ¢Àà 
+ * sqlä¿¡æ¯ç±»
  * @author Administrator
  *
  */
 public class SqlInfo {
 
 	/**
-	 * 
-	 * @param sql  preSqlÓï¾ä 
-	 * @param values  ²ÎÊıÖµ
-	 * @param argTypes ²ÎÊıÀàĞÍ
+	 *
+	 * @param sql  preSqlè¯­å¥
+	 * @param values  å‚æ•°å€¼
+	 * @param argTypes å‚æ•°ç±»å‹
 	 */
 	public SqlInfo(String sql, Object[] values) {
 		this.sql = sql;
@@ -60,12 +60,12 @@ public class SqlInfo {
 	public void setValues(Object[] values) {
 		this.values = values;
 	}
-	
+
 	/**
-	 * ºÏ²¢Á½¸öÓï¾äĞÅÏ¢
-	 * @param sqlInfo1 
+	 * åˆå¹¶ä¸¤ä¸ªè¯­å¥ä¿¡æ¯
+	 * @param sqlInfo1
 	 * @param sqlInfo2
-	 * @param join Á¬½Ó·û£¬1:°üº¬  2:and 3:where 
+	 * @param join è¿æ¥ç¬¦ï¼Œ1:åŒ…å«  2:and 3:where
 	 * @return
 	 */
 	public static SqlInfo joinSqlInfo(SqlInfo sqlInfo1,SqlInfo sqlInfo2,int join){
@@ -77,7 +77,7 @@ public class SqlInfo {
 		Object[] v2 = sqlInfo2.getValues();
 		String usql ="";
 		if(join==3)
-		    usql = sql1 + " where " + sql2;
+			usql = sql1 + " where " + sql2;
 		else if(join==1){
 			usql = sql1 + " and ( " + sql2+") ";
 		}else if(join==2){
@@ -94,7 +94,7 @@ public class SqlInfo {
 		}
 		return new SqlInfo(usql, nv);
 	}
-	
+
 	@Override
 	public String toString() {
 		return "SqlInfo [sql=" + sql + ", values=" + Arrays.toString(values)+"]";

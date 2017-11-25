@@ -28,14 +28,14 @@ public class CityGroupAccountAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -48,7 +48,7 @@ public class CityGroupAccountAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(cityid > 0){
 			groupid = RequestUtil.getLong(request, "groupid", -1L);
 		}
@@ -69,9 +69,9 @@ public class CityGroupAccountAction extends Action {
 			SqlInfo sqlInfo = RequestUtil.customSearch(request,"group_account_tb", "a", new String[]{"state"});
 			SqlInfo sqlInfo1 = getSuperSqlInfo(request);
 			List<Object> groups = new ArrayList<Object>();
-			if(cityid > 0){//城市商户登录
+			if(cityid > 0){//鍩庡競鍟嗘埛鐧诲綍
 				groups = commonMethods.getGroups(cityid);
-			}else if(groupid > 0){//运营集团登录
+			}else if(groupid > 0){//杩愯惀闆嗗洟鐧诲綍
 				groups.add(groupid);
 			}
 			if(groups != null && !groups.isEmpty()){
@@ -104,10 +104,10 @@ public class CityGroupAccountAction extends Action {
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 		}
-		
+
 		return null;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		Integer state = RequestUtil.getInteger(request, "state_start", -1);
 		SqlInfo sqlInfo1 = null;
@@ -116,7 +116,7 @@ public class CityGroupAccountAction extends Action {
 		}
 		return sqlInfo1;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> uids = new ArrayList<Object>();
@@ -128,7 +128,7 @@ public class CityGroupAccountAction extends Action {
 				else
 					preParams += ",?";
 			}
-			
+
 			List<Map<String, Object>> list2 = pgOnlyReadService.getAllMap("select id,nickname from user_info_tb where id in ("+preParams+") ", uids);
 			if(list2 != null && !list2.isEmpty()){
 				for(Map<String, Object> map : list){

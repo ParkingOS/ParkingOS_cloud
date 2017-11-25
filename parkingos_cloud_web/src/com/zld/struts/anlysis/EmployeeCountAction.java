@@ -32,7 +32,7 @@ public class EmployeeCountAction extends Action {
 	private MongoDbUtils mongoDbUtils;
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -103,12 +103,12 @@ public class EmployeeCountAction extends Action {
 			//json = StringUtils.createJson(list);
 			AjaxUtil.ajaxOutput(response, json);*/
 			List<Map<String, Object>> list = null;
-	        String json = JsonUtil.Map2Json(null,pageNum,0, "","id");
-	        AjaxUtil.ajaxOutput(response, json);
+			String json = JsonUtil.Map2Json(null,pageNum,0, "","id");
+			AjaxUtil.ajaxOutput(response, json);
 		}
 		return null;
 	}
-	
 
-	
+
+
 }

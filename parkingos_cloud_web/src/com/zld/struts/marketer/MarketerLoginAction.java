@@ -27,17 +27,17 @@ public class MarketerLoginAction extends Action {
 	private DataBaseService daService;
 	@Autowired
 	private PublicMethods publicMethods;
-	
+
 	private Logger logger = Logger.getLogger(MarketerLoginAction.class);
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		Map<String,Object> infoMap = new HashMap<String, Object>();
 		String action = RequestUtil.processParams(request, "action");
 		logger.error("action:"+action);
-		if(action.equals("forpass")){//ÕÒ»ØÃÜÂë£¬·¢ËÍµ½ÊĞ³¡×¨Ô±µÄ×¢²áÊÖ»úÉÏ
+		if(action.equals("forpass")){//æ‰¾å›å¯†ç ï¼Œå‘é€åˆ°å¸‚åœºä¸“å‘˜çš„æ³¨å†Œæ‰‹æœºä¸Š
 			String userId = RequestUtil.processParams(request, "username");
 			Map userMap = daService.getPojo("select id,password,mobile from user_info_tb where id=?",
 					new Object[]{Long.valueOf(userId)});
@@ -45,19 +45,19 @@ public class MarketerLoginAction extends Action {
 				String mobile = (String)userMap.get("mobile");
 				logger.equals(mobile);
 				if(mobile==null||"".equals(mobile)){
-					AjaxUtil.ajaxOutput(response, "{\"info\":\"Äú×¢²áÕÊºÅÊ±Ã»ÓĞÌîĞ´ÊÖ»ú£¬ÇëÁªÏµ¿Í·şÈËÔ±£¡\"}");
+					AjaxUtil.ajaxOutput(response, "{\"info\":\"æ‚¨æ³¨å†Œå¸å·æ—¶æ²¡æœ‰å¡«å†™æ‰‹æœºï¼Œè¯·è”ç³»å®¢æœäººå‘˜ï¼\"}");
 				}else if(Check.checkPhone(mobile,"m")){
 					String _mString = mobile.substring(0,3)+"****"+mobile.substring(7);
 					//SendMessage.sendMessage((String)userMap.get("mobile"),(String)userMap.get("password"));
-					AjaxUtil.ajaxOutput(response, "{\"info\":\"ÃÜÂëÒÑÍ¨¹ı¶ÌĞÅ·¢ËÍµ½Äú×¢²áµÄÊÖ»úÉÏ["+_mString+"]£¬Çë²éÊÕ£¡¡¾Í£³µ±¦¡¿\"}");
+					AjaxUtil.ajaxOutput(response, "{\"info\":\"å¯†ç å·²é€šè¿‡çŸ­ä¿¡å‘é€åˆ°æ‚¨æ³¨å†Œçš„æ‰‹æœºä¸Š["+_mString+"]ï¼Œè¯·æŸ¥æ”¶ï¼ã€åœè½¦å®ã€‘\"}");
 				}else {
-					AjaxUtil.ajaxOutput(response, "{\"info\":\"Äú×¢²áµÄÊÖ»úºÅ²»ºÏ·¨£¡\"}");
+					AjaxUtil.ajaxOutput(response, "{\"info\":\"æ‚¨æ³¨å†Œçš„æ‰‹æœºå·ä¸åˆæ³•ï¼\"}");
 				}
 			}else {
-				AjaxUtil.ajaxOutput(response, "{\"info\":\"ÕÊºÅ²»´æÔÚ£¡\"}");
+				AjaxUtil.ajaxOutput(response, "{\"info\":\"å¸å·ä¸å­˜åœ¨ï¼\"}");
 			}
 			return null;
-		}else if(action.equals("editpass")){//ĞŞ¸ÄÃÜÂë£¬·¢ËÍµ½ÊĞ³¡×¨Ô±µÄ×¢²áÊÖ»úÉÏ
+		}else if(action.equals("editpass")){//ä¿®æ”¹å¯†ç ï¼Œå‘é€åˆ°å¸‚åœºä¸“å‘˜çš„æ³¨å†Œæ‰‹æœºä¸Š
 			Long userId = RequestUtil.getLong(request, "username",-1L);
 			String oldPass = RequestUtil.processParams(request, "oldpass");
 			String newPass = RequestUtil.processParams(request, "newpass");
@@ -65,7 +65,7 @@ public class MarketerLoginAction extends Action {
 				oldPass =StringUtils.MD5(oldPass);
 				oldPass = StringUtils.MD5(oldPass+"zldtingchebao201410092009");
 			}
-			Long count  = daService.getLong("select count(*) from user_info_tb where id=? and md5pass=? ", 
+			Long count  = daService.getLong("select count(*) from user_info_tb where id=? and md5pass=? ",
 					new Object[]{userId,oldPass});
 			int result = 0;
 			if(newPass.length()<32){
@@ -107,7 +107,7 @@ public class MarketerLoginAction extends Action {
 		logger.error("user:"+username+",pass:"+pass);
 		String sql = "select * from user_info_tb where id=? and md5pass=? and state=? ";// and auth_flag=?";
 		if(pass.length()<32){
-			//md5ÃÜÂë £¬Éú³É¹æÔò£ºÔ­ÃÜÂëmd5ºó£¬¼ÓÉÏ'zldtingchebao201410092009'ÔÙ´Îmd5
+			//md5å¯†ç  ï¼Œç”Ÿæˆè§„åˆ™ï¼šåŸå¯†ç md5åï¼ŒåŠ ä¸Š'zldtingchebao201410092009'å†æ¬¡md5
 			pass =StringUtils.MD5(pass);
 			pass = StringUtils.MD5(pass +"zldtingchebao201410092009");
 		}
@@ -118,16 +118,16 @@ public class MarketerLoginAction extends Action {
 		}
 		Map user = daService.getPojo(sql, new Object[]{Long.valueOf(username),pass, 0});//,ZLDType.ZLD_COLLECTOR_ROLE});
 		//logger.error(user);
-		
+
 		if(user==null){
-			infoMap.put("info", "ÓÃ»§Ãû»òÃÜÂë´íÎó");
+			infoMap.put("info", "ç”¨æˆ·åæˆ–å¯†ç é”™è¯¯");
 		}else {
 			Long uin = (Long)user.get("id");
 			String token = StringUtils.MD5(username+pass+System.currentTimeMillis());
-			//²éÑ¯¹¦ÄÜÈ¨ÏŞ
+			//æŸ¥è¯¢åŠŸèƒ½æƒé™
 			List<Object> authids = new ArrayList<Object>();
 			authids = publicMethods.getAuthByRole((Long)user.get("auth_flag"));
-			//²éÑ¯Êı¾İÈ¨ÏŞ
+			//æŸ¥è¯¢æ•°æ®æƒé™
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			list = getUidInfo(uin);
 			infoMap.put("info", "success");
@@ -139,27 +139,27 @@ public class MarketerLoginAction extends Action {
 			doSaveSession(uin,token,version);
 			daService.update("update user_info_Tb set logon_time=? where id=?",
 					new Object[]{System.currentTimeMillis()/1000,user.get("id")});
-			logger.error(username+"µÇÂ¼³É¹¦...");
+			logger.error(username+"ç™»å½•æˆåŠŸ...");
 		}
 		AjaxUtil.ajaxOutput(response, StringUtils.createJson(infoMap));
 		return null;
 		//http://192.168.199.239/zld/marketerlogin.do?username=26788&password=111111
 	}
-	
+
 	/**
-	 * ±£´ætokenµ½Êı¾İ¿âÖĞ
+	 * ä¿å­˜tokenåˆ°æ•°æ®åº“ä¸­
 	 * @param uin
 	 * @param token
 	 */
 	private void doSaveSession(Long uin,String token,String version ){
-		//ÏÈÉ¾³ıÊĞ³¡×¨Ô±ÉÏ´ÎµÇÂ¼Ê±µÄtoken
+		//å…ˆåˆ é™¤å¸‚åœºä¸“å‘˜ä¸Šæ¬¡ç™»å½•æ—¶çš„token
 		daService.update("delete from user_session_tb where uin=? ", new Object[]{uin});
-		//±£´æ±¾´ÎµÇÂ¼µÄtoken
+		//ä¿å­˜æœ¬æ¬¡ç™»å½•çš„token
 		daService.update("insert into user_session_tb (uin,token,create_time,version) " +
-				"values (?,?,?,?)", 
+						"values (?,?,?,?)",
 				new Object[]{uin,token,System.currentTimeMillis()/1000,version});
 	}
-	
+
 	private List<Map<String, Object>> getUidInfo(Long uin){
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		List<Map<String, Object>> resultlist = new ArrayList<Map<String,Object>>();

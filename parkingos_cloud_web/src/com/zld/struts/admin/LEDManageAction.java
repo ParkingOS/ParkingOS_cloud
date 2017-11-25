@@ -32,15 +32,15 @@ public class LEDManageAction extends Action {
 	private MongoDbUtils mongoDbUtils;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	private Logger logger = Logger.getLogger(LEDManageAction.class);
 
 	/*
-	 * LEDÉèÖÃ
+	 * LEDè®¾ç½®
 	 */
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comId = (Long)request.getSession().getAttribute("comid");
@@ -52,7 +52,7 @@ public class LEDManageAction extends Action {
 			return null;
 		}
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
-		if(authId>0){//³µ³¡ÔÆºóÌ¨µ÷ÓÃÊ±
+		if(authId>0){//è½¦åœºäº‘åå°è°ƒç”¨æ—¶
 			comid =comId;
 		}
 		if(action.equals("")){
@@ -77,7 +77,7 @@ public class LEDManageAction extends Action {
 		}else if(action.equals("getworksites")){
 			String sql = "select * from com_worksite_tb where comid=?";
 			List<Map> list = daService.getAll(sql, new Object[]{comid});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"},";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"},";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+="{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("worksite_name")+"\"},";
@@ -120,7 +120,7 @@ public class LEDManageAction extends Action {
 			if(showcolor == -1) showcolor = null;
 			if(typeface == -1) typeface = null;
 			if(typesize == -1) typesize = null;
-			
+
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("comid", comid);
 			map.put("passid", passid);
@@ -170,7 +170,7 @@ public class LEDManageAction extends Action {
 			if(showcolor == -1) showcolor = null;
 			if(typeface == -1) typeface = null;
 			if(typesize == -1) typesize = null;
-			//±à¼­
+			//ç¼–è¾‘
 			String sql = "update com_led_tb set ledip=?,ledport=?,leduid=?,movemode=?,movespeed=?,dwelltime=?,ledcolor=?,showcolor=?,typeface=?,typesize=?,matercont=?,passid=?,width=?,height=?,type=?,rsport=? where id=?";
 			int re = daService.update(sql, new Object[]{ledip,ledport,leduid,movemode,movespeed,dwelltime,ledcolor,showcolor,typeface,typesize,matercont,passid,width,height,type,rsport,ledid});
 			if(re == 1){
@@ -180,7 +180,7 @@ public class LEDManageAction extends Action {
 				}else{
 					logger.error("parkadmin or admin:"+nickname+" edit comid:"+comid+" led ");
 				}
-				mongoDbUtils.saveLogs(request, 0, 3, "ĞŞ¸ÄÁË£¨comid:"+comid+"£©µÄLED£º"+ledip+":"+ledport);
+				mongoDbUtils.saveLogs(request, 0, 3, "ä¿®æ”¹äº†ï¼ˆcomid:"+comid+"ï¼‰çš„LEDï¼š"+ledip+":"+ledport);
 				AjaxUtil.ajaxOutput(response, "1");
 			}else{
 				AjaxUtil.ajaxOutput(response, "0");
@@ -197,7 +197,7 @@ public class LEDManageAction extends Action {
 				}else{
 					logger.error("parkadmin or admin:"+nickname+" delete comid:"+comid+" led ");
 				}
-				mongoDbUtils.saveLogs(request, 0, 4, "É¾³ıÁË£¨comid:"+comid+"£©µÄLED£º"+ledMap);
+				mongoDbUtils.saveLogs(request, 0, 4, "åˆ é™¤äº†ï¼ˆcomid:"+comid+"ï¼‰çš„LEDï¼š"+ledMap);
 				AjaxUtil.ajaxOutput(response, "1");
 			}else{
 				AjaxUtil.ajaxOutput(response, "0");

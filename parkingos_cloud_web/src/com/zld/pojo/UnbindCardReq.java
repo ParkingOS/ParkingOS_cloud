@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 public class UnbindCardReq implements Serializable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private Long cardId = -1L;
-	private Long unBinder = -1L;//½â°ó²Ù×÷ÈË
-	private Long groupId = -1L;//²Ù×÷ÈËËùÔÚµÄÔËÓª¼¯ÍÅ
+	private Long unBinder = -1L;//è§£ç»‘æ“ä½œäºº
+	private Long groupId = -1L;//æ“ä½œäººæ‰€åœ¨çš„è¿è¥é›†å›¢
 	private Long curTime = System.currentTimeMillis()/1000;
-	
+
 	public Long getCurTime() {
 		return curTime;
 	}
@@ -42,5 +42,5 @@ public class UnbindCardReq implements Serializable {
 		return "UnbindCardReq [cardId=" + cardId + ", unBinder=" + unBinder
 				+ ", groupId=" + groupId + ", curTime=" + curTime + "]";
 	}
-	
+
 }

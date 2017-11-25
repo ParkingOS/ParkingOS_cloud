@@ -9,41 +9,40 @@ import java.net.URLEncoder;
 import javax.servlet.http.HttpServletResponse;
 
 public class AjaxUtil {
-  
- 
-  
-    /** 
-     * 返回AJAX调用结果 String类型
-     * @param response
-     * @param outputString 
-     * @throws java.io.IOException 
-     */  
-    public static void ajaxOutput(HttpServletResponse response, String outputString) throws IOException {  
-        response.setContentType("text/html; charset=gbk");  
-        PrintWriter printWriter = response.getWriter();
-        printWriter.write(outputString);  
-        printWriter.flush();  
-        printWriter.close();
-    }  
-    
-    /** 
-     * 返回AJAX调用结果 结果类型是INT
-     * @param response
-     * @param outputInt
-     * @throws java.io.IOException
-     */  
-    public static void ajaxOutputRint(HttpServletResponse response, int outputInt) throws IOException {  
-        response.setContentType("text/html; charset=gbk");  
-        PrintWriter printWriter = response.getWriter();
-        printWriter.write(outputInt);
-        printWriter.flush();
-        printWriter.close();
-    }  
-    
-    /** 
-     *解码Ajax urf-8编码后的url形式中文参数 返回UTF-8结果
-     *@param String
-     */ 
+
+
+
+	/**
+	 * 杩斿洖AJAX璋冪敤缁撴灉 String绫诲瀷
+	 * @param response
+	 * @param outputString
+	 * @throws java.io.IOException
+	 */
+	public static void ajaxOutput(HttpServletResponse response, String outputString) throws IOException {
+		response.setContentType("text/html; charset=gbk");
+		PrintWriter printWriter = response.getWriter();
+		printWriter.write(outputString);
+		printWriter.flush();
+		printWriter.close();
+	}
+
+	/**
+	 * 杩斿洖AJAX璋冪敤缁撴灉 缁撴灉绫诲瀷鏄疘NT
+	 * @param response
+	 * @param outputInt
+	 * @throws java.io.IOException
+	 */
+	public static void ajaxOutputRint(HttpServletResponse response, int outputInt) throws IOException {
+		response.setContentType("text/html; charset=gbk");
+		PrintWriter printWriter = response.getWriter();
+		printWriter.write(outputInt);
+		printWriter.flush();
+		printWriter.close();
+	}
+
+	/**
+	 *瑙ｇ爜Ajax urf-8缂栫爜鍚庣殑url褰㈠紡涓枃鍙傛暟 杩斿洖UTF-8缁撴灉
+	 */
 	public static String decodeUTF8(String someStr) {
 		String newStr = null;
 		if(someStr!=null&&someStr.equals(""))
@@ -57,13 +56,13 @@ public class AjaxUtil {
 		}
 		return newStr;
 	}
-	
-	
 
-    /** 
-     *编码Ajax urf-8编码后的url形式中文参数 返回UTF-8结果
-     *@param String
-     */ 
+
+
+	/**
+	 *缂栫爜Ajax urf-8缂栫爜鍚庣殑url褰㈠紡涓枃鍙傛暟 杩斿洖UTF-8缁撴灉
+	 *@param String
+	 */
 	public static String encodeUTF8(String someStr) {
 		String newStr = null;
 		if(someStr!=null&&someStr.equals(""))

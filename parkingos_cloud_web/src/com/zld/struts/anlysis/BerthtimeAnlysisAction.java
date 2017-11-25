@@ -30,7 +30,7 @@ public class BerthtimeAnlysisAction extends Action {
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -41,10 +41,10 @@ public class BerthtimeAnlysisAction extends Action {
 			response.sendRedirect("login.do");
 			return null;
 		}
-		
+
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			request.setAttribute("btime", df2.format(System.currentTimeMillis()));
@@ -90,16 +90,16 @@ public class BerthtimeAnlysisAction extends Action {
 				sql += " c.comid in ("+preParams+") ";
 				params.addAll(parks);
 				list = pgOnlyReadService.getAllMap(sql,params);
-			  
+
 				if(list != null && !list.isEmpty()){
 					count = list.size();
 				}
 			}
-			
-			     
+
+
 			//setList(list);
 			String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"comid");
-			
+
 			//json = StringUtils.createJson(list);
 			AjaxUtil.ajaxOutput(response, json);
 		}
@@ -110,7 +110,7 @@ public class BerthtimeAnlysisAction extends Action {
 					"stay_time from order_tb as a left join com_info_tb as b on a.comid=b.id where a.end_time between ? and ? group by a.comid,b.company_name,total_time) as c  where ";
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			List<Map<String, Object>> list = null;
-			
+
 			int count = 0;
 			String btime = RequestUtil.processParams(request, "btime");
 			//String etime = RequestUtil.processParams(request, "etime");
@@ -147,12 +147,12 @@ public class BerthtimeAnlysisAction extends Action {
 					count = list.size();
 				}
 			}
-			
+
 			String json = StringUtils.createJson(list);
 			//AjaxUtil.ajaxOutput(response, json);
 			if(operate.equals("")){
 				request.setAttribute("btime", df2.format(System.currentTimeMillis()));
-	
+
 				//request.setAttribute("etime",  df2.format(System.currentTimeMillis()));
 				request.setAttribute("json", json);
 				return mapping.findForward("icon");
@@ -160,10 +160,10 @@ public class BerthtimeAnlysisAction extends Action {
 				AjaxUtil.ajaxOutput(response, json);
 			}
 		}
-		
+
 		return null;
 	}
-	
 
-	
+
+
 }

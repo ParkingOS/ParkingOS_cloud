@@ -22,8 +22,8 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
-/*ËµÃ÷£º³ÇÊĞÉÌ»§¡¢ÇşµÀ¡¢¼¯ÍÅµÄÈËÔ±¹ÜÀí²»ÄÜÔÚÒ»¸öÀàÀï´¦Àí£¬Èç¹ûÍ¬Ò»¸öÀà£¬³ÇÊĞÉÌ»§µÇÂ¼ÀïÓĞÈËÔ±¹ÜÀí£¬
-³ÇÊĞÉÌ»§µÄÔËÓª¼¯ÍÅ¹ÜÀíÀïÒ²ÓĞÈËÔ±¹ÜÀí£¬ÒòÎªÁ´½ÓµØÖ·ÏàÍ¬ÔÚÊÚÈ¨µÄÊ±ºò¾Í»á»ìÂÒ£¬ËùÒÔÔÚÃ¿Ò»¸ö×éÖ¯ÀàĞÍ¶¼ÓĞÒ»¸öÈËÔ±¹ÜÀíÀà*/
+/*è¯´æ˜ï¼šåŸå¸‚å•†æˆ·ã€æ¸ é“ã€é›†å›¢çš„äººå‘˜ç®¡ç†ä¸èƒ½åœ¨ä¸€ä¸ªç±»é‡Œå¤„ç†ï¼Œå¦‚æœåŒä¸€ä¸ªç±»ï¼ŒåŸå¸‚å•†æˆ·ç™»å½•é‡Œæœ‰äººå‘˜ç®¡ç†ï¼Œ
+åŸå¸‚å•†æˆ·çš„è¿è¥é›†å›¢ç®¡ç†é‡Œä¹Ÿæœ‰äººå‘˜ç®¡ç†ï¼Œå› ä¸ºé“¾æ¥åœ°å€ç›¸åŒåœ¨æˆæƒçš„æ—¶å€™å°±ä¼šæ··ä¹±ï¼Œæ‰€ä»¥åœ¨æ¯ä¸€ä¸ªç»„ç»‡ç±»å‹éƒ½æœ‰ä¸€ä¸ªäººå‘˜ç®¡ç†ç±»*/
 public class GroupMemberManageAction extends Action {
 	@Autowired
 	private DataBaseService daService;
@@ -35,11 +35,11 @@ public class GroupMemberManageAction extends Action {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
-		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//ÊÇ·ñÊÇ³¬¼¶¹ÜÀíÔ±
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//æ˜¯å¦æ˜¯è¶…çº§ç®¡ç†å‘˜
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long chanid = (Long)request.getSession().getAttribute("chanid");
@@ -51,16 +51,16 @@ public class GroupMemberManageAction extends Action {
 		if(groupid == null) groupid = -1L;
 		if(chanid == null) chanid = -1L;
 		if(cityid == null) cityid = -1L;
-		
+
 		if(supperadmin == 1 || cityid > 0 || chanid > 0){
 			groupid = RequestUtil.getLong(request, "groupid", -1L);
 		}
-		Map<String, Object> adminRoleMap = daService.getMap("select * from user_role_tb where type=? and oid =(select id from zld_orgtype_tb where name like ? limit ? ) limit ? ", 
-				new Object[]{0, "%¼¯ÍÅ%", 1, 1});//²éÕÒ³ÇÊĞ¹ÜÀíÔ±½ÇÉ«
+		Map<String, Object> adminRoleMap = daService.getMap("select * from user_role_tb where type=? and oid =(select id from zld_orgtype_tb where name like ? limit ? ) limit ? ",
+				new Object[]{0, "%é›†å›¢%", 1, 1});//æŸ¥æ‰¾åŸå¸‚ç®¡ç†å‘˜è§’è‰²
 		if(adminRoleMap == null || groupid < 0){
 			return null;
 		}
-		
+
 		if(action.equals("")){
 			request.setAttribute("groupid", groupid);
 			return mapping.findForward("list");
@@ -87,18 +87,18 @@ public class GroupMemberManageAction extends Action {
 			List list = null;
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
-			SqlInfo sqlInfo = RequestUtil.customSearch(request, "user_info","u", 
+			SqlInfo sqlInfo = RequestUtil.customSearch(request, "user_info","u",
 					new String[]{});
 			List<Object> params = new ArrayList<Object>();
 			params.add(groupid);
 			params.add(0);
 			params.add(0);
 			params.add(adminRoleMap.get("oid"));
-			if(supperadmin == 1 || chanid > 0 || cityid > 0){//×Ü¹ÜÀíÔ±Ö»ÄÜ¿´µ½¹ÜÀíÔ±
+			if(supperadmin == 1 || chanid > 0 || cityid > 0){//æ€»ç®¡ç†å‘˜åªèƒ½çœ‹åˆ°ç®¡ç†å‘˜
 				sql += " and u.role_id = ? ";
 				countSql += " and u.role_id = ? ";
 				params.add(adminRoleMap.get("id"));
-			}else{//·Ç×Ü¹ÜÀíÔ±µÇÂ¼²»ÄÜ¿´µ½¹ÜÀíÔ±
+			}else{//éæ€»ç®¡ç†å‘˜ç™»å½•ä¸èƒ½çœ‹åˆ°ç®¡ç†å‘˜
 				sql += " and u.role_id <> ? and r.adminid in (select id from user_info_tb where groupid=(select groupid from user_info_tb where id=? )) ";
 				countSql += " and u.role_id <> ? and r.adminid in (select id from user_info_tb where groupid=(select groupid from user_info_tb where id=? ))  ";
 				params.add(adminRoleMap.get("id"));
@@ -140,11 +140,12 @@ public class GroupMemberManageAction extends Action {
 		}
 		return null;
 	}
-	
-	
+
+
 	@SuppressWarnings({ "rawtypes" })
 	private int createMember(HttpServletRequest request, Long groupid, Long createor_id){
-		String strid =RequestUtil.processParams(request, "strid");
+		//tring strid =RequestUtil.processParams(request, "strid");
+		String strid = "";
 		String nickname =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "nickname"));
 		String phone =RequestUtil.processParams(request, "phone");
 		String mobile =RequestUtil.processParams(request, "mobile");
@@ -166,9 +167,12 @@ public class GroupMemberManageAction extends Action {
 			mobile = null;
 		}
 		Long time = System.currentTimeMillis()/1000;
+		//ç”¨æˆ·è¡¨*
+		long userId=daService.getkey("seq_user_info_tb");
+		strid = String.valueOf(userId);
 		if(!commonMethods.checkStrid(strid))
 			return -2;
-		Map<String, Object> map = onlyReadService.getMap("select * from user_role_tb where id = ?", 
+		Map<String, Object> map = onlyReadService.getMap("select * from user_role_tb where id = ?",
 				new Object[]{role_id});
 		if(map != null){
 			int is_inspect = (Integer)map.get("is_inspect");
@@ -184,17 +188,16 @@ public class GroupMemberManageAction extends Action {
 			if(is_opencard == 1){
 				auth_flag = 17;
 			}
-			//ÓÃ»§±í*
-			long userId=daService.getkey("seq_user_info_tb");
-			String sql="insert into user_info_tb (id,nickname,password,strid,reg_time,mobile,phone,groupid,role_id,auth_flag,creator_id,resume) " +
-					"values (?,?,?,?,?,?,?,?,?,?,?,?)";
-			Object [] values= new Object[]{userId,nickname,strid,strid,time,mobile,phone,groupid,role_id,auth_flag,createor_id,resume};
+			String userIdString = strid;
+			String sql="insert into user_info_tb (id,nickname,password,strid,reg_time,mobile,phone,groupid,role_id,auth_flag,creator_id,resume,user_id) " +
+					"values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			Object [] values= new Object[]{userId,nickname,strid,strid,time,mobile,phone,groupid,role_id,auth_flag,createor_id,resume,userIdString};
 			int r = daService.update(sql, values);
 			return r;
 		}
 		return -1;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes" })
 	private int editMember(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
@@ -222,7 +225,7 @@ public class GroupMemberManageAction extends Action {
 		if(!commonMethods.checkStrid(strid, id)){
 			return -2;
 		}
-		Map<String, Object> map = onlyReadService.getMap("select * from user_role_tb where id = ?", 
+		Map<String, Object> map = onlyReadService.getMap("select * from user_role_tb where id = ?",
 				new Object[]{role_id});
 		int is_inspect = 0;
 		int is_collector = 0;
@@ -246,18 +249,18 @@ public class GroupMemberManageAction extends Action {
 				new Object[]{nickname, strid, phone, mobile, role_id, auth_flag, resume, id});
 		return r;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes" })
 	private int deleteMember(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "selids", -1L);
 		if(id == -1){
 			return -1;
 		}
-		int r = daService.update("update user_info_tb set state=? where id=? ", 
+		int r = daService.update("update user_info_tb set state=? where id=? ",
 				new Object[]{1, id});
 		return r;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes" })
 	private String editPass(HttpServletRequest request){
 		String id =RequestUtil.processParams(request, "id");
@@ -273,13 +276,13 @@ public class GroupMemberManageAction extends Action {
 		}
 		String result = "0";
 		if(newPass.length()<6){
-			result = "ÃÜÂë³¤¶ÈĞ¡ÓÚ6Î»£¬ÇëÖØĞÂÊäÈë£¡";
+			result = "å¯†ç é•¿åº¦å°äº6ä½ï¼Œè¯·é‡æ–°è¾“å…¥ï¼";
 		}else if(newPass.equals(confirmPass)){
 			Object [] values = new Object[]{newPass,md5pass,Long.valueOf(id)};
 			int r = daService.update(sql, values);
 			result = r + "";
 		}else {
-			result = "Á½´ÎÃÜÂëÊäÈë²»Ò»ÖÂ£¬ÇëÖØĞÂÊäÈë£¡";
+			result = "ä¸¤æ¬¡å¯†ç è¾“å…¥ä¸ä¸€è‡´ï¼Œè¯·é‡æ–°è¾“å…¥ï¼";
 		}
 		return result;
 	}

@@ -1,14 +1,10 @@
 package com.zld.struts.anlysis;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zld.AjaxUtil;
+import com.zld.impl.CommonMethods;
+import com.zld.service.DataBaseService;
+import com.zld.service.PgOnlyReadService;
+import com.zld.utils.*;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -16,19 +12,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.zld.AjaxUtil;
-import com.zld.impl.CommonMethods;
-import com.zld.service.DataBaseService;
-import com.zld.service.PgOnlyReadService;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
-import com.zld.utils.TimeTools;
-import com.zld.utils.ZLDType;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * ³µ³¡¶©µ¥Í³¼Æ
+ * è½¦åœºè®¢å•ç»Ÿè®¡
  * @author Administrator
  *
  */
@@ -40,16 +33,16 @@ public class ParkOrderanlysisAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	private Logger logger = Logger.getLogger(ParkOrderanlysisAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
 		Integer role = RequestUtil.getInteger(request, "role",-1);
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Integer isHd = (Integer)request.getSession().getAttribute("ishdorder");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -60,7 +53,7 @@ public class ParkOrderanlysisAction extends Action {
 			response.sendRedirect("login.do");
 			return null;
 		}
-		
+
 		if(comid == 0){
 			comid = RequestUtil.getLong(request, "comid", 0L);
 		}
@@ -76,18 +69,18 @@ public class ParkOrderanlysisAction extends Action {
 			request.setAttribute("comid", comid);
 			return mapping.findForward("list");
 		}else if(action.equals("query")){
-			/*Ô­À´Í³¼Æ·ÖÎöÖĞ²éÑ¯µÄÊÕ·ÑÔ±ÊÇuid£¬¸ÄÎª²éÑ¯³ö³¡ÊÕ·ÑÔ±out_uidµÄĞÅÏ¢ by lqb 2017-05-27*/
+			/*åŸæ¥ç»Ÿè®¡åˆ†æä¸­æŸ¥è¯¢çš„æ”¶è´¹å‘˜æ˜¯uidï¼Œæ”¹ä¸ºæŸ¥è¯¢å‡ºåœºæ”¶è´¹å‘˜out_uidçš„ä¿¡æ¯ by lqb 2017-05-27*/
 			/*
-			 * 
+			 *
 			 */
-			
+
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			String nowtime= df2.format(System.currentTimeMillis());
 			String type = RequestUtil.processParams(request, "type");
 			String sql = "select count(*) scount,sum(amount_receivable) amount_receivable, " +
-					"sum(total) total , sum(cash_pay) cash_pay, sum(electronic_pay+electronic_prepay) electronic_pay, " +
-					"sum(reduce_amount) reduce_pay, out_uid from order_tb  ";
-			String free_sql = "select count(*) scount,sum(amount_receivable-electronic_prepay-cash_prepay-reduce_amount) free_pay,out_uid from order_tb";
+					"sum(total) total , sum(cash_pay) cash_pay,sum(cash_prepay) cash_prepay, sum(electronic_pay) electronic_pay,sum(electronic_prepay) electronic_prepay, " +
+					"sum(reduce_amount) reduce_pay, out_uid,comid from order_tb  ";
+			String free_sql = "select count(*) scount,sum(amount_receivable-electronic_prepay-cash_prepay-reduce_amount) free_pay,out_uid,comid from order_tb";
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			String btime = RequestUtil.processParams(request, "btime");
 			String etime = RequestUtil.processParams(request, "etime");
@@ -103,24 +96,24 @@ public class ParkOrderanlysisAction extends Action {
 			if(type.equals("today")){
 				sqlInfo =new SqlInfo(" end_time between ? and ? ",
 						new Object[]{b,e});
-				dstr = "½ñÌì";
+				dstr = "ä»Šå¤©";
 			}else if(type.equals("toweek")){
 				b = TimeTools.getWeekStartSeconds();
 				sqlInfo =new SqlInfo(" end_time between ? and ? ",
 						new Object[]{b,e});
-				dstr = "±¾ÖÜ";
+				dstr = "æœ¬å‘¨";
 			}else if(type.equals("lastweek")){
 				e = TimeTools.getWeekStartSeconds();
 				b= e-7*24*60*60;
 				e = e-1;
 				sqlInfo =new SqlInfo(" end_time between ? and ? ",
 						new Object[]{b,e});
-				dstr = "ÉÏÖÜ";
+				dstr = "ä¸Šå‘¨";
 			}else if(type.equals("tomonth")){
 				b=TimeTools.getMonthStartSeconds();
 				sqlInfo =new SqlInfo(" end_time between ? and ? ",
 						new Object[]{b,e});
-				dstr="±¾ÔÂ";
+				dstr="æœ¬æœˆ";
 			}else if(!btime.equals("")&&!etime.equals("")){
 				b = TimeTools.getLongMilliSecondFrom_HHMMDD(btime)/1000;
 				e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime+" 23:59:59");
@@ -138,39 +131,57 @@ public class ParkOrderanlysisAction extends Action {
 			params.add(1);
 			params.add(0);
 			params.add(0);
-			//×Ü¶©µ¥¼¯ºÏ
-			List<Map<String, Object>> totalList = pgOnlyReadService.getAllMap(sql +" group by out_uid order by scount desc ",params);
-			//ÔÂ¿¨¶©µ¥¼¯ºÏ
-			List<Map<String, Object>> monthList = pgOnlyReadService.getAllMap(sql +" and pay_type=3 group by out_uid order by scount desc ",params);
-			//Ãâ·Ñ¶©µ¥¼¯ºÏ
-			List<Map<String, Object>> freeList = pgOnlyReadService.getAllMap(free_sql +" and pay_type=8 group by out_uid order by scount desc ",params);
-			int totalCount = 0;//×Ü¶©µ¥Êı
+			//æ€»è®¢å•é›†åˆ
+			List<Map<String, Object>> totalList = pgOnlyReadService.getAllMap(sql +" group by out_uid,comid order by scount desc ",params);
+			//æœˆå¡è®¢å•é›†åˆ
+			List<Map<String, Object>> monthList = pgOnlyReadService.getAllMap(sql +" and pay_type=3 group by out_uid,comid order by scount desc ",params);
+			//å…è´¹è®¢å•é›†åˆ
+			List<Map<String, Object>> freeList = pgOnlyReadService.getAllMap(free_sql +" and pay_type=8 group by out_uid,comid order by scount desc ",params);
+			int totalCount = 0;//æ€»è®¢å•æ•°
 			int monthCount = 0;
-			double totalMoney = 0.0;//¶©µ¥½ğ¶î
-			double cashMoney = 0.0;//ÏÖ½ğÖ§¸¶½ğ¶î
-			double elecMoney = 0.0;//µç×ÓÖ§¸¶½ğ¶î
-			double freeMoney = 0.0;//Ãâ·Ñ½ğ¶î
-			double reduce_amount = 0.0;//¼õÃâÖ§¸¶
+			double totalMoney = 0.0;//è®¢å•é‡‘é¢
+			double cashMoney = 0.0;//ç°é‡‘æ”¯ä»˜é‡‘é¢
+			double elecMoney = 0.0;//ç”µå­æ”¯ä»˜é‡‘é¢
+			double freeMoney = 0.0;//å…è´¹é‡‘é¢
+			double reduce_amount = 0.0;//å‡å…æ”¯ä»˜
 			List<Map<String, Object>> backList = new ArrayList<Map<String, Object>>();
 			if(totalList != null && totalList.size() > 0){
+				Map<Long ,String> nameMap =new HashMap<>();
 				for(Map<String, Object> totalOrder : totalList){
+					Long _comid = (Long)totalOrder.get("comid");
+					String names = nameMap.get(_comid);
+					if(names==null){
+						Map<String,Object> namesMap = daService.getMap("select c.company_name,g.name from com_info_tb c left join" +
+								" org_group_tb g on c.groupid = g.id where c.id =?",new Object[]{_comid});
+						logger.error(namesMap);
+						if(namesMap!=null&&!namesMap.isEmpty()){
+							nameMap.put(_comid,namesMap.get("company_name")+"bolink"+namesMap.get("name"));
+							totalOrder.put("comid",namesMap.get("company_name"));
+							totalOrder.put("groupid",namesMap.get("name"));
+						}else{
+							nameMap.put(_comid,"bolink");
+						}
+					}else{
+						totalOrder.put("comid",names.split("bolink")[0]);
+						totalOrder.put("groupid",names.split("bolink")[1]);
+					}
 					totalCount += Integer.parseInt(totalOrder.get("scount")+"");
 					totalMoney += Double.parseDouble(totalOrder.get("amount_receivable")+"");
-					//Éè¶¨Ä¬ÈÏÖµ
+					//è®¾å®šé»˜è®¤å€¼
 					String sql_worker = "select nickname from user_info_tb where id = ?";
 					Object []val_worker = new Object[]{Long.parseLong(totalOrder.get("out_uid")+"")};
 					Map worker = daService.getMap(sql_worker ,val_worker);
 					if(worker!=null && worker.containsKey("nickname")){
-						//³ö³¡ÊÕ·ÑÔ±Id
+						//å‡ºåœºæ”¶è´¹å‘˜Id
 						totalOrder.put("id",totalOrder.get("out_uid"));
-						//ÊÕ·ÑÔ±Ãû³Æ
+						//æ”¶è´¹å‘˜åç§°
 						totalOrder.put("name",worker.get("nickname"));
 					}
-					//Ê±¼ä¶Î
+					//æ—¶é—´æ®µ
 					totalOrder.put("sdate",dstr);
-					//ÔÂ¿¨¶©µ¥Êı
+					//æœˆå¡è®¢å•æ•°
 					totalOrder.put("monthcount",0);
-					//±éÀúÔÂ¿¨¼¯ºÏ
+					//éå†æœˆå¡é›†åˆ
 					if(monthList != null && monthList.size() > 0){
 						for(Map<String, Object> monthOrder : monthList){
 							if(totalOrder.get("out_uid").equals(monthOrder.get("out_uid"))){
@@ -179,13 +190,15 @@ public class ParkOrderanlysisAction extends Action {
 							}
 						}
 					}
-					cashMoney += Double.parseDouble((totalOrder.get("cash_pay")== null ? "0" : totalOrder.get("cash_pay")+""));
-					//µç×ÓÖ§¸¶
-					totalOrder.put("electronic_pay", StringUtils.formatDouble(Double.parseDouble((totalOrder.get("electronic_pay")== null ? "0" : totalOrder.get("electronic_pay")+""))));
+					cashMoney +=StringUtils.formatDouble(totalOrder.get("cash_pay"))+StringUtils.formatDouble(totalOrder.get("cash_prepay"));
+					//ç”µå­æ”¯ä»˜
+
+					totalOrder.put("electronic_pay", String.format("%.2f",Double.parseDouble((totalOrder.get("electronic_pay")== null ? "0" : totalOrder.get("electronic_pay")+""))));
 					elecMoney += Double.parseDouble((totalOrder.get("electronic_pay")== null ? "0" : totalOrder.get("electronic_pay")+""));
-					//Ãâ·ÑÖ§¸¶
+
+					//å…è´¹æ”¯ä»˜
 					totalOrder.put("free_pay",0.0);
-					//±éÀúÃâ·Ñ¼¯ºÏ
+					//éå†å…è´¹é›†åˆ
 					if(freeList != null && freeList.size() > 0){
 						for(Map<String, Object> freeOrder : freeList){
 							if(totalOrder.get("out_uid").equals(freeOrder.get("out_uid"))){
@@ -198,11 +211,11 @@ public class ParkOrderanlysisAction extends Action {
 					backList.add(totalOrder);
 				}
 			}
-			
-			
-			String money = "×Ü¶©µ¥Êı£º"+totalCount+",ÔÂ¿¨¶©µ¥Êı:"+monthCount+",¶©µ¥½ğ¶î:"+StringUtils.formatDouble(totalMoney)+"Ôª," +
-							"ÏÖ½ğÖ§¸¶:"+StringUtils.formatDouble(cashMoney)+"Ôª,µç×ÓÖ§¸¶ :"+StringUtils.formatDouble(elecMoney)+"Ôª," +
-							"Ãâ·Ñ½ğ¶î:"+StringUtils.formatDouble(freeMoney)+"Ôª,¼õÃâÖ§¸¶:"+StringUtils.formatDouble(reduce_amount)+"Ôª";
+
+
+			String money = "æ€»è®¢å•æ•°ï¼š"+totalCount+",æœˆå¡è®¢å•æ•°:"+monthCount+",è®¢å•é‡‘é¢:"+StringUtils.formatDouble(totalMoney)+"å…ƒ," +
+					"ç°é‡‘æ”¯ä»˜:"+StringUtils.formatDouble(cashMoney)+"å…ƒ,ç”µå­æ”¯ä»˜ :"+StringUtils.formatDouble(elecMoney)+"å…ƒ," +
+					"å…è´¹é‡‘é¢:"+StringUtils.formatDouble(freeMoney)+"å…ƒ,å‡å…åŠµæ”¯ä»˜:"+StringUtils.formatDouble(reduce_amount)+"å…ƒ";
 			String json = JsonUtil.anlysisMap2Json(backList,1,backList.size(), fieldsstr,"id",money);
 			System.out.println(json);
 			AjaxUtil.ajaxOutput(response, json);
@@ -240,8 +253,12 @@ public class ParkOrderanlysisAction extends Action {
 				etime =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(et+" 23:59:59");
 			}
 			long uid = RequestUtil.getLong(request, "uid", -1L);
-			String sql = "select a.id,a.start_time,a.end_time,a.uid,b.worksite_name worksite_id from parkuser_work_record_tb a ,com_worksite_tb b where (a.end_time " +
-					"between ? and ? or a.start_time between ? and ? or (a.start_time between ? and ? and (a.end_time>? or a.end_time is null))) and a.uid = ? and b.id=a.worksite_id ";// order by a.end_time desc";//²éÑ¯ÉÏ°àĞÅÏ¢
+			String sql = "select a.id,a.start_time,a.end_time,a.uid,b.worksite_name worksite_id " +
+					" from " +
+					" parkuser_work_record_tb a left join " +
+					" com_worksite_tb b  on b.id=a.worksite_id  " +
+					"where (a.end_time  between ? and ? or a.start_time between ? and ? or (a.start_time between ? and ? and " +
+					"(a.end_time>? or a.end_time is null))) and a.uid = ? ";// order by a.end_time desc";//æŸ¥è¯¢ä¸Šç­ä¿¡æ¯
 			List<Object> params = new ArrayList();
 			params.add(btime);
 			params.add(etime);
@@ -252,17 +269,20 @@ public class ParkOrderanlysisAction extends Action {
 			params.add(etime);
 			params.add(uid);
 			sql +=" order by a.end_time desc";
+			logger.error(sql);
+			logger.error(params);
 			list = daService.getAllMap(sql,params);
-			
-			double amountmoney = 0.0;//×Ü½ğ¶î
-			double cash_money = 0.0;//ÏÖ½ğÖ§¸¶½ğ¶î
-			double elec_money = 0.0;//µç×ÓÖ§¸¶½ğ¶î
-			double reduce_money = 0.0;//¼õÃâÖ§¸¶½ğ¶î
-			double free_money = 0.0;//¼õÃâÖ§¸¶½ğ¶î
+
+			logger.error(list);
+			double amountmoney = 0.0;//æ€»é‡‘é¢
+			double cash_money = 0.0;//ç°é‡‘æ”¯ä»˜é‡‘é¢
+			double elec_money = 0.0;//ç”µå­æ”¯ä»˜é‡‘é¢
+			double reduce_money = 0.0;//å‡å…æ”¯ä»˜é‡‘é¢
+			double free_money = 0.0;//å‡å…æ”¯ä»˜é‡‘é¢
 			int count =0;
 			int monthcount =0;
-			for (int i = 0; i < list.size(); i++) {//Ñ­»·×éÖ¯Ã¿¸ö°àµÄÍ³¼Æ
-				List<Object> p = new ArrayList(); 
+			for (int i = 0; i < list.size(); i++) { //å¾ªç¯ç»„ç»‡æ¯ä¸ªç­çš„ç»Ÿè®¡
+				List<Object> p = new ArrayList();
 				Map work = (Map)list.get(i);
 				long start_time = (Long)work.get("start_time");
 				long end_time = Long.MAX_VALUE;
@@ -276,17 +296,17 @@ public class ParkOrderanlysisAction extends Action {
 				p.add(uid);
 				p.add(0);
 				p.add(comid);
-				List list2 = new ArrayList();//×ÜµÄ¶©µ¥
-				List list3 = new ArrayList();//Ãâ·Ñ
-				List list4 = new ArrayList();//ÏÖ½ğ
+				List list2 = new ArrayList();//æ€»çš„è®¢å•
+				List list3 = new ArrayList();//å…è´¹
+				List list4 = new ArrayList();//ç°é‡‘
 
-					//×ÜµÄ¶©µ¥ÊıºÍ×ÜµÄ½ğ¶î
+				//æ€»çš„è®¢å•æ•°å’Œæ€»çš„é‡‘é¢
 				String sql2 = "select count(*) ordertotal,sum(amount_receivable) amount_receivable, " +
-						"sum(total) total , sum(cash_pay) cash_pay, sum(electronic_pay+electronic_prepay) electronic_pay, " +
+						"sum(total) total , sum(cash_pay) cash_pay,sum(cash_prepay) cash_prepay, sum(electronic_pay) electronic_pay,sum(electronic_prepay) electronic_prepay, " +
 						"sum(reduce_amount) reduce_pay from order_tb where end_time between ? and ? " +
 						" and state= ? and out_uid = ? and ishd=? and comid=?";
 				list2 = daService.getAllMap(sql2 ,p);
-				//ÔÂ¿¨¶©µ¥Êı
+				//æœˆå¡è®¢å•æ•°
 				String sql5 = "select count(*) ordertotal from order_tb where end_time between ? and ? " +
 						" and state= ? and out_uid = ? and pay_type =? and ishd=? and comid=?";
 				Object []v5 = new Object[]{start_time,end_time,1,uid,3,0,comid};
@@ -295,13 +315,14 @@ public class ParkOrderanlysisAction extends Action {
 				monthcount+=Integer.parseInt(list5.get("ordertotal")+"");
 				count+=Integer.parseInt((((Map)list2.get(0)).get("ordertotal"))+"");
 				if(list2!=null&&list2.size()==1){
+					Map<String,Object> oMap = (Map)list2.get(0);
 					int ordertotal = 0;
 					double totalMOney = 0 ;
 					try{
 						//amount_receivable = Double.parseDouble((((Map)list2.get(0)).get("amount_receivable"))+"");
-						ordertotal = Integer.parseInt((((Map)list2.get(0)).get("ordertotal"))+"");
-						totalMOney = Double.parseDouble((((Map)list2.get(0)).get("amount_receivable"))+"");
-						
+						ordertotal = Integer.parseInt((oMap.get("ordertotal"))+"");
+						totalMOney = Double.parseDouble((oMap.get("amount_receivable"))+"");
+
 					}catch (Exception e) {
 						totalMOney=0.0;
 					}
@@ -309,36 +330,37 @@ public class ParkOrderanlysisAction extends Action {
 					work.put("ordertotal",ordertotal);
 					work.put("total",StringUtils.formatDouble(totalMOney));
 					amountmoney+=totalMOney;
-					//ÏÖ½ğÖ§¸¶
-					work.put("cash_pay",StringUtils.formatDouble(Double.parseDouble((((Map)list2.get(0)).get("cash_pay")== null ? "0" : ((Map)list2.get(0)).get("cash_pay")+""))));
-					cash_money += Double.parseDouble((((Map)list2.get(0)).get("cash_pay")== null ? "0" : ((Map)list2.get(0)).get("cash_pay")+""));
-					//µç×ÓÖ§¸¶
-					elec_money += Double.parseDouble((((Map)list2.get(0)).get("electronic_pay")== null ? "0" : ((Map)list2.get(0)).get("electronic_pay")+""));
-					work.put("electronic_pay", StringUtils.formatDouble(Double.parseDouble((((Map)list2.get(0)).get("electronic_pay")== null ? "0" : ((Map)list2.get(0)).get("electronic_pay")+""))));
-					//¼õÃâ„»Ö§¸¶
-					reduce_money += Double.parseDouble((((Map)list2.get(0)).get("reduce_pay")== null ? "0" : ((Map)list2.get(0)).get("reduce_pay")+""));
-					work.put("reduce_pay", StringUtils.formatDouble(Double.parseDouble((((Map)list2.get(0)).get("reduce_pay")== null ? "0" : ((Map)list2.get(0)).get("reduce_pay")+""))));
+					//ç°é‡‘æ”¯ä»˜
+					cash_money +=StringUtils.formatDouble(oMap.get("cash_pay"))+StringUtils.formatDouble(oMap.get("cash_prepay"));
+					work.put("cash_pay",StringUtils.formatDouble(oMap.get("cash_pay"))+StringUtils.formatDouble(oMap.get("cash_prepay")));
+					//ç”µå­æ”¯ä»˜
+					elec_money += StringUtils.formatDouble(oMap.get("electronic_pay"))+StringUtils.formatDouble(oMap.get("electronic_prepay"));
+					work.put("electronic_pay", StringUtils.formatDouble(oMap.get("electronic_pay"))+StringUtils.formatDouble(oMap.get("electronic_prepay")));
+					//å‡å…åŠµæ”¯ä»˜
+					reduce_money +=StringUtils.formatDouble(oMap.get("reduce_pay"));
+					work.put("reduce_pay", StringUtils.formatDouble(oMap.get("reduce_pay")));
 				}
-				//Ãâ·Ñ¶©µ¥¼¯ºÏ
+				//å…è´¹è®¢å•é›†åˆ
 				String sql6 = "select sum(amount_receivable-electronic_prepay-cash_prepay-reduce_amount) free_pay from order_tb where end_time between ? and ? " +
 						" and state= ? and out_uid = ? and pay_type =? and ishd=? and comid=?";
 				Object []v6 = new Object[]{start_time,end_time,1,uid,8, 0, comid};
 				Map list6 = daService.getMap(sql6 ,v6);
-				//Ãâ·ÑÖ§¸¶
+				//å…è´¹æ”¯ä»˜
 				free_money += Double.parseDouble((list6.get("free_pay")== null ? "0" : list6.get("free_pay")+""));
 				work.put("free_pay", StringUtils.formatDouble(Double.parseDouble(list6.get("free_pay")== null ? "0" : (list6.get("free_pay")+""))));
 			}
-			String title = "×Ü¶©µ¥Êı£º"+count+"£¬ÔÂ¿¨¶©µ¥Êı£º"+monthcount+"£¬×Ü½áËã½ğ¶î£º"+StringUtils.formatDouble(amountmoney)+"Ôª£¬ÆäÖĞÏÖ½ğÖ§¸¶£º"+StringUtils.formatDouble(cash_money)+"Ôª£¬µç×ÓÖ§¸¶ £º"+StringUtils.formatDouble(elec_money)+"Ôª£¬" +
-							"Ãâ·Ñ½ğ¶î£º"+StringUtils.formatDouble(free_money)+"Ôª,¼õÃâÖ§¸¶£º"+StringUtils.formatDouble(reduce_money)+"Ôª";
+			String title = "æ€»è®¢å•æ•°ï¼š"+count+"ï¼Œæœˆå¡è®¢å•æ•°ï¼š"+monthcount+"ï¼Œæ€»ç»“ç®—é‡‘é¢ï¼š"+String.format("%.2f",amountmoney)+"å…ƒï¼Œå…¶ä¸­ç°é‡‘æ”¯ä»˜ï¼š"+String.format("%.2f",cash_money)
+					+"å…ƒï¼Œç”µå­æ”¯ä»˜ ï¼š"+StringUtils.formatDouble(elec_money)+"å…ƒï¼Œ" +
+					"å…è´¹é‡‘é¢ï¼š"+String.format("%.2f",free_money)+"å…ƒ,å‡å…åŠµæ”¯ä»˜ï¼š"+String.format("%.2f",reduce_money)+"å…ƒ";
 			String ret = JsonUtil.anlysisMap2Json(list,1,list.size(), fieldsstr,"id",title);
 			logger.error(ret);
 			AjaxUtil.ajaxOutput(response, ret);
-			return null;			
+			return null;
 		}else if(action.equals("orderdetail")){
 			String sql = "select *,(amount_receivable-electronic_prepay-cash_prepay-reduce_amount) free_pay from order_tb  ";
-			//Í³¼Æ×Ü¶©µ¥Êı£¬½ğ¶î£¬µç×ÓºÍÏÖ½ğÖ§¸¶
+			//ç»Ÿè®¡æ€»è®¢å•æ•°ï¼Œé‡‘é¢ï¼Œç”µå­å’Œç°é‡‘æ”¯ä»˜
 			String sql2 = "select count(*) ordertotal,sum(amount_receivable) amount_receivable, " +
-					"sum(total) total , sum(cash_pay) cash_pay, sum(electronic_pay) electronic_pay, " +
+					"sum(total) total , sum(cash_prepay) cash_prepay,sum(cash_pay) cash_pay, sum(electronic_pay) electronic_pay," +
 					"sum(electronic_prepay) electronic_prepay,sum(reduce_amount) reduce_pay from order_tb";
 			Long uid = RequestUtil.getLong(request, "uid", -2L);
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
@@ -378,7 +400,7 @@ public class ParkOrderanlysisAction extends Action {
 				sqlInfo =new SqlInfo(" end_time between ? and ? ",
 						new Object[]{b,e});
 			}
-			
+
 			sql +=" where "+sqlInfo.getSql()+" and out_uid=?  and state= ? and comid=? and ishd=?  ";
 			sql2 +=" where "+sqlInfo.getSql()+" and out_uid=?  and state= ? and comid=? and ishd=?  ";
 			params= sqlInfo.getParams();
@@ -386,61 +408,63 @@ public class ParkOrderanlysisAction extends Action {
 			params.add(1);
 			params.add(comid);
 			params.add(0);
-			
-			
-			double amountmoney = 0.0;//×Ü½ğ¶î
-			double cash_money = 0.0;//ÏÖ½ğÖ§¸¶½ğ¶î
-			double elec_money = 0.0;//µç×ÓÖ§¸¶½ğ¶î
+
+
+			double amountmoney = 0.0;//æ€»é‡‘é¢
+			double cash_money = 0.0;//ç°é‡‘æ”¯ä»˜é‡‘é¢
+			double elec_money = 0.0;//ç”µå­æ”¯ä»˜é‡‘é¢
 			int count =0;
-			
+
 			if(uid!=-2){
 				List<Map<String, Object>> orders = daService.getAllMap(sql+"order by end_time desc",params);
 				for(Map<String, Object> order : orders){
 					Map<String, Object> work = new HashMap<String, Object>();
-					//±àºÅ 
+					//ç¼–å·
 					work.put("id", order.get("id"));
-					//Í£³µÈÕÆÚ 
+					//åœè½¦æ—¥æœŸ
 					work.put("create_time", order.get("create_time"));
-					//½áËãÈÕÆÚ 
+					//ç»“ç®—æ—¥æœŸ
 					work.put("end_time", order.get("end_time"));
-					//¶©µ¥½ğ¶î  	
-					work.put("total", order.get("amount_receivable"));
-					//ÏÖ½ğÖ§¸¶  order.get("amount_receivable")
-					work.put("cashMoney", order.get("cash_pay"));
-					//µç×ÓÖ§¸¶  
-					work.put("elecMoney", Double.parseDouble((order.get("electronic_pay")== null ? "0" : order.get("electronic_pay")+""))
-								+ Double.parseDouble((order.get("electronic_prepay")== null ? "0" : order.get("electronic_prepay")+"")));
-					//ÔÂ¿¨          
+					//è®¢å•é‡‘é¢
+					work.put("total", order.get("total"));
+					//ç°é‡‘æ”¯ä»˜  order.get("amount_receivable")
+					work.put("cashMoney", StringUtils.formatDouble(order.get("cash_pay"))+StringUtils.formatDouble(order.get("cash_prepay")));
+					//ç”µå­æ”¯ä»˜
+					work.put("elecMoney", StringUtils.formatDouble(order.get("electronic_prepay"))+StringUtils.formatDouble(order.get("electronic_pay")));
+							//+ Double.parseDouble((order.get("electronic_prepay")== null ? "0" : order.get("electronic_prepay")+"")));
+					//æœˆå¡
 					//work.put("monthCard", order.get(""));
-					//Ãâ·ÑÖ§¸¶  
+					//å…è´¹æ”¯ä»˜
 					work.put("freeMoney",0.0);
 					if(order.get("pay_type")!=null && Integer.parseInt(order.get("pay_type")+"")==8){
 						work.put("freeMoney", StringUtils.formatDouble(Double.parseDouble(order.get("free_pay")== null ? "0" : (order.get("free_pay")+""))));
 					}
-					//¼õÃâÖ§¸¶
+					//å‡å…æ”¯ä»˜
 					work.put("reduceMoney", order.get("reduce_amount"));
-					//Í£³µÊ±³¤  
+					//åœè½¦æ—¶é•¿
 					work.put("duration", order.get("duration"));
-					//Ö§¸¶·½Ê½  
+					//æ”¯ä»˜æ–¹å¼
 					work.put("pay_type", order.get("pay_type"));
-					//NFC¿¨ºÅ  
+					//NFCå¡å·
 					work.put("nfc_uuid", order.get(""));
-					//³µÅÆºÅ  
+					//è½¦ç‰Œå·
 					work.put("car_number", order.get("car_number"));
-					//²é¿´³µÁ¾Í¼Æ¬  
+					//æŸ¥çœ‹è½¦è¾†å›¾ç‰‡
 					work.put("order_id_local", order.get("order_id_local"));
 					list.add(work);
 				}
 				List<Map<String, Object>> orderList = daService.getAllMap(sql2,params);
+				Double reduce_pay = 0.0;
 				if(orderList!=null && orderList.size()>0){
 					Map<String, Object> map = orderList.get(0);
-					amountmoney = Double.parseDouble((map.get("amount_receivable"))+"");
-					cash_money = Double.parseDouble((map.get("cash_pay"))+"");
-					elec_money = Double.parseDouble((map.get("electronic_pay"))+"");
+					amountmoney = StringUtils.formatDouble((map.get("total")));
+					cash_money = StringUtils.formatDouble((map.get("cash_pay")))+StringUtils.formatDouble((map.get("cash_prepay")));
+					elec_money = StringUtils.formatDouble((map.get("electronic_pay")))+StringUtils.formatDouble((map.get("electronic_prepay")));
 					count+=Integer.parseInt((map.get("ordertotal"))+"");
+					reduce_pay = StringUtils.formatDouble((map.get("reduce_pay")));
 				}
-				String title = StringUtils.formatDouble(amountmoney)+"Ôª£¬ÆäÖĞÏÖ½ğÖ§¸¶£º"+StringUtils.formatDouble(cash_money)+"Ôª£¬" +
-							   "µç×ÓÖ§¸¶ £º"+StringUtils.formatDouble(elec_money)+"Ôª£¬¹²"+count+"Ìõ";
+				String title = StringUtils.formatDouble(amountmoney)+"å…ƒï¼Œå…¶ä¸­ç°é‡‘æ”¯ä»˜ï¼š"+String.format("%.2f",cash_money)+"å…ƒï¼Œ" +
+						"ç”µå­æ”¯ä»˜ ï¼š"+String.format("%.2f",elec_money)+"å…ƒï¼Œå‡å…åˆ¸æ”¯ä»˜ï¼š"+String.format("%.2f",reduce_pay)+"å…ƒï¼Œå…±"+count+"æ¡";
 				String json = JsonUtil.anlysisMap2Json(list,1,list.size(), fieldsstr,"id",title);
 				//String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"id");
 				AjaxUtil.ajaxOutput(response, json);
@@ -495,7 +519,7 @@ public class ParkOrderanlysisAction extends Action {
 		}
 		return total+"_"+count;
 	}
-	
+
 	private void setList(List<Map<String, Object>> lists,String dstr){
 		List<Map<String, Object>> result = new ArrayList<Map<String,Object>>();
 		List<Long> comidList = new ArrayList<Long>();
@@ -543,7 +567,7 @@ public class ParkOrderanlysisAction extends Action {
 		request.setAttribute("comid", RequestUtil.getInteger(request, "comid", 0));
 		request.setAttribute("pay_type", RequestUtil.getInteger(request, "pay_type", 0));
 	}
-	
+
 	private Double getPayMoney2 (Long uid,Long comid,SqlInfo sqlInfo,List<Object> params){
 		String sql ="select sum(total) money from order_tb where comid=? and pay_type=? and uid=? and "+sqlInfo.getSql();
 //		params.add(0,uid);
@@ -555,7 +579,7 @@ public class ParkOrderanlysisAction extends Action {
 			return Double.valueOf(map.get("money")+"");
 		return 0d;
 	}
-	//ÏÖ½ğÖ§¸¶
+	//ç°é‡‘æ”¯ä»˜
 	private Double getPayMoney (Long uid,List<Object> params){
 		String sql ="select sum(amount) money from parkuser_cash_tb where uin=? and type=? and create_time between ? and ? ";
 		Object[] values = new Object[]{uid,0,params.get(0),params.get(1)};
@@ -564,7 +588,7 @@ public class ParkOrderanlysisAction extends Action {
 			return Double.valueOf(map.get("money")+"");
 		return 0d;
 	}
-	
+
 	private Long getComid(Long comid, Long cityid, Long groupid){
 		List<Object> parks = null;
 		if(groupid != null && groupid > 0){
@@ -582,7 +606,7 @@ public class ParkOrderanlysisAction extends Action {
 				comid = -999L;
 			}
 		}
-		
+
 		return comid;
 	}
 }

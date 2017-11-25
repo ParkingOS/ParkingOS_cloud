@@ -14,7 +14,7 @@ public class RequestUtil {
 			return request.getParameter(param);
 		return "";
 	}
-	
+
 	public static Integer getInteger(HttpServletRequest request ,String param,Integer defaultvalue){
 		String value = processParams(request, param);
 		if(value.equals(""))
@@ -41,11 +41,11 @@ public class RequestUtil {
 			}
 		}
 	}
-	
+
 	public static String getString(HttpServletRequest request ,String param){
 		return  processParams(request, param);
 	}
-	
+
 	public static Double getDouble(HttpServletRequest request ,String param,Double defaultvalue){
 		String value = processParams(request, param);
 		if(value.equals(""))
@@ -59,21 +59,21 @@ public class RequestUtil {
 			}
 		}
 	}
-	
-	
+
+
 	/**
-	 * 
+	 *
 	 * @param request
 	 * @param table
 	 * @param tableAlia
-	 * @param exculdeFiled ÅÅ³ıµÄ×Ö¶Î
+	 * @param exculdeFiled æ’é™¤çš„å­—æ®µ
 	 * @return
 	 */
 	public static SqlInfo customSearch(HttpServletRequest request,String table,String tableAlia,String[] exculdeFiled) {
 		String fieldStr = RequestUtil.processParams(request, "fieldsstr");
 		String [] fields = fieldStr.split("\\_\\_");
 		List<JdbcFieldUtils> jflist = new ArrayList<JdbcFieldUtils>();
-		
+
 		for(String f:fields){
 			boolean isExculde = false;
 			if(exculdeFiled!=null){
@@ -125,7 +125,7 @@ public class RequestUtil {
 		String fieldStr = RequestUtil.processParams(request, "fieldsstr");
 		String [] fields = fieldStr.split("\\_\\_");
 		List<JdbcFieldUtils> jflist = new ArrayList<JdbcFieldUtils>();
-		
+
 		for(String f:fields){
 			int type = GetFieldType.getFieldType(table, f);
 			String value = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, f));
@@ -166,9 +166,9 @@ public class RequestUtil {
 	 * @param request
 	 * @param name
 	 */
-	// ´¦Àí²éÑ¯£¬·µ»ØsqlÓï¾ä
+	// å¤„ç†æŸ¥è¯¢ï¼Œè¿”å›sqlè¯­å¥
 	public static List<JdbcFieldUtils> operRequestParam(String fileName,
-			String operType, String time_start, String time_end,Integer inputType) {
+														String operType, String time_start, String time_end,Integer inputType) {
 		// 2012-08-05 10:00:00
 		List<JdbcFieldUtils> jfuList = new ArrayList<JdbcFieldUtils>();
 		int fieldType = JdbcTypeOperate.TYPE_INT;
@@ -219,12 +219,12 @@ public class RequestUtil {
 						jfuList.add(new JdbcFieldUtils(fieldType, fileName,
 								operate, value, null, null));
 					}
-					
+
 				}
 			}else {
 				if(operType.length()>2&&Check.isNumber(operType))
 					jfuList.add(new JdbcFieldUtils(fieldType, fileName,
-						JdbcTypeOperate.OPER_EQ, Integer.valueOf(operType), null, null));
+							JdbcTypeOperate.OPER_EQ, Integer.valueOf(operType), null, null));
 			}
 		}
 		return jfuList;

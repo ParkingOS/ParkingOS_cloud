@@ -29,10 +29,10 @@ public class PayTypeAnlysisAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -70,7 +70,7 @@ public class PayTypeAnlysisAction extends Action {
 			String sqlnopayment = "select  sum( case when state=1 then act_total  else 0 end)  as payment," +
 					"sum( case when state=0 then total  else 0 end)   as nopayment," +
 					"comid from   no_payment_tb where is_delete=? and create_time between ? and ? and  ";
-			//String countSql ="select count(*)  from   no_payment_tb  as a  left join  com_info_tb as b on a.comid=b.id  where a.create_time between ? and ?"; 
+			//String countSql ="select count(*)  from   no_payment_tb  as a  left join  com_info_tb as b on a.comid=b.id  where a.create_time between ? and ?";
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			List<Map<String, Object>> orderlist = null;
 			List<Map<String, Object>> nopaylist = null;
@@ -116,7 +116,7 @@ public class PayTypeAnlysisAction extends Action {
 				nopayparams.addAll(parks);
 				orderlist = pgOnlyReadService.getAllMap(sqlorder,orderparams);
 				nopaylist= pgOnlyReadService.getAllMap(sqlnopayment,nopayparams);
-				//°Ñnopaylist²éµ½µÄÊı¾İ×·¼Óµ½orderlist
+				//æŠŠnopaylistæŸ¥åˆ°çš„æ•°æ®è¿½åŠ åˆ°orderlist
 				if(orderlist!=null&&!orderlist.isEmpty()){
 					if(nopaylist!=null&&!nopaylist.isEmpty()){
 						for(Map<String, Object> map: orderlist){
@@ -137,7 +137,7 @@ public class PayTypeAnlysisAction extends Action {
 							}
 						}
 					}
-					//Èç¹û×·½É±íÃ»ÓĞ²éµ½Ê±¼ä¶ÎÄÚµÄÊı¾İÖÃÒÑ×·½ÉÎª0
+					//å¦‚æœè¿½ç¼´è¡¨æ²¡æœ‰æŸ¥åˆ°æ—¶é—´æ®µå†…çš„æ•°æ®ç½®å·²è¿½ç¼´ä¸º0
 					else {
 						for(Map<String, Object> map: orderlist){
 							map.put("payment",0);
@@ -156,18 +156,18 @@ public class PayTypeAnlysisAction extends Action {
 					cash += StringUtils.formatDouble(map.get("cash"));
 				}
 			}
-			String res = "×ÜÊÕÈë£º"+allfact+"£¬ÏÖ½ğÊÕ·Ñ£º"+cash;
-			
+			String res = "æ€»æ”¶å…¥ï¼š"+allfact+"ï¼Œç°é‡‘æ”¶è´¹ï¼š"+cash;
+
 			//setList(list);
 			String json = JsonUtil.anlysisMap2Json(orderlist,pageNum,count, fieldsstr,"id",res);
-			
+
 			//json = StringUtils.createJson(list);
 			AjaxUtil.ajaxOutput(response, json);
 		}
-		
+
 		return null;
 	}
-	
 
-	
+
+
 }

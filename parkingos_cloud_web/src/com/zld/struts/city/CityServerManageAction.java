@@ -29,17 +29,17 @@ public class CityServerManageAction extends Action {
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
-	private CommonMethods commonMethods; 
+	private CommonMethods commonMethods;
 	@Autowired
 	private MemcacheUtils memcacheUtils;
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -47,13 +47,13 @@ public class CityServerManageAction extends Action {
 			response.sendRedirect("login.do");
 			return null;
 		}
-		
+
 		if(cityid == null && groupid == null){
 			return null;
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("quickquery")){
@@ -70,7 +70,7 @@ public class CityServerManageAction extends Action {
 				parks = commonMethods.getparks(cityid);
 			}else if(groupid > 0){
 				parks = commonMethods.getParks(groupid);
-			 
+
 			}
 			if(parks != null && !parks.isEmpty()){
 				String preParams  ="";
@@ -87,7 +87,7 @@ public class CityServerManageAction extends Action {
 				if(count>0){
 					list = pgOnlyReadService.getAll(sql +" order by create_time desc ",params, pageNum, pageSize);
 				}
-			}  
+			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("query")){
@@ -117,7 +117,7 @@ public class CityServerManageAction extends Action {
 				sql += " comid in ("+preParams+") ";
 				countSql += " comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -139,7 +139,7 @@ public class CityServerManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 
 	private int editServer(HttpServletRequest request){
 		Integer id = RequestUtil.getInteger(request, "id", -1);
@@ -152,11 +152,11 @@ public class CityServerManageAction extends Action {
 		String secret =RequestUtil.processParams(request, "secret");
 		String remark =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "remark"));
 		Long time = TimeTools.getLongMilliSecondFrom_HHMMDD(limit_time)/1000;
-		int r = daService.update("update local_info_tb set is_update=?,limit_time=?,secret=?,remark=?,comid=? where id = ? ", 
+		int r = daService.update("update local_info_tb set is_update=?,limit_time=?,secret=?,remark=?,comid=? where id = ? ",
 				new Object[]{isupdate,time,secret,remark,comid,id});
 		return r;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	private int creatServer(HttpServletRequest request){
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
@@ -167,7 +167,7 @@ public class CityServerManageAction extends Action {
 		Long limit_time =TimeTools.getBeginTime(System.currentTimeMillis()) + 10*365*24*60*60;//RequestUtil.processParams(request, "limit_time");
 		String secret =RequestUtil.processParams(request, "secret");
 		String remark =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "remark"));
-		int r = daService.update("insert into local_info_tb(comid,is_update,limit_time,secret,remark) values(?,?,?,?,?)", 
+		int r = daService.update("insert into local_info_tb(comid,is_update,limit_time,secret,remark) values(?,?,?,?,?)",
 				new Object[]{comid,isupdate,limit_time,secret,remark});
 		if(r==1){
 			List<Long> tcache = memcacheUtils.doListLongCache("etclocal_park_cache", null, null);

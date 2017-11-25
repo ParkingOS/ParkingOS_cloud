@@ -17,24 +17,24 @@ import com.zld.AjaxUtil;
 import com.zld.service.DataBaseService;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
-//废弃
+//搴熷純
 public class GroupManageAction extends Action {
 	@Autowired
 	private DataBaseService daService;
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
-		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//是否是超级管理员
+		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//鏄惁鏄秴绾х鐞嗗憳
 		if(uin == null){
 			response.sendRedirect("login.do");
 			return null;
 		}
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("quickquery")){
@@ -60,7 +60,7 @@ public class GroupManageAction extends Action {
 			Integer type = RequestUtil.getInteger(request, "type", 0);
 			Integer state = RequestUtil.getInteger(request, "state", 0);
 			int ret = 0;
-			ret = daService.update("insert into org_group_tb (name,state,create_time,chanid,cityid,type) values(?,?,?,?,?,?) ", 
+			ret = daService.update("insert into org_group_tb (name,state,create_time,chanid,cityid,type) values(?,?,?,?,?,?) ",
 					new Object[]{name, state, System.currentTimeMillis()/1000, chanid, cityid, type});
 			AjaxUtil.ajaxOutput(response, ret+"");
 			return null;
@@ -83,7 +83,7 @@ public class GroupManageAction extends Action {
 		}else if(action.equals("set")){
 			Long groupid = RequestUtil.getLong(request, "id", -1L);
 			request.setAttribute("treeurl", "getdata.do?action=groupsetting&groupid="+groupid);
-			request.setAttribute("title", "运营集团设置");
+			request.setAttribute("title", "杩愯惀闆嗗洟璁剧疆");
 			return mapping.findForward("tree");
 		}
 		return null;

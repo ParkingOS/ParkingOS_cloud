@@ -30,15 +30,15 @@ public class GroupSurveyManageAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Integer isHd = (Integer)request.getSession().getAttribute("ishdorder");
 		if(uin==null){
@@ -46,7 +46,7 @@ public class GroupSurveyManageAction extends Action {
 			return null;
 		}
 		if(action.equals("")){
-			Map<String, Object> map = pgOnlyReadService.getMap("select id,company_name from com_info_tb where groupid=? and state!=? order by id limit ?", 
+			Map<String, Object> map = pgOnlyReadService.getMap("select id,company_name from com_info_tb where groupid=? and state!=? order by id limit ?",
 					new Object[]{groupid, 1, 1});
 			if(map != null){
 				request.setAttribute("comid", map.get("id"));
@@ -56,7 +56,7 @@ public class GroupSurveyManageAction extends Action {
 		}else if(action.equals("psurvey")){
 			String sql = "select id,company_name,parking_total from com_info_tb where groupid=? and state!=? " ;
 			String countSql = "select count(id) from com_info_tb where groupid=? and state!=? " ;
-			
+
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			List<Map<String, Object>> list = null;
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
@@ -76,7 +76,7 @@ public class GroupSurveyManageAction extends Action {
 		}else if(action.equals("dsurvey")){
 			String sql = "select id from com_info_tb where groupid=? " ;
 			String countSql = "select count(id) from com_info_tb where groupid=? " ;
-			
+
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			List list = null;
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
@@ -93,7 +93,7 @@ public class GroupSurveyManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void setList(List<Map<String, Object>> list, Integer ishd){
 		Long b = TimeTools.getToDayBeginTime();
@@ -103,7 +103,7 @@ public class GroupSurveyManageAction extends Action {
 				Long id = (Long)map.get("id");
 				Double etotal = 0d;
 				Double ctotal = 0d;
-				List<Map<String, Object>> list2 = pgOnlyReadService.getAll("select distinct(uid) from order_tb where comid=? and state=? and uid>? and end_time between ? and ? ", 
+				List<Map<String, Object>> list2 = pgOnlyReadService.getAll("select distinct(uid) from order_tb where comid=? and state=? and uid>? and end_time between ? and ? ",
 						new Object[]{id, 1, 0, b, e});
 				if(list2 != null && !list2.isEmpty()){
 					for(Map map2 : list2){
@@ -121,7 +121,7 @@ public class GroupSurveyManageAction extends Action {
 			}
 		}
 	}
-	
+
 	private void setListNew(List<Map<String, Object>> list, Integer ishd){
 		Long b = TimeTools.getToDayBeginTime();
 		Long e = System.currentTimeMillis()/1000;
@@ -143,9 +143,9 @@ public class GroupSurveyManageAction extends Action {
 				map.put("atotal", StringUtils.formatDouble(total)+"");
 			}
 		}
-		
+
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	private void setLots(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
@@ -162,14 +162,14 @@ public class GroupSurveyManageAction extends Action {
 					for(Map<String, Object> map2 : allList){
 						Integer pay_type = (Integer)map2.get("pay_type");
 						Long ucount = (Long)map2.get("ucount");
-						if(pay_type == 3){//ÔÂ¿¨³µÎ»Õ¼ÓÃÊý
+						if(pay_type == 3){//æœˆå¡è½¦ä½å ç”¨æ•°
 							month_used_count = ucount;
-						}else{//Ê±×â³µÎ»Õ¼ÓÃÊý
+						}else{//æ—¶ç§Ÿè½¦ä½å ç”¨æ•°
 							time_used_count += ucount;
 						}
 					}
 				}
-				
+
 				Long invmonth_used_count = 0L;
 				Long invtime_used_count = 0L;
 				String sql1 = "select count(ID) ucount,pay_type from order_tb where comid=? and create_time>? and create_time<? and state=? group by pay_type ";
@@ -178,31 +178,31 @@ public class GroupSurveyManageAction extends Action {
 					for(Map<String, Object> map2 : invList){
 						Integer pay_type = (Integer)map2.get("pay_type");
 						Long ucount = (Long)map2.get("ucount");
-						if(pay_type == 3){//ÔÂ¿¨³µÎ»Õ¼ÓÃÊý
+						if(pay_type == 3){//æœˆå¡è½¦ä½å ç”¨æ•°
 							invmonth_used_count = ucount;
-						}else{//Ê±×â³µÎ»Õ¼ÓÃÊý
+						}else{//æ—¶ç§Ÿè½¦ä½å ç”¨æ•°
 							invtime_used_count += ucount;
 						}
 					}
 				}
-				
+
 				int inv_month = (int) (invmonth_used_count*2/14);
 				int inv_time = (int) (invtime_used_count*2/14);
-				
+
 				if(month_used_count >= inv_month){
 					month_used_count -= inv_month;
 				}else{
 					month_used_count = 1L;
 				}
-				
+
 				if(time_used_count >= inv_time){
 					time_used_count -= inv_time;
 				}else{
 					time_used_count = 1L;
 				}
-				
+
 				double ratio = 0d;
-				
+
 				if(parking_total < time_used_count + month_used_count){
 					parking_total = time_used_count.intValue() + month_used_count.intValue();
 				}

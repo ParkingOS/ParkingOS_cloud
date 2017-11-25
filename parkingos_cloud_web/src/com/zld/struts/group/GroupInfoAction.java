@@ -22,7 +22,7 @@ public class GroupInfoAction extends Action {
 	@SuppressWarnings("unchecked")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -36,9 +36,9 @@ public class GroupInfoAction extends Action {
 		if(action.equals("")){
 			Map<String, Object> cityMap = daService.getPojo("select * from org_group_tb  where id=?",
 					new Object[]{groupid});
-			Map<String, Object> userMap = daService.getMap("select nickname,mobile,phone from user_info_tb where id=? ", 
+			Map<String, Object> userMap = daService.getMap("select nickname,mobile,phone from user_info_tb where id=? ",
 					new Object[]{uin});
-			
+
 			StringBuffer buffer = new StringBuffer("[");
 			for (String  key : cityMap.keySet()) {
 				buffer.append("{\"name\":\""+key+"\",\"value\":\""+cityMap.get(key)+"\"},");
@@ -58,7 +58,7 @@ public class GroupInfoAction extends Action {
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
 			Integer type = RequestUtil.getInteger(request, "type", 0);
-			
+
 			String mobile = RequestUtil.processParams(request, "mobile");
 			String phone = RequestUtil.processParams(request, "phone");
 			String nickname = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "nickname"));
@@ -71,15 +71,15 @@ public class GroupInfoAction extends Action {
 					return null;
 				}
 			}
-			int r = daService.update("update org_group_tb set name=?,type=? where id=? ", 
+			int r = daService.update("update org_group_tb set name=?,type=? where id=? ",
 					new Object[]{name, type, id});
-			r = daService.update("update user_info_tb set mobile=?,phone=?,nickname=? where id=? ", 
+			r = daService.update("update user_info_tb set mobile=?,phone=?,nickname=? where id=? ",
 					new Object[]{mobile, phone, nickname, uin});
 			AjaxUtil.ajaxOutput(response, r + "");
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes" })
 	private int editPass(Long uin, String newPass, String confirmPass){
 		String sql = "update user_info_tb set password =? ,md5pass=? where id =?";

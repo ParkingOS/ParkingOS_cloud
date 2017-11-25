@@ -24,12 +24,12 @@ import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
 /**
- * Í£³µ³¡ºóÌ¨¹ÜÀíÔ±µÇÂ¼ºó£¬¹ÜÀíÔ±¹¤£¬Ô±¹¤·ÖÎªÊÕ·ÑÔ±ºÍ²ÆÎñ
+ * åœè½¦åœºåŽå°ç®¡ç†å‘˜ç™»å½•åŽï¼Œç®¡ç†å‘˜å·¥ï¼Œå‘˜å·¥åˆ†ä¸ºæ”¶è´¹å‘˜å’Œè´¢åŠ¡
  * @author Administrator
  *
  */
 public class ReserveOrderAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -40,7 +40,7 @@ public class ReserveOrderAction extends Action{
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -53,7 +53,7 @@ public class ReserveOrderAction extends Action{
 			response.sendRedirect("login.do");
 			return null;
 		}
-	
+
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
 		if(comid==0)
@@ -90,43 +90,43 @@ public class ReserveOrderAction extends Action{
 				sql += " comid in ("+preParams+") ";
 				countSql += " comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
 					params.addAll(sqlInfo.getParams());
 				}
-				
+
 				count= daService.getCount(countSql, params);
 				if(count>0){
 					list = daService.getAll(sql+ " order by id desc", params, pageNum, pageSize);
-			    }
+				}
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 		}
 		return null;
 	}
-	
+
 	private int getNumberStart(String v){
 		for(int i=0;i<v.length();i++){
 			char c = v.charAt(i);
 			if(Check.isNumber(c+"")){
-					return i;
+				return i;
 			}
 		}
 		return 0;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
 
 }

@@ -28,13 +28,13 @@ public class SensorBerthCompareAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µ«¬ºµƒ”√ªßid
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ÁôªÂΩïÁöÑÁî®Êà∑id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -86,7 +86,7 @@ public class SensorBerthCompareAction extends Action {
 				sql += " and p.comid in ("+preParams+") ";
 				countsql += " and p.comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					sql +=" and "+sqlInfo.getSql();
 					countsql += " and "+sqlInfo.getSql();
@@ -149,7 +149,7 @@ public class SensorBerthCompareAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		Integer state = RequestUtil.getInteger(request, "state_start", -1);
 		SqlInfo sqlInfo1 = null;
@@ -169,7 +169,7 @@ public class SensorBerthCompareAction extends Action {
 		}
 		return sqlInfo1;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo2(HttpServletRequest request){
 		String did = RequestUtil.processParams(request, "did");
 		SqlInfo sqlInfo1 = null;
@@ -178,7 +178,7 @@ public class SensorBerthCompareAction extends Action {
 		}
 		return sqlInfo1;
 	}
-	
+
 	private void setOrderInfo(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			Long ntime = System.currentTimeMillis()/1000;
@@ -190,12 +190,12 @@ public class SensorBerthCompareAction extends Action {
 					preParams ="?";
 				else
 					preParams += ",?";
-				
+
 				int state = 0;
 				if(map.get("beart_time") != null){
 					Long beart_time = (Long)map.get("beart_time");
 					map.put("heartbeat_time", TimeTools.getTime_yyyyMMdd_HHmmss(beart_time*1000));
-					if(ntime - beart_time > 30 *60){//–ƒÃ¯≥¨π˝»˝ Æ∑÷÷”√ª”–æÕ±ÍŒ™¿Îœﬂ
+					if(ntime - beart_time > 30 *60){//ÂøÉË∑≥Ë∂ÖËøá‰∏âÂçÅÂàÜÈíüÊ≤°ÊúâÂ∞±Ê†á‰∏∫Á¶ªÁ∫ø
 						state = 1;
 					}
 				}
@@ -206,7 +206,7 @@ public class SensorBerthCompareAction extends Action {
 			params1.add(0);
 			List<Map<String, Object>> berthList = pgOnlyReadService.getAllMap("select o.in_time,p.id from berth_order_tb o,com_park_tb p" +
 					" where o.dici_id=p.id and p.id in ("+preParams+") and o.state=? order by o.in_time desc ", params1);
-			
+
 			if(berthList != null && !berthList.isEmpty()){
 				for(Map<String, Object> map : list){
 					Long berthid = (Long)map.get("berthid");
@@ -223,7 +223,7 @@ public class SensorBerthCompareAction extends Action {
 					}
 				}
 			}
-			
+
 			List<Map<String, Object>> orderList = pgOnlyReadService.getAllMap("select o.create_time,o.car_number,p.id from order_tb o,com_park_tb p" +
 					" where o.id=p.order_id and p.id in ("+preParams+") and o.state=? ", params1);
 			if(orderList != null && !orderList.isEmpty()){
@@ -242,7 +242,7 @@ public class SensorBerthCompareAction extends Action {
 			}
 		}
 	}
-	
+
 	private List<Map<String, Object>> getpark(Long cityid, Long groupid){
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		List<Object> params = new ArrayList<Object>();
@@ -260,7 +260,7 @@ public class SensorBerthCompareAction extends Action {
 				else
 					preParams += ",?";
 			}
-			
+
 			List<Map<String, Object>> parkList = pgOnlyReadService.getAllMap("select id,company_name from com_info_tb" +
 					" where id in ("+preParams+") ", parks);
 			list = parkList;

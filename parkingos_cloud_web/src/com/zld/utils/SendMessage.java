@@ -20,8 +20,8 @@ public class SendMessage {
 			code=code*100;
 		if(code<999)
 			code =code*10;
-		String result = sendMessage(mobile, "Äú±¾´ÎµÄÑéÖ¤Âë:"+code+" "+time+"¡¾Í£³µ±¦¡¿");//sendMsg_ManDao_Http(mobile,code);
-		//System.out.println("======ÊÖ»úºÅ£º"+mobile+"=========¶ÌĞÅ·¢ËÍ½á¹û"+result);
+		String result = sendMessage(mobile, "æ‚¨æœ¬æ¬¡çš„éªŒè¯ç :"+code+" "+time+"ã€åœè½¦å®ã€‘");//sendMsg_ManDao_Http(mobile,code);
+		//System.out.println("======æ‰‹æœºå·ï¼š"+mobile+"=========çŸ­ä¿¡å‘é€ç»“æœ"+result);
 		if(result.equals("0"))
 			return code;
 		return null;
@@ -34,9 +34,9 @@ public class SendMessage {
 			code =code*10;
 		return code;
 	}
-	
+
 	public static  String sendMessage(String mobile,String code){
-		//http://sdk.entinfo.cn:8060/webservice.asmx/SendSMS?sn=WEB-XJG-010-00051&pwd=791445&mobile=15801482643&content=²âÊÔ¡¾Í£³µ±¦¡¿
+		//http://sdk.entinfo.cn:8060/webservice.asmx/SendSMS?sn=WEB-XJG-010-00051&pwd=791445&mobile=15801482643&content=æµ‹è¯•ã€åœè½¦å®ã€‘
 		//String url ="http://211.147.224.154/cgi-bin/sendsms";//
 		//D4D714306327249005D7C3DE885A1051
 		String url ="http://sdk.entinfo.cn:8060/webservice.asmx/SendSMS";//
@@ -63,20 +63,20 @@ public class SendMessage {
 		}
 		result = new HttpProxy().doPost(url, params);*/
 		//return doGet(url);
-		System.err.println("·¢ËÍ¶ÌĞÅ£ºÄÚÈİ£º"+code+",½ÓÊÕÈË£º"+mobile+",½á¹û:"+result);
-		if(result!=null&&result.indexOf("³É¹¦")!=-1)
+		System.err.println("å‘é€çŸ­ä¿¡ï¼šå†…å®¹ï¼š"+code+",æ¥æ”¶äººï¼š"+mobile+",ç»“æœ:"+result);
+		if(result!=null&&result.indexOf("æˆåŠŸ")!=-1)
 			return "0";
 		return "-1";
 	}
-	//Èº·¢¶ÌĞÅ
+	//ç¾¤å‘çŸ­ä¿¡
 	public  static String sendMultiMessage(String mobiles,String message){
-		//http://sdk.entinfo.cn:8060/webservice.asmx/SendSMS?sn=WEB-XJG-010-00051&pwd=791445&mobile=15801482643&content=²âÊÔ¡¾Í£³µ±¦¡¿
+		//http://sdk.entinfo.cn:8060/webservice.asmx/SendSMS?sn=WEB-XJG-010-00051&pwd=791445&mobile=15801482643&content=æµ‹è¯•ã€åœè½¦å®ã€‘
 		//String url ="http://211.147.224.154:18013/cgi-bin/sendsms";//
 		//String url ="http://211.147.239.62:9088/cgi-bin/sendsms";//
 		//String url="http://www.oa-sms.com/sendSms.action";
 		//String url ="http://sdk.entinfo.cn:8060/webservice.asmx/mt";//
 		String url ="http://sdk2.entinfo.cn:8061/mdsmssend.ashx";//
-		
+
 		String sn = "WEB-CSL-010-00199";
 		String ps = "285776";
 		String result = null;
@@ -105,14 +105,14 @@ public class SendMessage {
 			e.printStackTrace();
 		}
 //		result = new HttpProxy().doPost(url, params);
-		//System.out.println(">>>>>>>>>>>>>>>Èº·¢½ÓÊÕÈË£º"+mobiles);
-		//System.out.println(">>>>>>>>>>>>>>>Èº·¢¶ÌĞÅ½á¹û£º"+result);
-		System.err.println(">>>>>>>>>>>>>>>·¢ËÍ¶ÌĞÅ£ºÄÚÈİ£º"+message+",½ÓÊÕÈË£º"+mobiles+",½á¹û:"+result+",ÇëÇó:"+url);
+		//System.out.println(">>>>>>>>>>>>>>>ç¾¤å‘æ¥æ”¶äººï¼š"+mobiles);
+		//System.out.println(">>>>>>>>>>>>>>>ç¾¤å‘çŸ­ä¿¡ç»“æœï¼š"+result);
+		System.err.println(">>>>>>>>>>>>>>>å‘é€çŸ­ä¿¡ï¼šå†…å®¹ï¼š"+message+",æ¥æ”¶äººï¼š"+mobiles+",ç»“æœ:"+result+",è¯·æ±‚:"+url);
 		//if(result.equals("0"))
 		return "1";
 		//return "-1";
 	}
-	
+
 	public  String send(String params, String strurl,String encode,String decode) throws Exception {
 		// TODO Auto-generated method stub
 		HttpURLConnection url_con = null;
@@ -154,7 +154,7 @@ public class SendMessage {
 		return responseContent;
 	}
 	public static void main(String[] args) {
-		String mesg = "½ñÍíÓÃÍ£³µ±¦Ö§¸¶Í£³µ·Ñ£¬Ê¡ĞÄÊ¡Á¦¸ü£¡Ê¡£¡Ç®£¡Á¢¼´ÔÚ¡°ÎÒµÄÕË»§¡±²é¿´ËùÁìÍ£³µÈ¯£¬Í£³µ±¦°éÄú³öĞĞ×îºóÒ»Õ¾¡£ÏÂÔØµØÖ·£ºwww.tingchebao.com ¡¾Í£³µ±¦¡¿ ";
+		String mesg = "ä»Šæ™šç”¨åœè½¦å®æ”¯ä»˜åœè½¦è´¹ï¼Œçœå¿ƒçœåŠ›æ›´ï¼çœï¼é’±ï¼ç«‹å³åœ¨â€œæˆ‘çš„è´¦æˆ·â€æŸ¥çœ‹æ‰€é¢†åœè½¦åˆ¸ï¼Œåœè½¦å®ä¼´æ‚¨å‡ºè¡Œæœ€åä¸€ç«™ã€‚ä¸‹è½½åœ°å€ï¼šwww.tingchebao.com ã€åœè½¦å®ã€‘ ";
 		sendMessage("15801482643", mesg);
 		//		Integer code = new Random(System.currentTimeMillis()).nextInt(10000);
 //		String time = TimeTools.gettime().substring(11,16);
@@ -163,22 +163,22 @@ public class SendMessage {
 //		if(code<999)
 //			code =code*10;
 //		System.out.println(code);
-//		String mesg ="ÄúµÄÊÖ»úºÅ£º1364 121 2226£¬ÒÑ±»¼à¿Øµ½·¢ËÍÁË²»ÎÄÃ÷ĞÅÏ¢£¬ÎÒÃÇ½«¼ÌĞø¼à¿Ø£¬Èç¹ûÔÙÓĞ²»Á¼ĞÅÏ¢£¬ÎÒÃÇ½«¸øÄúÍ£»ú£¬²¢ÒÆ½»Ë¾·¨²¿ÃÅ½øĞĞÈ¡Ö¤µ÷²é£¬" +
-//				"ÓÉ´ËËù´øÀ´µÄºó¹û£¬½«ÓÉÄúÀ´³Ğµ£¡£¡¾ÖĞ¹úĞÅÏ¢¼à¿Ø¡¿";
+//		String mesg ="æ‚¨çš„æ‰‹æœºå·ï¼š1364 121 2226ï¼Œå·²è¢«ç›‘æ§åˆ°å‘é€äº†ä¸æ–‡æ˜ä¿¡æ¯ï¼Œæˆ‘ä»¬å°†ç»§ç»­ç›‘æ§ï¼Œå¦‚æœå†æœ‰ä¸è‰¯ä¿¡æ¯ï¼Œæˆ‘ä»¬å°†ç»™æ‚¨åœæœºï¼Œå¹¶ç§»äº¤å¸æ³•éƒ¨é—¨è¿›è¡Œå–è¯è°ƒæŸ¥ï¼Œ" +
+//				"ç”±æ­¤æ‰€å¸¦æ¥çš„åæœï¼Œå°†ç”±æ‚¨æ¥æ‰¿æ‹…ã€‚ã€ä¸­å›½ä¿¡æ¯ç›‘æ§ã€‘";
 //		String result =sendMessage("13641212226",mesg);
 //		System.out.println(result);
 
 //
 
-//		String message ="×ğ¾´µÄºÏ×÷»ï°éÄúºÃ£¬³µÖ÷(ÊÖ»ú£º18518132466)ÒÑÍ¨¹ıÍ£³µ±¦¹ºÂò¹ó³µ³¡°üÔÂ·şÎñ10¸öÔÂ£¬·ÑÓÃ3990.00Ôª£¬Äú¿ÉÒÔÔÚºóÌ¨²é¿´ÏàÓ¦ĞÅÏ¢¡£"+
-//						"³µÖ÷½«Æ¾¶ÌĞÅÇ°À´»»È¡ÔÂ¿¨£¬Çë±¸ºÃÏàÓ¦ÔÂ¿¨£¬Ğ»Ğ»¡£¿Í·ş£º01053618108 ¡¾Í£³µ±¦¡¿";
+//		String message ="å°Šæ•¬çš„åˆä½œä¼™ä¼´æ‚¨å¥½ï¼Œè½¦ä¸»(æ‰‹æœºï¼š18518132466)å·²é€šè¿‡åœè½¦å®è´­ä¹°è´µè½¦åœºåŒ…æœˆæœåŠ¡10ä¸ªæœˆï¼Œè´¹ç”¨3990.00å…ƒï¼Œæ‚¨å¯ä»¥åœ¨åå°æŸ¥çœ‹ç›¸åº”ä¿¡æ¯ã€‚"+
+//						"è½¦ä¸»å°†å‡­çŸ­ä¿¡å‰æ¥æ¢å–æœˆå¡ï¼Œè¯·å¤‡å¥½ç›¸åº”æœˆå¡ï¼Œè°¢è°¢ã€‚å®¢æœï¼š01053618108 ã€åœè½¦å®ã€‘";
 		//System.err.println(sendMessage("13718451896",message));
 //		System.out.println(sendMessage("15801482643",message));
-//		String message ="¡¾Í£³µ±¦¡¿ÏÂÖÜÒ»£¨12ÔÂ22ÈÕ£©Æğ£¬¶ÔÓÚ²»Ö§³ÖÊÖ»úÖ§¸¶µÄÍ£³µ³¡£¬½«²»ÔÙÀÛ¼Æ»ı·Ö·¢·Å½±Æ·¡£³ÏÑûÄúÖ§³ÖÖ§¸¶£¬Ã¿±Ê½»Ò×½±ÀøÁ½Ôª¡£»¶Ó­ÁªÏµ010-56450585Ç¢Ì¸Ö§¸¶¡£";
+//		String message ="ã€åœè½¦å®ã€‘ä¸‹å‘¨ä¸€ï¼ˆ12æœˆ22æ—¥ï¼‰èµ·ï¼Œå¯¹äºä¸æ”¯æŒæ‰‹æœºæ”¯ä»˜çš„åœè½¦åœºï¼Œå°†ä¸å†ç´¯è®¡ç§¯åˆ†å‘æ”¾å¥–å“ã€‚è¯šé‚€æ‚¨æ”¯æŒæ”¯ä»˜ï¼Œæ¯ç¬”äº¤æ˜“å¥–åŠ±ä¸¤å…ƒã€‚æ¬¢è¿è”ç³»010-56450585æ´½è°ˆæ”¯ä»˜ã€‚";
 //		String mobiles = ZldTest.anlysisPhoneLocal();
 //		System.out.println(sendMultiMessage(mobiles,message));
 	}
-	
+
 /*	public static String sendMsg_ManDao_Http (String mobile,Integer code){
 		String result="";
 		String strurl="http://sdk.entinfo.cn:8060/z_mdsmssend.aspx";
@@ -191,14 +191,14 @@ public class SendMessage {
 //		String pass = "371571";
 //		String user= "SDK-BBX-010-19035";
 //		String pass = "c(32adb(";
-		
-		String params = "sn="+user+"&pwd="+pass+"&mobile="+mobile+"&content=ÑéÖ¤Âë£º"+code+","+TimeTools.gettime()+"¡¾ÕæÀ´µç¡¿";
+
+		String params = "sn="+user+"&pwd="+pass+"&mobile="+mobile+"&content=éªŒè¯ç ï¼š"+code+","+TimeTools.gettime()+"ã€çœŸæ¥ç”µã€‘";
 		try {
 			result = submit(params,strurl, "GBK","GBK");
 			result=result.trim();
 		} catch (Exception e) {
 			e.printStackTrace();
-			result = "-7";//Òì³£
+			result = "-7";//å¼‚å¸¸
 		}
 		return result;
 	}

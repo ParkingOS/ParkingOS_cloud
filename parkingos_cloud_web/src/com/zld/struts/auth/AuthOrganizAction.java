@@ -22,7 +22,7 @@ import com.zld.utils.StringUtils;
 
 
 /**
- * È¨ÏŞ¹ÜÀí---×éÖ¯»ú¹¹¹ÜÀí
+ * æƒé™ç®¡ç†---ç»„ç»‡æœºæ„ç®¡ç†
  * @author Gecko
  *
  */
@@ -32,7 +32,7 @@ public class AuthOrganizAction extends Action {
 	private DataBaseService daService;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
 		request.setAttribute("authid", request.getParameter("authid"));
@@ -58,7 +58,7 @@ public class AuthOrganizAction extends Action {
 				list = 	daService.getAll("select id as value_no,name as value_name from zld_organize_tb",null);
 				Map<String, Object> firstMap = new HashMap<String, Object>();
 				firstMap.put("value_no", "0");
-				firstMap.put("value_name", "ÎŞ");
+				firstMap.put("value_name", "æ— ");
 				if(list.isEmpty())
 					list = new ArrayList<Map<String, Object>>();
 				list.add(0,firstMap);
@@ -70,7 +70,7 @@ public class AuthOrganizAction extends Action {
 			}
 			result= StringUtils.createJson(list);
 			if(type.equals("state")){
-				result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"},{\"value_no\":\"0\",\"value_name\":\"Õı³£\"},{\"value_no\":\"1\",\"value_name\":\"½ûÓÃ\"}]";
+				result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"},{\"value_no\":\"0\",\"value_name\":\"æ­£å¸¸\"},{\"value_no\":\"1\",\"value_name\":\"ç¦ç”¨\"}]";
 			}
 			AjaxUtil.ajaxOutput(response, result);
 			return null;

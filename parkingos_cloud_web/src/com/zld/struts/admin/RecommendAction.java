@@ -23,15 +23,15 @@ import com.zld.utils.SqlInfo;
 public class RecommendAction extends Action {
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(RecommendAction.class);
-	
+
 	/*
-	 * ÍÆ¼ö²éÑ¯
+	 * æ¨èæŸ¥è¯¢
 	 */
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comId = (Long)request.getSession().getAttribute("comid");
@@ -50,7 +50,7 @@ public class RecommendAction extends Action {
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			List<Object> params = new ArrayList<Object>();
 			list = daService.getAll(sql, params, pageNum, pageSize);
-			//°Ñ¹ÜÀíÔ±ºÍÊÕ·ÑÔ±Í³Ò»»®ÎªÊÕ·ÑÔ±
+			//æŠŠç®¡ç†å‘˜å’Œæ”¶è´¹å‘˜ç»Ÿä¸€åˆ’ä¸ºæ”¶è´¹å‘˜
 			for(Map<String, Object> map : list){
 				Long auth_flag = (Long)map.get("auth_flag");
 				if(auth_flag == 1){
@@ -76,7 +76,7 @@ public class RecommendAction extends Action {
 				params = sqlInfo.getParams();
 			}
 			if(auth_flag != -1){
-				//ÊÕ·ÑÔ±ºÍ¹ÜÀíÔ±ºÏ²¢ÔÚÒ»Æğ
+				//æ”¶è´¹å‘˜å’Œç®¡ç†å‘˜åˆå¹¶åœ¨ä¸€èµ·
 				if(auth_flag == 2){
 					countSql +=" and (u.auth_flag=? or u.auth_flag=?) ";
 					sql += " and (u.auth_flag=? or u.auth_flag=?) ";
@@ -92,7 +92,7 @@ public class RecommendAction extends Action {
 			Long count = daService.getCount(countSql, params);
 			if(count > 0){
 				list = daService.getAll(sql, params, pageNum, pageSize);
-				//°Ñ¹ÜÀíÔ±ºÍÊÕ·ÑÔ±Í³Ò»»®ÎªÊÕ·ÑÔ±
+				//æŠŠç®¡ç†å‘˜å’Œæ”¶è´¹å‘˜ç»Ÿä¸€åˆ’ä¸ºæ”¶è´¹å‘˜
 				for(Map<String, Object> map : list){
 					Long role = (Long)map.get("auth_flag");
 					if(role == 1){

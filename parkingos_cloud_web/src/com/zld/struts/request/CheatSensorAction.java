@@ -30,15 +30,15 @@ public class CheatSensorAction extends Action {
 	private DataBaseService writeService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	long groupId = 28;
-	
+
 	Logger logger = Logger.getLogger(CheatSensorAction.class);
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
 		String berth = RequestUtil.processParams(request, "berth").trim();
@@ -56,14 +56,14 @@ public class CheatSensorAction extends Action {
 			Map<String, Object> berthMap = readService.getMap("select * from com_park_tb where cid=? and comid=? " +
 					" and is_delete=? ", new Object[]{berth, parkId, 0});
 			if(berthMap.get("dici_id") == null){
-				AjaxUtil.ajaxOutput(response, "¸Ã²´Î»Ã»ÓĞ°ó¶¨³µ¼ìÆ÷");
+				AjaxUtil.ajaxOutput(response, "è¯¥æ³Šä½æ²¡æœ‰ç»‘å®šè½¦æ£€å™¨");
 				return null;
 			}
 			Integer sensorId = (Integer)berthMap.get("dici_id");
-			Map<String, Object> sensorMap = readService.getMap("select * from dici_tb where id=? ", 
+			Map<String, Object> sensorMap = readService.getMap("select * from dici_tb where id=? ",
 					new Object[]{sensorId.longValue()});
 			if(sensorMap == null){
-				AjaxUtil.ajaxOutput(response, "¸Ã²´Î»Ã»ÓĞ°ó¶¨³µ¼ìÆ÷");
+				AjaxUtil.ajaxOutput(response, "è¯¥æ³Šä½æ²¡æœ‰ç»‘å®šè½¦æ£€å™¨");
 				return null;
 			}
 			String did = (String)sensorMap.get("did");
@@ -76,10 +76,10 @@ public class CheatSensorAction extends Action {
 			String result = new HttpProxy().doPost("http://180.150.188.224:8080/zld/api/hdinfo/InsertCarAdmission", params);
 			logger.error("result:"+result);
 			if(result != null){
-				AjaxUtil.ajaxOutput(response, "Èë³¡²Ù×÷³É¹¦");
+				AjaxUtil.ajaxOutput(response, "å…¥åœºæ“ä½œæˆåŠŸ");
 				return null;
 			}
-			AjaxUtil.ajaxOutput(response, "Èë³¡²Ù×÷Ê§°Ü");
+			AjaxUtil.ajaxOutput(response, "å…¥åœºæ“ä½œå¤±è´¥");
 			return null;
 		}else if(action.equals("settleSensorOrder")){
 			Long curTime = System.currentTimeMillis()/1000;
@@ -91,14 +91,14 @@ public class CheatSensorAction extends Action {
 			Map<String, Object> berthMap = readService.getMap("select * from com_park_tb where cid=? and comid=? " +
 					" and is_delete=? ", new Object[]{berth, parkId, 0});
 			if(berthMap.get("dici_id") == null){
-				AjaxUtil.ajaxOutput(response, "¸Ã²´Î»Ã»ÓĞ°ó¶¨³µ¼ìÆ÷");
+				AjaxUtil.ajaxOutput(response, "è¯¥æ³Šä½æ²¡æœ‰ç»‘å®šè½¦æ£€å™¨");
 				return null;
 			}
 			Integer sensorId = (Integer)berthMap.get("dici_id");
-			Map<String, Object> sensorMap = readService.getMap("select * from dici_tb where id=? ", 
+			Map<String, Object> sensorMap = readService.getMap("select * from dici_tb where id=? ",
 					new Object[]{sensorId.longValue()});
 			if(sensorMap == null){
-				AjaxUtil.ajaxOutput(response, "¸Ã²´Î»Ã»ÓĞ°ó¶¨³µ¼ìÆ÷");
+				AjaxUtil.ajaxOutput(response, "è¯¥æ³Šä½æ²¡æœ‰ç»‘å®šè½¦æ£€å™¨");
 				return null;
 			}
 			String did = (String)sensorMap.get("did");
@@ -106,10 +106,10 @@ public class CheatSensorAction extends Action {
 			Map<String, Object> berthOrderMap = writeService.getMap("select indicate from berth_order_tb where berth_id=? " +
 					" and state=? order by in_time desc limit ? ", new Object[]{did, 0, 1});
 			if(berthOrderMap == null){
-				AjaxUtil.ajaxOutput(response, "ÎŞÔÚ³¡¶©µ¥");
+				AjaxUtil.ajaxOutput(response, "æ— åœ¨åœºè®¢å•");
 				return null;
 			}
-			
+
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("sensornumber", did);
 			params.put("carouttime", TimeTools.getTime_yyyyMMdd_HHmmss(curTime * 1000));
@@ -118,10 +118,10 @@ public class CheatSensorAction extends Action {
 			String result = new HttpProxy().doPost("http://180.150.188.224:8080/zld/api/hdinfo/InsertCarEntrance", params);
 			logger.error("result:"+result);
 			if(result != null){
-				AjaxUtil.ajaxOutput(response, "³ö³¡²Ù×÷³É¹¦");
+				AjaxUtil.ajaxOutput(response, "å‡ºåœºæ“ä½œæˆåŠŸ");
 				return null;
 			}
-			AjaxUtil.ajaxOutput(response, "³ö³¡²Ù×÷Ê§°Ü");
+			AjaxUtil.ajaxOutput(response, "å‡ºåœºæ“ä½œå¤±è´¥");
 			return null;
 		}else if(action.equals("getparks")){
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
@@ -140,7 +140,7 @@ public class CheatSensorAction extends Action {
 				params.addAll(parks);
 				list = readService.getAllMap(sql, params);
 			}
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡ÔñÍ£³µ³¡\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©åœè½¦åœº\"}";
 			if(list != null && !list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("company_name")+"\"}";
@@ -151,19 +151,19 @@ public class CheatSensorAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private String checkSesnor(String uuid, long parkId){
 		try {
 			if(uuid == null || "".equals(uuid)){
-				return "²´Î»±àºÅ²»ÄÜÎª¿Õ";
+				return "æ³Šä½ç¼–å·ä¸èƒ½ä¸ºç©º";
 			}
 			if(parkId < 0){
-				return "ÇëÑ¡Ôñ³µ³¡";
+				return "è¯·é€‰æ‹©è½¦åœº";
 			}
 			Long count = readService.getLong("select count(id) from com_park_tb where cid=? and " +
 					" comid =? and is_delete=?", new Object[]{uuid, parkId, 0});
 			if(count == 0){
-				return "²´Î»²»´æÔÚ";
+				return "æ³Šä½ä¸å­˜åœ¨";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

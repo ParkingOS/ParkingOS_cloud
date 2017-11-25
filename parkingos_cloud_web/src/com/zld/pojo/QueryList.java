@@ -8,7 +8,7 @@ import java.util.concurrent.Callable;
 import com.zld.service.PgOnlyReadService;
 
 /**
- * ¿ªÆôÏß³Ì²éÑ¯ÁĞ±í
+ * å¼€å¯çº¿ç¨‹æŸ¥è¯¢åˆ—è¡¨
  * @author whx
  */
 public class QueryList implements Callable<List> {
@@ -18,9 +18,9 @@ public class QueryList implements Callable<List> {
 	private int pageSize;
 	private PgOnlyReadService readService;
 	public QueryList(PgOnlyReadService readService, String sql,
-			ArrayList<Object> params, int pageNum, int pageSize){
+					 ArrayList<Object> params, int pageNum, int pageSize){
 		this.sql = sql;
-		//ÕâÀïĞèÒªÓÃµ½Éî¿½±´£¬·ñÔò¼òµ¥µÄ¸³ÖµÖ»ÊÇÒıÓÃµÄÍ¬Ò»¸ö¶ÔÏó£¬¶øgetAll»á¸Ä±äparamsµÄÖµ
+		//è¿™é‡Œéœ€è¦ç”¨åˆ°æ·±æ‹·è´ï¼Œå¦åˆ™ç®€å•çš„èµ‹å€¼åªæ˜¯å¼•ç”¨çš„åŒä¸€ä¸ªå¯¹è±¡ï¼Œè€ŒgetAllä¼šæ”¹å˜paramsçš„å€¼
 		this.params = (ArrayList<Object>) params.clone();
 		this.pageNum = pageNum;
 		this.pageSize = pageSize;

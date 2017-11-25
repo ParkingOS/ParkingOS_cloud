@@ -55,15 +55,15 @@ public class StatsAccountAction extends Action {
 	@Autowired
 	@Resource(name = "escapeOrder")
 	private StatsOrderService orderService;
-	
+
 	private Logger logger = Logger.getLogger(StatsAccountAction.class);
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		if(uin == null){
@@ -91,7 +91,7 @@ public class StatsAccountAction extends Action {
 			}else if(from == 1){
 				request.setAttribute("treeurl", "getdata.do?action=epaysetting&statsid="
 						+statsid+"&btime="+btime+"&etime="+etime+"&seltype="+seltype);
-				request.setAttribute("title", "µç×ÓÕËÄ¿Ã÷Ï¸");
+				request.setAttribute("title", "ç”µå­è´¦ç›®æ˜ç»†");
 				return mapping.findForward("tree");
 			}else if(from == 2){
 				return mapping.findForward("parkUserEpay");
@@ -105,7 +105,7 @@ public class StatsAccountAction extends Action {
 				return mapping.findForward("cardPay");
 			}else if(from == 7){
 				return mapping.findForward("escape");
-			}else if(from == 8 
+			}else if(from == 8
 					|| from == 9
 					|| from == 10){
 				return mapping.findForward("actCard");
@@ -127,7 +127,7 @@ public class StatsAccountAction extends Action {
 				etime = nowtime + " 23:59:59";
 			Long b = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(btime);
 			Long e = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime);
-			
+
 			AccountReq req = new AccountReq();
 			req.setId(statsid);
 			req.setStartTime(b);
@@ -138,27 +138,27 @@ public class StatsAccountAction extends Action {
 			List<Map<String, Object>> list = null;
 			Long count = 0L;
 			AccountResp resp = null;
-			if(from == 0){//ÏÖ½ğÃ÷Ï¸
+			if(from == 0){//ç°é‡‘æ˜ç»†
 				SqlInfo sqlInfo = RequestUtil.customSearch(request, "parkuser_cash_tb");
 				req.setSqlInfo(sqlInfo);
 				resp = parkUserCash.account(req);
-			}else if(from == 2){//ÊÕ·ÑÔ±µç×ÓÃ÷Ï¸
+			}else if(from == 2){//æ”¶è´¹å‘˜ç”µå­æ˜ç»†
 				SqlInfo sqlInfo = RequestUtil.customSearch(request, "parkuser_account_tb");
 				req.setSqlInfo(sqlInfo);
 				resp = parkUserEpayService.account(req);
-			}else if(from == 3){//³µ³¡µç×ÓÃ÷Ï¸
+			}else if(from == 3){//è½¦åœºç”µå­æ˜ç»†
 				SqlInfo sqlInfo = RequestUtil.customSearch(request, "park_account_tb");
 				req.setSqlInfo(sqlInfo);
 				resp = parkEpayService.account(req);
-			}else if(from == 4){//ÔËÓª¼¯ÍÅµç×ÓÃ÷Ï¸
+			}else if(from == 4){//è¿è¥é›†å›¢ç”µå­æ˜ç»†
 				SqlInfo sqlInfo = RequestUtil.customSearch(request, "group_account_tb");
 				req.setSqlInfo(sqlInfo);
 				resp = groupEpayService.account(req);
-			}else if(from == 5){//ÉÌ»§µç×ÓÃ÷Ï¸
+			}else if(from == 5){//å•†æˆ·ç”µå­æ˜ç»†
 				SqlInfo sqlInfo = RequestUtil.customSearch(request, "city_account_tb");
 				req.setSqlInfo(sqlInfo);
 				resp = tenantEpayService.account(req);
-			}else if(from == 6){//¿¨Æ¬Ã÷Ï¸
+			}else if(from == 6){//å¡ç‰‡æ˜ç»†
 				String baseSql = " (charge_type in (?) or consume_type in (?,?,?,?)) ";
 				List<Object> baseParams = new ArrayList<Object>();
 				baseParams.add(4);
@@ -174,14 +174,14 @@ public class StatsAccountAction extends Action {
 				SqlInfo sqlInfo2 = new SqlInfo(baseSql, baseParams);
 				req.setSqlInfo(sqlInfo2);
 				resp = cardService.account(req);
-			}else if(from == 7){//ÌÓµ¥
+			}else if(from == 7){//é€ƒå•
 				SqlInfo sqlInfo = RequestUtil.customSearch(request, "no_payment_tb");
 				req.setSqlInfo(sqlInfo);
 				resp = orderService.order(req);
 			}else if(from == 8){
 				String baseSql = " type=? ";
 				List<Object> baseParams = new ArrayList<Object>();
-				baseParams.add(3);//¼¤»î¿¨Æ¬
+				baseParams.add(3);//æ¿€æ´»å¡ç‰‡
 				SqlInfo sqlInfo = RequestUtil.customSearch(request, "card_account_tb");
 				if(sqlInfo != null){
 					baseSql = baseSql + " and " + sqlInfo.getSql();
@@ -193,8 +193,8 @@ public class StatsAccountAction extends Action {
 			}else if(from == 9){
 				String baseSql = " charge_type=? and type=? ";
 				List<Object> baseParams = new ArrayList<Object>();
-				baseParams.add(0);//ÏÖ½ğ³äÖµ
-				baseParams.add(0);//³äÖµ
+				baseParams.add(0);//ç°é‡‘å……å€¼
+				baseParams.add(0);//å……å€¼
 				SqlInfo sqlInfo = RequestUtil.customSearch(request, "card_account_tb");
 				if(sqlInfo != null){
 					baseSql = baseSql + " and " + sqlInfo.getSql();
@@ -206,7 +206,7 @@ public class StatsAccountAction extends Action {
 			}else if(from == 10){
 				String baseSql = " type=? ";
 				List<Object> baseParams = new ArrayList<Object>();
-				baseParams.add(5);//×¢Ïú¿¨Æ¬
+				baseParams.add(5);//æ³¨é”€å¡ç‰‡
 				SqlInfo sqlInfo = RequestUtil.customSearch(request, "card_account_tb");
 				if(sqlInfo != null){
 					baseSql = baseSql + " and " + sqlInfo.getSql();
@@ -230,7 +230,7 @@ public class StatsAccountAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void setNfc(List<Map<String, Object>> list){
 		try {
 			if(list != null && !list.isEmpty()){
@@ -262,5 +262,5 @@ public class StatsAccountAction extends Action {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

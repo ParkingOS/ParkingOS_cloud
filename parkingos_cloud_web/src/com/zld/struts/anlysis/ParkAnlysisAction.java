@@ -27,7 +27,7 @@ public class ParkAnlysisAction extends Action {
 	private DataBaseService daService;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception{
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -52,7 +52,7 @@ public class ParkAnlysisAction extends Action {
 				etime = nowtime;
 			}
 			Long e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime+" 23:59:59");
-			
+
 			Long uid = RequestUtil.getLong(request, "uid", -1L);
 			List<Object> params = new ArrayList<Object>();
 			String sql = "select count(*) total,sum(parking_total) parking_total,parking_type from com_info_tb where isfixed=? and epay=? and state!=? ";
@@ -71,20 +71,20 @@ public class ParkAnlysisAction extends Action {
 			}
 			sql += " group by parking_type order by parking_type desc ";
 			list = daService.getAllMap(sql,params);
-			Long dimian_dixia = 0L;//µØÉÏ/µØÏÂ
-			Long zhandao = 0L;//Õ¼µÀÀàĞÍµÄ³µ³¡
-			Long dixia = 0L;//µØÏÂÀàĞÍµÄ³µ³¡
-			Long dimian = 0L;//µØÉÏÍ£³µ³¡
-			Long parking_total = 0L;//³µÎ»×ÜÊı
+			Long dimian_dixia = 0L;//åœ°ä¸Š/åœ°ä¸‹
+			Long zhandao = 0L;//å é“ç±»å‹çš„è½¦åœº
+			Long dixia = 0L;//åœ°ä¸‹ç±»å‹çš„è½¦åœº
+			Long dimian = 0L;//åœ°ä¸Šåœè½¦åœº
+			Long parking_total = 0L;//è½¦ä½æ€»æ•°
 			for(Map<String, Object> map : list){
 				Integer parking_type = (Integer)map.get("parking_type");
 				Long total = (Long)map.get("total");
 				Long parking = (Long)map.get("parking_total");
 				if(parking_type == 3){
 					dimian_dixia = total;
-				}else if(parking_type == 2){//Õ¼µÀ
+				}else if(parking_type == 2){//å é“
 					zhandao = total;
-				}else if(parking_type == 1){//µØÏÂ
+				}else if(parking_type == 1){//åœ°ä¸‹
 					dixia = total;
 				}else if(parking_type == 0){
 					dimian = total;
@@ -111,7 +111,7 @@ public class ParkAnlysisAction extends Action {
 			params.add(b);
 			params.add(e);
 			params.add(0);
-			//ÒÑĞ£ÑéµÄ¿ÉÖ§¸¶³µ³¡Ê±¼ä¶ÎÄÚµÄ×¢²áÊı
+			//å·²æ ¡éªŒçš„å¯æ”¯ä»˜è½¦åœºæ—¶é—´æ®µå†…çš„æ³¨å†Œæ•°
 			Long ctotal = daService.getCount(sql2, params);
 			List<Map<String, Object>> list2 = new ArrayList<Map<String,Object>>();
 			Map<String, Object> newMap = new HashMap<String, Object>();

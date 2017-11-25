@@ -8,14 +8,14 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * AES¼ÓÃÜÆ÷
- * 
+ * AESåŠ å¯†å™¨
+ *
  * @author Eric_Ni
- * 
+ *
  */
 public class AESEncryptor {
 	/**
-	 * AES¼ÓÃÜ
+	 * AESåŠ å¯†
 	 */
 	public static String encrypt(String seed, String cleartext)
 			throws Exception {
@@ -25,7 +25,7 @@ public class AESEncryptor {
 	}
 
 	/**
-	 * AES½âÃÜ
+	 * AESè§£å¯†
 	 */
 	public static String decrypt(String seed, String encrypted)
 			throws Exception {

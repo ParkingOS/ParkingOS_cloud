@@ -3,9 +3,9 @@ package com.zld.pojo;
 import java.io.Serializable;
 
 public class WorkTime implements Serializable {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -73,5 +73,5 @@ public class WorkTime implements Serializable {
 				+ b_minute + ", e_hour=" + e_hour + ", e_minute=" + e_minute
 				+ ", role_id=" + role_id + ", is_delete=" + is_delete + "]";
 	}
-	
+
 }

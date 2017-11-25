@@ -9,14 +9,14 @@ import com.zld.pojo.StatsReq;
 @Service
 public interface StatsOrderService {
 	/**
-	 * ¶©µ¥Í³¼Æ
+	 * è®¢å•ç»Ÿè®¡
 	 * @param req
 	 * @return
 	 */
 	public StatsOrderResp statsOrder(StatsReq req);
-	
+
 	/**
-	 * ²é¶©µ¥
+	 * æŸ¥è®¢å•
 	 * @param req
 	 * @return
 	 */

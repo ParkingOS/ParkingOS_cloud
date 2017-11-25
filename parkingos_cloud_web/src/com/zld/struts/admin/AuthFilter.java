@@ -21,16 +21,19 @@ import com.zld.AjaxUtil;
 
 public class AuthFilter implements Filter {
 	private String failurl = null;
-	
+
 	Logger logger = Logger.getLogger(AuthFilter.class);
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException {
+						 FilterChain chain) throws IOException, ServletException {
 		try {
 			HttpServletRequest httpServletRequest = ((HttpServletRequest) request);
-			String requestUrl = httpServletRequest.getRequestURI().split("/")[2];
+			String [] rStrings = httpServletRequest.getRequestURI().split("/");
+			String requestUrl ="";
+			if(rStrings.length>2)
+				requestUrl=rStrings[2];
 			String action = httpServletRequest.getParameter("action");
 			String curl = (action != null)? (requestUrl + "?action=" +action ) : requestUrl;
 			RequestDispatcher dispatcher = request.getRequestDispatcher(failurl);
@@ -46,21 +49,21 @@ public class AuthFilter implements Filter {
 				boolean regflag = false;
 				List<String> allauthList = new ArrayList<String>();
 				List<String> ownauthList = new ArrayList<String>();
-				for(Map<String, Object> map : allauth){//¼ÓÔØËùÓĞµÄÒÑ×¢²áÈ¨ÏŞ
+				for(Map<String, Object> map : allauth){//åŠ è½½æ‰€æœ‰çš„å·²æ³¨å†Œæƒé™
 					String url = (String)map.get("url");
 					String actions = null;
 					if(map.get("actions") != null){
 						actions = (String)map.get("actions");
 					}
 					allauthList.add(url);
-					if(url.contains("?")){//ÓĞĞ©urlÀïÃæ´øÓĞ²ÎÊı
-						url = url.split("\\?")[0];//·ûºÅ?ÔÚÕıÔò±í´ïÊ¾ÖĞÓĞÏàÓ¦µÄ²»Í¬ÒâÒå£¬ËùÒÔÔÚÊ¹ÓÃÊ±Òª½øĞĞ×ªÒå´¦Àí¡£
+					if(url.contains("?")){//æœ‰äº›urlé‡Œé¢å¸¦æœ‰å‚æ•°
+						url = url.split("\\?")[0];//ç¬¦å·?åœ¨æ­£åˆ™è¡¨è¾¾ç¤ºä¸­æœ‰ç›¸åº”çš„ä¸åŒæ„ä¹‰ï¼Œæ‰€ä»¥åœ¨ä½¿ç”¨æ—¶è¦è¿›è¡Œè½¬ä¹‰å¤„ç†ã€‚
 					}
 					if(actions != null){
 						String[] actionarr = actions.split(",");
 						for(int i = 0; i< actionarr.length; i++){
 							String act = actionarr[i];
-							if(act.contains(".")){//ÓĞĞ©actionÊÇÍêÕûµÄurl,±ÈÈçparkinfo.do?action=withdraw
+							if(act.contains(".")){//æœ‰äº›actionæ˜¯å®Œæ•´çš„url,æ¯”å¦‚parkinfo.do?action=withdraw
 								allauthList.add(act);
 							}else if(!act.equals("")){
 								allauthList.add(url + "?action=" + act);
@@ -69,7 +72,7 @@ public class AuthFilter implements Filter {
 					}
 				}
 				if(authList != null){
-					for(Map<String, Object> map : authList){//¼ÓÔØÓµÓĞµÄÈ¨ÏŞ
+					for(Map<String, Object> map : authList){//åŠ è½½æ‹¥æœ‰çš„æƒé™
 						String url = (String)map.get("url");
 						String actions = null;
 						String sub_auth = null;
@@ -81,7 +84,7 @@ public class AuthFilter implements Filter {
 						}
 						ownauthList.add(url);
 						if(url.contains("?")){
-							url = url.split("\\?")[0];//·ûºÅ?ÔÚÕıÔò±í´ïÊ¾ÖĞÓĞÏàÓ¦µÄ²»Í¬ÒâÒå£¬ËùÒÔÔÚÊ¹ÓÃÊ±Òª½øĞĞ×ªÒå´¦Àí¡£
+							url = url.split("\\?")[0];//ç¬¦å·?åœ¨æ­£åˆ™è¡¨è¾¾ç¤ºä¸­æœ‰ç›¸åº”çš„ä¸åŒæ„ä¹‰ï¼Œæ‰€ä»¥åœ¨ä½¿ç”¨æ—¶è¦è¿›è¡Œè½¬ä¹‰å¤„ç†ã€‚
 						}
 						if(actions != null && sub_auth != null){
 							String[] actionarr = actions.split(",");
@@ -91,7 +94,7 @@ public class AuthFilter implements Filter {
 								for(int i = 0; i< actionarr.length; i++){
 									if(i == actnum){
 										String act = actionarr[i];
-										if(act.contains(".")){//ÓĞĞ©actionÊÇÍêÕûµÄurl,±ÈÈçparkinfo.do?action=withdraw
+										if(act.contains(".")){//æœ‰äº›actionæ˜¯å®Œæ•´çš„url,æ¯”å¦‚parkinfo.do?action=withdraw
 											ownauthList.add(act);
 										}else if(!act.equals("")){
 											ownauthList.add(url + "?action=" + act);
@@ -102,8 +105,8 @@ public class AuthFilter implements Filter {
 						}
 					}
 				}
-				
-				for(String aurl : allauthList){//ÅĞ¶Ïµ±Ç°ÇëÇóÊÇ·ñÔÚÒÑ×¢²áÈ¨ÏŞÀï
+
+				for(String aurl : allauthList){//åˆ¤æ–­å½“å‰è¯·æ±‚æ˜¯å¦åœ¨å·²æ³¨å†Œæƒé™é‡Œ
 					if(aurl.contains(curl)){
 						regflag = true;
 						break;
@@ -111,7 +114,7 @@ public class AuthFilter implements Filter {
 				}
 				if(regflag){
 					boolean authflag = false;
-					for(String aurl : ownauthList){//ÅĞ¶Ïµ±Ç°ÇëÇóÊÇ·ñÔÚÒÑ×¢²áÈ¨ÏŞÀï
+					for(String aurl : ownauthList){//åˆ¤æ–­å½“å‰è¯·æ±‚æ˜¯å¦åœ¨å·²æ³¨å†Œæƒé™é‡Œ
 						if(aurl.contains(curl)){
 							authflag = true;
 							break;
@@ -122,7 +125,7 @@ public class AuthFilter implements Filter {
 						return;
 					}
 				}
-			} 
+			}
 		} catch (Exception e) {
 			logger.error("auth check filter exception", e);
 		}
@@ -134,7 +137,7 @@ public class AuthFilter implements Filter {
 		// TODO Auto-generated method stub
 		failurl = filterConfig.getInitParameter("failurl");
 	}
-	
+
 	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub

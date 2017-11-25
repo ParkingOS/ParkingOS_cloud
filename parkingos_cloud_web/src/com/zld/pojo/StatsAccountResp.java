@@ -18,5 +18,5 @@ public class StatsAccountResp extends BaseResp implements Serializable {
 	public String toString() {
 		return "StatsResp [accounts=" + accounts + "]";
 	}
-	
+
 }

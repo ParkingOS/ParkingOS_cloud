@@ -24,7 +24,7 @@ import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
 
 public class CityTransmitterManageAction extends Action {
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -35,10 +35,10 @@ public class CityTransmitterManageAction extends Action {
 	Logger logger = Logger.getLogger(CityTransmitterManageAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//ÁôªÂΩïÁöÑÁî®Êà∑id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ÈêßËØ≤Á∂çÈê®Âã≠Êï§Èé¥Á©íd
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -51,7 +51,7 @@ public class CityTransmitterManageAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			commonMethods.setIndexAuthId(request);
 			request.setAttribute("site_state_start", RequestUtil.processParams(request, "site_state_start"));
@@ -111,7 +111,7 @@ public class CityTransmitterManageAction extends Action {
 			setList(list);
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
-		
+
 		}else if(action.equals("edit")){
 			int r = editTransmitter(request);
 			AjaxUtil.ajaxOutput(response, "" + r);
@@ -183,7 +183,7 @@ public class CityTransmitterManageAction extends Action {
 		}
 		return sqlInfo1;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		Long ntime = System.currentTimeMillis()/1000;
 		if(list != null && !list.isEmpty()){
@@ -207,7 +207,7 @@ public class CityTransmitterManageAction extends Action {
 			}
 			List<Map<String, Object>> list2 = pgOnlyReadService.getAllMap(
 					"select count(id) fcount,site_id from device_fault_tb " +
-					"where site_id in ("+preParams+") group by site_id ", idList);
+							"where site_id in ("+preParams+") group by site_id ", idList);
 			if(list2 != null && !list2.isEmpty()){
 				for(Map<String, Object> map : list){
 					Long id = (Long)map.get("id");
@@ -222,7 +222,7 @@ public class CityTransmitterManageAction extends Action {
 			}
 		}
 	}
-	
+
 	private int createTransmitter(HttpServletRequest request, Long cityid){
 		String uuid = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "uuid"));
 		String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
@@ -230,21 +230,21 @@ public class CityTransmitterManageAction extends Action {
 		Double longitude = RequestUtil.getDouble(request, "longitude", 0d);
 		Double latitude = RequestUtil.getDouble(request, "latitude", 0d);
 		Double voltage = RequestUtil.getDouble(request, "voltage", 0d);
-		Integer state = RequestUtil.getInteger(request, "state", 1);//0£∫π ’œ 1£∫’˝≥£
+		Integer state = RequestUtil.getInteger(request, "state", 1);//0ÔºöÊïÖÈöú 1ÔºöÊ≠£Â∏∏
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		if(uuid.equals("")) uuid = null;
 		if(uuid != null && !uuid.equals("")){
-			Long count = pgOnlyReadService.getLong("select count(id) from sites_tb where is_delete=? and uuid=? and cityid=? ", 
+			Long count = pgOnlyReadService.getLong("select count(id) from sites_tb where is_delete=? and uuid=? and cityid=? ",
 					new Object[]{0, uuid,cityid});
 			if(count > 0){
 				return -2;
 			}
 		}
-		int r = daService.update("insert into sites_tb(uuid,voltage,longitude,latitude,create_time,address,cityid,name,state,comid) values(?,?,?,?,?,?,?,?,?,?)", 
+		int r = daService.update("insert into sites_tb(uuid,voltage,longitude,latitude,create_time,address,cityid,name,state,comid) values(?,?,?,?,?,?,?,?,?,?)",
 				new Object[]{uuid, voltage, longitude, latitude, System.currentTimeMillis()/1000,address, cityid, name, state, comid});
 		return r;
 	}
-	
+
 	private int editTransmitter(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		String uuid = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "uuid"));
@@ -253,7 +253,7 @@ public class CityTransmitterManageAction extends Action {
 		Double longitude = RequestUtil.getDouble(request, "longitude", 0d);
 		Double latitude = RequestUtil.getDouble(request, "latitude", 0d);
 		Double voltage = RequestUtil.getDouble(request, "voltage", 0d);
-		Integer state = RequestUtil.getInteger(request, "state", 1);//0£∫π ’œ 1£∫’˝≥£
+		Integer state = RequestUtil.getInteger(request, "state", 1);//0ÔºöÊïÖÈöú 1ÔºöÊ≠£Â∏∏
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		if(uuid.equals("")) uuid = null;
 		/*if(uuid != null && !uuid.equals("")){
@@ -263,11 +263,11 @@ public class CityTransmitterManageAction extends Action {
 				return -2;
 			}
 		}*/
-		int r = daService.update("update sites_tb set uuid=?,address=?,name=?,longitude=?,latitude=?,voltage=?,state=?,comid=?,update_time=? where id=? ", 
+		int r = daService.update("update sites_tb set uuid=?,address=?,name=?,longitude=?,latitude=?,voltage=?,state=?,comid=?,update_time=? where id=? ",
 				new Object[]{uuid, address, name, longitude, latitude,voltage, state, comid, System.currentTimeMillis()/1000, id});
 		return r;
 	}
-	
+
 	private int deleteTransmitter(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		int r = daService.update("update sites_tb set is_delete=? where id=? ", new Object[]{1, id});

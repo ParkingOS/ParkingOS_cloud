@@ -22,21 +22,21 @@ import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.TimeTools;
 /**
- * ²´³µµã¹ÜÀí£¬ÔÚ×Ü¹ÜÀíÔ±ºóÌ¨
+ * æ³Šè½¦ç‚¹ç®¡ç†ï¼Œåœ¨æ€»ç®¡ç†å‘˜åå°
  * @author Administrator
  *
  */
 public class CarstopsOrdersManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
 	private PublicMethods publicMethods;
-	
+
 	private Logger logger = Logger.getLogger(CarstopsOrdersManageAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -68,7 +68,7 @@ public class CarstopsOrdersManageAction extends Action{
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("getuids")){
 			List<Map> tradsList = daService.getAll("select id,nickname from user_info_tb where auth_flag =? and state=?  ",new Object[]{13,0});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("nickname")+"\"}";
@@ -104,9 +104,9 @@ public class CarstopsOrdersManageAction extends Action{
 		}
 		return null;
 	}
-	
+
 	/**
-	 * ¼ÆËã¼Û¸ñ
+	 * è®¡ç®—ä»·æ ¼
 	 * @param cid
 	 * @param start
 	 * @param end
@@ -114,23 +114,23 @@ public class CarstopsOrdersManageAction extends Action{
 	 */
 	private Double getPrice (Long cid,Long start,Long end,Long uin,Long create_time){
 		Map cspriceMap = daService.getMap("select * from carstops_price_tb where cid=? order by ctime limit ?", new Object[]{cid,1});
-		Integer ptype = 0;//²´³µµã¼Û¸ñÀàĞÍ    0ÁÙÍ£ 1³£Í£
+		Integer ptype = 0;//æ³Šè½¦ç‚¹ä»·æ ¼ç±»å‹    0ä¸´åœ 1å¸¸åœ
 		Double price = 0d;
-		Long dur = (end-start)/60;//Ê±³¤£¬·ÖÖÓ
+		Long dur = (end-start)/60;//æ—¶é•¿ï¼Œåˆ†é’Ÿ
 		if(dur==0)
 			dur=1L;
-		logger.error("Ê±³¤:"+dur);
+		logger.error("æ—¶é•¿:"+dur);
 		if(cspriceMap!=null){
 			ptype = (Integer) cspriceMap.get("type");
-			//¿´¿´ÊÇ²»ÊÇ·ûºÏÓÅ»İ
+			//çœ‹çœ‹æ˜¯ä¸æ˜¯ç¬¦åˆä¼˜æƒ 
 			Map coMap = daService.getMap("select max(start_time) ctime from carstop_order_tb where uin =? and start_time !=?", new Object[]{uin,create_time});
-			boolean isfirst = false;//ÊÇ·ñÊÇÊ×´ÎÍ£³µ
-			boolean ismfirst = false;//ÊÇ·ñÊÇ±¾ÖÜÊ×´ÎÍ£³µ
-			if(ptype==0){//ÁÙÍ£ 
+			boolean isfirst = false;//æ˜¯å¦æ˜¯é¦–æ¬¡åœè½¦
+			boolean ismfirst = false;//æ˜¯å¦æ˜¯æœ¬å‘¨é¦–æ¬¡åœè½¦
+			if(ptype==0){//ä¸´åœ
 				Long ctime = (Long)coMap.get("ctime");
 				if(ctime==null)
 					isfirst=true;
-			}else if(ptype==1){//³£Í£
+			}else if(ptype==1){//å¸¸åœ
 				if(coMap!=null){
 					Long ctime = (Long)coMap.get("ctime");
 					Long ntime = TimeTools.getWeekStartSeconds();
@@ -138,15 +138,15 @@ public class CarstopsOrdersManageAction extends Action{
 						ismfirst=true;
 				}
 			}
-			
-			if(ptype==0){//ÁÙÍ£    XXÔªÊ×ÈıĞ¡Ê±£¬³¬³öºóXÔªÒ»Ğ¡Ê±  Ê×´ÎÍ£³µXÔªÊ×XĞ¡Ê±£¬³¬³öºóXÔªÒ»Ğ¡Ê±
+
+			if(ptype==0){//ä¸´åœ    XXå…ƒé¦–ä¸‰å°æ—¶ï¼Œè¶…å‡ºåXå…ƒä¸€å°æ—¶  é¦–æ¬¡åœè½¦Xå…ƒé¦–Xå°æ—¶ï¼Œè¶…å‡ºåXå…ƒä¸€å°æ—¶
 				Double first_price = Double.valueOf(cspriceMap.get("first_price")+"");
 				Double next_price = Double.valueOf(cspriceMap.get("next_price")+"");
 				Double fav_price = Double.valueOf(cspriceMap.get("fav_price")+"");
 				Integer first_unit =(Integer)cspriceMap.get("first_unit");
 				Integer next_unit =(Integer)cspriceMap.get("next_unit");
 				Integer fav_unit =(Integer)cspriceMap.get("fav_unit");
-				if(isfirst){//ÊÇµÚÒ»´ÎÍ£³µ£¬°´ÓÅ»İ¼Û¸ñ×ß
+				if(isfirst){//æ˜¯ç¬¬ä¸€æ¬¡åœè½¦ï¼ŒæŒ‰ä¼˜æƒ ä»·æ ¼èµ°
 					first_price = fav_price;
 					first_unit = fav_unit;
 				}
@@ -160,27 +160,27 @@ public class CarstopsOrdersManageAction extends Action{
 				}else {
 					price=first_price;
 				}
-			}else if(ptype==1){//XÔªÃ¿Ğ¡Ê±£¬XXÔª°üÌì  Ã¿ÖÜÊ×µ¥XÔªÇ®
+			}else if(ptype==1){//Xå…ƒæ¯å°æ—¶ï¼ŒXXå…ƒåŒ…å¤©  æ¯å‘¨é¦–å•Xå…ƒé’±
 				Double next_price = Double.valueOf(cspriceMap.get("next_price")+"");
-				Double top_price = Double.valueOf(cspriceMap.get("top_price")+"");//×î¸ß¼Û
-				Double fav_price = Double.valueOf(cspriceMap.get("fav_price")+"");//ÓÅ»İ¼Û
+				Double top_price = Double.valueOf(cspriceMap.get("top_price")+"");//æœ€é«˜ä»·
+				Double fav_price = Double.valueOf(cspriceMap.get("fav_price")+"");//ä¼˜æƒ ä»·
 				Integer next_unit =(Integer)cspriceMap.get("next_unit");
-			
+
 				if(dur%next_unit!=0)
 					price =(dur/next_unit)*next_price +next_price;
 				else {
 					price =(dur/next_unit)*next_price;
 				}
-				
+
 				if(ismfirst){
-					if(fav_price>0&&fav_price<price)//Èç¹ûÓÅ»İ¼Û´óÓÚµ±Ç°¼Û¸ñ£¬È¡µ±Ç°¼Û
+					if(fav_price>0&&fav_price<price)//å¦‚æœä¼˜æƒ ä»·å¤§äºå½“å‰ä»·æ ¼ï¼Œå–å½“å‰ä»·
 						price=fav_price;
 				}
-				if(price>top_price&&top_price>0)//Èç¹û¼Û¸ñ´óÓÚ×î¸ß¼Û£¬È¡×î¸ß¼Û
+				if(price>top_price&&top_price>0)//å¦‚æœä»·æ ¼å¤§äºæœ€é«˜ä»·ï¼Œå–æœ€é«˜ä»·
 					price=top_price;
 			}
 		}
 		return price;
 	}
-	
+
 }

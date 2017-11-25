@@ -1,14 +1,9 @@
 package com.zld.struts.anlysis;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zld.AjaxUtil;
+import com.zld.impl.CommonMethods;
+import com.zld.service.PgOnlyReadService;
+import com.zld.utils.*;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -16,29 +11,27 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.zld.AjaxUtil;
-import com.zld.impl.CommonMethods;
-import com.zld.service.PgOnlyReadService;
-import com.zld.utils.ExportExcelUtil;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
-import com.zld.utils.TimeTools;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CollectByParkStaticAnlysisAction extends Action{
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	private Logger logger = Logger.getLogger(CollectByParkStaticAnlysisAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		request.setAttribute("authid", request.getParameter("authid"));
@@ -68,11 +61,11 @@ public class CollectByParkStaticAnlysisAction extends Action{
 			if(groupid == -1){
 				groupid = RequestUtil.getLong(request, "groupid", -1L);
 			}
-			SqlInfo sqlInfo = RequestUtil.customSearch(request, "com_info");
+			SqlInfo sqlInfo = RequestUtil.customSearch(request, "com_info","c",null);
 			List<Object> params = new ArrayList<Object>();
 			params.add(1);
-			String sql = "select id,company_name from com_info_tb where state<>? ";
-			String countSql = "select count(id) from com_info_tb where state<>? ";
+			String sql = " select c.id,c.company_name,g.name as groupid from com_info_tb c left join org_group_tb g on c.groupid = g.id  where c.state<>?";
+			String countSql = " select count(id) from com_info_tb c where state<>? ";
 			List<Object> parks = null;
 			if(groupid > 0){
 				parks = commonMethods.getParks(groupid);
@@ -90,16 +83,16 @@ public class CollectByParkStaticAnlysisAction extends Action{
 					else
 						preParams += ",?";
 				}
-				sql += " and id in ("+preParams+") ";
-				countSql += " and id in ("+preParams+") ";
+				sql += " and c.id in ("+preParams+") ";
+				countSql += " and c.id in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo != null) {
 					countSql += " and "+ sqlInfo.getSql();
 					sql += " and "+sqlInfo.getSql();
 					params.addAll(sqlInfo.getParams());
 				}
-				
+				logger.error(countSql);
 				count = pgOnlyReadService.getCount(countSql, params);
 				if(count > 0){
 					List<Map<String, Object>> titleList = pgOnlyReadService.getAllMap(sql, params);
@@ -108,7 +101,7 @@ public class CollectByParkStaticAnlysisAction extends Action{
 					setList(list, b, e);
 				}
 			}
-			
+
 			String json = JsonUtil.anlysisMap3Json(list, pageNum, count, fieldsstr,"id",res);
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("export")){
@@ -122,7 +115,7 @@ public class CollectByParkStaticAnlysisAction extends Action{
 			SqlInfo sqlInfo = RequestUtil.customSearch(request, "com_info");
 			List<Object> params = new ArrayList<Object>();
 			params.add(1);
-			String sql = "select id,company_name from com_info_tb where state<>? ";
+			String sql = "select c.id,c.company_name,g.name as groupid from com_info_tb c left join org_group_tb g on c.groupid = g.id  where c.state<>? ";
 			List<Object> parks = null;
 			if(groupid > 0){
 				parks = commonMethods.getParks(groupid);
@@ -137,13 +130,15 @@ public class CollectByParkStaticAnlysisAction extends Action{
 					else
 						preParams += ",?";
 				}
-				sql += " and id in ("+preParams+") ";
+				sql += " and c.id in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo != null) {
 					sql += " and "+sqlInfo.getSql();
 					params.addAll(sqlInfo.getParams());
 				}
+				logger.error(sql);
+				logger.error(params);
 				List<Map<String, Object>> list = pgOnlyReadService.getAllMap(sql, params);
 				if(list != null && !list.isEmpty()){
 					setList(list, b, e);
@@ -151,14 +146,14 @@ public class CollectByParkStaticAnlysisAction extends Action{
 				}
 			}
 		}
-		
+
 		return null;
 	}
 	private void export(HttpServletResponse response, List<Map<String, Object>> list, String btime, String etime){
 		try {
 			if(list != null && !list.isEmpty()){
-				String heards[] = new String[]{"³µ³¡±àºÅ","³µ³¡Ãû³Æ","ÆÕÍ¨¶©µ¥","×·½É¶©µ¥","ºÏ¼Æ","ÆÕÍ¨¶©µ¥","×·½É¶©µ¥","ºÏ¼Æ",
-						"ÆÕÍ¨¶©µ¥","×·½É¶©µ¥","ºÏ¼Æ","ÊµÊÕÍ£³µ·Ñ","Î´½ÉÍ£³µ·Ñ","Ó¦ÊÕÍ£³µ·Ñ"};
+				String heards[] = new String[]{"è½¦åœºç¼–å·","è½¦åœºåç§°","æ™®é€šè®¢å•","è¿½ç¼´è®¢å•","åˆè®¡","æ™®é€šè®¢å•","è¿½ç¼´è®¢å•","åˆè®¡",
+						"æ™®é€šè®¢å•","è¿½ç¼´è®¢å•","åˆè®¡","å®æ”¶åœè½¦è´¹","æœªç¼´åœè½¦è´¹","åº”æ”¶åœè½¦è´¹"};
 				List<List<String>> bodyList = new ArrayList<List<String>>();
 				for(Map<String, Object> map : list){
 					List<String> valueList = new ArrayList<String>();
@@ -167,26 +162,26 @@ public class CollectByParkStaticAnlysisAction extends Action{
 					valueList.add(map.get("cashCustomFee") + "");
 					valueList.add(map.get("cashPursueFee") + "");
 					valueList.add(map.get("cashTotalFee") + "");
-					
+
 					valueList.add(map.get("ePayCustomFee") + "");
 					valueList.add(map.get("ePayPursueFee") + "");
 					valueList.add(map.get("ePayTotalFee") + "");
-					
+
 					valueList.add(map.get("cardCustomFee") + "");
 					valueList.add(map.get("cardPursueFee") + "");
 					valueList.add(map.get("cardTotalFee") + "");
-					
+
 					valueList.add(map.get("totalFee") + "");
 					valueList.add(map.get("escapeFee") + "");
 					valueList.add(map.get("allTotalFee") + "");
 					bodyList.add(valueList);
 				}
-				String fname = "Í£³µ³¡ÊÕ·Ñ±¨±í" + btime + "ÖÁ" + etime;
+				String fname = "åœè½¦åœºæ”¶è´¹æŠ¥è¡¨" + btime + "è‡³" + etime;
 				java.io.OutputStream os = response.getOutputStream();
 				response.reset();
 				response.setHeader("Content-disposition", "attachment; filename="
 						+ StringUtils.encodingFileName(fname) + ".xls");
-				ExportExcelUtil importExcel = new ExportExcelUtil("Í£³µ³¡ÊÕ·Ñ±¨±í",
+				ExportExcelUtil importExcel = new ExportExcelUtil("åœè½¦åœºæ”¶è´¹æŠ¥è¡¨",
 						heards, bodyList);
 				List<Map<String,String>> mulitHeadList = new ArrayList<Map<String,String>>();
 				Map<String, String> mhead0 = new HashMap<String, String>();
@@ -199,19 +194,19 @@ public class CollectByParkStaticAnlysisAction extends Action{
 				mulitHeadList.add(mhead1);
 				Map<String, String> mhead2 = new HashMap<String, String>();
 				mhead2.put("length", "2");
-				mhead2.put("content", "Í£³µ·Ñ-ÏÖ½ğÖ§¸¶");
+				mhead2.put("content", "åœè½¦è´¹-ç°é‡‘æ”¯ä»˜");
 				mulitHeadList.add(mhead2);
 				Map<String, String> mhead3 = new HashMap<String, String>();
 				mhead3.put("length", "2");
-				mhead3.put("content", "Í£³µ·Ñ-µç×ÓÖ§¸¶");
+				mhead3.put("content", "åœè½¦è´¹-ç”µå­æ”¯ä»˜");
 				mulitHeadList.add(mhead3);
 				Map<String, String> mhead4 = new HashMap<String, String>();
 				mhead4.put("length", "2");
-				mhead4.put("content", "Í£³µ·Ñ-Ë¢¿¨Ö§¸¶");
+				mhead4.put("content", "åœè½¦è´¹-åˆ·å¡æ”¯ä»˜");
 				mulitHeadList.add(mhead4);
 				Map<String, String> mhead5 = new HashMap<String, String>();
 				mhead5.put("length", "2");
-				mhead5.put("content", "Í£³µ·Ñ-ºÏ¼Æ");
+				mhead5.put("content", "åœè½¦è´¹-åˆè®¡");
 				mulitHeadList.add(mhead5);
 				importExcel.mulitHeadList = mulitHeadList;
 				Map<String, String> headInfoMap=new HashMap<String, String>();
@@ -224,7 +219,7 @@ public class CollectByParkStaticAnlysisAction extends Action{
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void setList(List<Map<String, Object>> list, Long startTime, Long endTime){
 		try {
 			if(list != null && !list.isEmpty()){
@@ -246,7 +241,7 @@ public class CollectByParkStaticAnlysisAction extends Action{
 					infoMap.put("cardActFee", 0);
 					infoMap.put("totalPursueFee", 0);
 				}
-				
+
 				List<Object> idList = new ArrayList<Object>();
 				String preParams = "";
 				for(Map<String, Object> map : list){
@@ -260,29 +255,29 @@ public class CollectByParkStaticAnlysisAction extends Action{
 				if(rList != null && !rList.isEmpty()){
 					for(Map<String, Object> infoMap : rList){
 						Long uin = (Long)infoMap.get("id");
-						Double prepay_cash = Double.valueOf(infoMap.get("prepay_cash") + "");//ÏÖ½ğÔ¤Ö§¸¶
-						Double add_cash = Double.valueOf(infoMap.get("add_cash") + "");//ÏÖ½ğ²¹½É
-						Double refund_cash = Double.valueOf(infoMap.get("refund_cash") + "");//ÏÖ½ğÍË¿î
-						Double pursue_cash = Double.valueOf(infoMap.get("pursue_cash") + "");//ÏÖ½ğ×·½É
-						Double pfee_cash = Double.valueOf(infoMap.get("pfee_cash") + "");//ÏÖ½ğÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
-						
-						Double prepay_epay = Double.valueOf(infoMap.get("prepay_epay") + "");//µç×ÓÔ¤Ö§¸¶
-						Double add_epay = Double.valueOf(infoMap.get("add_epay") + "");//µç×Ó²¹½É
-						Double refund_epay = Double.valueOf(infoMap.get("refund_epay") + "");//µç×ÓÍË¿î
-						Double pursue_epay = Double.valueOf(infoMap.get("pursue_epay") + "");//µç×Ó×·½É
-						Double pfee_epay = Double.valueOf(infoMap.get("pfee_epay") + "");//µç×ÓÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
-						Double escape = Double.valueOf(infoMap.get("escape") + "");//ÌÓµ¥Î´×·½ÉµÄÍ£³µ·Ñ
-						
-						Double prepay_card = Double.valueOf(infoMap.get("prepay_card") + "");//Ë¢¿¨Ô¤Ö§¸¶
-						Double add_card = Double.valueOf(infoMap.get("add_card") + "");//Ë¢¿¨²¹½É
-						Double refund_card = Double.valueOf(infoMap.get("refund_card") + "");//Ë¢¿¨ÍË¿î
-						Double pursue_card = Double.valueOf(infoMap.get("pursue_card") + "");//Ë¢¿¨×·½É
-						Double pfee_card = Double.valueOf(infoMap.get("pfee_card") + "");//Ë¢¿¨Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
-						
-						Double charge_card_cash = Double.valueOf(infoMap.get("charge_card_cash") + "");//¿¨Æ¬ÏÖ½ğ³äÖµ½ğ¶î
-						Double return_card_fee = Double.valueOf(infoMap.get("return_card_fee") + "");//×¢Ïú¿¨Æ¬ÍË»¹µÄÓà¶î
-						Double act_card_fee = Double.valueOf(infoMap.get("act_card_fee") + "");//¼¤»î¿¨Æ¬×ÜÃæÖµ£¨Âô¿¨×ÜÃæÖµ£©
-						
+						Double prepay_cash = Double.valueOf(infoMap.get("prepay_cash") + "");//ç°é‡‘é¢„æ”¯ä»˜
+						Double add_cash = Double.valueOf(infoMap.get("add_cash") + "");//ç°é‡‘è¡¥ç¼´
+						Double refund_cash = Double.valueOf(infoMap.get("refund_cash") + "");//ç°é‡‘é€€æ¬¾
+						Double pursue_cash = Double.valueOf(infoMap.get("pursue_cash") + "");//ç°é‡‘è¿½ç¼´
+						Double pfee_cash = Double.valueOf(infoMap.get("pfee_cash") + "");//ç°é‡‘åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+
+						Double prepay_epay = Double.valueOf(infoMap.get("prepay_epay") + "");//ç”µå­é¢„æ”¯ä»˜
+						Double add_epay = Double.valueOf(infoMap.get("add_epay") + "");//ç”µå­è¡¥ç¼´
+						Double refund_epay = Double.valueOf(infoMap.get("refund_epay") + "");//ç”µå­é€€æ¬¾
+						Double pursue_epay = Double.valueOf(infoMap.get("pursue_epay") + "");//ç”µå­è¿½ç¼´
+						Double pfee_epay = Double.valueOf(infoMap.get("pfee_epay") + "");//ç”µå­åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+						Double escape = Double.valueOf(infoMap.get("escape") + "");//é€ƒå•æœªè¿½ç¼´çš„åœè½¦è´¹
+
+						Double prepay_card = Double.valueOf(infoMap.get("prepay_card") + "");//åˆ·å¡é¢„æ”¯ä»˜
+						Double add_card = Double.valueOf(infoMap.get("add_card") + "");//åˆ·å¡è¡¥ç¼´
+						Double refund_card = Double.valueOf(infoMap.get("refund_card") + "");//åˆ·å¡é€€æ¬¾
+						Double pursue_card = Double.valueOf(infoMap.get("pursue_card") + "");//åˆ·å¡è¿½ç¼´
+						Double pfee_card = Double.valueOf(infoMap.get("pfee_card") + "");//åˆ·å¡åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+
+						Double charge_card_cash = Double.valueOf(infoMap.get("charge_card_cash") + "");//å¡ç‰‡ç°é‡‘å……å€¼é‡‘é¢
+						Double return_card_fee = Double.valueOf(infoMap.get("return_card_fee") + "");//æ³¨é”€å¡ç‰‡é€€è¿˜çš„ä½™é¢
+						Double act_card_fee = Double.valueOf(infoMap.get("act_card_fee") + "");//æ¿€æ´»å¡ç‰‡æ€»é¢å€¼ï¼ˆå–å¡æ€»é¢å€¼ï¼‰
+
 						double cashCustomFee = StringUtils.formatDouble(pfee_cash + prepay_cash + add_cash - refund_cash);
 						double epayCustomFee = StringUtils.formatDouble(pfee_epay + prepay_epay + add_epay - refund_epay);
 						double cardCustomFee = StringUtils.formatDouble(pfee_card + prepay_card + add_card - refund_card);
@@ -292,7 +287,7 @@ public class CollectByParkStaticAnlysisAction extends Action{
 						double totalFee = StringUtils.formatDouble(cashTotalFee + ePayTotalFee + cardTotalFee);
 						double allTotalFee = StringUtils.formatDouble(totalFee + escape);
 						double totalPursueFee = StringUtils.formatDouble(pursue_cash + pursue_epay + pursue_card);
-						
+
 						for(Map<String, Object> map : list){
 							Long id = (Long)map.get("id");
 							if(id.intValue() == uin.intValue()){
@@ -322,16 +317,16 @@ public class CollectByParkStaticAnlysisAction extends Action{
 			e.printStackTrace();
 		}
 	}
-	
+
 	private String setTitle(List<Map<String, Object>> list, Long startTime, Long endTime){
 		double cashTotalFee = 0;
 		double ePayTotalFee = 0;
 		double cardTotalFee = 0;
-		double chargeCardFee = 0;//¿¨Æ¬³äÖµ
-		double returnCardFee = 0;//ÍË¿¨½ğ¶î
-		double actCardFee = 0;//¼¤»îÃæÖµ
-		double escapeFee = 0;//ÌÓµ¥Î´×·½ÉµÄÍ£³µ·Ñ
-		double allFee = 0;//Ó¦ÊÕ
+		double chargeCardFee = 0;//å¡ç‰‡å……å€¼
+		double returnCardFee = 0;//é€€å¡é‡‘é¢
+		double actCardFee = 0;//æ¿€æ´»é¢å€¼
+		double escapeFee = 0;//é€ƒå•æœªè¿½ç¼´çš„åœè½¦è´¹
+		double allFee = 0;//åº”æ”¶
 		try {
 			if(list != null && !list.isEmpty()){
 				List<Object> collectors = new ArrayList<Object>();
@@ -340,21 +335,21 @@ public class CollectByParkStaticAnlysisAction extends Action{
 				}
 				Map<String, Object> infoMap = commonMethods.sumIncomeAnly(collectors, startTime, endTime, 2);
 				if(infoMap != null && !infoMap.isEmpty()){
-					Double cashPrepayFee = 0d;//ÏÖ½ğÔ¤Ö§¸¶
-					Double cashAddFee = 0d;//ÏÖ½ğ²¹½É
-					Double cashRefundFee = 0d;//ÏÖ½ğÍË¿î
-					Double cashPursueFee = 0d;//ÏÖ½ğ×·½É
-					Double cashParkingFee = 0d;//ÏÖ½ğÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
-					Double ePayPrepayFee = 0d;//µç×ÓÔ¤Ö§¸¶
-					Double ePayAddFee = 0d;//µç×Ó²¹½É
-					Double ePayRefundFee = 0d;//µç×ÓÍË¿î
-					Double ePayPursueFee = 0d;//µç×Ó×·½É
-					Double ePayParkingFee = 0d;//µç×ÓÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
-					Double cardPrepayFee = 0d;//Ë¢¿¨Ô¤Ö§¸¶
-					Double cardAddFee = 0d;//Ë¢¿¨²¹½É
-					Double cardRefundFee = 0d;//Ë¢¿¨ÍË¿î
-					Double cardPursueFee = 0d;//Ë¢¿¨×·½É
-					Double cardParkingFee = 0d;//Ë¢¿¨Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
+					Double cashPrepayFee = 0d;//ç°é‡‘é¢„æ”¯ä»˜
+					Double cashAddFee = 0d;//ç°é‡‘è¡¥ç¼´
+					Double cashRefundFee = 0d;//ç°é‡‘é€€æ¬¾
+					Double cashPursueFee = 0d;//ç°é‡‘è¿½ç¼´
+					Double cashParkingFee = 0d;//ç°é‡‘åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+					Double ePayPrepayFee = 0d;//ç”µå­é¢„æ”¯ä»˜
+					Double ePayAddFee = 0d;//ç”µå­è¡¥ç¼´
+					Double ePayRefundFee = 0d;//ç”µå­é€€æ¬¾
+					Double ePayPursueFee = 0d;//ç”µå­è¿½ç¼´
+					Double ePayParkingFee = 0d;//ç”µå­åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+					Double cardPrepayFee = 0d;//åˆ·å¡é¢„æ”¯ä»˜
+					Double cardAddFee = 0d;//åˆ·å¡è¡¥ç¼´
+					Double cardRefundFee = 0d;//åˆ·å¡é€€æ¬¾
+					Double cardPursueFee = 0d;//åˆ·å¡è¿½ç¼´
+					Double cardParkingFee = 0d;//åˆ·å¡åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 					if(infoMap.get("prepay_cash") != null){
 						cashPrepayFee = Double.valueOf(infoMap.get("prepay_cash") + "");
 					}
@@ -412,21 +407,22 @@ public class CollectByParkStaticAnlysisAction extends Action{
 					if(infoMap.get("escape") != null){
 						escapeFee = Double.valueOf(infoMap.get("escape") + "");
 					}
-					cashTotalFee = StringUtils.formatDouble(cashParkingFee + cashPrepayFee + 
+					cashTotalFee = StringUtils.formatDouble(cashParkingFee + cashPrepayFee +
 							cashAddFee + cashPursueFee - cashRefundFee);
-					ePayTotalFee = StringUtils.formatDouble(ePayParkingFee + ePayPrepayFee + 
+					ePayTotalFee = StringUtils.formatDouble(ePayParkingFee + ePayPrepayFee +
 							ePayAddFee + ePayPursueFee - ePayRefundFee);
-					cardTotalFee = StringUtils.formatDouble(cardParkingFee + cardPrepayFee + 
+					cardTotalFee = StringUtils.formatDouble(cardParkingFee + cardPrepayFee +
 							cardAddFee + cardPursueFee - cardRefundFee);
-					allFee = StringUtils.formatDouble(cashTotalFee + ePayTotalFee + 
+					allFee = StringUtils.formatDouble(cashTotalFee + ePayTotalFee +
 							cardTotalFee + escapeFee);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String res = "Í£³µ·Ñ-->ÏÖ½ğÖ§¸¶£º"+cashTotalFee+"Ôª£¬µç×ÓÖ§¸¶£º"+ePayTotalFee+
-				"Ôª£¬¿¨Æ¬Ö§¸¶£º"+cardTotalFee+"Ôª"+"£¬Î´½É£º"+escapeFee+"£¬Ôª"+"£¬Ó¦ÊÕ£º"+allFee+"Ôª";
+		String res = "åœè½¦è´¹-->ç°é‡‘æ”¯ä»˜ï¼š"+cashTotalFee+"å…ƒï¼Œç”µå­æ”¯ä»˜ï¼š"+ePayTotalFee+"å…ƒ";
+		/*String res = "åœè½¦è´¹-->ç°é‡‘æ”¯ä»˜ï¼š"+cashTotalFee+"å…ƒï¼Œç”µå­æ”¯ä»˜ï¼š"+ePayTotalFee+
+				"å…ƒï¼Œå¡ç‰‡æ”¯ä»˜ï¼š"+cardTotalFee+"å…ƒ"+"ï¼Œæœªç¼´ï¼š"+escapeFee+"ï¼Œå…ƒ"+"ï¼Œåº”æ”¶ï¼š"+allFee+"å…ƒ";*/
 		return res;
 	}
 }

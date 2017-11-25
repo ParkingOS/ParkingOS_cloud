@@ -20,21 +20,21 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 /**
- * 泊车点管理，在总管理员后台
+ * 娉婅溅鐐圭鐞嗭紝鍦ㄦ�荤鐞嗗憳鍚庡彴
  * @author Administrator
  *
  */
 public class CarstopsManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
 	private PublicMethods publicMethods;
-	
+
 	private Logger logger = Logger.getLogger(CarstopsManageAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -77,10 +77,10 @@ public class CarstopsManageAction extends Action{
 			Double mp = RequestUtil.getDouble(request, "max_price", 0d);
 			Integer city = RequestUtil.getInteger(request, "city", 110000);
 			int ret = daService.update("update car_stops_tb set max_price=?,next_price=?,start_price=?, longitude=?" +
-					",latitude=?,name=?,address=?,utime=?,resume=?,city=? where id =?", 
+							",latitude=?,name=?,address=?,utime=?,resume=?,city=? where id =?",
 					new Object[]{mp,np,sp,lng,lat,name,local,System.currentTimeMillis()/1000,resume,city,id});
 			AjaxUtil.ajaxOutput(response, ret+"");
-			
+
 		}else if(action.equals("create")){
 			String local = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "address"));
 			String name = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "name"));
@@ -94,7 +94,7 @@ public class CarstopsManageAction extends Action{
 			String loginUser = (String)request.getSession().getAttribute("nickname");
 			Long ntime = System.currentTimeMillis()/1000;
 			int ret = daService.update("insert into car_stops_tb (name,longitude,latitude,start_price,next_price," +
-					"max_price,ctime,utime,creator,resume,address,city) values(?,?,?,?,?,?,?,?,?,?,?,?)",
+							"max_price,ctime,utime,creator,resume,address,city) values(?,?,?,?,?,?,?,?,?,?,?,?)",
 					new Object[]{name,lng,lat,sp,np,mp,ntime,ntime,loginUser,resume,local,city});
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}else if(action.equals("delete")){
@@ -111,15 +111,15 @@ public class CarstopsManageAction extends Action{
 					ret = daService.update("update car_stops_tb set pic=? where id = ? ", new Object[]{picurl,id});
 				}
 				if(ret==1)
-					request.setAttribute("result", "上传成功，请关闭当前窗口!");
-				else 
-					request.setAttribute("result", "上传失败!");
+					request.setAttribute("result", "涓婁紶鎴愬姛锛岃鍏抽棴褰撳墠绐楀彛!");
+				else
+					request.setAttribute("result", "涓婁紶澶辫触!");
 			}else {
-				request.setAttribute("result", "上传失败!");
+				request.setAttribute("result", "涓婁紶澶辫触!");
 			}
 			return mapping.findForward("uploadret");
 		}
 		return null;
 	}
-	
+
 }

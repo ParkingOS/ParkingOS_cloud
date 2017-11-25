@@ -20,7 +20,7 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 /**
- * 总管理员   免费停车场注册修改删除等
+ * 鎬荤鐞嗗憳   鍏嶈垂鍋滆溅鍦烘敞鍐屼慨鏀瑰垹闄ょ瓑
  * @author Administrator
  *
  */
@@ -30,7 +30,7 @@ public class FreeParkManageAction extends Action {
 	private DataBaseService daService;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		if(action.equals("")){
@@ -116,10 +116,10 @@ public class FreeParkManageAction extends Action {
 		return null;
 	}
 
-	//注册停车场管理员帐号
+	//娉ㄥ唽鍋滆溅鍦虹鐞嗗憳甯愬彿
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Long createParking(HttpServletRequest request){
-	
+
 		Long time = System.currentTimeMillis()/1000;
 		String company =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "company_name"));
 		String address =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
@@ -140,7 +140,7 @@ public class FreeParkManageAction extends Action {
 			}
 		}
 		Long comId = daService.getLong("SELECT nextval('seq_com_info_tb'::REGCLASS) AS newid",null);
-		
+
 		List<Map> sqlsList = new ArrayList<Map>();
 		Map comMap = new HashMap();
 		//String share_number =RequestUtil.processParams(request, "share_number");
@@ -151,9 +151,9 @@ public class FreeParkManageAction extends Action {
 				property,parking_type,parking_total,Double.valueOf(longitude),Double.valueOf(latitude),1,time};
 		comMap.put("sql", comsql);
 		comMap.put("values", comvalues);
-		
+
 		sqlsList.add(comMap);
-		
+
 		boolean r = daService.bathUpdate(sqlsList);
 		if(r)
 			return comId;

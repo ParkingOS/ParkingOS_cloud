@@ -32,10 +32,10 @@ public class AuthManageAction extends Action {
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
 	private Logger logger = Logger.getLogger(AuthManageAction.class);
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comId = (Long)request.getSession().getAttribute("comid");
@@ -144,11 +144,11 @@ public class AuthManageAction extends Action {
 			Map<String, Object> parent = new HashMap<String, Object>();
 			parent.put("id", 1);
 			parent.put("pId", 0);
-			parent.put("name", "¹¦ÄÜÈ¨ÏŞ");
+			parent.put("name", "åŠŸèƒ½æƒé™");
 			parent.put("open", true);
 			parent.put("isParent", true);
 			list2.add(parent);
-			
+
 			for(Map<String, Object> map : list){
 				Map<String, Object> newMap = new HashMap<String, Object>();
 				Long nid = (Long)map.get("nid");
@@ -318,7 +318,7 @@ public class AuthManageAction extends Action {
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			list = pgOnlyReadService.getAll(sql, new Object[]{0});
 			StringBuffer jsonData = new StringBuffer();
-			jsonData.append("{\"root_role\":{\"id\":\"role\",\"name\":\"ËùÓĞ½ÇÉ«\"},");
+			jsonData.append("{\"root_role\":{\"id\":\"role\",\"name\":\"æ‰€æœ‰è§’è‰²\"},");
 			for(Map<String, Object> map : list){
 				Long roleid = (Long)map.get("roleid");
 				String rolename = (String)map.get("role_name");
@@ -333,7 +333,7 @@ public class AuthManageAction extends Action {
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			list = pgOnlyReadService.getAll(sql, new Object[]{0});
 			StringBuffer jsonData = new StringBuffer();
-			jsonData.append("{\"root_15\":{\"id\":\"15\",\"name\":\"ËùÓĞ²¿ÃÅ\"},");
+			jsonData.append("{\"root_15\":{\"id\":\"15\",\"name\":\"æ‰€æœ‰éƒ¨é—¨\"},");
 			for(Map<String, Object> map : list){
 				Long nid = (Long)map.get("nid");
 				Long pid = (Long)map.get("pid");
@@ -375,12 +375,12 @@ public class AuthManageAction extends Action {
 							userinfoMap.put("sql", "update user_info_tb set department_id=? where id=? ");
 							userinfoMap.put("values", new Object[]{map.get("id"),id});
 							bathSql.add(userinfoMap);
-							
+
 							Map<String, Object> dataauthMap = new HashMap<String, Object>();
 							dataauthMap.put("sql", "update dataauth_tb set department_id=? where authorizer=? ");
 							dataauthMap.put("values", new Object[]{map.get("id"),id});
 							bathSql.add(dataauthMap);
-							
+
 							boolean b = daService.bathUpdate2(bathSql);
 							if(!b){
 								AjaxUtil.ajaxOutput(response, "-1");
@@ -399,7 +399,7 @@ public class AuthManageAction extends Action {
 			Map<String, Object> parent = new HashMap<String, Object>();
 			parent.put("id", 1);
 			parent.put("pId", 0);
-			parent.put("name", "½ÇÉ«ÁĞ±í");
+			parent.put("name", "è§’è‰²åˆ—è¡¨");
 			parent.put("open", true);
 			parent.put("isParent", true);
 			list2.add(parent);
@@ -495,12 +495,12 @@ public class AuthManageAction extends Action {
 			}
 			int result = daService.update("delete from dataauth_tb where authorizee=? and department_id=? ", new Object[]{uin,departid});
 			int r = daService.bathInsert("insert into dataauth_tb(authorizee,authorizer,department_id) values(?,?,?) ",values, new int[] { 4, 4, 4 });
-			logger.error("±»ÊÚÈ¨ÈËuin:" + uin + ",ÊÚÈ¨ÈË£º" + ids);
+			logger.error("è¢«æˆæƒäººuin:" + uin + ",æˆæƒäººï¼š" + ids);
 			AjaxUtil.ajaxOutput(response, "1");
 		}
 		return null;
 	}
-	
+
 	private String checkAuth(String auth) throws JSONException{
 		String sql = "select * from auth_tb";
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
@@ -509,7 +509,7 @@ public class AuthManageAction extends Action {
 		Map<String, Object> parent = new HashMap<String, Object>();
 		parent.put("id", 1);
 		parent.put("pId", 0);
-		parent.put("name", "¹¦ÄÜÈ¨ÏŞ");
+		parent.put("name", "åŠŸèƒ½æƒé™");
 		parent.put("open", true);
 		parent.put("isParent", true);
 		if(jsonArray.length() > 0){
@@ -529,7 +529,7 @@ public class AuthManageAction extends Action {
 				Long pId = jsonObject.getLong("pid");
 				if(id.equals(nid) && pId.equals(pid)){
 					newMap.put("checked", true);
-					break;	
+					break;
 				}
 			}
 			newMap.put("open", true);
@@ -545,14 +545,14 @@ public class AuthManageAction extends Action {
 		String json = StringUtils.createJson(list2);
 		return json;
 	}
-	
+
 	private List<Map<String, Object>> setDepartmentNode(List<Map<String, Object>> list){
 		List<Map<String, Object>> list2 = new ArrayList<Map<String,Object>>();
 		Map<String, Object> parent = new HashMap<String, Object>();
 		parent.put("id", 15);
 		parent.put("pId", 1);
 		parent.put("open", true);
-		parent.put("name", "ËùÓĞ²¿ÃÅ");
+		parent.put("name", "æ‰€æœ‰éƒ¨é—¨");
 		parent.put("isParent", true);
 		list2.add(parent);
 		for(Map<String, Object> map2 : list){
@@ -571,7 +571,7 @@ public class AuthManageAction extends Action {
 		}
 		return list2;
 	}
-	
+
 	private List setAuthNode(){
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		String sql = "select * from user_role_tb order by id";
@@ -584,36 +584,36 @@ public class AuthManageAction extends Action {
 		parent.put("id", 1);
 		parent.put("pId", 0);
 		parent.put("open", true);
-		parent.put("name", "È¨ÏŞÏµÍ³");
+		parent.put("name", "æƒé™ç³»ç»Ÿ");
 		list2.add(parent);
 		Map<String, Object> childen1 = new HashMap<String, Object>();
 		childen1.put("id", 11);
 		childen1.put("pId", 1);
 		childen1.put("open", true);
-		childen1.put("name", "½ÇÉ«¹ÜÀí");
+		childen1.put("name", "è§’è‰²ç®¡ç†");
 		list2.add(childen1);
 		Map<String, Object> childen2 = new HashMap<String, Object>();
 		childen2.put("id", 12);
 		childen2.put("pId", 1);
 		childen2.put("open", true);
-		childen2.put("name", "²¿ÃÅ¹ÜÀí");
+		childen2.put("name", "éƒ¨é—¨ç®¡ç†");
 		list2.add(childen2);
 		Map<String, Object> childen3 = new HashMap<String, Object>();
 		childen3.put("id", 13);
 		childen3.put("pId", 1);
 		childen3.put("open", true);
-		childen3.put("name", "¹¦ÄÜÈ¨ÏŞ¹ÜÀí");
+		childen3.put("name", "åŠŸèƒ½æƒé™ç®¡ç†");
 		list2.add(childen3);
 		Map<String, Object> childen5 = new HashMap<String, Object>();
 		childen5.put("id", 15);
 		childen5.put("pId", 1);
 		childen5.put("open", true);
-		childen5.put("name", "ÈËÔ±ÉèÖÃ");
+		childen5.put("name", "äººå‘˜è®¾ç½®");
 		list2.add(childen5);
 		Map<String, Object> childen4 = new HashMap<String, Object>();
 		childen4.put("id", 14);
 		childen4.put("pId", 1);
-		childen4.put("name", "½ÇÉ«È¨ÏŞ");
+		childen4.put("name", "è§’è‰²æƒé™");
 		list2.add(childen4);
 		for(Map<String, Object> map2 : list){
 			Map<String, Object> map3 = new HashMap<String, Object>();
@@ -626,17 +626,17 @@ public class AuthManageAction extends Action {
 			}
 			list2.add(map3);
 		}
-		
+
 		return list2;
 	}
-	
+
 	private List setRoleNode(List<Map<String, Object>> list){
 		List<Map<String, Object>> list2 = new ArrayList<Map<String,Object>>();
 		Map<String, Object> parent = new HashMap<String, Object>();
 		parent.put("id", 1);
 		parent.put("pId", 0);
 		parent.put("open", true);
-		parent.put("name", "½ÇÉ«¹ÜÀí");
+		parent.put("name", "è§’è‰²ç®¡ç†");
 		parent.put("isParent", true);
 		list2.add(parent);
 		for(Map<String, Object> map2 : list){
@@ -652,7 +652,7 @@ public class AuthManageAction extends Action {
 		}
 		return list2;
 	}
-	
+
 	private void setChecked(List<Map<String, Object>> list, Long uin){
 		if(!list.isEmpty()){
 			List<Map<String, Object>> resultList = new ArrayList<Map<String,Object>>();

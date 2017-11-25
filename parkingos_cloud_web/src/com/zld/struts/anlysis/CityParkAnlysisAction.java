@@ -35,7 +35,7 @@ public class CityParkAnlysisAction extends Action {
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null){
@@ -46,7 +46,7 @@ public class CityParkAnlysisAction extends Action {
 			return null;
 		}
 		if(cityid == null) cityid = -1L;
-		
+
 		if(action.equals("")){
 			jSON();
 			return mapping.findForward("column");
@@ -126,7 +126,7 @@ public class CityParkAnlysisAction extends Action {
 				}
 				sql += " and id in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					sql +=" and "+sqlInfo.getSql();
 					params.addAll(sqlInfo.getParams());
@@ -134,7 +134,7 @@ public class CityParkAnlysisAction extends Action {
 				sql += " group by city,parking_type order by city ";
 				list = pgOnlyReadService.getAllMap(sql, params);
 				list = setCity(list);
-				
+
 				if(list != null){
 					count = list.size();
 				}
@@ -142,10 +142,10 @@ public class CityParkAnlysisAction extends Action {
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"city");
 			AjaxUtil.ajaxOutput(response, json);
 		}
-		
+
 		return null;
 	}
-	
+
 	private void setLocal(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			for(Map<String, Object> map : list){
@@ -155,7 +155,7 @@ public class CityParkAnlysisAction extends Action {
 			}
 		}
 	}
-	
+
 	private List<Map<String, Object>> setCity(List<Map<String, Object>> list){
 		List<Map<String, Object>> rList = new ArrayList<Map<String,Object>>();
 		List<Integer> cities = new ArrayList<Integer>();
@@ -200,15 +200,15 @@ public class CityParkAnlysisAction extends Action {
 				}
 			}
 		}
-		
+
 		return rList;
 	}
-	
+
 	private void jSON(){
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("category", "001车场");
-		
+		map.put("category", "001杞﹀満");
+
 		List<Map<String, Object>> list1 = new ArrayList<Map<String,Object>>();
 		Map<String, Object> map1 = new HashMap<String, Object>();
 		map1.put("start", "3");

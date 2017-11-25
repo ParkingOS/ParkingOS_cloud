@@ -21,13 +21,13 @@ public class TransmitterMonitorAction extends Action {
 
 	@Autowired
 	private PgOnlyReadService onlyReadService;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -46,7 +46,7 @@ public class TransmitterMonitorAction extends Action {
 		}if(action.equals("")){
 			String gps = "";
 			if(cityid != null && cityid > 0){
-				Map cityMap = onlyReadService.getMap("select gps from org_city_merchants where id =? ", 
+				Map cityMap = onlyReadService.getMap("select gps from org_city_merchants where id =? ",
 						new Object[]{cityid});
 				if(cityMap != null && cityMap.get("gps") != null){
 					gps = (String)cityMap.get("gps");
@@ -68,8 +68,8 @@ public class TransmitterMonitorAction extends Action {
 		Double lon = RequestUtil.getDouble(request, "lon", 0.0);
 		Double lat = RequestUtil.getDouble(request, "lat", 0.0);
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
-       	//String url ="http://api.map.baidu.com/geoconv/v1/?";
-       	//String result1 = null;
+		//String url ="http://api.map.baidu.com/geoconv/v1/?";
+		//String result1 = null;
 		if(lon>0&&lat>0){
 			double lngp = 0.02346 * 2;
 			double latp = 0.01792;
@@ -84,33 +84,33 @@ public class TransmitterMonitorAction extends Action {
 					//JSONArray array = jsonObject.getJSONArray("result");
 					//for(Object object : array)
 					//{
-						//JSONObject jsonObject2 = (JSONObject)object;
-						//Object xString = jsonObject2.get("x");
-						//Object yString =jsonObject2.get("y");
-					   if((map.get("longitude"))!=null&& (map.get("latitude"))!=null){
-						   String  state="";
-							if(Integer.parseInt(map.get("state").toString())==0)
-							{
-								state="¹ÊÕÏ";
-							}
-							else {
-								state="Õı³£";
-							}
-					    String gps = (Double.valueOf(map.get("longitude") + ""))+ ","
-							+ (Double.valueOf(map.get("latitude") + ""));
-						ret +="["+gps+",\"µØÖ·:"+map.get("address")+"\",\"»ùÕ¾Ãû³Æ:"+map.get("name")+"\","+map.get("voltage")+",\"×´Ì¬:"+state+"\"],";
+					//JSONObject jsonObject2 = (JSONObject)object;
+					//Object xString = jsonObject2.get("x");
+					//Object yString =jsonObject2.get("y");
+					if((map.get("longitude"))!=null&& (map.get("latitude"))!=null){
+						String  state="";
+						if(Integer.parseInt(map.get("state").toString())==0)
+						{
+							state="æ•…éšœ";
+						}
+						else {
+							state="æ­£å¸¸";
+						}
+						String gps = (Double.valueOf(map.get("longitude") + ""))+ ","
+								+ (Double.valueOf(map.get("latitude") + ""));
+						ret +="["+gps+",\"åœ°å€:"+map.get("address")+"\",\"åŸºç«™åç§°:"+map.get("name")+"\","+map.get("voltage")+",\"çŠ¶æ€:"+state+"\"],";
 					}
-					
-					
+
+
 				}
-				
+
 				if(ret.endsWith(","))
 					ret = ret.substring(0,ret.length()-1);
 				return ret+"]";
 			}
-			//return "[[116.417854,39.921988,\"µØÖ·£º±±¾©ÊĞ¶«³ÇÇøÍõ¸®¾®´ó½Ö88ºÅÀÖÌìÒøÌ©°Ù»õ°Ë²ã\"],"+
-			//		" [116.406605,39.921585,\"µØÖ·£º±±¾©ÊĞ¶«³ÇÇø¶«»ªÃÅ´ó½Ö\"],"+
-			//		" [116.412222,39.912345,\"µØÖ·£º±±¾©ÊĞ¶«³ÇÇøÕıÒåÂ·¼×5ºÅ\"]]";//StringUtils.createJson(result);
+			//return "[[116.417854,39.921988,\"åœ°å€ï¼šåŒ—äº¬å¸‚ä¸œåŸåŒºç‹åºœäº•å¤§è¡—88å·ä¹å¤©é“¶æ³°ç™¾è´§å…«å±‚\"],"+
+			//		" [116.406605,39.921585,\"åœ°å€ï¼šåŒ—äº¬å¸‚ä¸œåŸåŒºä¸œåé—¨å¤§è¡—\"],"+
+			//		" [116.412222,39.912345,\"åœ°å€ï¼šåŒ—äº¬å¸‚ä¸œåŸåŒºæ­£ä¹‰è·¯ç”²5å·\"]]";//StringUtils.createJson(result);
 		}
 		return "[]";
 	}

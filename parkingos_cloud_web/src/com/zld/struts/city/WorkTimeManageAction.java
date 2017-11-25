@@ -25,14 +25,14 @@ public class WorkTimeManageAction extends Action{
 	private DataBaseService daService;
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -63,13 +63,13 @@ public class WorkTimeManageAction extends Action{
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("create")){
 			Long role_id = RequestUtil.getLong(request, "role_id", -1L);
-			Integer b_hour = RequestUtil.getInteger(request, "b_hour", 0);//-- 上班(小时)
-			Integer b_minute = RequestUtil.getInteger(request, "b_minute", 0);//-- 上班（分钟）
-			Integer e_hour = RequestUtil.getInteger(request, "e_hour", 0);//-- 下班(小时)
-			Integer e_minute = RequestUtil.getInteger(request, "e_minute", 0);//-- 下班(分钟)
+			Integer b_hour = RequestUtil.getInteger(request, "b_hour", 0);//-- 涓婄彮(灏忔椂)
+			Integer b_minute = RequestUtil.getInteger(request, "b_minute", 0);//-- 涓婄彮锛堝垎閽燂級
+			Integer e_hour = RequestUtil.getInteger(request, "e_hour", 0);//-- 涓嬬彮(灏忔椂)
+			Integer e_minute = RequestUtil.getInteger(request, "e_minute", 0);//-- 涓嬬彮(鍒嗛挓)
 			if(role_id > 0){
 				int r = daService.update("insert into work_time_tb(b_hour,b_minute,e_hour,e_minute,role_id) " +
-						"values(?,?,?,?,?)", 
+								"values(?,?,?,?,?)",
 						new Object[]{b_hour, b_minute, e_hour, e_minute, role_id});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -77,12 +77,12 @@ public class WorkTimeManageAction extends Action{
 			AjaxUtil.ajaxOutput(response, "-1");
 		}else if(action.equals("edit")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			Integer b_hour = RequestUtil.getInteger(request, "b_hour", 0);//-- 上班(小时)
-			Integer b_minute = RequestUtil.getInteger(request, "b_minute", 0);//-- 上班（分钟）
-			Integer e_hour = RequestUtil.getInteger(request, "e_hour", 0);//-- 下班(小时)
-			Integer e_minute = RequestUtil.getInteger(request, "e_minute", 0);//-- 下班(分钟)
+			Integer b_hour = RequestUtil.getInteger(request, "b_hour", 0);//-- 涓婄彮(灏忔椂)
+			Integer b_minute = RequestUtil.getInteger(request, "b_minute", 0);//-- 涓婄彮锛堝垎閽燂級
+			Integer e_hour = RequestUtil.getInteger(request, "e_hour", 0);//-- 涓嬬彮(灏忔椂)
+			Integer e_minute = RequestUtil.getInteger(request, "e_minute", 0);//-- 涓嬬彮(鍒嗛挓)
 			if(groupid > 0){
-				int r = daService.update("update work_time_tb set b_hour=?,b_minute=?,e_hour=?,e_minute=? where id=? ", 
+				int r = daService.update("update work_time_tb set b_hour=?,b_minute=?,e_hour=?,e_minute=? where id=? ",
 						new Object[]{b_hour, b_minute, e_hour, e_minute, id});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -90,7 +90,7 @@ public class WorkTimeManageAction extends Action{
 			AjaxUtil.ajaxOutput(response, "-1");
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			int r = daService.update("update work_time_tb set is_delete=? where id=? ", 
+			int r = daService.update("update work_time_tb set is_delete=? where id=? ",
 					new Object[]{1, id});
 			AjaxUtil.ajaxOutput(response, r + "");
 		}

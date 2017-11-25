@@ -31,7 +31,7 @@ public class TicketManageAction extends Action {
 	private Logger logger = Logger.getLogger(TicketManageAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		String token =RequestUtil.processParams(request, "token");
@@ -39,14 +39,14 @@ public class TicketManageAction extends Action {
 		Map<String,Object> infoMap  = new HashMap<String, Object>();
 		if(token==null||"null".equals(token)||"".equals(token)){
 			infoMap.put("result", "fail");
-			infoMap.put("message", "tokenÎŞĞ§!");
+			infoMap.put("message", "tokenæ— æ•ˆ!");
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(infoMap));
 			return null;
 		}
 		Long uin = validToken(token);
 		if(uin == null){
 			infoMap.put("result", "fail");
-			infoMap.put("message", "tokenÎŞĞ§!");
+			infoMap.put("message", "tokenæ— æ•ˆ!");
 			return null;
 		}
 		if(action.equals("create")){
@@ -58,7 +58,7 @@ public class TicketManageAction extends Action {
 				AjaxUtil.ajaxOutput(response, StringUtils.createJson(rMap));
 				return null;
 			}
-			logger.error(">>>>>>>>>>´òÓ¡ÓÅ»İÈ¯£¬ÓÅ»İÈ¯ÀàĞÍtype:"+type+",ÓÅ»İ¶î¶Ètime£º"+time+",ÉÌ»§shop_id:"+shop_id);
+			logger.error(">>>>>>>>>>æ‰“å°ä¼˜æƒ åˆ¸ï¼Œä¼˜æƒ åˆ¸ç±»å‹type:"+type+",ä¼˜æƒ é¢åº¦timeï¼š"+time+",å•†æˆ·shop_id:"+shop_id);
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			String nowtime= df2.format(System.currentTimeMillis());
 			Long btime = TimeTools.getLongMilliSecondFrom_HHMMDD(StringUtils.getFistdayOfMonth())/1000;
@@ -68,27 +68,27 @@ public class TicketManageAction extends Action {
 					new Object[] { shop_id });
 			Integer ticket_limit = (Integer)shopMap.get("ticket_limit");
 			Integer ticketfree_limit = (Integer)shopMap.get("ticketfree_limit");
-			
+
 			Map<String, Object> map = getlimit(shop_id, btime, etime);
-			Long mtotal = 0L;//ÓÅ»İÈ¯ÒÑ´òÓ¡¶î¶È
-			Long ecount = 0L;//È«ÃâÈ¯´òÓ¡ÊıÁ¿
+			Long mtotal = 0L;//ä¼˜æƒ åˆ¸å·²æ‰“å°é¢åº¦
+			Long ecount = 0L;//å…¨å…åˆ¸æ‰“å°æ•°é‡
 			if(map.get("mtotal") != null){
 				mtotal = (Long)map.get("mtotal");
 			}
 			if(map.get("ecount") != null){
 				ecount = (Long)map.get("ecount");
 			}
-			if(type == 3){//ÓÅ»İÈ¯
+			if(type == 3){//ä¼˜æƒ åˆ¸
 				if(ticket_limit < (mtotal + time)){
-					logger.error("ÓÅ»İÈ¯¶î¶ÈÒÑÓÃÍê£¬ÒÑÊ¹ÓÃ¶î¶Èmtotal"+mtotal+",ÓÅ»İÈ¯¶î¶Ètime£º"+time+",ÉÌ»§ÓÅ»İÈ¯¶î¶ÈÉÏÏŞticket_limit£º"+ticket_limit+",ÉÌ»§shop_id:"+shop_id);
+					logger.error("ä¼˜æƒ åˆ¸é¢åº¦å·²ç”¨å®Œï¼Œå·²ä½¿ç”¨é¢åº¦mtotal"+mtotal+",ä¼˜æƒ åˆ¸é¢åº¦timeï¼š"+time+",å•†æˆ·ä¼˜æƒ åˆ¸é¢åº¦ä¸Šé™ticket_limitï¼š"+ticket_limit+",å•†æˆ·shop_id:"+shop_id);
 					rMap.put("result", -2);
 					AjaxUtil.ajaxOutput(response, StringUtils.createJson(rMap));
 					return null;
 				}
-			}else if(type == 4){//È«ÃâÈ¯
-				time = 0;//È«ÃâÈ¯
+			}else if(type == 4){//å…¨å…åˆ¸
+				time = 0;//å…¨å…åˆ¸
 				if(ticketfree_limit <= ecount){
-					logger.error("È«ÃâÈ¯¶î¶ÈÒÑÓÃÍê£¬ÒÑÊ¹ÓÃ¶î¶Èecount"+ecount+",ÉÌ»§È«ÃâÈ¯¶î¶ÈÉÏÏŞticketfree_limit£º"+ticketfree_limit+",ÉÌ»§shop_id:"+shop_id);
+					logger.error("å…¨å…åˆ¸é¢åº¦å·²ç”¨å®Œï¼Œå·²ä½¿ç”¨é¢åº¦ecount"+ecount+",å•†æˆ·å…¨å…åˆ¸é¢åº¦ä¸Šé™ticketfree_limitï¼š"+ticketfree_limit+",å•†æˆ·shop_id:"+shop_id);
 					rMap.put("result", -2);
 					AjaxUtil.ajaxOutput(response, StringUtils.createJson(rMap));
 					return null;
@@ -107,15 +107,15 @@ public class TicketManageAction extends Action {
 				ticketSqlMap.put("sql", "insert into ticket_tb(id,create_time,limit_day,money,state,comid,type,shop_id) values(?,?,?,?,?,?,?,?)");
 				ticketSqlMap.put("values", new Object[]{ticketid, System.currentTimeMillis()/1000, etime, time, 0, shopMap.get("comid"),type, shop_id});
 				bathSql.add(ticketSqlMap);
-				
+
 				Map<String, Object> qrcodeSqlMap = new HashMap<String, Object>();
 				qrcodeSqlMap.put("sql", "insert into qr_code_tb(ctime,type,code,ticketid,comid) values(?,?,?,?,?)");
 				qrcodeSqlMap.put("values", new Object[]{System.currentTimeMillis()/1000, 5, code, ticketid, shopMap.get("comid")});
 				bathSql.add(qrcodeSqlMap);
 			}
-			
+
 			boolean b = daService.bathUpdate(bathSql);
-			logger.error("´òÓ¡ÓÅ»İÈ¯½á¹ûb£º"+b+",ÉÌ»§shop_id:"+shop_id);
+			logger.error("æ‰“å°ä¼˜æƒ åˆ¸ç»“æœbï¼š"+b+",å•†æˆ·shop_id:"+shop_id);
 			if(b){
 				rMap.put("result", code);
 				AjaxUtil.ajaxOutput(response, StringUtils.createJson(rMap));
@@ -156,9 +156,9 @@ public class TicketManageAction extends Action {
 			Long count = daService.getCount(sqlcount, params);
 			list = daService.getAll(sql, params, pageNum, pageSize);
 			Map<String, Object> map = getlimit(shop_id, b, e);
-			Long mcount = 0L;//ÓÅ»İÈ¯ÒÑ´òÓ¡ÊıÁ¿
-			Long mtotal = 0L;//ÓÅ»İÈ¯ÒÑ´òÓ¡¶î¶È
-			Long ecount = 0L;//È«ÃâÈ¯´òÓ¡ÊıÁ¿
+			Long mcount = 0L;//ä¼˜æƒ åˆ¸å·²æ‰“å°æ•°é‡
+			Long mtotal = 0L;//ä¼˜æƒ åˆ¸å·²æ‰“å°é¢åº¦
+			Long ecount = 0L;//å…¨å…åˆ¸æ‰“å°æ•°é‡
 			if(map.get("mcount") != null){
 				mcount = (Long)map.get("mcount");
 				mtotal = (Long)map.get("mtotal");
@@ -183,9 +183,9 @@ public class TicketManageAction extends Action {
 			Long btime = TimeTools.getLongMilliSecondFrom_HHMMDD(StringUtils.getFistdayOfMonth())/1000;
 			Long etime =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(nowtime+" 23:59:59");
 			Map<String, Object> map = getlimit(shop_id, btime, etime);
-			Long mcount = 0L;//ÓÅ»İÈ¯ÒÑ´òÓ¡ÊıÁ¿
-			Long mtotal = 0L;//ÓÅ»İÈ¯ÒÑ´òÓ¡¶î¶È
-			Long ecount = 0L;//È«ÃâÈ¯´òÓ¡ÊıÁ¿
+			Long mcount = 0L;//ä¼˜æƒ åˆ¸å·²æ‰“å°æ•°é‡
+			Long mtotal = 0L;//ä¼˜æƒ åˆ¸å·²æ‰“å°é¢åº¦
+			Long ecount = 0L;//å…¨å…åˆ¸æ‰“å°æ•°é‡
 			if(map.get("mcount") != null){
 				mcount = (Long)map.get("mcount");
 				mtotal = (Long)map.get("mtotal");
@@ -207,10 +207,10 @@ public class TicketManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private Map<String, Object> getlimit(Long shop_id, Long btime, Long etime){
 		Map<String, Object> infoMap = new HashMap<String, Object>();
-		//Ò»¸öÔÂÄÚ´òÓ¡µÄ¶î¶È
+		//ä¸€ä¸ªæœˆå†…æ‰“å°çš„é¢åº¦
 		List<Map<String, Object>> list = pgOnlyReadService
 				.getAll("select sum(money) mtotal,count(*) mcount,type from ticket_tb where shop_id=? and (type=? or type=?) and create_time between ? and ? group by type ",
 						new Object[] { shop_id, 3, 4, btime ,etime });
@@ -227,15 +227,15 @@ public class TicketManageAction extends Action {
 		}
 		return infoMap;
 	}
-	
+
 	/**
-	 * ÑéÖ¤tokenÊÇ·ñÓĞĞ§
+	 * éªŒè¯tokenæ˜¯å¦æœ‰æ•ˆ
 	 * @param token
 	 * @return uin
 	 */
 	private Long validToken(String token) {
 		Map tokenMap = pgOnlyReadService.getMap("select * from user_session_tb where token=?", new Object[]{token});
- 		Long uin = null;
+		Long uin = null;
 		if(tokenMap!=null&&tokenMap.get("uin")!=null){
 			uin = (Long) tokenMap.get("uin");
 		}

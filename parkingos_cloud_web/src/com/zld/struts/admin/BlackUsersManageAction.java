@@ -1,19 +1,5 @@
 package com.zld.struts.admin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.zld.AjaxUtil;
 import com.zld.impl.MemcacheUtils;
 import com.zld.impl.PublicMethods;
@@ -21,16 +7,28 @@ import com.zld.service.DataBaseService;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 /**
- * ºÚÃûµ¥¹ÜÀí£¬ÔÚ×Ü¹ÜÀíÔ±ºóÌ¨
+ * é»‘åå•ç®¡ç†ï¼Œåœ¨æ€»ç®¡ç†å‘˜åå°
  * @author Administrator
  *
  */
 public class BlackUsersManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(BlackUsersManageAction.class);
 	@Autowired
 	private MemcacheUtils memcacheUtils;
@@ -38,7 +36,7 @@ public class BlackUsersManageAction extends Action{
 	private PublicMethods publicMethods;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -92,10 +90,20 @@ public class BlackUsersManageAction extends Action{
 			else {
 				AjaxUtil.ajaxOutput(response, "-1");
 			}
+			int flag =state;
+			if(state==1){
+				flag  = 2;
+			}
 			Object [] values = new Object[]{state,System.currentTimeMillis()/1000,id};
 			if(id!=-1)
 				result = daService.update(sql, values);
-			if(result==1){//Çå³ı»º´æÖĞµÄ³µÖ÷
+			if(result==1){
+				Map<String,Object> black = daService.getMap("select comid from zld_black_tb where id =? ",new Object[]{id});
+				if(!black.isEmpty())
+					daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{black.get("comid"),"zld_black_tb",id,System.currentTimeMillis()/1000,flag});
+
+			}
+			/*if(result==1){//æ¸…é™¤ç¼“å­˜ä¸­çš„è½¦ä¸»
 				List<Long> blackUsers = memcacheUtils.doListLongCache("zld_black_users", null, null);
 				if(blackUsers!=null){
 					if(state==1&&blackUsers.contains(uin)){
@@ -107,7 +115,7 @@ public class BlackUsersManageAction extends Action{
 							blackUsers.add(uin);
 							memcacheUtils.doListLongCache("zld_black_users", blackUsers, "update");
 						}else{
-							logger.error("³µÖ÷uin:"+uin+"ÊÇÈÏÖ¤ÓÃ»§£¬²»¼ÓÈëºÚÃûµ¥");
+							logger.error("è½¦ä¸»uin:"+uin+"æ˜¯è®¤è¯ç”¨æˆ·ï¼Œä¸åŠ å…¥é»‘åå•");
 						}
 					}
 				}
@@ -122,27 +130,27 @@ public class BlackUsersManageAction extends Action{
 					}
 				}
 				logger.error("edit blackusers:"+whiteUsers);
-			}
+			}*/
 			AjaxUtil.ajaxOutput(response, result+"");
-		}else if(action.equals("reload")){//ÖØÖÃºÚÃûµ¥»º´æ
+		}else if(action.equals("reload")){//é‡ç½®é»‘åå•ç¼“å­˜
 			List<Map<String, Object>> list = daService.getAll("select z.uin from zld_black_tb z ,user_info_tb u where z.state=? and u.id = z.uin and u.is_auth = ?", new Object[]{0,0});
 			if(list!=null&&!list.isEmpty()){
 				List<Long> users = new ArrayList<Long>();
 				for(Map<String, Object> map :list){
 					long uin = Long.parseLong(map.get("uin")+"");
 //					if(!publicMethods.isAuthUser(uin)){
-						users.add(uin);
+					users.add(uin);
 //					}else{
-//						logger.error("³µÖ÷uin:"+uin+"ÊÇÈÏÖ¤ÓÃ»§£¬²»¼ÓÈëºÚÃûµ¥");
+//						logger.error("è½¦ä¸»uin:"+uin+"æ˜¯è®¤è¯ç”¨æˆ·ï¼Œä¸åŠ å…¥é»‘åå•");
 //					}
 				}
 				memcacheUtils.doListLongCache("zld_black_users", users, "update");
-				AjaxUtil.ajaxOutput(response, "ÖØÖÃÁË"+list.size()+"ÌõºÚÃûµ¥");
+				AjaxUtil.ajaxOutput(response, "é‡ç½®äº†"+list.size()+"æ¡é»‘åå•");
 				logger.error("reload blackusers:"+users);
 			}else {
-				AjaxUtil.ajaxOutput(response, "Ã»ÓĞºÚÃûµ¥");
+				AjaxUtil.ajaxOutput(response, "æ²¡æœ‰é»‘åå•");
 			}
-		}else if(action.equals("reloadwhite")){//ÖØÖÃ°×Ãûµ¥ »º´æ
+		}else if(action.equals("reloadwhite")){//é‡ç½®ç™½åå• ç¼“å­˜
 			List<Map<String, Object>> list = daService.getAll("select uin from zld_black_tb where state =?", new Object[]{1});
 			if(list!=null&&!list.isEmpty()){
 				List<Long> users = new ArrayList<Long>();
@@ -150,12 +158,12 @@ public class BlackUsersManageAction extends Action{
 					users.add((Long)map.get("uin"));
 				}
 				memcacheUtils.doListLongCache("zld_white_users", users, "update");
-				AjaxUtil.ajaxOutput(response, "ÖØÖÃÁË"+list.size()+"Ìõ°×Ãûµ¥");
+				AjaxUtil.ajaxOutput(response, "é‡ç½®äº†"+list.size()+"æ¡ç™½åå•");
 				logger.error("reload blackusers:"+users);
 			}else {
-				AjaxUtil.ajaxOutput(response, "Ã»ÓĞ°×Ãûµ¥");
+				AjaxUtil.ajaxOutput(response, "æ²¡æœ‰ç™½åå•");
 			}
-		}else if(action.equals("viewwhitememcache")){//²é¿´°×Ãûµ¥ 
+		}else if(action.equals("viewwhitememcache")){//æŸ¥çœ‹ç™½åå•
 			List<Long> blackUsers = memcacheUtils.doListLongCache("zld_white_users", null, null);
 			if(blackUsers!=null)
 				AjaxUtil.ajaxOutput(response, blackUsers.size()+":"+blackUsers.toString());
@@ -163,7 +171,7 @@ public class BlackUsersManageAction extends Action{
 				AjaxUtil.ajaxOutput(response, "[]");
 			}
 		}
-		else if(action.equals("viewmemcache")){//²é¿´ºÚÃûµ¥
+		else if(action.equals("viewmemcache")){//æŸ¥çœ‹é»‘åå•
 			List<Long> blackUsers = memcacheUtils.doListLongCache("zld_black_users", null, null);
 			if(blackUsers!=null)
 				AjaxUtil.ajaxOutput(response, blackUsers.size()+":"+blackUsers.toString());
@@ -173,7 +181,7 @@ public class BlackUsersManageAction extends Action{
 		}
 		return null;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		String mobile = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "mobile"));
 		SqlInfo sqlInfo = null;

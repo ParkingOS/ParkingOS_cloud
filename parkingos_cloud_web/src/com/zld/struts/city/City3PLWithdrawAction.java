@@ -30,10 +30,10 @@ public class City3PLWithdrawAction extends Action {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null){
@@ -78,10 +78,10 @@ public class City3PLWithdrawAction extends Action {
 			int r = editBath(request);
 			AjaxUtil.ajaxOutput(response, r + "");
 		}
-		
+
 		return null;
 	}
-	
+
 	private int editBath(HttpServletRequest request){
 		String ids = RequestUtil.getString(request, "ids");
 		Integer state = RequestUtil.getInteger(request, "state", 0);
@@ -105,15 +105,15 @@ public class City3PLWithdrawAction extends Action {
 		}
 		return 0;
 	}
-	
+
 	private int edit(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		Integer state = RequestUtil.getInteger(request, "state", 0);
-		int r = daService.update("update withdrawer_tb set state =?,update_time=? where id =? ", 
+		int r = daService.update("update withdrawer_tb set state =?,update_time=? where id =? ",
 				new Object[]{state, System.currentTimeMillis()/1000, id});
 		return r;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		String name = RequestUtil.processParams(request, "name");
 		SqlInfo sqlInfo1 = null;

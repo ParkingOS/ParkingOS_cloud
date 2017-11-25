@@ -32,7 +32,7 @@ public class GroupCardAccountAction extends Action {
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//????????id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		if(uin == null){

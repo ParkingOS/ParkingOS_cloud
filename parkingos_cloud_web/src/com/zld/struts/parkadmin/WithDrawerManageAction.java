@@ -21,20 +21,20 @@ import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
 /**
- * 停车场后台管理员登录后，提现管理 
+ * 鍋滆溅鍦哄悗鍙扮鐞嗗憳鐧诲綍鍚庯紝鎻愮幇绠＄悊
  * @author Administrator
  *
  */
 public class WithDrawerManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(WithDrawerManageAction.class);
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -51,7 +51,7 @@ public class WithDrawerManageAction extends Action{
 		if(groupid != null && groupid > 0){
 			request.setAttribute("groupid", groupid);
 			if(comid == null || comid <= 0){
-				Map map = daService.getMap("select id,company_name from com_info_tb where groupid=? order by id limit ? ", 
+				Map map = daService.getMap("select id,company_name from com_info_tb where groupid=? order by id limit ? ",
 						new Object[]{groupid, 1});
 				if(map != null){
 					comid = (Long)map.get("id");
@@ -111,6 +111,6 @@ public class WithDrawerManageAction extends Action{
 		}
 		return null;
 	}
-	
+
 
 }

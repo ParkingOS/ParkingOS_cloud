@@ -32,7 +32,7 @@ public class PeakAlertAnlysisAction extends Action {
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null){
@@ -43,7 +43,7 @@ public class PeakAlertAnlysisAction extends Action {
 			return null;
 		}
 		if(cityid == null) cityid = -1L;
-		
+
 		if(action.equals("")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			Long today = TimeTools.getToDayBeginTime();
@@ -71,19 +71,19 @@ public class PeakAlertAnlysisAction extends Action {
 				}
 				sql += " and p.comid in ("+preParams+") ";
 				params.addAll(parks);
-				sql += " order by p.create_time ";//±ØĞëÉıĞòÅÅĞò
+				sql += " order by p.create_time ";//å¿…é¡»å‡åºæ’åº
 				list = pgOnlyReadService.getAllMap(sql, params);
 			}
 			list = setList(list);
 			JSONArray json = JSONArray.fromObject(list);
 			AjaxUtil.ajaxOutput(response, json.toString());
 		}
-		
+
 		return null;
 	}
-	
+
 	private List<Map<String, Object>> setList(List<Map<String, Object>> list){
-		double rateline = 0.85d;//¸ß·åÔ¤¾¯·Ö½çÏß
+		double rateline = 0.85d;//é«˜å³°é¢„è­¦åˆ†ç•Œçº¿
 		List<Map<String, Object>> rList = new ArrayList<Map<String,Object>>();
 		List<Object> comidList = new ArrayList<Object>();
 		if(list != null && !list.isEmpty()){
@@ -93,7 +93,7 @@ public class PeakAlertAnlysisAction extends Action {
 				Integer present = (Integer)map.get("present");
 				Integer berths = (Integer)map.get("berths");
 				Long begintime = TimeTools.getBeginTime(ctime*1000);
-				if(berths == 0){//²´Î»×ÜÊı²»ÄÜÎªÁã
+				if(berths == 0){//æ³Šä½æ€»æ•°ä¸èƒ½ä¸ºé›¶
 					continue;
 				}
 				Long duration = (ctime - begintime)/60;
@@ -104,28 +104,28 @@ public class PeakAlertAnlysisAction extends Action {
 						if(comid.intValue() == com_id.intValue()){
 							List<Map<String, Object>> segments = (List<Map<String, Object>>)map2.get("segments");
 							if(!segments.isEmpty()){
-								Map<String, Object> lastMap = segments.get(segments.size() - 1);//»ñÈ¡Ê±¼ä×î½üµÄÒ»´Î¸ß·åÔ¤¾¯
+								Map<String, Object> lastMap = segments.get(segments.size() - 1);//è·å–æ—¶é—´æœ€è¿‘çš„ä¸€æ¬¡é«˜å³°é¢„è­¦
 								Integer flag = (Integer)lastMap.get("flag");
-								if(flag == 0){//×î½üµÄÒ»´ÎÔ¤¾¯»¹Î´½áÊø
-									if(rate < rateline){//¸ß·åÔ¤¾¯½áÊø
+								if(flag == 0){//æœ€è¿‘çš„ä¸€æ¬¡é¢„è­¦è¿˜æœªç»“æŸ
+									if(rate < rateline){//é«˜å³°é¢„è­¦ç»“æŸ
 										lastMap.put("flag", 1);
 									}
-									lastMap.put("end", duration);//ÖØÖÃÔ¤¾¯½áÊøÊ±¼ä
-								}else{//×î½üµÄÒ»´Î¸ß·åÔ¤¾¯ÒÑ½áÊø
+									lastMap.put("end", duration);//é‡ç½®é¢„è­¦ç»“æŸæ—¶é—´
+								}else{//æœ€è¿‘çš„ä¸€æ¬¡é«˜å³°é¢„è­¦å·²ç»“æŸ
 									if(rate >= rateline){
 										Map<String, Object> segMap = new HashMap<String, Object>();
-										segMap.put("start", duration);//Ô¤¾¯¿ªÊ¼Ê±¼ä
-										segMap.put("end", duration);//Ô¤¾¯½áÊøÊ±¼ä,³õÊ¼»¯Êı¾İÎªÔ¤¾¯¿ªÊ¼Ê±¼ä
-										segMap.put("flag", 0);//flag==0±íÊ¾Ô¤¾¯»¹Î´½áÊø
+										segMap.put("start", duration);//é¢„è­¦å¼€å§‹æ—¶é—´
+										segMap.put("end", duration);//é¢„è­¦ç»“æŸæ—¶é—´,åˆå§‹åŒ–æ•°æ®ä¸ºé¢„è­¦å¼€å§‹æ—¶é—´
+										segMap.put("flag", 0);//flag==0è¡¨ç¤ºé¢„è­¦è¿˜æœªç»“æŸ
 										segments.add(segMap);
 									}
 								}
 							}else{
-								if(rate >= rateline){//´óÓÚ85%±íÊ¾¸ß·åÔ¤¾¯
+								if(rate >= rateline){//å¤§äº85%è¡¨ç¤ºé«˜å³°é¢„è­¦
 									Map<String, Object> segMap = new HashMap<String, Object>();
-									segMap.put("start", duration);//Ô¤¾¯¿ªÊ¼Ê±¼ä
-									segMap.put("end", duration);//Ô¤¾¯½áÊøÊ±¼ä,³õÊ¼»¯Êı¾İÎª¿ªÊ¼Ê±¼ä
-									segMap.put("flag", 0);//flag==0±íÊ¾Ô¤¾¯»¹Î´½áÊø
+									segMap.put("start", duration);//é¢„è­¦å¼€å§‹æ—¶é—´
+									segMap.put("end", duration);//é¢„è­¦ç»“æŸæ—¶é—´,åˆå§‹åŒ–æ•°æ®ä¸ºå¼€å§‹æ—¶é—´
+									segMap.put("flag", 0);//flag==0è¡¨ç¤ºé¢„è­¦è¿˜æœªç»“æŸ
 									segments.add(segMap);
 								}
 							}
@@ -138,11 +138,11 @@ public class PeakAlertAnlysisAction extends Action {
 					infoMap.put("comid", comid);
 					infoMap.put("category", map.get("company_name"));
 					List<Map<String, Object>> segList = new ArrayList<Map<String,Object>>();
-					if(rate >= rateline){//´óÓÚ85%±íÊ¾¸ß·åÔ¤¾¯
+					if(rate >= rateline){//å¤§äº85%è¡¨ç¤ºé«˜å³°é¢„è­¦
 						Map<String, Object> segMap = new HashMap<String, Object>();
-						segMap.put("start", duration);//Ô¤¾¯¿ªÊ¼Ê±¼ä
-						segMap.put("end", duration);//Ô¤¾¯½áÊøÊ±¼ä,³õÊ¼»¯Êı¾İÎª¿ªÊ¼Ê±¼ä
-						segMap.put("flag", 0);//flag==0±íÊ¾Ô¤¾¯»¹Î´½áÊø
+						segMap.put("start", duration);//é¢„è­¦å¼€å§‹æ—¶é—´
+						segMap.put("end", duration);//é¢„è­¦ç»“æŸæ—¶é—´,åˆå§‹åŒ–æ•°æ®ä¸ºå¼€å§‹æ—¶é—´
+						segMap.put("flag", 0);//flag==0è¡¨ç¤ºé¢„è­¦è¿˜æœªç»“æŸ
 						segList.add(segMap);
 					}
 					infoMap.put("segments", segList);

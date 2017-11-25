@@ -34,16 +34,16 @@ public class GroupCardManageAction extends Action{
 	private DataBaseService writeService;
 	@Autowired
 	private CardService cardService;
-	
+
 	Logger logger = Logger.getLogger(GroupCardManageAction.class);
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		if(uin == null){
@@ -106,7 +106,7 @@ public class GroupCardManageAction extends Action{
 			}else{
 				AjaxUtil.ajaxOutput(response, resp.getErrmsg());
 			}
-		}else if(action.equals("return")){//注销
+		}else if(action.equals("return")){//娉ㄩ攢
 			Long cardId = RequestUtil.getLong(request, "id", -1L);
 			ReturnCardReq req = new ReturnCardReq();
 			req.setCardId(cardId);
@@ -142,7 +142,7 @@ public class GroupCardManageAction extends Action{
 		}else if(action.equals("delete")){
 			Long cardId = RequestUtil.getLong(request, "id", -1L);
 			Long count = readService.getLong("select count(id) from com_nfc_tb " +
-					" where state<>? and id=? and is_delete=? and type=? ", 
+							" where state<>? and id=? and is_delete=? and type=? ",
 					new Object[]{1, cardId, 0, 2});
 			if(count > 0){
 				AjaxUtil.ajaxOutput(response, "-2");
@@ -173,7 +173,7 @@ public class GroupCardManageAction extends Action{
 		}
 		return null;
 	}
-	
+
 	private void setInfo(List<Map<String, Object>> list){
 		try {
 			if(list != null && !list.isEmpty()){
@@ -190,7 +190,7 @@ public class GroupCardManageAction extends Action{
 							preParams += ",?";
 					}
 				}
-				
+
 				List<Map<String, Object>> list2 = null;
 				if(!uinList.isEmpty()){
 					list2 = readService.getAllMap("select id,mobile from user_info_tb where id in ("+preParams+")", uinList);
@@ -201,7 +201,7 @@ public class GroupCardManageAction extends Action{
 								Long uin = (Long)map2.get("uin");
 								if(id.intValue() == uin.intValue()){
 									map2.put("mobile", map.get("mobile"));
-									//此处没有break，因为一个人可以有多张卡
+									//姝ゅ娌℃湁break锛屽洜涓轰竴涓汉鍙互鏈夊寮犲崱
 								}
 							}
 						}
@@ -236,7 +236,7 @@ public class GroupCardManageAction extends Action{
 				preParams = "";
 				for(Map<String, Object> map : list){
 					Long state = (Long)map.get("state");
-					if(state == 4){//只绑定车牌号
+					if(state == 4){//鍙粦瀹氳溅鐗屽彿
 						cardIdList.add(map.get("id"));
 						if(preParams.equals(""))
 							preParams ="?";
@@ -244,7 +244,7 @@ public class GroupCardManageAction extends Action{
 							preParams += ",?";
 					}
 				}
-				
+
 				if(!cardIdList.isEmpty()){
 					cardIdList.add(0);
 					List<Map<String, Object>> list4 = readService.getAllMap("select card_id,car_number " +
@@ -272,7 +272,7 @@ public class GroupCardManageAction extends Action{
 			e.printStackTrace();
 		}
 	}
-	
+
 	private SqlInfo getSqlInfo1(HttpServletRequest request){
 		String mobile = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "mobile"));
 		SqlInfo sqlInfo = null;
@@ -282,14 +282,14 @@ public class GroupCardManageAction extends Action{
 		}
 		return sqlInfo;
 	}
-	
+
 	private SqlInfo getSqlInfo2(HttpServletRequest request){
 		String car_number = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "carnumber"));
 		SqlInfo sqlInfo = null;
 		if(!car_number.equals("")){
 			sqlInfo = new SqlInfo(" ((state=? and uin in (select uin from car_info_tb where " +
 					" car_number like ? and state=? )) or (state=? and id in (select card_id " +
-					" from card_carnumber_tb where car_number like ? and is_delete=? ))) ", 
+					" from card_carnumber_tb where car_number like ? and is_delete=? ))) ",
 					new Object[]{2, "%"+car_number+"%", 1, 4, "%"+car_number+"%", 0});
 		}
 		return sqlInfo;

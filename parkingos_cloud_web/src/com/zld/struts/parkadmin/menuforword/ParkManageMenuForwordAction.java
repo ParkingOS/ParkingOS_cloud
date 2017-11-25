@@ -8,21 +8,21 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 /**
- * 电子支付菜单
+ * 鐢靛瓙鏀粯鑿滃崟
  * @author Administrator
  *
  */
 public class ParkManageMenuForwordAction extends Action{
-	
-	
+
+
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		request.setAttribute("authid", request.getParameter("authid"));
 		return mapping.findForward("parkmanage");
 	}
 
-	
+
 }

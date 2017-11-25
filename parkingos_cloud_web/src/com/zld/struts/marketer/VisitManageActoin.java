@@ -31,7 +31,7 @@ public class VisitManageActoin extends Action {
 	private Logger logger = Logger.getLogger(VisitManageActoin.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception{
 		String action = RequestUtil.processParams(request, "action");
 		String token =RequestUtil.processParams(request, "token");
@@ -46,9 +46,9 @@ public class VisitManageActoin extends Action {
 			return null;
 		}
 		if(action.equals("create")){
-			//拜访记录ID
+			//鎷滆璁板綍ID
 			Long visitid = RequestUtil.getLong(request, "visitid", -1L);
-			//联系人ID
+			//鑱旂郴浜篒D
 			Long contacts = RequestUtil.getLong(request, "id", -1L);
 			if(contacts == -1 || visitid == -1){
 				AjaxUtil.ajaxOutput(response, "-1");
@@ -105,7 +105,7 @@ public class VisitManageActoin extends Action {
 			Long endTime =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(nowtime+" 23:59:59");
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "size", 20);
-			Long groupuid = RequestUtil.getLong(request, "uid", -1L);//组内成员
+			Long groupuid = RequestUtil.getLong(request, "uid", -1L);//缁勫唴鎴愬憳
 			String sql = "select id,visit_content,create_time,contacts,address from visit_info_tb where uid=? and state=? and create_time between ? and ? order by create_time desc ";
 			String sqlcount = "select count(*) from visit_info_tb where uid=? and state=? and create_time between ? and ? ";
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
@@ -127,21 +127,21 @@ public class VisitManageActoin extends Action {
 		//http://192.168.199.239/zld/visit.do?action=querytoday&token=
 		return null;
 	}
-	
+
 	/**
-	 * 验证token是否有效
+	 * 楠岃瘉token鏄惁鏈夋晥
 	 * @param token
 	 * @return uin
 	 */
 	private Long validToken(String token) {
 		Map tokenMap = pgOnlyReadService.getMap("select * from user_session_tb where token=?", new Object[]{token});
- 		Long uin = null;
+		Long uin = null;
 		if(tokenMap!=null&&tokenMap.get("uin")!=null){
 			uin = (Long) tokenMap.get("uin");
 		}
 		return uin;
 	}
-	
+
 	private void setName(List<Map<String, Object>> list){
 		List<Object> uids = new ArrayList<Object>();
 		if(list != null && !list.isEmpty()){

@@ -15,6 +15,7 @@ import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.zld.AjaxUtil;
+import com.zld.CustomDefind;
 import com.zld.service.DataBaseService;
 import com.zld.service.PgOnlyReadService;
 import com.zld.utils.JsonUtil;
@@ -26,11 +27,11 @@ public class ShopMemberManageAction extends Action {
 	private DataBaseService daService;
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
-	
+
 	private Logger logger = Logger.getLogger(ShopManageAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -80,7 +81,7 @@ public class ShopMemberManageAction extends Action {
 			}
 			String sql = "update user_info_tb set nickname=?,strid=?,phone=?,mobile=?,auth_flag=? where id=? ";
 			int result = daService.update(sql, new Object[]{nickname,strid,phone,mobile,auth_flag,Long.valueOf(id)});
-			
+
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("delete")){
 			String id =RequestUtil.processParams(request, "selids");
@@ -101,55 +102,70 @@ public class ShopMemberManageAction extends Action {
 				e.printStackTrace();
 			}
 			if(newPass.length()<6){
-				AjaxUtil.ajaxOutput(response, "√‹¬Î≥§∂»–°”⁄6Œª£¨«Î÷ÿ–¬ ‰»Î£°");
+				AjaxUtil.ajaxOutput(response, "ÂØÜÁ†ÅÈïøÂ∫¶Â∞è‰∫é6‰ΩçÔºåËØ∑ÈáçÊñ∞ËæìÂÖ•ÔºÅ");
 			}else if(newPass.equals(confirmPass)){
 				Object [] values = new Object[]{newPass,md5pass,Long.valueOf(uin)};
 				int result = daService.update(sql, values);
 				AjaxUtil.ajaxOutput(response, result+"");
 			}else {
-				AjaxUtil.ajaxOutput(response, "¡Ω¥Œ√‹¬Î ‰»Î≤ª“ª÷¬£¨«Î÷ÿ–¬ ‰»Î£°");
+				AjaxUtil.ajaxOutput(response, "‰∏§Ê¨°ÂØÜÁ†ÅËæìÂÖ•‰∏ç‰∏ÄËá¥ÔºåËØ∑ÈáçÊñ∞ËæìÂÖ•ÔºÅ");
 			}
 			return null;
 		}
 		return null;
 	}
-	
-	//◊¢≤·Õ£≥µ≥° ’∑—‘±’ ∫≈
-		@SuppressWarnings({ "rawtypes" })
-		private int createMember(HttpServletRequest request){
-			String strid =RequestUtil.processParams(request, "strid");
-			String nickname =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "nickname"));
-			String phone =RequestUtil.processParams(request, "phone");
-			String mobile =RequestUtil.processParams(request, "mobile");
-			Long role =RequestUtil.getLong(request, "auth_flag", 15L);//14:∏∫‘»À 15£∫π§◊˜»À‘±
-			if(nickname.equals("")) nickname=null;
-			if(phone.equals("")) phone=null;
-			if(mobile.equals("")) mobile=null;
-			Map adminMap = (Map) request.getSession().getAttribute("userinfo");
-			Long time = System.currentTimeMillis()/1000;
-			if(!checkStrid(strid))
-				return 0;
-			Long shop_id = RequestUtil.getLong(request, "shop_id", -1L);
-			if(shop_id == -1){
-				return 0;
-			}
-			//”√ªß±Ì
-			String sql="insert into user_info_tb (nickname,password,strid," +
-					"address,reg_time,mobile,phone,auth_flag,shop_id) " +
-					"values (?,?,?,?,?,?,?,?,?)";
-			Object [] values= new Object[]{nickname,strid,strid,
-					adminMap.get("address"),time,mobile,phone,role,shop_id};
-			int r = daService.update(sql, values);
-			return r;
-		}
-		
-		private boolean checkStrid(String strid){
-			String sql = "select count(*) from user_info_tb where strid =?";
-			Long result = daService.getLong(sql, new Object[]{strid});
-			if(result>0){
-				return false;
-			}
-			return true;
 
+	//Ê≥®ÂÜåÂÅúËΩ¶Âú∫Êî∂Ë¥πÂëòÂ∏êÂè∑
+	@SuppressWarnings({ "rawtypes" })
+	private int createMember(HttpServletRequest request){
+		//String strid =RequestUtil.processParams(request, "strid");
+		String strid = "";
+		String nickname =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "nickname"));
+		String phone =RequestUtil.processParams(request, "phone");
+		String mobile =RequestUtil.processParams(request, "mobile");
+		Long comid = (Long)request.getSession().getAttribute("comid");
+		Long role =RequestUtil.getLong(request, "auth_flag", 15L);//14:Ë¥üË¥£‰∫∫ 15ÔºöÂ∑•‰Ωú‰∫∫Âëò
+		if(nickname.equals("")) nickname=null;
+		if(phone.equals("")) phone=null;
+		if(mobile.equals("")) mobile=null;
+		Map adminMap = (Map) request.getSession().getAttribute("userinfo");
+		Long time = System.currentTimeMillis()/1000;
+		//Áî®Êà∑id
+		Long id = daService.getkey("seq_user_info_tb");
+
+		//ÁôªÂΩïÂ∏êÂè∑idÂâçÂä†‰∏äÂπ≥Âè∞Ëã±ÊñáÁÆÄÁß∞
+		strid = String.valueOf(CustomDefind.UNIONVALUE+id);
+		if(!checkStrid(strid))
+			return 0;
+		Long shop_id = RequestUtil.getLong(request, "shop_id", -1L);
+		if(shop_id == -1){
+			return 0;
 		}
+		String md5Pass = "";
+		if(md5Pass.length()<32){
+			//md5ÂØÜÁ†Å ÔºåÁîüÊàêËßÑÂàôÔºöÂéüÂØÜÁ†Åmd5ÂêéÔºåÂä†‰∏ä'zldtingchebao201410092009'ÂÜçÊ¨°md5
+			md5Pass =StringUtils.MD5(strid);
+			md5Pass = StringUtils.MD5(md5Pass +"zldtingchebao201410092009");
+		}
+		//Ê∑ªÂä†user_id
+		String userIdString = strid;
+		//Áî®Êà∑Ë°®
+		String sql="insert into user_info_tb (id,nickname,password,strid," +
+				"address,reg_time,mobile,phone,auth_flag,shop_id,comid,md5pass,user_id) " +
+				"values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		Object [] values= new Object[]{id,nickname,strid,strid,
+				adminMap.get("address"),time,mobile,phone,role,shop_id,comid,md5Pass,userIdString};
+		int r = daService.update(sql, values);
+		return r;
+	}
+
+	private boolean checkStrid(String strid){
+		String sql = "select count(*) from user_info_tb where strid =?";
+		Long result = daService.getLong(sql, new Object[]{strid});
+		if(result>0){
+			return false;
+		}
+		return true;
+
+	}
 }

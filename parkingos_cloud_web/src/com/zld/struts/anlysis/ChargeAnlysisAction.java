@@ -26,7 +26,7 @@ public class ChargeAnlysisAction extends Action {
 	private DataBaseService daService;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception{
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -64,7 +64,7 @@ public class ChargeAnlysisAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private Map<String, Object> setList(List<Map<String, Object>> list){
 		Map<String, Object> newMap = new HashMap<String, Object>();
 		List<Object> wxuins = new ArrayList<Object>();
@@ -111,7 +111,7 @@ public class ChargeAnlysisAction extends Action {
 		newMap.put("wxpvip", wxpuins.size());
 		newMap.put("zfbvip", zfbuins.size());
 		newMap.put("bothvip", bothuins.size());
-		//◊‹”‡∂Ó
+		//ÊÄª‰ΩôÈ¢ù
 		Map<String,Object> map = new HashMap<String, Object>();
 		map = daService.getMap("select sum(balance) residuemoney from user_info_tb where auth_flag=?", new Object[]{4});
 		newMap.put("residuemoney", map.get("residuemoney"));

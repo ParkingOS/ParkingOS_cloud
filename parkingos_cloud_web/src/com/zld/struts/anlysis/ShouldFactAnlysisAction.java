@@ -35,7 +35,7 @@ public class ShouldFactAnlysisAction extends Action {
 	private MongoDbUtils mongoDbUtils;
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -63,7 +63,7 @@ public class ShouldFactAnlysisAction extends Action {
 			String sqlnopayment = "select  sum( case when state=1 then act_total  else 0 end)  as payment," +
 					"sum( case when state=0 then total  else 0 end)   as nopayment," +
 					"comid from   no_payment_tb where create_time between ? and ? and  ";
-			//String countSql ="select count(*)  from   no_payment_tb  as a  left join  com_info_tb as b on a.comid=b.id  where a.create_time between ? and ?"; 
+			//String countSql ="select count(*)  from   no_payment_tb  as a  left join  com_info_tb as b on a.comid=b.id  where a.create_time between ? and ?";
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			List<Map<String, Object>> orderlist = null;
 			List<Map<String, Object>> nopaylist = null;
@@ -104,11 +104,11 @@ public class ShouldFactAnlysisAction extends Action {
 				nopayparams.addAll(parks);
 				orderlist = pgOnlyReadService.getAllMap(sqlorder,orderparams);
 				nopaylist= pgOnlyReadService.getAllMap(sqlnopayment,nopayparams);
-				//把nopaylist查到的数据追加到orderlist
+				//鎶妌opaylist鏌ュ埌鐨勬暟鎹拷鍔犲埌orderlist
 				if(orderlist!=null&&!orderlist.isEmpty()){
 					if(nopaylist!=null&&!nopaylist.isEmpty()){
 						for(Map<String, Object> map: orderlist){
-							//如果没有匹配到对应的停车场就让追缴和为追缴值为0
+							//濡傛灉娌℃湁鍖归厤鍒板搴旂殑鍋滆溅鍦哄氨璁╄拷缂村拰涓鸿拷缂村�间负0
 							map.put("payment",0);
 							map.put("nopayment", 0);
 							Long order_comid=(Long)map.get("comid");
@@ -129,7 +129,7 @@ public class ShouldFactAnlysisAction extends Action {
 													StringUtils.formatDouble(nMap.get("nopayment"))));
 											map.put("paynopaypercent",StringUtils.formatDouble(nMap.get("payment"))/
 													StringUtils.formatDouble(nMap.get("nopayment")));
-											
+
 											break;
 										}
 									}
@@ -137,7 +137,7 @@ public class ShouldFactAnlysisAction extends Action {
 							}
 						}
 					}
-					//如果追缴表没有查到时间段内的数据置已追缴和未缴为0
+					//濡傛灉杩界即琛ㄦ病鏈夋煡鍒版椂闂存鍐呯殑鏁版嵁缃凡杩界即鍜屾湭缂翠负0
 					else {
 						for(Map<String, Object> map: orderlist){
 							map.put("payment",0);
@@ -154,14 +154,14 @@ public class ShouldFactAnlysisAction extends Action {
 			}
 			//setList(list);
 			String json = JsonUtil.Map2Json(orderlist,pageNum,count, fieldsstr,"id");
-			
+
 			//json = StringUtils.createJson(list);
 			AjaxUtil.ajaxOutput(response, json);
 		}
-		
+
 		return null;
 	}
-	
 
-	
+
+
 }

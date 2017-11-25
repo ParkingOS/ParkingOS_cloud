@@ -13,13 +13,13 @@ public class JdbcFieldUtils {
 	private Object value;
 	private List<Object> valueList;
 	/**
-	 * 
-	 * @param fieldType ×Ö¶ÎÀàĞÍ
-	 * @param fieldName ×Ö¶ÎÃû
-	 * @param operate ²Ù×÷
-	 * @param LongValue Öµ
-	 * @param start ¿ªÊ¼Öµ
-	 * @param end ½áÊøÖµ
+	 *
+	 * @param fieldType å­—æ®µç±»å‹
+	 * @param fieldName å­—æ®µå
+	 * @param operate æ“ä½œ
+	 * @param LongValue å€¼
+	 * @param start å¼€å§‹å€¼
+	 * @param end ç»“æŸå€¼
 	 */
 	public JdbcFieldUtils(int fieldType,String fieldName,int operate,Object value,Object start,Object end){
 		this.fieldName = fieldName;
@@ -29,7 +29,7 @@ public class JdbcFieldUtils {
 		this.value = value;
 		this.fieldType = fieldType;
 	}
-	
+
 	public JdbcFieldUtils(int fieldType,String fieldName,int operate,Object value,Object start,Object end, List valueList) {
 		this.fieldName = fieldName;
 		this.operate = operate;
@@ -95,5 +95,5 @@ public class JdbcFieldUtils {
 		this.value = value;
 	}
 
-	
+
 }

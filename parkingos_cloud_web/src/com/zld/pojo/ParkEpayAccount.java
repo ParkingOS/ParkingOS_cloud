@@ -4,19 +4,19 @@ import java.io.Serializable;
 
 public class ParkEpayAccount implements Serializable {
 	private Long id = -1L;
-	private Long comid = -1L;//³µ³¡±àºÅ
-	private Double amount = 0d;//½ğ¶î
-	private Integer type = 0;//0³äÖµ 1ÌáÏÖ£¬2·µÏÖ£¨ÒÑ·ÏÆú£©
-	private Long create_time;//¼ÇÂ¼Ê±¼ä
-	private String remark;//ËµÃ÷
-	private Long uid = -1L;//ÊÕ·ÑÔ±ÕË»§
-	private Integer source = 0;//À´Ô´£¬0£ºÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©£¬1£º·µÏÖ£¬2£º²´³µ·Ñ£¬3£ºÍÆ¼ö½±£¬4£º²¹½»ÏÖ½ğ£¨ÒÑ·ÏÆú£©£¬5£º³µ³¡ÌáÏÖ£¬6£ºÍ£³µ±¦ÅÅĞĞ°ñÖÜ½±£¬7£º×·½ÉÍ£³µ·Ñ£¬8£º³µÖ÷Ô¤¸¶Í£³µ·Ñ£¬9£ºÔ¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©£¬10£ºÔ¤¸¶²¹½É£¨Ô¤¸¶½ğ¶î²»×ã£© 11£º¶©µ¥ÍË¿î
-	private Long orderid = -1L;//¶©µ¥±àºÅ
-	private Long withdraw_id = -1L;//ÌáÏÖ¼ÇÂ¼±àºÅ
-	private Long berthseg_id = -1L;//²úÉúÕâ±ÊÁ÷Ë®ËùÔÚµÄ²´Î»¶Î±àºÅ
-	private Long berth_id = -1L;//²úÉúÕâ±ÊÁ÷Ë®ËùÔÚµÄ²´Î»±àºÅ
-	private Long groupid = -1L;//ÔËÓª¼¯ÍÅÕËºÅ
-	private Integer is_delete = 0;//ÕËÄ¿Á÷Ë®×´Ì¬ 0£ºÕı³£ 1£ºÉ¾³ı
+	private Long comid = -1L;//è½¦åœºç¼–å·
+	private Double amount = 0d;//é‡‘é¢
+	private Integer type = 0;//0å……å€¼ 1æç°ï¼Œ2è¿”ç°ï¼ˆå·²åºŸå¼ƒï¼‰
+	private Long create_time;//è®°å½•æ—¶é—´
+	private String remark;//è¯´æ˜
+	private Long uid = -1L;//æ”¶è´¹å‘˜è´¦æˆ·
+	private Integer source = 0;//æ¥æºï¼Œ0ï¼šåœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰ï¼Œ1ï¼šè¿”ç°ï¼Œ2ï¼šæ³Šè½¦è´¹ï¼Œ3ï¼šæ¨èå¥–ï¼Œ4ï¼šè¡¥äº¤ç°é‡‘ï¼ˆå·²åºŸå¼ƒï¼‰ï¼Œ5ï¼šè½¦åœºæç°ï¼Œ6ï¼šåœè½¦å®æ’è¡Œæ¦œå‘¨å¥–ï¼Œ7ï¼šè¿½ç¼´åœè½¦è´¹ï¼Œ8ï¼šè½¦ä¸»é¢„ä»˜åœè½¦è´¹ï¼Œ9ï¼šé¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰ï¼Œ10ï¼šé¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜é‡‘é¢ä¸è¶³ï¼‰ 11ï¼šè®¢å•é€€æ¬¾
+	private Long orderid = -1L;//è®¢å•ç¼–å·
+	private Long withdraw_id = -1L;//æç°è®°å½•ç¼–å·
+	private Long berthseg_id = -1L;//äº§ç”Ÿè¿™ç¬”æµæ°´æ‰€åœ¨çš„æ³Šä½æ®µç¼–å·
+	private Long berth_id = -1L;//äº§ç”Ÿè¿™ç¬”æµæ°´æ‰€åœ¨çš„æ³Šä½ç¼–å·
+	private Long groupid = -1L;//è¿è¥é›†å›¢è´¦å·
+	private Integer is_delete = 0;//è´¦ç›®æµæ°´çŠ¶æ€ 0ï¼šæ­£å¸¸ 1ï¼šåˆ é™¤
 	public Long getId() {
 		return id;
 	}
@@ -117,6 +117,6 @@ public class ParkEpayAccount implements Serializable {
 	public void setIs_delete(Integer is_delete) {
 		this.is_delete = is_delete;
 	}
-	
-	
+
+
 }

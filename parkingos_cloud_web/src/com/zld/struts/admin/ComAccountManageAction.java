@@ -21,7 +21,7 @@ import com.zld.utils.RequestUtil;
 
 
 /**
- * ÌáÏÖ¹«Ë¾ÕÊ»§
+ * æç°å…¬å¸å¸æˆ·
  * @author Administrator
  *
  */
@@ -29,22 +29,22 @@ public class ComAccountManageAction extends Action{
 
 	@Autowired
 	private DataBaseService daService;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long operater = (Long)request.getSession().getAttribute("loginuin");
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		Long groupid = RequestUtil.getLong(request, "groupid", -1L);
 		Long cityid = RequestUtil.getLong(request, "cityid", -1L);
-		Integer type = RequestUtil.getInteger(request, "type", 0);//ÕË»§ÀàĞÍ 0:¹«Ë¾£¬1¸öÈË 2¶Ô¹«
+		Integer type = RequestUtil.getInteger(request, "type", 0);//è´¦æˆ·ç±»å‹ 0:å…¬å¸ï¼Œ1ä¸ªäºº 2å¯¹å…¬
 		if(operater == null){
 			response.sendRedirect("login.do");
 			return null;
 		}
-		
+
 		if(action.equals("")){
 			request.setAttribute("comid", comid);
 			request.setAttribute("groupid", groupid);
@@ -74,7 +74,7 @@ public class ComAccountManageAction extends Action{
 			String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
-		}else if(action.equals("create")){//Ìí¼ÓÕÊºÅ
+		}else if(action.equals("create")){//æ·»åŠ å¸å·
 			List<Object> pList = new ArrayList<Object>();
 			if(comid > -1){
 				pList.add(comid);
@@ -106,12 +106,12 @@ public class ComAccountManageAction extends Action{
 			int result = 0;
 			if(!card_number.equals("")&&!mobile.equals("")&&!bank_name.equals("")){
 				result = daService.update("insert into com_account_tb (comid,uin,name,card_number,mobile,bank_name," +
-						"note,atype,area,bank_pint,type,state,city,pay_type,pay_date,use,bank_no,groupid,cityid)" +
-						" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+								"note,atype,area,bank_pint,type,state,city,pay_type,pay_date,use,bank_no,groupid,cityid)" +
+								" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 						new Object[]{comid,uin,name,card_number,mobile,bank_name,note,atype,area,bank_point,type,0,city,pay_type,pay_date,use,bank_no,groupid,cityid});
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
-		}else if(action.equals("edit")){//±à¼­ÕÊºÅ
+		}else if(action.equals("edit")){//ç¼–è¾‘å¸å·
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			String name =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
 			String card_number =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "card_number"));
@@ -130,7 +130,7 @@ public class ComAccountManageAction extends Action{
 			int result = 0;
 			if(!card_number.equals("")&&!mobile.equals("")&&!bank_name.equals("")){
 				result = daService.update("update com_account_tb set name=?,card_number=?,mobile=?,bank_name=?," +
-						"note=?,atype=?,area=?,bank_pint=?,state=?,city=?,pay_type=?,pay_date=?,use=?,bank_no=? where id=? " ,
+								"note=?,atype=?,area=?,bank_pint=?,state=?,city=?,pay_type=?,pay_date=?,use=?,bank_no=? where id=? " ,
 						new Object[]{name,card_number,mobile,bank_name,note,atype,area,bank_point,state,city,pay_type,pay_date,use,bank_no,id});
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
@@ -146,5 +146,5 @@ public class ComAccountManageAction extends Action{
 		}
 		return null;
 	}
-	
+
 }

@@ -1,17 +1,10 @@
 package com.zld.struts.admin;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import net.sf.json.JSONObject;
-
+import com.zld.AjaxUtil;
+import com.zld.CustomDefind;
+import com.zld.impl.CommonMethods;
+import com.zld.service.PgOnlyReadService;
+import com.zld.utils.*;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -19,62 +12,71 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.zld.AjaxUtil;
-import com.zld.CustomDefind;
-import com.zld.impl.CommonMethods;
-import com.zld.service.DataBaseService;
-import com.zld.service.PgOnlyReadService;
-import com.zld.utils.GetLocalCode;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.ParkingMap;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.StringUtils;
-import com.zld.utils.TimeTools;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 
 public class GetDatas extends Action{
-	
+
 	@Autowired
 	PgOnlyReadService dataBaseService;
 	@Autowired
 	private PgOnlyReadService readService;
 	@Autowired
 	CommonMethods commonMethods;
-	
+
 	Logger logger = Logger.getLogger(GetDatas.class);
-	
+
 	@SuppressWarnings("unused")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		String userId = (String)request.getSession().getAttribute("userid");
-	   
+
 		if(userId==null&&action.indexOf("lott")==-1){
 			response.sendRedirect("login.do");
 			return null;
 		}
-		 if(action.equals("markets")){
+		if(action.equals("markets")){
 			List<Map<String,Object>> tradsList = dataBaseService.getAll("select id,nickname from user_info_tb where state =? and comid=? and (auth_flag=? or auth_flag=?) ",
 					new Object[]{0,0,5,11});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("nickname")+"\"}";
 				}
 			}
-			
 			result+="]";
 			AjaxUtil.ajaxOutput(response, result);
 		}else if(action.equals("getpark")){
 			Long id =RequestUtil.getLong(request, "id", -1L);
 			List<Map<String,Object>> tradsList = dataBaseService.getAll("select id,company_name from com_info_tb  where uid =? ",
 					new Object[]{id});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("company_name")+"\"}";
+				}
+			}
+			result+="]";
+			AjaxUtil.ajaxOutput(response, result);
+		}else if(action.equals("getcartype")){
+			Long id =RequestUtil.getLong(request, "id", -1L);
+			Long groupid =RequestUtil.getLong(request, "groupid", -1L);
+			List<Map<String,Object>> tradsList =null;
+			if(id!=-1){
+				tradsList=dataBaseService.getAll("select id,name from car_type_tb  where comid =? and is_delete=? ",new Object[]{id,0});
+			}else if(groupid!=-1){
+				tradsList=dataBaseService.getAll("select id,name from car_type_tb  where comid in (select " +
+						"id from com_info_tb where groupid=?) and is_delete=? ",new Object[]{groupid,0});
+			}
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
+			if(tradsList!=null&&tradsList.size()>0){
+				for(Map map : tradsList){
+					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("name")+"\"}";
 				}
 			}
 			result+="]";
@@ -84,7 +86,7 @@ public class GetDatas extends Action{
 			// Long uin = (Long)request.getSession().getAttribute("loginuin");
 			List<Map <String,Object>> tradsList= dataBaseService.getAll("select id,nickname from user_info_tb where comid=? ",
 					new Object[]{id});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("nickname")+"\"}";
@@ -97,28 +99,28 @@ public class GetDatas extends Action{
 		}
 		else if(action.equals("getuserbyuin")){
 			//Long id =RequestUtil.getLong(request, "id", -1L);
-			 //Long uin = (Long)request.getSession().getAttribute("loginuin");
+			//Long uin = (Long)request.getSession().getAttribute("loginuin");
 			List<Map<String,Object>> tradsList=null;
-			 Long cityid = (Long)request.getSession().getAttribute("cityid");
-			 Long comid = (Long)request.getSession().getAttribute("comid");
-			 Long groupid = (Long)request.getSession().getAttribute("groupid");
-			 
-		    if(cityid!=null && cityid > 0)
+			Long cityid = (Long)request.getSession().getAttribute("cityid");
+			Long comid = (Long)request.getSession().getAttribute("comid");
+			Long groupid = (Long)request.getSession().getAttribute("groupid");
+
+			if(cityid!=null && cityid > 0)
 			{
-			 tradsList = dataBaseService.getAll("select id,nickname from user_info_tb where cityid=? ",
-					new Object[]{cityid});
+				tradsList = dataBaseService.getAll("select id,nickname from user_info_tb where cityid=? ",
+						new Object[]{cityid});
 			}
-		    if(groupid!=null && groupid > 0)
+			if(groupid!=null && groupid > 0)
 			{
-			 tradsList = dataBaseService.getAll("select id,nickname from user_info_tb where groupid=? ",
-					new Object[]{groupid});
+				tradsList = dataBaseService.getAll("select id,nickname from user_info_tb where groupid=? ",
+						new Object[]{groupid});
 			}
-		    if(comid!=null && comid>0)
+			if(comid!=null && comid>0)
 			{
-			 tradsList = dataBaseService.getAll("select id,nickname from user_info_tb where comid=? ",
-					new Object[]{comid});
+				tradsList = dataBaseService.getAll("select id,nickname from user_info_tb where comid=? ",
+						new Object[]{comid});
 			}
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("nickname")+"\"}";
@@ -126,12 +128,12 @@ public class GetDatas extends Action{
 			}
 			result+="]";
 			result = result.replace("null", "");
-			 logger.error("getuserbyuin cityid:"+cityid+",comid:"+comid+",groupid:"+groupid);
+			logger.error("getuserbyuin cityid:"+cityid+",comid:"+comid+",groupid:"+groupid);
 			AjaxUtil.ajaxOutput(response, result);
 		}
 		else if(action.equals("getvalue")){
 			String type = RequestUtil.getString(request, "type");
-			Long id =RequestUtil.getLong(request, "id", -1L); 
+			Long id =RequestUtil.getLong(request, "id", -1L);
 			String name =id+"";
 			if(type.equals("parkname")){
 				name = ParkingMap.getParkName(id);
@@ -158,7 +160,7 @@ public class GetDatas extends Action{
 		}else if(action.equals("getpname")){
 			Long comid = RequestUtil.getLong(request, "id", -1L);
 			List<Map<String,Object>>  pList = null;
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(comid!=-1){
 				Long ntime = System.currentTimeMillis()/1000;
 				String sql = "select id,p_name from product_package_tb where (comid=? ";
@@ -173,9 +175,11 @@ public class GetDatas extends Action{
 					params.add(comidoth);
 					sql += " or comid = ? ";
 				}
-				params.add(ntime+30*24*60*60);
+//				params.add(0);
+//				params.add(ntime+30*24*60*60);
 				params.add(0);
-				pList = dataBaseService.getAll(sql +") and limitday >? and state=? ",params,1,Integer.MAX_VALUE);
+				/*pList = dataBaseService.getAll(sql +") and is_delete=? and limitday >? and state=? ",params,1,Integer.MAX_VALUE);*/
+				pList = dataBaseService.getAll(sql +") and is_delete=? ",params,1,Integer.MAX_VALUE);
 				if(pList!=null&&pList.size()>0){
 					for(Map map : pList){
 						result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("p_name")+"\"}";
@@ -184,12 +188,29 @@ public class GetDatas extends Action{
 			}
 			result+="]";
 			AjaxUtil.ajaxOutput(response, result);
-		}else if(action.equals("getpass")){//»ñÈ¡Í¨µÀÁĞ±í
+		}else if(action.equals("getpackage")){
+			Long groupid = RequestUtil.getLong(request, "id", -1L);
+			List<Map<String,Object>>  pList = null;
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
+			if(groupid!=-1){
+				Long ntime = System.currentTimeMillis()/1000;
+				String sql = "select id,p_name from product_package_tb where comid in(select id from com_info_tb " +
+						"where groupid =?  ";
+				pList = dataBaseService.getAll(sql +") and is_delete=? ",new Object[]{groupid,0});
+				if(pList!=null&&pList.size()>0){
+					for(Map map : pList){
+						result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("p_name")+"\"}";
+					}
+				}
+			}
+			result+="]";
+			AjaxUtil.ajaxOutput(response, result);
+		}else if(action.equals("getpass")){//è·å–é€šé“åˆ—è¡¨
 			Long worksite_id = RequestUtil.getLong(request, "id", -1L);
 			String sql = "select * from com_pass_tb where worksite_id=?";
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 			list = dataBaseService.getAll(sql, new Object[]{worksite_id});
-			String result = "[{\"value_no\":\"\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("passname")+"\"}";
@@ -197,12 +218,12 @@ public class GetDatas extends Action{
 			}
 			result += "]";
 			AjaxUtil.ajaxOutput(response, result);
-		}else if(action.equals("getcompass")){//»ñÈ¡³µ³¡ËùÓĞÍ¨µÀÁĞ±í
+		}else if(action.equals("getcompass")){//è·å–è½¦åœºæ‰€æœ‰é€šé“åˆ—è¡¨
 			Long comid = RequestUtil.getLong(request, "id", -1L);
-			String sql = "select * from com_pass_tb where comid=?";
+			String sql = "select * from com_pass_tb where comid=? and state= ? ";
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
-			list = dataBaseService.getAll(sql, new Object[]{comid});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			list = dataBaseService.getAll(sql, new Object[]{comid,0});
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("passname")+"\"}";
@@ -210,77 +231,77 @@ public class GetDatas extends Action{
 			}
 			result += "]";
 			AjaxUtil.ajaxOutput(response, result);
-		}else if(action.equals("getsubcoms")){//»ñÈ¡³µ³¡ÒÔ¼°×Ó³µ³¡
-			 Long comid = RequestUtil.getLong(request, "id", -1L);
-			 String sql = "select * from com_info_tb where pid=? or id = ? order by id desc";
-			 List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
-			 list = dataBaseService.getAll(sql, new Object[]{comid,comid});
-			 String result = "[{\"value_no\":\"\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
-			 if(!list.isEmpty()){
-				 for(Map map : list){
-					 result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("company_name")+"\"}";
-				 }
-			 }
-			 result += "]";
-			 AjaxUtil.ajaxOutput(response, result);
-		 }
-		/*else if(action.equals("addlott")){//±£´æÖĞ½±
+		}else if(action.equals("getsubcoms")){//è·å–è½¦åœºä»¥åŠå­è½¦åœº
+			Long comid = RequestUtil.getLong(request, "id", -1L);
+			String sql = "select * from com_info_tb where pid=? or id = ? order by id desc";
+			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+			list = dataBaseService.getAll(sql, new Object[]{comid,comid});
+			String result = "[{\"value_no\":\"\",\"value_name\":\"è¯·é€‰æ‹©\"}";
+			if(!list.isEmpty()){
+				for(Map map : list){
+					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("company_name")+"\"}";
+				}
+			}
+			result += "]";
+			AjaxUtil.ajaxOutput(response, result);
+		}
+		/*else if(action.equals("addlott")){//ä¿å­˜ä¸­å¥–
 			Long orderId = RequestUtil.getLong(request, "orderid", -1L);
 			Integer lott = RequestUtil.getInteger(request, "lott", -1);
 			Long uin = dataBaseService.getLong("select uin from order_tb where id=?",new Object[]{orderId});
-			//ÊÇ·ñÊÇ
+			//æ˜¯å¦æ˜¯
 			Long count  = dataBaseService.getLong("select count(Id) from lottery_tb where orderid=? and lottery_result>?",
 					new Object[]{orderId,-1});
 			int ret =0;
-			if(count>0){//Î´ÉèÖÃ¹ı½±Æ·
+			if(count>0){//æœªè®¾ç½®è¿‡å¥–å“
 				ret=-1;
 			}else {
-			
+
 				List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-				//Ğ´ÈëÓÃ»§Ã÷Ï¸
+				//å†™å…¥ç”¨æˆ·æ˜ç»†
 				Map<String, Object> userAccountSqlMap = new HashMap<String, Object>();
-				//¸üĞÂ³é½±½á¹û
+				//æ›´æ–°æŠ½å¥–ç»“æœ
 				Map<String, Object> lotterySqlMap = new HashMap<String, Object>();
-				//¸üĞÂ³µÖ÷ÕË»§
+				//æ›´æ–°è½¦ä¸»è´¦æˆ·
 				Map<String, Object> userSqlMap = new HashMap<String, Object>();
 				userSqlMap.put("sql", "update user_info_tb set balance = balance+? where id=? ");
 				userSqlMap.put("values", new Object[]{lott+1,uin});
 				if(lott<3)
 					bathSql.add(userSqlMap);
-				
+
 				userAccountSqlMap.put("sql", "insert into user_account_tb(uin,amount,type,create_time,remark,pay_type) values(?,?,?,?,?,?)");
-				userAccountSqlMap.put("values",  new Object[]{uin,lott+1,0,System.currentTimeMillis()/1000,"³äÖµ",8});
+				userAccountSqlMap.put("values",  new Object[]{uin,lott+1,0,System.currentTimeMillis()/1000,"å……å€¼",8});
 				if(lott<3)
 					bathSql.add(userAccountSqlMap);
-				
+
 				lotterySqlMap.put("sql", "update lottery_tb set lottery_result = ? ,create_time=? where orderid=?");
 				lotterySqlMap.put("values", new Object[]{lott,System.currentTimeMillis()/1000,orderId});
 				bathSql.add(lotterySqlMap);
-				//ÅúÁ¿¸üĞÂ
+				//æ‰¹é‡æ›´æ–°
 				boolean result = dataBaseService.bathUpdate(bathSql);
 				if(result)
 					ret=1;
 			}
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}*/
-		else if(action.equals("lottery")){//²éÑ¯ÊÇ·ñ¿ÉÒÔ³é½±
+		else if(action.equals("lottery")){//æŸ¥è¯¢æ˜¯å¦å¯ä»¥æŠ½å¥–
 			Long orderId = RequestUtil.getLong(request, "id", -1L);
 			Map orderMap = dataBaseService.getMap("select uin from order_tb where id  = ? ", new Object[]{orderId});
 			Long uin = -1L;
 			if(orderMap!=null&&orderMap.get("uin")!=null)
 				uin= (Long)orderMap.get("uin");
-			Long count = dataBaseService.getLong("select count(id) from lottery_tb where uin =? and create_time>? and lottery_result>? ", 
+			Long count = dataBaseService.getLong("select count(id) from lottery_tb where uin =? and create_time>? and lottery_result>? ",
 					new Object[]{uin,TimeTools.getToDayBeginTime(),0});
-			if(count>0){//½ñÈÕÒÑ³é½±
+			if(count>0){//ä»Šæ—¥å·²æŠ½å¥–
 				count=0L;
-				//System.out.println(">>>>>uin:"+uin+",½ñÌìÒÑ³é¹ı½±!");
+				//System.out.println(">>>>>uin:"+uin+",ä»Šå¤©å·²æŠ½è¿‡å¥–!");
 			}else {
 				count  = dataBaseService.getLong("select count(Id) from lottery_tb where orderid=? and lottery_result<?",
 						new Object[]{orderId,0});
 				/*if(count<1){
-					System.out.println(">>>>>orderid:"+orderId+",½ñÌìÒÑ³é¹ı½±!");
+					System.out.println(">>>>>orderid:"+orderId+",ä»Šå¤©å·²æŠ½è¿‡å¥–!");
 				}else {
-					System.out.println(">>>>>orderid:"+orderId+",½ñÌì¿ÉÒÔ¹ı½±!");
+					System.out.println(">>>>>orderid:"+orderId+",ä»Šå¤©å¯ä»¥è¿‡å¥–!");
 				}*/
 			}
 			System.out.println(">>>>orderid:"+orderId);
@@ -289,7 +310,7 @@ public class GetDatas extends Action{
 		}else if(action.equals("getbonustypes")){
 			List<Map<String,Object>> tradsList = dataBaseService.getAll("select id,name from bonus_type_tb where state =? order by id ",
 					new Object[]{1});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("name")+"\"}";
@@ -301,7 +322,7 @@ public class GetDatas extends Action{
 			List<Map<String, Object>> list = dataBaseService
 					.getAll("select id,nickname from user_info_tb where (auth_flag=? or auth_flag=?) and state=? ",
 							new Object[]{0, 7, 0});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(list != null && !list.isEmpty()){
 				for(Map<String, Object> map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("nickname")+"\"}";
@@ -318,7 +339,7 @@ public class GetDatas extends Action{
 				sql +=" where c.comid=? ";
 			}
 			List<Map<String,Object>> tradsList = dataBaseService.getAllMap(sql, params);
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("passname")+"("+map.get("worksite_name")+")\"}";
@@ -328,7 +349,7 @@ public class GetDatas extends Action{
 			AjaxUtil.ajaxOutput(response, result);
 		}else if(action.equals("getIbeaconPark")){
 			List<Map<String,Object>> tradsList = dataBaseService.getAll("select id,company_name from com_info_tb where state=? and etc =?", new Object[]{0, 1});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("company_name")+"\"}";
@@ -338,7 +359,7 @@ public class GetDatas extends Action{
 			AjaxUtil.ajaxOutput(response, result);
 		}else if(action.equals("getWorksitePark")){
 			List<Map<String,Object>> tradsList = dataBaseService.getAll("select id,company_name from com_info_tb where state=? and id in(select comid from com_worksite_tb)",new Object[]{0});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("company_name")+"\"}";
@@ -353,7 +374,7 @@ public class GetDatas extends Action{
 				tradsList = dataBaseService.getAll("select id,worksite_name from com_worksite_tb where state=? and comid =?",new Object[]{0,comid});
 			else
 				tradsList = dataBaseService.getAll("select id,worksite_name from com_worksite_tb where state=? ", new Object[]{0});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("worksite_name")+"\"}";
@@ -363,7 +384,7 @@ public class GetDatas extends Action{
 			AjaxUtil.ajaxOutput(response, result);
 		}else if(action.equals("getcity")){
 			Map<Integer , String> localDataMap = GetLocalCode.localDataMap;
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"È«²¿\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"å…¨éƒ¨\"}";
 			if(localDataMap != null){
 				String city = CustomDefind.getValue("CITY");
 				if(city != null){
@@ -380,12 +401,12 @@ public class GetDatas extends Action{
 			List<Map<String, Object>> authList=(List<Map<String, Object>>)request.getSession().getAttribute("authlist");
 			String auths ="";
 			if(authList!=null)
-			for(Map<String, Object> aMap : authList){
-				Long aid =(Long)aMap.get("auth_id");
-				if(aid.equals(authId)){
-					auths = (String)aMap.get("sub_auth");
+				for(Map<String, Object> aMap : authList){
+					Long aid =(Long)aMap.get("auth_id");
+					if(aid.equals(authId)){
+						auths = (String)aMap.get("sub_auth");
+					}
 				}
-			}
 			AjaxUtil.ajaxOutput(response, auths);
 		}else if(action.equals("getauthmenu")){
 			Long authId = RequestUtil.getLong(request, "authid", -1L);
@@ -404,7 +425,7 @@ public class GetDatas extends Action{
 				}
 				Collections.sort(menuList,new Comparator<Map<String, Object>>() {
 					public int compare(Map<String, Object> o1,
-							Map<String, Object> o2) {
+									   Map<String, Object> o2) {
 						Integer aid1=(Integer)o1.get("sort");
 						Integer aid2=(Integer)o2.get("sort");
 						Integer comp = (aid1-aid2);
@@ -418,14 +439,14 @@ public class GetDatas extends Action{
 		}else if(action.equals("getprodsum")){
 			Long prodId = RequestUtil.getLong(request, "p_name", -1L);
 			Integer months = RequestUtil.getInteger(request, "months", 0);
-			
+
 			Double total = commonMethods.getProdSum(prodId, months);
 			AjaxUtil.ajaxOutput(response, total+"");
 		}else if(action.equals("getchans")){
 			String sql = "select * from org_channel_tb where state=?";
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 			list = dataBaseService.getAll(sql, new Object[]{0});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("name")+"\"}";
@@ -437,7 +458,7 @@ public class GetDatas extends Action{
 			String sql = "select * from org_city_merchants where state=?";
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 			list = dataBaseService.getAll(sql, new Object[]{0});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("name")+"\"}";
@@ -456,7 +477,7 @@ public class GetDatas extends Action{
 			}else if(groupid > 0){
 				parks = commonMethods.getParks(groupid);
 			}
-			String result = "[{\"value_no\":\"-999\",\"value_name\":\"Ã»ÓĞ³µ³¡¿ÉÑ¡\"}]";
+			String result = "[{\"value_no\":\"-999\",\"value_name\":\"æ²¡æœ‰è½¦åœºå¯é€‰\"}]";
 			if(cityid<0&&groupid<0){
 				AjaxUtil.ajaxOutput(response, result);
 				return null;
@@ -488,22 +509,22 @@ public class GetDatas extends Action{
 			}
 			AjaxUtil.ajaxOutput(response,name);
 		}else if(action.equals("orgtree")){
-			List<Map<String, Object>> orgList = dataBaseService.getAll("select * from zld_orgtype_tb where state=? order by sort", 
+			List<Map<String, Object>> orgList = dataBaseService.getAll("select * from zld_orgtype_tb where state=? order by sort",
 					new Object[]{0});
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			List<Map<String, Object>> curlist = new ArrayList<Map<String,Object>>();
 			Map<String, Object> rootMap = new HashMap<String, Object>();
 			rootMap.put("sysid", "root_0");
 			rootMap.put("treeid", 0);
-			rootMap.put("name", "×éÖ¯ÀàĞÍ");
+			rootMap.put("name", "ç»„ç»‡ç±»å‹");
 			rootMap.put("id", 0L);
 			curlist.add(rootMap);
 			while(curlist != null && !curlist.isEmpty()){
 				list.addAll(curlist);
 				curlist = setTreeList(orgList, curlist);
 			}
-			
-			int selnode = 0;//³õÊ¼×´Ì¬±»Ñ¡ÖĞµÄ½Úµã
+
+			int selnode = 0;//åˆå§‹çŠ¶æ€è¢«é€‰ä¸­çš„èŠ‚ç‚¹
 			if(list.size() > 0){
 				selnode = 1;
 			}
@@ -518,22 +539,22 @@ public class GetDatas extends Action{
 			}
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(list));
 		}else if(action.equals("orgmanage")){
-			List<Map<String, Object>> orgList = dataBaseService.getAll("select * from zld_orgtype_tb where state=? order by sort", 
+			List<Map<String, Object>> orgList = dataBaseService.getAll("select * from zld_orgtype_tb where state=? order by sort",
 					new Object[]{0});
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			List<Map<String, Object>> curlist = new ArrayList<Map<String,Object>>();
 			Map<String, Object> rootMap = new HashMap<String, Object>();
 			rootMap.put("sysid", "root_0");
 			rootMap.put("treeid", 0);
-			rootMap.put("name", "×éÖ¯ÀàĞÍ");
+			rootMap.put("name", "ç»„ç»‡ç±»å‹");
 			rootMap.put("id", 0L);
 			curlist.add(rootMap);
 			while(curlist != null && !curlist.isEmpty()){
 				list.addAll(curlist);
 				curlist = setTreeList(orgList, curlist);
 			}
-			
-			int selnode = 0;//³õÊ¼×´Ì¬±»Ñ¡ÖĞµÄ½Úµã
+
+			int selnode = 0;//åˆå§‹çŠ¶æ€è¢«é€‰ä¸­çš„èŠ‚ç‚¹
 			for(Map<String, Object> map : list){
 				Integer treeid = (Integer)map.get("treeid");
 				Long oid = (Long)map.get("id");
@@ -544,22 +565,22 @@ public class GetDatas extends Action{
 			}
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(list));
 		}else if(action.equals("orgrole")){
-			List<Map<String, Object>> orgList = dataBaseService.getAll("select * from zld_orgtype_tb where state=? order by sort", 
+			List<Map<String, Object>> orgList = dataBaseService.getAll("select * from zld_orgtype_tb where state=? order by sort",
 					new Object[]{0});
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			List<Map<String, Object>> curlist = new ArrayList<Map<String,Object>>();
 			Map<String, Object> rootMap = new HashMap<String, Object>();
 			rootMap.put("sysid", "root_0");
 			rootMap.put("treeid", 0);
-			rootMap.put("name", "×éÖ¯ÀàĞÍ");
+			rootMap.put("name", "ç»„ç»‡ç±»å‹");
 			rootMap.put("id", 0L);
 			curlist.add(rootMap);
 			while(curlist != null && !curlist.isEmpty()){
 				list.addAll(curlist);
 				curlist = setTreeList(orgList, curlist);
 			}
-			
-			int selnode = 0;//³õÊ¼×´Ì¬±»Ñ¡ÖĞµÄ½Úµã
+
+			int selnode = 0;//åˆå§‹çŠ¶æ€è¢«é€‰ä¸­çš„èŠ‚ç‚¹
 			if(list.size() > 0){
 				selnode = 1;
 			}
@@ -576,22 +597,22 @@ public class GetDatas extends Action{
 		}else if(action.equals("functree")){
 			Long oid = RequestUtil.getLong(request, "oid", -1L);
 			if(oid > 0){
-				List<Map<String, Object>> funcList = dataBaseService.getAll("select * from auth_tb where state=? and oid=? order by sort", 
+				List<Map<String, Object>> funcList = dataBaseService.getAll("select * from auth_tb where state=? and oid=? order by sort",
 						new Object[]{0, oid});
 				List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 				List<Map<String, Object>> curlist = new ArrayList<Map<String,Object>>();
 				Map<String, Object> rootMap = new HashMap<String, Object>();
 				rootMap.put("sysid", "root_0");
 				rootMap.put("treeid", 0);
-				rootMap.put("nname", "¹¦ÄÜ¹ÜÀí");
+				rootMap.put("nname", "åŠŸèƒ½ç®¡ç†");
 				rootMap.put("id", 0L);
 				curlist.add(rootMap);
 				while(curlist != null && !curlist.isEmpty()){
 					list.addAll(curlist);
 					curlist = setTreeList(funcList, curlist);
 				}
-				
-				int selnode = 0;//³õÊ¼×´Ì¬±»Ñ¡ÖĞµÄ½Úµã
+
+				int selnode = 0;//åˆå§‹çŠ¶æ€è¢«é€‰ä¸­çš„èŠ‚ç‚¹
 				for(Map<String, Object> map : list){
 					Integer treeid = (Integer)map.get("treeid");
 					Long pid = (Long)map.get("id");
@@ -607,7 +628,7 @@ public class GetDatas extends Action{
 			String sql = "select * from zld_orgtype_tb where state=? ";
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 			list = dataBaseService.getAll(sql, new Object[]{0});
-			String result = "[{\"value_no\":\"0\",\"value_name\":\"ÎŞ\"}";
+			String result = "[{\"value_no\":\"0\",\"value_name\":\"æ— \"}";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("name")+"\"}";
@@ -619,7 +640,7 @@ public class GetDatas extends Action{
 			String sql = "select * from auth_tb where state=? ";
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 			list = dataBaseService.getAll(sql, new Object[]{0});
-			String result = "[{\"value_no\":\"0\",\"value_name\":\"ÎŞ\"}";
+			String result = "[{\"value_no\":\"0\",\"value_name\":\"æ— \"}";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("nname")+"\"}";
@@ -633,10 +654,10 @@ public class GetDatas extends Action{
 			Map<String, Object> rootMap = new HashMap<String, Object>();
 			rootMap.put("sysid", "root_0");
 			rootMap.put("treeid", 0);
-			rootMap.put("name", "³ÇÊĞ¹ÜÀí");
+			rootMap.put("name", "åŸå¸‚ç®¡ç†");
 			rootMap.put("id", 0L);
 			list.add(rootMap);
-			int selnode = 0;//³õÊ¼×´Ì¬±»Ñ¡ÖĞµÄ½Úµã
+			int selnode = 0;//åˆå§‹çŠ¶æ€è¢«é€‰ä¸­çš„èŠ‚ç‚¹
 			if(list.size() > 0){
 				selnode = 1;
 			}
@@ -644,7 +665,7 @@ public class GetDatas extends Action{
 			Map<String, Object> child1 = new HashMap<String, Object>();
 			child1.put("sysid", "0_1");
 			child1.put("treeid", "1");
-			child1.put("name", "Ô±¹¤¹ÜÀí");
+			child1.put("name", "å‘˜å·¥ç®¡ç†");
 			child1.put("url", "citymember.do?cityid="+cityid);
 			list.add(child1);
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(list));
@@ -654,10 +675,10 @@ public class GetDatas extends Action{
 			Map<String, Object> rootMap = new HashMap<String, Object>();
 			rootMap.put("sysid", "root_0");
 			rootMap.put("treeid", 0);
-			rootMap.put("name", "ÔËÓª¼¯ÍÅ¹ÜÀí");
+			rootMap.put("name", "è¿è¥é›†å›¢ç®¡ç†");
 			rootMap.put("id", 0L);
 			list.add(rootMap);
-			int selnode = 0;//³õÊ¼×´Ì¬±»Ñ¡ÖĞµÄ½Úµã
+			int selnode = 0;//åˆå§‹çŠ¶æ€è¢«é€‰ä¸­çš„èŠ‚ç‚¹
 			if(list.size() > 0){
 				selnode = 1;
 			}
@@ -665,31 +686,31 @@ public class GetDatas extends Action{
 			Map<String, Object> child1 = new HashMap<String, Object>();
 			child1.put("sysid", "0_1");
 			child1.put("treeid", "1");
-			child1.put("name", "Ô±¹¤¹ÜÀí");
+			child1.put("name", "å‘˜å·¥ç®¡ç†");
 			child1.put("url", "groupmember.do?groupid="+groupid);
 			list.add(child1);
 			Map<String, Object> child2 = new HashMap<String, Object>();
 			child2.put("sysid", "0_2");
 			child2.put("treeid", "2");
-			child2.put("name", "ÌáÏÖÕË»§");
+			child2.put("name", "æç°è´¦æˆ·");
 			child2.put("url", "");
 			list.add(child2);
 			Map<String, Object> child3 = new HashMap<String, Object>();
 			child3.put("sysid", "2_201");
 			child3.put("treeid", "201");
-			child3.put("name", "¹«Ë¾ÕË»§");
+			child3.put("name", "å…¬å¸è´¦æˆ·");
 			child3.put("url", "comaccount.do?type=0&groupid="+groupid);
 			list.add(child3);
 			Map<String, Object> child4 = new HashMap<String, Object>();
 			child4.put("sysid", "2_202");
 			child4.put("treeid", "202");
-			child4.put("name", "¶Ô¹«ÕË»§");
+			child4.put("name", "å¯¹å…¬è´¦æˆ·");
 			child4.put("url", "comaccount.do?type=2&groupid="+groupid);
 			list.add(child4);
 			Map<String, Object> child5 = new HashMap<String, Object>();
 			child5.put("sysid", "2_203");
 			child5.put("treeid", "203");
-			child5.put("name", "¸öÈËÕË»§");
+			child5.put("name", "ä¸ªäººè´¦æˆ·");
 			child5.put("url", "comaccount.do?type=1&groupid="+groupid);
 			list.add(child5);
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(list));
@@ -702,10 +723,10 @@ public class GetDatas extends Action{
 			Map<String, Object> rootMap = new HashMap<String, Object>();
 			rootMap.put("sysid", "root_0");
 			rootMap.put("treeid", 0);
-			rootMap.put("name", "µç×ÓÕË»§Ã÷Ï¸");
+			rootMap.put("name", "ç”µå­è´¦æˆ·æ˜ç»†");
 			rootMap.put("id", 0L);
 			list.add(rootMap);
-			int selnode = 0;//³õÊ¼×´Ì¬±»Ñ¡ÖĞµÄ½Úµã
+			int selnode = 0;//åˆå§‹çŠ¶æ€è¢«é€‰ä¸­çš„èŠ‚ç‚¹
 			if(list.size() > 0){
 				selnode = 1;
 			}
@@ -713,28 +734,28 @@ public class GetDatas extends Action{
 			Map<String, Object> child1 = new HashMap<String, Object>();
 			child1.put("sysid", "0_1");
 			child1.put("treeid", "1");
-			child1.put("name", "ÔËÓª¼¯ÍÅµç×ÓÕË»§Ã÷Ï¸");
+			child1.put("name", "è¿è¥é›†å›¢ç”µå­è´¦æˆ·æ˜ç»†");
 			child1.put("url", "statsaccount.do?&statsid="+statsid+
 					"&btime="+btime+"&etime="+etime+"&seltype="+seltype+"&from=4");
 			list.add(child1);
 			Map<String, Object> child2 = new HashMap<String, Object>();
 			child2.put("sysid", "0_2");
 			child2.put("treeid", "2");
-			child2.put("name", "Í£³µ³¡µç×ÓÕË»§Ã÷Ï¸");
+			child2.put("name", "åœè½¦åœºç”µå­è´¦æˆ·æ˜ç»†");
 			child2.put("url", "statsaccount.do?&statsid="+statsid+
 					"&btime="+btime+"&etime="+etime+"&seltype="+seltype+"&from=3");
 			list.add(child2);
 			Map<String, Object> child3 = new HashMap<String, Object>();
 			child3.put("sysid", "0_3");
 			child3.put("treeid", "3");
-			child3.put("name", "ÊÕ·ÑÔ±µç×ÓÕË»§Ã÷Ï¸");
+			child3.put("name", "æ”¶è´¹å‘˜ç”µå­è´¦æˆ·æ˜ç»†");
 			child3.put("url", "statsaccount.do?&statsid="+statsid+
 					"&btime="+btime+"&etime="+etime+"&seltype="+seltype+"&from=2");
 			list.add(child3);
 			Map<String, Object> child4 = new HashMap<String, Object>();
 			child4.put("sysid", "0_4");
 			child4.put("treeid", "4");
-			child4.put("name", "³ÇÊĞÉÌ»§µç×ÓÕË»§Ã÷Ï¸");
+			child4.put("name", "åŸå¸‚å•†æˆ·ç”µå­è´¦æˆ·æ˜ç»†");
 			child4.put("url", "statsaccount.do?&statsid="+statsid+
 					"&btime="+btime+"&etime="+etime+"&seltype="+seltype+"&from=5");
 			list.add(child4);
@@ -750,7 +771,7 @@ public class GetDatas extends Action{
 			}
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 			list = dataBaseService.getAllMap(sql, params);
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("name")+"\"}";
@@ -766,7 +787,7 @@ public class GetDatas extends Action{
 			params.add(groupid);
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 			list = dataBaseService.getAllMap(sql, params);
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("name")+"\"}";
@@ -784,7 +805,7 @@ public class GetDatas extends Action{
 			params.add(cityid);
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 			list = dataBaseService.getAllMap(sql, params);
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(cityid > 0 && !list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("name")+"\"}";
@@ -808,7 +829,7 @@ public class GetDatas extends Action{
 			params.add(comid);
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 			list = dataBaseService.getAllMap(sql, params);
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(comid > 0 && !list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("berthsec_name")+"\"}";
@@ -817,22 +838,22 @@ public class GetDatas extends Action{
 			result += "]";
 			AjaxUtil.ajaxOutput(response, result);
 		}else if(action.equals("getberth")){
-			 Long comid = RequestUtil.getLong(request, "id", -1L);
-			 String sql = "select * from com_park_tb c where berthsec_id = ? and  is_delete=?";
-			 List<Object> params = new ArrayList<Object>();
-			 params.add(comid);
-			 params.add(0);
-			 List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
-			 list = dataBaseService.getAllMap(sql, params);
-			 String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
-			 if(comid > 0 && !list.isEmpty()){
-				 for(Map map : list){
-					 result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("cid")+"\"}";
-				 }
-			 }
-			 result += "]";
-			 AjaxUtil.ajaxOutput(response, result);
-		 }else if(action.equals("getinspects")){
+			Long comid = RequestUtil.getLong(request, "id", -1L);
+			String sql = "select * from com_park_tb c where berthsec_id = ? and  is_delete=?";
+			List<Object> params = new ArrayList<Object>();
+			params.add(comid);
+			params.add(0);
+			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+			list = dataBaseService.getAllMap(sql, params);
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
+			if(comid > 0 && !list.isEmpty()){
+				for(Map map : list){
+					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("cid")+"\"}";
+				}
+			}
+			result += "]";
+			AjaxUtil.ajaxOutput(response, result);
+		}else if(action.equals("getinspects")){
 			Long comid = RequestUtil.getLong(request, "id", -1L);
 //			String sql = "select i.inspector_id,u.nickname from work_berthsec_tb b,work_inspector_tb i,user_info_tb u where b.berthsec_id = ? and  b.is_delete=? and " +
 //					"i.inspect_group_id = b.inspect_group_id and i.state=? and u.state=? and u.id = i.inspector_id ";
@@ -843,12 +864,12 @@ public class GetDatas extends Action{
 			List<Object> params = new ArrayList<Object>();
 			params.add(comid);
 			params.add(0);
-			 params.add(0);
-			 params.add(0);
-			 params.add(0);
+			params.add(0);
+			params.add(0);
+			params.add(0);
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 			list = dataBaseService.getAllMap(sql, params);
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(comid > 0 && !list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("inspector_id")+"\",\"value_name\":\""+map.get("nickname")+"\"}";
@@ -857,29 +878,29 @@ public class GetDatas extends Action{
 			result += "]";
 			AjaxUtil.ajaxOutput(response, result);
 		}else if(action.equals("getinspectsbygroup")){
-			 Long comid = RequestUtil.getLong(request, "groupid", -1L);
+			Long comid = RequestUtil.getLong(request, "groupid", -1L);
 //			 String sql = "select i.inspector_id,u.nickname from work_berthsec_tb b,work_inspector_tb i,user_info_tb u where b.berthsec_id  in(select id from com_berthsecs_tb where comid in(select id from com_info_tb where groupid = ?)) and  b.is_delete=? and " +
 //					 "i.inspect_group_id = b.inspect_group_id and i.state=? and u.state=? and  u.id = i.inspector_id ";
-			 String sql = "select w.inspector_id,u.nickname from work_inspector_tb w,user_info_tb u where w.inspect_group_id in" +
-					 "(select w.inspect_group_id from com_berthsecs_tb c ,work_berthsec_tb w where c.comid in(select id from " +
-					 "com_info_tb where groupid =? ) and w.berthsec_id = c.id and w.inspect_group_id>-1) and u.id = w.inspector_id " ;
-					 //"i.state=? and u.state=?";
-			 List<Object> params = new ArrayList<Object>();
-			 params.add(comid);
+			String sql = "select w.inspector_id,u.nickname from work_inspector_tb w,user_info_tb u where w.inspect_group_id in" +
+					"(select w.inspect_group_id from com_berthsecs_tb c ,work_berthsec_tb w where c.comid in(select id from " +
+					"com_info_tb where groupid =? ) and w.berthsec_id = c.id and w.inspect_group_id>-1) and u.id = w.inspector_id " ;
+			//"i.state=? and u.state=?";
+			List<Object> params = new ArrayList<Object>();
+			params.add(comid);
 //			 params.add(0);
 //			 params.add(0);
 //			 params.add(0);
-			 List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
-			 list = dataBaseService.getAllMap(sql, params);
-			 String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
-			 if(comid > 0 && !list.isEmpty()){
-				 for(Map map : list){
-					 result+=",{\"value_no\":\""+map.get("inspector_id")+"\",\"value_name\":\""+map.get("nickname")+"\"}";
-				 }
-			 }
-			 result += "]";
-			 AjaxUtil.ajaxOutput(response, result);
-		 }else if(action.equals("getdici")){
+			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+			list = dataBaseService.getAllMap(sql, params);
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
+			if(comid > 0 && !list.isEmpty()){
+				for(Map map : list){
+					result+=",{\"value_no\":\""+map.get("inspector_id")+"\",\"value_name\":\""+map.get("nickname")+"\"}";
+				}
+			}
+			result += "]";
+			AjaxUtil.ajaxOutput(response, result);
+		}else if(action.equals("getdici")){
 			Long comid = RequestUtil.getLong(request, "id", -1L);
 			String sql = "select * from dici_tb where id not in (select dici_id from com_park_tb where comid=? ) and comid=? and is_delete=? ";
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
@@ -888,7 +909,7 @@ public class GetDatas extends Action{
 			params.add(comid);
 			params.add(0);
 			list = dataBaseService.getAllMap(sql, params);
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(comid > 0 && !list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("code")+"\"}";
@@ -896,7 +917,7 @@ public class GetDatas extends Action{
 			}
 			result += "]";
 			AjaxUtil.ajaxOutput(response, result);
-		}else if(action.equals("getorgusers")){//²éÑ¯×éÖ¯ÀàĞÍÏÂµÄÈË
+		}else if(action.equals("getorgusers")){//æŸ¥è¯¢ç»„ç»‡ç±»å‹ä¸‹çš„äºº
 			Long groupId = RequestUtil.getLong(request, "groupid", -1L);
 			Long cityId = RequestUtil.getLong(request, "cityid", -1L);
 			String sql = "select id,nickname from user_info_tb where state=? ";
@@ -911,7 +932,7 @@ public class GetDatas extends Action{
 				sql +=" and cityid=? ";
 				values = new Object[]{0,cityId};
 			}
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(values!=null){
 				List<Map<String, Object>> list = dataBaseService.getAll(sql, values);
 				if(list!=null&&!list.isEmpty()){
@@ -927,7 +948,7 @@ public class GetDatas extends Action{
 			Long groupid = RequestUtil.getLong(request, "groupid", -1L);
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 			list = dataBaseService.getAll("select id,nickname from user_info_tb where groupid=? and state=? ", new Object[]{groupid,0});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("nickname")+"\"}";
@@ -938,21 +959,23 @@ public class GetDatas extends Action{
 		}
 		else if(action.equals("getcollectors")){
 			Long comid = RequestUtil.getLong(request, "id", -1L);
-			Map<String, Object> groupMap = dataBaseService.getMap("select groupid from com_info_tb where id=? and groupid>? ", 
-					new Object[]{comid, 0});
+//			Map<String, Object> groupMap = dataBaseService.getMap("select groupid from com_info_tb where id=? and groupid>? ",
+//					new Object[]{comid, 0});
 			List<Object> params = new ArrayList<Object>();
 			String sql = "select * from user_info_tb where state<>? and (comid=? ";
 			params.add(1);
 			params.add(comid);
-			if(groupMap != null){
-				Long groupid = (Long)groupMap.get("groupid");
-				sql += " or groupid=?";
-				params.add(groupid);
-			}
+//			if(groupMap != null){
+//				Long groupid = (Long)groupMap.get("groupid");
+//				sql += " or groupid=?";
+//				params.add(groupid);
+//			}
 			sql += " )";
 			List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+			logger.error(sql);
+			logger.error(params);
 			list = dataBaseService.getAllMap(sql, params);
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("nickname")+"\"}";
@@ -964,7 +987,7 @@ public class GetDatas extends Action{
 			Long comid = RequestUtil.getLong(request, "id", -1L);
 			List<Map<String, Object>> tradsList = dataBaseService.getAll("select id,name from free_reasons_tb where comid=? ",
 					new Object[]{comid});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map<String, Object> map : tradsList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("name")+"\"}";
@@ -976,10 +999,10 @@ public class GetDatas extends Action{
 			Long groupid = RequestUtil.getLong(request, "id", -1L);
 			List<Map<String, Object>> list = null;
 			if(groupid > 0){
-				list = dataBaseService.getAll("select id,company_name from com_info_tb where groupid=? and state!=? order by id ", 
+				list = dataBaseService.getAll("select id,company_name from com_info_tb where groupid=? and state!=? order by id ",
 						new Object[]{groupid, 1});
 			}
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(list != null && list.size() > 0){
 				for(Map<String, Object> map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("company_name")+"\"}";
@@ -1008,9 +1031,9 @@ public class GetDatas extends Action{
 			Long cityid = RequestUtil.getLong(request, "cityid", 1L);
 			List<Map<String, Object>> list = null;
 			list = dataBaseService.getAll("select key,value from dictionary_content_tb where cityid=? and did = " +
-					"(select id from dictionary_type_tb where name=?) ", 
+							"(select id from dictionary_type_tb where name=?) ",
 					new Object[]{cityid,name});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(list != null && list.size() > 0){
 				for(Map<String, Object> map : list){
 					result+=",{\"value_no\":\""+map.get("key")+"\",\"value_name\":\""+map.get("value")+"\"}";
@@ -1018,15 +1041,15 @@ public class GetDatas extends Action{
 			}
 			result+="]";
 			AjaxUtil.ajaxOutput(response, result);
-		}else if(action.equals("getCarType")){//»ñÈ¡³µĞÍÁĞ±í
-			 Long comid = RequestUtil.getLong(request, "id", -1L);
-			 List<Map<String, Object>> retList = commonMethods.getCarType(comid);
-			 String result = StringUtils.getJson(retList);
-			 AjaxUtil.ajaxOutput(response, result);
-		 }else if(action.equals("getcitymer")){//²éÑ¯³ÇÊĞÉÌ»§
+		}else if(action.equals("getCarType")){//è·å–è½¦å‹åˆ—è¡¨
+			Long comid = RequestUtil.getLong(request, "id", -1L);
+			List<Map<String, Object>> retList = commonMethods.getCarType(comid);
+			String result = StringUtils.getJson(retList);
+			AjaxUtil.ajaxOutput(response, result);
+		}else if(action.equals("getcitymer")){//æŸ¥è¯¢åŸå¸‚å•†æˆ·
 			List<Map<String, Object>> list = null;
 			list = dataBaseService.getAll("select id,cname from org_city_merchants where state=? ",	new Object[]{0});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(list != null && list.size() > 0){
 				for(Map<String, Object> map : list){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("cname")+"\"}";
@@ -1034,161 +1057,161 @@ public class GetDatas extends Action{
 			}
 			result+="]";
 			AjaxUtil.ajaxOutput(response, result);
-		 }else if(action.equals("getparkbygroupid")){//²éÑ¯³ÇÊĞÉÌ»§
-			 Long groupid = RequestUtil.getLong(request, "groupid", -1L);
-			 if(groupid==-1)
-				 groupid=RequestUtil.getLong(request, "id", -1L);
-			 List<Map<String, Object>> list = null;
-			 list = dataBaseService.getAll("select id,company_name from com_info_tb where groupid=? and state=?",	new Object[]{groupid,0});
-			 String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
-			 if(list != null && list.size() > 0){
-				 for(Map<String, Object> map : list){
-					 result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("company_name")+"\"}";
-				 }
-			 }
-			 result+="]";
-			 AjaxUtil.ajaxOutput(response, result);
-		 }else if(action.equals("getallcitygroups")){
-			 List<Map<String, Object>> list = null;
-			 list = dataBaseService.getAll("select g.id gid,g.name gname,c.id cid,c.name cname  from org_group_tb g " +
-						" left join org_city_merchants c on g.cityid=c.id where c.state=? and g.state=? ",	new Object[]{0,0});
-			 String result ="";
-			 if(list!=null&&!list.isEmpty()){
-				 List<Map<String, Object>> resultMap = new ArrayList<Map<String,Object>>();
-				 for(Map<String, Object> map : list){
-					 Long cid = (Long)map.get("cid");
-					 boolean ishave = false;
-					 for(Map<String, Object>map2 : resultMap){
-						 Long cid1 = (Long) map2.get("cid");
-						 if(cid.equals(cid1)){
+		}else if(action.equals("getparkbygroupid")){//æŸ¥è¯¢åŸå¸‚å•†æˆ·
+			Long groupid = RequestUtil.getLong(request, "groupid", -1L);
+			if(groupid==-1)
+				groupid=RequestUtil.getLong(request, "id", -1L);
+			List<Map<String, Object>> list = null;
+			list = dataBaseService.getAll("select id,company_name from com_info_tb where groupid=? and state=?",	new Object[]{groupid,0});
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
+			if(list != null && list.size() > 0){
+				for(Map<String, Object> map : list){
+					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("company_name")+"\"}";
+				}
+			}
+			result+="]";
+			AjaxUtil.ajaxOutput(response, result);
+		}else if(action.equals("getallcitygroups")){
+			List<Map<String, Object>> list = null;
+			list = dataBaseService.getAll("select g.id gid,g.name gname,c.id cid,c.name cname  from org_group_tb g " +
+					" left join org_city_merchants c on g.cityid=c.id where c.state=? and g.state=? ",	new Object[]{0,0});
+			String result ="";
+			if(list!=null&&!list.isEmpty()){
+				List<Map<String, Object>> resultMap = new ArrayList<Map<String,Object>>();
+				for(Map<String, Object> map : list){
+					Long cid = (Long)map.get("cid");
+					boolean ishave = false;
+					for(Map<String, Object>map2 : resultMap){
+						Long cid1 = (Long) map2.get("cid");
+						if(cid.equals(cid1)){
 							List<Map<String, Object>> groupList =(List<Map<String, Object>>)map2.get("groups");
 							Map<String, Object> group = new HashMap<String, Object>();
 							group.put("gid", map.get("gid"));
 							group.put("gname", map.get("gname"));
 							groupList.add(group);
 							ishave = true;
-						 }
-					 }
-					 if(!ishave){
-						 List<Map<String, Object>> groupList =new ArrayList<Map<String,Object>>();
-						 Map<String, Object> group = new HashMap<String, Object>();
-						 group.put("gid", map.get("gid"));
-						 group.put("gname", map.get("gname"));
-						 groupList.add(group);
-						 Map<String, Object> city = new HashMap<String, Object>();
-						 city.put("cid", map.get("cid"));
-						 city.put("cname", map.get("cname"));
-						 city.put("groups", groupList);
-						 resultMap.add(city);
-					 }
-				 }
-				 AjaxUtil.ajaxOutput(response,JsonUtil.createJson(resultMap));
-			 }
-		 }else if(action.equals("getgroupidbyparkid")){//¸ù¾İ³µ³¡±àºÅ²éÑ¯¼¯ÍÅ±àºÅ
-			 Long parkid = RequestUtil.getLong(request, "parkid", -1L);
-			 String result ="{}";
-			 if(parkid>0){
-				 Map<String, Object> groupMap =  dataBaseService.getMap("select groupid,company_name from com_info_tb where id=? ",
-						 new Object[]{parkid});
-				 if(groupMap!=null){
-					 result = "[{\"groupid\":\""+groupMap.get("groupid")+"\",\"parkname\":\""+groupMap.get("company_name")+"\"}]";
-				 }
-			 }
-			 AjaxUtil.ajaxOutput(response, result);
-		 }else if(action.equals("getberthsegbygroupid")){//¸ù¾İ³µ³¡±àºÅ²éÑ¯¼¯ÍÅ±àºÅ
-			 Long groupid = RequestUtil.getLong(request, "groupid", -1L);
-			 List<Map<String, Object>> list = null;
-			 list = dataBaseService.getAll("select id,berthsec_name from com_berthsecs_tb where comid in(select id from com_info_tb where groupid = ?) and is_active=?", new Object[]{groupid,0});
-			 String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
-			 if(list != null && list.size() > 0){
-				 for(Map<String, Object> map : list){
-					 result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("berthsec_name")+"\"}";
-				 }
-			 }
-			 result+="]";
-			 AjaxUtil.ajaxOutput(response, result);
-		 }else if(action.equals("gettasktype")){
-			 String tasktype = CustomDefind.TASKTYPE;
-			 String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
-			 if(tasktype!=null){
-				 String res[] = tasktype.split("\\|");
-				 for(int i=0;i<res.length;i++){
-					 result+=",{\"value_no\":\""+i+"\",\"value_name\":\""+res[i]+"\"}";
-				 }
-				 result+="]";
+						}
+					}
+					if(!ishave){
+						List<Map<String, Object>> groupList =new ArrayList<Map<String,Object>>();
+						Map<String, Object> group = new HashMap<String, Object>();
+						group.put("gid", map.get("gid"));
+						group.put("gname", map.get("gname"));
+						groupList.add(group);
+						Map<String, Object> city = new HashMap<String, Object>();
+						city.put("cid", map.get("cid"));
+						city.put("cname", map.get("cname"));
+						city.put("groups", groupList);
+						resultMap.add(city);
+					}
+				}
+				AjaxUtil.ajaxOutput(response,JsonUtil.createJson(resultMap));
+			}
+		}else if(action.equals("getgroupidbyparkid")){//æ ¹æ®è½¦åœºç¼–å·æŸ¥è¯¢é›†å›¢ç¼–å·
+			Long parkid = RequestUtil.getLong(request, "parkid", -1L);
+			String result ="{}";
+			if(parkid>0){
+				Map<String, Object> groupMap =  dataBaseService.getMap("select groupid,company_name from com_info_tb where id=? ",
+						new Object[]{parkid});
+				if(groupMap!=null){
+					result = "[{\"groupid\":\""+groupMap.get("groupid")+"\",\"parkname\":\""+groupMap.get("company_name")+"\"}]";
+				}
+			}
+			AjaxUtil.ajaxOutput(response, result);
+		}else if(action.equals("getberthsegbygroupid")){//æ ¹æ®è½¦åœºç¼–å·æŸ¥è¯¢é›†å›¢ç¼–å·
+			Long groupid = RequestUtil.getLong(request, "groupid", -1L);
+			List<Map<String, Object>> list = null;
+			list = dataBaseService.getAll("select id,berthsec_name from com_berthsecs_tb where comid in(select id from com_info_tb where groupid = ?) and is_active=?", new Object[]{groupid,0});
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
+			if(list != null && list.size() > 0){
+				for(Map<String, Object> map : list){
+					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("berthsec_name")+"\"}";
+				}
+			}
+			result+="]";
+			AjaxUtil.ajaxOutput(response, result);
+		}else if(action.equals("gettasktype")){
+			String tasktype = CustomDefind.TASKTYPE;
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
+			if(tasktype!=null){
+				String res[] = tasktype.split("\\|");
+				for(int i=0;i<res.length;i++){
+					result+=",{\"value_no\":\""+i+"\",\"value_name\":\""+res[i]+"\"}";
+				}
+				result+="]";
 
-			 }
-			 AjaxUtil.ajaxOutput(response, result);
-		 }else if(action.equals("getdetailtype")){
-			 Long id = RequestUtil.getLong(request, "id", -1L);
-			 if(id>=0){
-				 String key = "TASKDETAIl"+id;
-				 String taskdetail = CustomDefind.getValue(key);
-				 String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
-				 if(taskdetail!=null){
-					 String res[] = taskdetail.split("\\|");
-					 for(int i=0;i<res.length;i++){
-						 result+=",{\"value_no\":\""+i+"\",\"value_name\":\""+res[i]+"\"}";
-					 }
-					 result+="]";
+			}
+			AjaxUtil.ajaxOutput(response, result);
+		}else if(action.equals("getdetailtype")){
+			Long id = RequestUtil.getLong(request, "id", -1L);
+			if(id>=0){
+				String key = "TASKDETAIl"+id;
+				String taskdetail = CustomDefind.getValue(key);
+				String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
+				if(taskdetail!=null){
+					String res[] = taskdetail.split("\\|");
+					for(int i=0;i<res.length;i++){
+						result+=",{\"value_no\":\""+i+"\",\"value_name\":\""+res[i]+"\"}";
+					}
+					result+="]";
 
-				 }
-				 AjaxUtil.ajaxOutput(response, result);
-			 }
-		 }
-		 else if(action.equals("getdetailtypename")){
-			 Long id = RequestUtil.getLong(request, "id", -1L);
-			 int value = RequestUtil.getInteger(request, "value", -1);
-			 if(id>=0){
-				 String key = "TASKDETAIl"+id;
-				 String taskdetail = CustomDefind.getValue(key);
-				 String result = "";
-				 if(taskdetail!=null){
-					 String res[] = taskdetail.split("\\|");
-					 result = res[value];
+				}
+				AjaxUtil.ajaxOutput(response, result);
+			}
+		}
+		else if(action.equals("getdetailtypename")){
+			Long id = RequestUtil.getLong(request, "id", -1L);
+			int value = RequestUtil.getInteger(request, "value", -1);
+			if(id>=0){
+				String key = "TASKDETAIl"+id;
+				String taskdetail = CustomDefind.getValue(key);
+				String result = "";
+				if(taskdetail!=null){
+					String res[] = taskdetail.split("\\|");
+					result = res[value];
 
-				 }
-				 AjaxUtil.ajaxOutput(response, result);
-			 }
-		 }
+				}
+				AjaxUtil.ajaxOutput(response, result);
+			}
+		}
 		else if(action.equals("getcid")){
-			 Long id = RequestUtil.getLong(request, "id", -1L);
-			 Map map = dataBaseService.getMap("select cid from com_park_tb where id = ?", new Object[]{id});
-			 String result = "Î´Öª";
-			 if(map!=null&&map.get("cid")!=null)
-				 result = map.get("cid")+"";
-			 AjaxUtil.ajaxOutput(response, result);
-		 }
-		 else if(action.equals("getparksbygroup")){//¸ù¾İ¼¯ÍÅ±àºÅ²éÑ¯³µ³¡±àºÅ
-			 Long groupid = RequestUtil.getLong(request, "id", -1L);
-			 List<Map<String, Object>> list = null;
-			 list = dataBaseService.getAll("select id,company_name from com_info_tb where groupid = ? and state = ? ", new Object[]{groupid,0});
-			 String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
-			 if(list != null && list.size() > 0){
-				 for(Map<String, Object> map : list){
-					 result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("company_name")+"\"}";
-				 }
-			 }
-			 result+="]";
-			 AjaxUtil.ajaxOutput(response, result);
-		 }
-		else if(action.equals("getcompassbygroupid")){//¸ù¾İ¼¯ÍÅ±àºÅ²éÑ¯³µ³¡±àºÅ
-			 String id = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "id"));
-			 String sql = "select c.id,c.passname,w.worksite_name from com_pass_tb c left join com_worksite_tb w on c.worksite_id=w.id ";
-			 List<Object> params  = new ArrayList<Object>();
-			 if(!id.equals("")){
-				 params.add(Long.valueOf(id));
-				 sql +=" where c.comid in(select id from com_info_tb where groupid = ?) ";
-			 }
-			 List<Map<String,Object>> tradsList = dataBaseService.getAllMap(sql,params);
-			 String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
-			 if(tradsList!=null&&tradsList.size()>0){
-				 for(Map map : tradsList){
-					 result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("passname")+"("+map.get("worksite_name")+")\"}";
-				 }
-			 }
-			 result+="]";
-			 AjaxUtil.ajaxOutput(response, result);
+			Long id = RequestUtil.getLong(request, "id", -1L);
+			Map map = dataBaseService.getMap("select cid from com_park_tb where id = ?", new Object[]{id});
+			String result = "æœªçŸ¥";
+			if(map!=null&&map.get("cid")!=null)
+				result = map.get("cid")+"";
+			AjaxUtil.ajaxOutput(response, result);
+		}
+		else if(action.equals("getparksbygroup")){//æ ¹æ®é›†å›¢ç¼–å·æŸ¥è¯¢è½¦åœºç¼–å·
+			Long groupid = RequestUtil.getLong(request, "id", -1L);
+			List<Map<String, Object>> list = null;
+			list = dataBaseService.getAll("select id,company_name from com_info_tb where groupid = ? and state = ? ", new Object[]{groupid,0});
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
+			if(list != null && list.size() > 0){
+				for(Map<String, Object> map : list){
+					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("company_name")+"\"}";
+				}
+			}
+			result+="]";
+			AjaxUtil.ajaxOutput(response, result);
+		}
+		else if(action.equals("getcompassbygroupid")){//æ ¹æ®é›†å›¢ç¼–å·æŸ¥è¯¢è½¦åœºç¼–å·
+			String id = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "id"));
+			String sql = "select c.id,c.passname,w.worksite_name from com_pass_tb c left join com_worksite_tb w on c.worksite_id=w.id ";
+			List<Object> params  = new ArrayList<Object>();
+			if(!id.equals("")){
+				params.add(Long.valueOf(id));
+				sql +=" where c.comid in(select id from com_info_tb where groupid = ?) ";
+			}
+			List<Map<String,Object>> tradsList = dataBaseService.getAllMap(sql,params);
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
+			if(tradsList!=null&&tradsList.size()>0){
+				for(Map map : tradsList){
+					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("passname")+"("+map.get("worksite_name")+")\"}";
+				}
+			}
+			result+="]";
+			AjaxUtil.ajaxOutput(response, result);
 		}else if(action.equals("nickname")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			String sql = "select id,nickname from user_info_tb where id=? ";
@@ -1203,7 +1226,7 @@ public class GetDatas extends Action{
 		}
 		return null;
 	}
-	
+
 	private List<Map<String, Object>> setTreeList(List<Map<String, Object>> allList,List<Map<String, Object>> lastList){
 		List<Map<String, Object>> curList = new ArrayList<Map<String,Object>>();
 		if(allList != null && !allList.isEmpty()){
@@ -1225,7 +1248,7 @@ public class GetDatas extends Action{
 		return curList;
 	}
 
-	
+
 	private List<Map<String, Object>> getSubAuth(List<Map<String, Object>> authList,Long authId){
 		List<Map<String, Object>> ret = new ArrayList<Map<String,Object>>();
 		for(Map<String, Object> aMap : authList){

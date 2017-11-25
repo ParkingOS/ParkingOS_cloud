@@ -40,7 +40,7 @@ public class PlotProdAnlysisAction extends Action{
 	private PgOnlyReadDao pgOnlyReadDao;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -75,17 +75,17 @@ public class PlotProdAnlysisAction extends Action{
 			if(year.equals("")){
 				year = "curyear";
 			}
-			String  firday = StringUtils.getFistdayOfYear();//½ñÄê¿ªÊ¼Ê±¼ä
+			String  firday = StringUtils.getFistdayOfYear();//ä»Šå¹´å¼€å§‹æ—¶é—´
 			Integer curyear = Integer.valueOf(firday.split("-")[0]);
-			String nextfirday = (curyear + 1) + "-01-01";//Ã÷ÄêµÄ¿ªÊ¼Ê±¼ä
+			String nextfirday = (curyear + 1) + "-01-01";//æ˜å¹´çš„å¼€å§‹æ—¶é—´
 			Long b = TimeTools.getLongMilliSecondFrom_HHMMDD(firday)/1000;
 			Long e = TimeTools.getLongMilliSecondFrom_HHMMDD(nextfirday)/1000;
 			if(year.equals("lastyear")){
-				String lastfirday = (curyear - 1) + "-01-01";//È¥ÄêµÄ¿ªÊ¼Ê±¼ä
+				String lastfirday = (curyear - 1) + "-01-01";//å»å¹´çš„å¼€å§‹æ—¶é—´
 				b = TimeTools.getLongMilliSecondFrom_HHMMDD(lastfirday)/1000;
 				e = TimeTools.getLongMilliSecondFrom_HHMMDD(firday)/1000;
 			}
-			
+
 			String sql = "select cp.*,p.p_name,p.price from carower_product cp,product_package_tb p where " +
 					"cp.pid=p.id and cp.create_time between ? and ? and p.comid=? and cp.p_lot=? order by cp.create_time desc ";
 			List<Object> params = new ArrayList<Object>();
@@ -100,69 +100,69 @@ public class PlotProdAnlysisAction extends Action{
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("expexcel")){
 			try {
-				String fname = "Í£³µÎ»ÔÂ¿¨ÊÕ·ÑÌ¨ÕË" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
+				String fname = "åœè½¦ä½æœˆå¡æ”¶è´¹å°è´¦" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
 				fname = StringUtils.encodingFileName(fname);
 				java.io.OutputStream os;
 				os = response.getOutputStream();
 				response.reset();
 				response.setHeader("Content-disposition", "attachment; filename="
 						+ fname + ".xls");
-	            //Ê×ÏÈÒªÊ¹ÓÃWorkbookÀàµÄ¹¤³§·½·¨´´½¨Ò»¸ö¿ÉĞ´ÈëµÄ¹¤×÷±¡(Workbook)¶ÔÏó   
+				//é¦–å…ˆè¦ä½¿ç”¨Workbookç±»çš„å·¥å‚æ–¹æ³•åˆ›å»ºä¸€ä¸ªå¯å†™å…¥çš„å·¥ä½œè–„(Workbook)å¯¹è±¡
 				WritableWorkbook wwb = Workbook.createWorkbook(os);
-				//´´½¨Ò»¸ö¿ÉĞ´ÈëµÄ¹¤×÷±í   
-	            //WorkbookµÄcreateSheet·½·¨ÓĞÁ½¸ö²ÎÊı£¬µÚÒ»¸öÊÇ¹¤×÷±íµÄÃû³Æ£¬µÚ¶ş¸öÊÇ¹¤×÷±íÔÚ¹¤×÷±¡ÖĞµÄÎ»ÖÃ   
-	            WritableSheet sheetOne = wwb.createSheet("sheet1", 0);   
-	            WritableFont wf = new WritableFont(WritableFont.TIMES, 10, WritableFont.BOLD, false);
+				//åˆ›å»ºä¸€ä¸ªå¯å†™å…¥çš„å·¥ä½œè¡¨
+				//Workbookçš„createSheetæ–¹æ³•æœ‰ä¸¤ä¸ªå‚æ•°ï¼Œç¬¬ä¸€ä¸ªæ˜¯å·¥ä½œè¡¨çš„åç§°ï¼Œç¬¬äºŒä¸ªæ˜¯å·¥ä½œè¡¨åœ¨å·¥ä½œè–„ä¸­çš„ä½ç½®
+				WritableSheet sheetOne = wwb.createSheet("sheet1", 0);
+				WritableFont wf = new WritableFont(WritableFont.TIMES, 10, WritableFont.BOLD, false);
 				WritableCellFormat wff = new WritableCellFormat(wf);
 				wff.setWrap(true);
 				wff.setAlignment(Alignment.CENTRE);
 				wff.setVerticalAlignment(VerticalAlignment.CENTRE);
-				//labelµÚÒ»¸ö²ÎÊı´ú±íÁĞ£¬µÚ¶ş¸ö²ÎÊı´ú±íĞĞ£¬µÚÈı¸öÊÇÊı¾İ£¬µÚËÄ¸öÊÇ¸ñÊ½
-				//µÚÒ»ĞĞ
-				sheetOne.addCell(new Label(0,0,"Í£³µÎ»ÔÂ¿¨ÊÕ·ÑÌ¨ÕË",wff));  
-				sheetOne.addCell(new Label(0,1,"³µÎ»ºÅ",wff));  
-				sheetOne.addCell(new Label(1,1,"·¿ºÅ",wff));  
-				sheetOne.addCell(new Label(2,1,"»áÔ±ĞÕÃû",wff));  
-				sheetOne.addCell(new Label(3,1,"»áÔ±ÊÖ»úºÅ",wff));  
-				sheetOne.addCell(new Label(4,1,"ÊÕ·Ñ±ê×¼£¨Ôª/ÔÂ£©",wff));
-				sheetOne.addCell(new Label(5,1,"ÔÂ¿¨¿ªÍ¨Çé¿ö",wff));
-				sheetOne.addCell(new Label(7,1,"ÊÕÈ¡Ê±¼ä/ÊÕÈ¡ÖÜÆÚ/ÊÕÈ¡½ğ¶î",wff));
-				sheetOne.addCell(new Label(8,1,"ÊÕÈ¡ºÏ¼Æ",wff));
-				sheetOne.addCell(new Label(9,1,"·ÖÅäµ½¸÷ÆÚ",wff));
-				sheetOne.addCell(new Label(12,1,"ÓÅ»İ½ğ¶îºÏ¼Æ",wff));
-	            //µÚ¶şĞĞ
-				sheetOne.addCell(new Label(5,2,"¿ªÍ¨ÈÕÆÚ",wff));
-				sheetOne.addCell(new Label(6,2,"³µÅÆºÅ",wff));
-				sheetOne.addCell(new Label(9,2,"ÉÏÒ»Äê",wff));
-				sheetOne.addCell(new Label(10,2,"±¾Äê",wff));
-				sheetOne.addCell(new Label(11,2,"ÏÂÒ»Äê",wff));
-	            sheetOne.mergeCells(0, 0, 12, 0);//µÚÒ»ĞĞËùÓĞÁĞºÏ²¢
-	            sheetOne.mergeCells(0, 1, 0, 2);//µÚÒ»ÁĞµÄµÚ¶şĞĞºÍµÚÈıĞĞºÏ²¢
-	            sheetOne.mergeCells(1, 1, 1, 2);//µÚ¶şÁĞµÄµÚ¶şĞĞºÍµÚÈıĞĞºÏ²¢
-	            sheetOne.mergeCells(2, 1, 2, 2);//µÚÈıÁĞµÄµÚ¶şĞĞºÍµÚÈıĞĞºÏ²¢
-	            sheetOne.mergeCells(3, 1, 3, 2);//µÚËÄÁĞµÄµÚ¶şĞĞºÍµÚÈıĞĞºÏ²¢
-	            sheetOne.mergeCells(4, 1, 4, 2);//µÚÎåÁĞµÄµÚ¶şĞĞºÍµÚÈıĞĞºÏ²¢
-	            sheetOne.mergeCells(5, 1, 6, 1);//µÚÁùÁĞºÍµÚÆßÁĞµÄµÚ¶şĞĞºÏ²¢
-	            sheetOne.mergeCells(7, 1, 7, 2);//µÚ°ËÁĞµÄµÚ¶şĞĞºÍµÚÈıĞĞºÏ²¢
-	            sheetOne.mergeCells(8, 1, 8, 2);//µÚ¾ÅÁĞµÄµÚ¶şĞĞºÍµÚÈıĞĞºÏ²¢
-	            sheetOne.mergeCells(9, 1, 11, 1);//µÚÊ®ÁĞºÍµÚÊ®¶şÁĞµÄµÚ¶şĞĞºÏ²¢
-	            sheetOne.mergeCells(12, 1, 12, 2);//µÚÊ®ÈıÁĞµÄµÚ¶şĞĞºÍµÚÈıĞĞºÏ²¢
-	            
-	            List<Map<String, Object>> list = plotprodquery(request, comid);
+				//labelç¬¬ä¸€ä¸ªå‚æ•°ä»£è¡¨åˆ—ï¼Œç¬¬äºŒä¸ªå‚æ•°ä»£è¡¨è¡Œï¼Œç¬¬ä¸‰ä¸ªæ˜¯æ•°æ®ï¼Œç¬¬å››ä¸ªæ˜¯æ ¼å¼
+				//ç¬¬ä¸€è¡Œ
+				sheetOne.addCell(new Label(0,0,"åœè½¦ä½æœˆå¡æ”¶è´¹å°è´¦",wff));
+				sheetOne.addCell(new Label(0,1,"è½¦ä½å·",wff));
+				sheetOne.addCell(new Label(1,1,"æˆ¿å·",wff));
+				sheetOne.addCell(new Label(2,1,"ä¼šå‘˜å§“å",wff));
+				sheetOne.addCell(new Label(3,1,"ä¼šå‘˜æ‰‹æœºå·",wff));
+				sheetOne.addCell(new Label(4,1,"æ”¶è´¹æ ‡å‡†ï¼ˆå…ƒ/æœˆï¼‰",wff));
+				sheetOne.addCell(new Label(5,1,"æœˆå¡å¼€é€šæƒ…å†µ",wff));
+				sheetOne.addCell(new Label(7,1,"æ”¶å–æ—¶é—´/æ”¶å–å‘¨æœŸ/æ”¶å–é‡‘é¢",wff));
+				sheetOne.addCell(new Label(8,1,"æ”¶å–åˆè®¡",wff));
+				sheetOne.addCell(new Label(9,1,"åˆ†é…åˆ°å„æœŸ",wff));
+				sheetOne.addCell(new Label(12,1,"ä¼˜æƒ é‡‘é¢åˆè®¡",wff));
+				//ç¬¬äºŒè¡Œ
+				sheetOne.addCell(new Label(5,2,"å¼€é€šæ—¥æœŸ",wff));
+				sheetOne.addCell(new Label(6,2,"è½¦ç‰Œå·",wff));
+				sheetOne.addCell(new Label(9,2,"ä¸Šä¸€å¹´",wff));
+				sheetOne.addCell(new Label(10,2,"æœ¬å¹´",wff));
+				sheetOne.addCell(new Label(11,2,"ä¸‹ä¸€å¹´",wff));
+				sheetOne.mergeCells(0, 0, 12, 0);//ç¬¬ä¸€è¡Œæ‰€æœ‰åˆ—åˆå¹¶
+				sheetOne.mergeCells(0, 1, 0, 2);//ç¬¬ä¸€åˆ—çš„ç¬¬äºŒè¡Œå’Œç¬¬ä¸‰è¡Œåˆå¹¶
+				sheetOne.mergeCells(1, 1, 1, 2);//ç¬¬äºŒåˆ—çš„ç¬¬äºŒè¡Œå’Œç¬¬ä¸‰è¡Œåˆå¹¶
+				sheetOne.mergeCells(2, 1, 2, 2);//ç¬¬ä¸‰åˆ—çš„ç¬¬äºŒè¡Œå’Œç¬¬ä¸‰è¡Œåˆå¹¶
+				sheetOne.mergeCells(3, 1, 3, 2);//ç¬¬å››åˆ—çš„ç¬¬äºŒè¡Œå’Œç¬¬ä¸‰è¡Œåˆå¹¶
+				sheetOne.mergeCells(4, 1, 4, 2);//ç¬¬äº”åˆ—çš„ç¬¬äºŒè¡Œå’Œç¬¬ä¸‰è¡Œåˆå¹¶
+				sheetOne.mergeCells(5, 1, 6, 1);//ç¬¬å…­åˆ—å’Œç¬¬ä¸ƒåˆ—çš„ç¬¬äºŒè¡Œåˆå¹¶
+				sheetOne.mergeCells(7, 1, 7, 2);//ç¬¬å…«åˆ—çš„ç¬¬äºŒè¡Œå’Œç¬¬ä¸‰è¡Œåˆå¹¶
+				sheetOne.mergeCells(8, 1, 8, 2);//ç¬¬ä¹åˆ—çš„ç¬¬äºŒè¡Œå’Œç¬¬ä¸‰è¡Œåˆå¹¶
+				sheetOne.mergeCells(9, 1, 11, 1);//ç¬¬ååˆ—å’Œç¬¬åäºŒåˆ—çš„ç¬¬äºŒè¡Œåˆå¹¶
+				sheetOne.mergeCells(12, 1, 12, 2);//ç¬¬åä¸‰åˆ—çš„ç¬¬äºŒè¡Œå’Œç¬¬ä¸‰è¡Œåˆå¹¶
+
+				List<Map<String, Object>> list = plotprodquery(request, comid);
 				if(list != null && !list.isEmpty()){
 					String [] f = new String[]{"p_lot","address","names","mobiles","unitprice","opentime","carnumbers","record","atotal","lasttotal","curtotal","nexttotal","dtotal"};
 					for(int i=0; i<list.size();i++){
 						Map<String, Object> map = list.get(i);
 						for(int j=0;j<f.length;j++){
-							Label data=new Label(j,i+3,map.get(f[j])+"");//Êı¾İ´ÓµÚÈıĞĞ¿ªÊ¼Ìí¼Ó
-							sheetOne.addCell(data); 
+							Label data=new Label(j,i+3,map.get(f[j])+"");//æ•°æ®ä»ç¬¬ä¸‰è¡Œå¼€å§‹æ·»åŠ 
+							sheetOne.addCell(data);
 						}
 					}
 				}
-				//´ÓÄÚ´æÖĞ¶Á³ö
-	            wwb.write();   
-	            //¹Ø±Õ×ÊÔ´£¬ÊÍ·ÅÄÚ´æ   
-	            wwb.close();  
+				//ä»å†…å­˜ä¸­è¯»å‡º
+				wwb.write();
+				//å…³é—­èµ„æºï¼Œé‡Šæ”¾å†…å­˜
+				wwb.close();
 			} catch (Exception e) {
 				// TODO: handle exception
 				e.printStackTrace();
@@ -170,24 +170,24 @@ public class PlotProdAnlysisAction extends Action{
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private List<Map<String, Object>> plotprodquery(HttpServletRequest request, Long comid){
 		String year = RequestUtil.processParams(request, "time");
 		if(year.equals("")){
 			year = "curyear";
 		}
-		String  firday = StringUtils.getFistdayOfYear();//½ñÄê¿ªÊ¼Ê±¼ä
+		String  firday = StringUtils.getFistdayOfYear();//ä»Šå¹´å¼€å§‹æ—¶é—´
 		Integer curyear = Integer.valueOf(firday.split("-")[0]);
-		String nextfirday = (curyear + 1) + "-01-01";//Ã÷ÄêµÄ¿ªÊ¼Ê±¼ä
+		String nextfirday = (curyear + 1) + "-01-01";//æ˜å¹´çš„å¼€å§‹æ—¶é—´
 		Long b = TimeTools.getLongMilliSecondFrom_HHMMDD(firday)/1000;
 		Long e = TimeTools.getLongMilliSecondFrom_HHMMDD(nextfirday)/1000;
 		if(year.equals("lastyear")){
-			String lastfirday = (curyear - 1) + "-01-01";//È¥ÄêµÄ¿ªÊ¼Ê±¼ä
+			String lastfirday = (curyear - 1) + "-01-01";//å»å¹´çš„å¼€å§‹æ—¶é—´
 			b = TimeTools.getLongMilliSecondFrom_HHMMDD(lastfirday)/1000;
 			e = TimeTools.getLongMilliSecondFrom_HHMMDD(firday)/1000;
 		}
-		
+
 		String sql = "select cp.*,p.p_name,p.price from carower_product cp,product_package_tb p where " +
 				"cp.pid=p.id and cp.p_lot!=? and cp.create_time between ? and ? and p.comid=? order by cp.create_time ";
 		List<Object> params = new ArrayList<Object>();
@@ -218,23 +218,23 @@ public class PlotProdAnlysisAction extends Action{
 				}
 				String onerec = TimeTools.getTimeStr_yyyy_MM_dd(create_time*1000)+
 						"/"+TimeTools.getTimeStr_yyyy_MM_dd(b_time*1000)+
-						"ÖÁ"+TimeTools.getTimeStr_yyyy_MM_dd(e_time*1000)+
+						"è‡³"+TimeTools.getTimeStr_yyyy_MM_dd(e_time*1000)+
 						"/"+act_total;
-				
+
 				Map<String, Object> stgMap = getAcctByYear(map);
-				Double lasttotal = Double.valueOf(stgMap.get("lasttotal") + "");//·ÖÅäµ½È¥ÄêµÄ½ğ¶î
-				Double curtotal = Double.valueOf(stgMap.get("curtotal") + "");//·ÖÅäµ½½ñÄêµÄ½ğ¶î
-				Double nexttotal = Double.valueOf(stgMap.get("nexttotal") + "");//·ÖÅäµ½Ã÷ÄêµÄ½ğ¶î
+				Double lasttotal = Double.valueOf(stgMap.get("lasttotal") + "");//åˆ†é…åˆ°å»å¹´çš„é‡‘é¢
+				Double curtotal = Double.valueOf(stgMap.get("curtotal") + "");//åˆ†é…åˆ°ä»Šå¹´çš„é‡‘é¢
+				Double nexttotal = Double.valueOf(stgMap.get("nexttotal") + "");//åˆ†é…åˆ°æ˜å¹´çš„é‡‘é¢
 				if(plots.contains(p_lot)){
 					for(Map<String, Object> map2 : rList){
 						String plot = (String)map2.get("p_lot");
 						if(p_lot.equals(plot)){
-							String record = (String)map2.get("record");//ÊÕÈ¡¼ÇÂ¼
-							String names = (String)map2.get("names");//»áÔ±ĞÕÃû
-							String uins = (String)map2.get("uins");//»áÔ±±àºÅ
-							Double ototal = Double.valueOf(map2.get("ototal") + "");//Ó¦ÊÕ×Ü½ğ¶î
-							Double atotal = Double.valueOf(map2.get("atotal") + "");//ÊµÊÕ×Ü½ğ¶î
-							Double dtotal = Double.valueOf(map2.get("dtotal") + "");//ÓÅ»İ½ğ¶î
+							String record = (String)map2.get("record");//æ”¶å–è®°å½•
+							String names = (String)map2.get("names");//ä¼šå‘˜å§“å
+							String uins = (String)map2.get("uins");//ä¼šå‘˜ç¼–å·
+							Double ototal = Double.valueOf(map2.get("ototal") + "");//åº”æ”¶æ€»é‡‘é¢
+							Double atotal = Double.valueOf(map2.get("atotal") + "");//å®æ”¶æ€»é‡‘é¢
+							Double dtotal = Double.valueOf(map2.get("dtotal") + "");//ä¼˜æƒ é‡‘é¢
 							Double lsttal = Double.valueOf(map2.get("lasttotal") + "");
 							Double curtal = Double.valueOf(map2.get("curtotal") + "");
 							Double nxttal = Double.valueOf(map2.get("nexttotal") + "");
@@ -293,7 +293,7 @@ public class PlotProdAnlysisAction extends Action{
 					plots.add(p_lot);
 					rList.add(map2);
 				}
-				
+
 				if(!uinList.contains(uin)){
 					uinList.add(uin);
 				}
@@ -311,11 +311,11 @@ public class PlotProdAnlysisAction extends Action{
 							String mobile = (String)map2.get("mobile");
 							if(uinArr[i].equals(id)){
 								if(mobiles.equals("")){
-									mobiles = mobile; 
+									mobiles = mobile;
 								}else{
 									mobiles += "," + mobile;
 								}
-								
+
 								if(map2.get("car_number") != null){
 									String car_number = (String)map2.get("car_number");
 									if(car_number.equals("")){
@@ -332,32 +332,32 @@ public class PlotProdAnlysisAction extends Action{
 					map.put("carnumbers", carnumbers);
 				}
 			}
-			
+
 //			getPlotinfo(rList,comid);
 		}
 		return rList;
 	}
-	
+
 	private Map<String, Object> getAcctByYear(Map<String, Object> plotMap){
 		Map<String, Object> rmap = new HashMap<String, Object>();
-		String  firday = StringUtils.getFistdayOfYear();//½ñÄê¿ªÊ¼Ê±¼ä
+		String  firday = StringUtils.getFistdayOfYear();//ä»Šå¹´å¼€å§‹æ—¶é—´
 		Integer year = Integer.valueOf(firday.split("-")[0]);
-		String nextfirday = (year + 1) + "-01-01";//Ã÷ÄêµÄ¿ªÊ¼Ê±¼ä
+		String nextfirday = (year + 1) + "-01-01";//æ˜å¹´çš„å¼€å§‹æ—¶é—´
 		Long fir = TimeTools.getLongMilliSecondFrom_HHMMDD(firday)/1000;
 		Long nextfir = TimeTools.getLongMilliSecondFrom_HHMMDD(nextfirday)/1000;
 		Long btime = (Long)plotMap.get("b_time");
 		Long etime = (Long)plotMap.get("e_time");
 		Double act_total = Double.valueOf(plotMap.get("act_total") + "");
-		Long lsttime = 0L;//·ÖÅäµ½È¥ÄêµÄÊ±¼ä
-		Long curtime = 0L;//·ÖÅäµ½½ñÄêµÄÊ±¼ä
-		Long nexttime = 0L;//·ÖÅäµ½Ã÷ÄêµÄÊ±¼ä
-		//¼ÆËãÈ¥Äê·ÖÅäµÄÊ±¼ä
+		Long lsttime = 0L;//åˆ†é…åˆ°å»å¹´çš„æ—¶é—´
+		Long curtime = 0L;//åˆ†é…åˆ°ä»Šå¹´çš„æ—¶é—´
+		Long nexttime = 0L;//åˆ†é…åˆ°æ˜å¹´çš„æ—¶é—´
+		//è®¡ç®—å»å¹´åˆ†é…çš„æ—¶é—´
 		if(etime <= fir){
 			lsttime = etime - btime;
 		}else if(btime < fir){
 			lsttime = fir - btime;
 		}
-		//¼ÆËã½ñÄê·ÖÅäµÄÊ±¼ä
+		//è®¡ç®—ä»Šå¹´åˆ†é…çš„æ—¶é—´
 		if(etime > fir && btime < nextfir){
 			if(btime < fir){
 				if(etime <= nextfir){
@@ -373,7 +373,7 @@ public class PlotProdAnlysisAction extends Action{
 				}
 			}
 		}
-		//¼ÆËãÃ÷Äê·ÖÅäµÄÊ±¼ä
+		//è®¡ç®—æ˜å¹´åˆ†é…çš„æ—¶é—´
 		if(etime > nextfir){
 			if(btime <= nextfir){
 				nexttime = etime - nextfir;
@@ -381,17 +381,17 @@ public class PlotProdAnlysisAction extends Action{
 				nexttime = etime - btime;
 			}
 		}
-		
-		Double lasttotal = StringUtils.formatDouble((((double)lsttime)/(etime - btime))*act_total);//·ÖÅäµ½½ñÄêÖ®Ç°µÄ½ğ¶î
-		Double curtotal = StringUtils.formatDouble((((double)curtime)/(etime - btime))*act_total);//·ÖÅäµ½½ñÄêµÄ½ğ¶î
-		Double nexttotal = StringUtils.formatDouble(act_total-lasttotal - curtotal);//·ÖÅäµ½Ã÷ÄêµÄ½ğ¶î
-		
+
+		Double lasttotal = StringUtils.formatDouble((((double)lsttime)/(etime - btime))*act_total);//åˆ†é…åˆ°ä»Šå¹´ä¹‹å‰çš„é‡‘é¢
+		Double curtotal = StringUtils.formatDouble((((double)curtime)/(etime - btime))*act_total);//åˆ†é…åˆ°ä»Šå¹´çš„é‡‘é¢
+		Double nexttotal = StringUtils.formatDouble(act_total-lasttotal - curtotal);//åˆ†é…åˆ°æ˜å¹´çš„é‡‘é¢
+
 		rmap.put("lasttotal", lasttotal);
 		rmap.put("curtotal", curtotal);
 		rmap.put("nexttotal", nexttotal);
 		return rmap;
 	}
-	
+
 	private void getPlotinfo(List<Map<String, Object>> list, Long comid){
 		if(list != null && !list.isEmpty()){
 			List<Object> plots = new ArrayList<Object>();
@@ -429,7 +429,7 @@ public class PlotProdAnlysisAction extends Action{
 			}
 		}
 	}
-	
+
 	private void getcarinfo(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Long> uins = new ArrayList<Long>();
@@ -442,7 +442,7 @@ public class PlotProdAnlysisAction extends Action{
 					favtotal = StringUtils.formatDouble(total - act_total);
 				}
 				map.put("favtotal", favtotal);
-				
+
 				if(!uins.contains(uin)){
 					uins.add(uin);
 				}
@@ -467,7 +467,7 @@ public class PlotProdAnlysisAction extends Action{
 			}
 		}
 	}
-	
+
 	private List<Map<String, Object>> getUserInfo(List<Long> uins){
 		List<Map<String, Object>> resultlList = new ArrayList<Map<String,Object>>();
 		if(uins != null && !uins.isEmpty()){
@@ -484,7 +484,7 @@ public class PlotProdAnlysisAction extends Action{
 			String sql = "select c.car_number,u.id,u.nickname,u.mobile from user_info_tb u left join car_info_tb c on u.id=c.uin where " +
 					"u.id in ("+preParams+") ";
 			List<Map<String, Object>> list2 = daService.getAllMap(sql, params);
-			
+
 			List<Long> rsltuins = new ArrayList<Long>();
 			for(Map<String, Object> map : list2){
 				Long uin = (Long)map.get("id");

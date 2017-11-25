@@ -24,31 +24,31 @@ import com.zld.utils.SqlInfo;
 import com.zld.utils.TimeTools;
 
 public class LocalServerManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
 	private LogService logService;
 	@Autowired
 	private MemcacheUtils memcacheUtils;
-	
+
 	private Logger logger = Logger.getLogger(MarketerManageAction.class);
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		
+
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
-		Long chanid = (Long)request.getSession().getAttribute("chanid");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
+		Long chanid = (Long)request.getSession().getAttribute("chanid");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
-		Long groupid = (Long)request.getSession().getAttribute("groupid");//登录的用户id
+		Long groupid = (Long)request.getSession().getAttribute("groupid");//鐧诲綍鐨勭敤鎴穒d
 		if(uin==null){
 			response.sendRedirect("login.do");
 			return null;
 		}
-		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//是否是超级管理员
+		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//鏄惁鏄秴绾х鐞嗗憳
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if("quickquery".equals(action)){
@@ -151,7 +151,7 @@ public class LocalServerManageAction extends Action{
 			}
 			if(comid > 0){
 				if(chanid != null && chanid > 0){
-					Long count = daService.getLong("select count(id) from com_info_tb where id=? and chanid=? ", 
+					Long count = daService.getLong("select count(id) from com_info_tb where id=? and chanid=? ",
 							new Object[]{comid, chanid});
 					if(count > 0){
 						count = daService.getLong("select count(id) from local_info_tb where comid=? ", new Object[]{comid});
@@ -163,7 +163,7 @@ public class LocalServerManageAction extends Action{
 						return null;
 					}
 				}else if(groupid != null && groupid > 0){
-					Long count = daService.getLong("select count(id) from com_info_tb where id=? and groupid=? ", 
+					Long count = daService.getLong("select count(id) from com_info_tb where id=? and groupid=? ",
 							new Object[]{comid, groupid});
 					if(count > 0){
 						count = daService.getLong("select count(id) from local_info_tb where comid=? ", new Object[]{comid});
@@ -177,7 +177,7 @@ public class LocalServerManageAction extends Action{
 				}
 			}
 			AjaxUtil.ajaxOutput(response, "1");
-		}else if("findMem".equals(action)){//辅助验证查看memcached
+		}else if("findMem".equals(action)){//杈呭姪楠岃瘉鏌ョ湅memcached
 			//180.150.188.224:8080/tcbcloud/localserver.do?action=findMem
 			List<Long> tcache = memcacheUtils.doListLongCache("etclocal_park_cache", null, null);
 			String res = "";
@@ -188,7 +188,7 @@ public class LocalServerManageAction extends Action{
 			}
 			AjaxUtil.ajaxOutput(response, res);
 		}
-		
+
 		return null;
 	}
 

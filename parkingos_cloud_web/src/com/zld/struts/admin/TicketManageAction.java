@@ -27,11 +27,11 @@ import com.zld.utils.TimeTools;
 public class TicketManageAction extends Action {
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(TicketManageAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -75,7 +75,7 @@ public class TicketManageAction extends Action {
 			List arrayList = (List) ret.get(0);
 			if (ret.size()>0) {
 				if(Long.parseLong(ret.get(1)+"")>65535){
-					AjaxUtil.ajaxOutput(response,  "Êı¾İÌ«´ó");
+					AjaxUtil.ajaxOutput(response,  "æ•°æ®å¤ªå¤§");
 					return null;
 				}
 			}
@@ -85,27 +85,27 @@ public class TicketManageAction extends Action {
 			if(list!=null&&list.size()>0){
 				//setComName(list);id__money__umoney__limit_day__uin__state__car_number__type
 				String [] f = new String[]{"id","money","umoney","limit_day","utime","uin","state","car_number","type"};
-				heards = new String[]{"±àºÅ","½ğ¶î","µÖ¿Û½ğ¶î","µ½ÆÚÊ±¼ä","Ê¹ÓÃÊ±¼ä","×´Ì¬","³µÖ÷ÕË»§","³µÅÆºÅ","Í£³µÈ¯ÀàĞÍ"};
+				heards = new String[]{"ç¼–å·","é‡‘é¢","æŠµæ‰£é‡‘é¢","åˆ°æœŸæ—¶é—´","ä½¿ç”¨æ—¶é—´","çŠ¶æ€","è½¦ä¸»è´¦æˆ·","è½¦ç‰Œå·","åœè½¦åˆ¸ç±»å‹"};
 				for(Map<String, Object> map : list){
 					List<String> values = new ArrayList<String>();
 					for(String field : f){
 						if("state".equals(field)){
 							if(Integer.parseInt(map.get(field)+"")==1){
-								values.add("ÒÑÊ¹ÓÃ");
+								values.add("å·²ä½¿ç”¨");
 							}else{
-								values.add("Î´Ê¹ÓÃ");
+								values.add("æœªä½¿ç”¨");
 							}
 						}else if("type".equals(field)){
 							if(Integer.parseInt(map.get(field)+"")==0){
-								values.add("ÆÕÍ¨Í£³µÈ¯");
+								values.add("æ™®é€šåœè½¦åˆ¸");
 							}else if(Integer.parseInt(map.get(field)+"")==1){
-								values.add("×¨ÓÃÍ£³µÈ¯");
+								values.add("ä¸“ç”¨åœè½¦åˆ¸");
 							}else if(Integer.parseInt(map.get(field)+"")==2){
-								values.add("Î¢ĞÅ´òÕÛÈ¯");
+								values.add("å¾®ä¿¡æ‰“æŠ˜åˆ¸");
 							}else if(Integer.parseInt(map.get(field)+"")==3){
-								values.add("¼õÊ±È¯");
+								values.add("å‡æ—¶åˆ¸");
 							}else if(Integer.parseInt(map.get(field)+"")==4){
-								values.add("È«ÃâÈ¯");
+								values.add("å…¨å…åˆ¸");
 							}
 						}else if("limit_day".equals(field)||"utime".equals(field)){
 							values.add(TimeTools.getTime_yyyyMMdd_HHmmss(Long.parseLong(map.get(field)+"")*1000));
@@ -116,7 +116,7 @@ public class TicketManageAction extends Action {
 					bodyList.add(values);
 				}
 			}
-			String fname = "Í£³µÈ¯" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
+			String fname = "åœè½¦åˆ¸" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
 			fname = StringUtils.encodingFileName(fname);
 			java.io.OutputStream os;
 			try {
@@ -125,7 +125,7 @@ public class TicketManageAction extends Action {
 						+ fname + ".xls");
 				response.setContentType("application/x-download");
 				os = response.getOutputStream();
-				ExportExcelUtil importExcel = new ExportExcelUtil("Í£³µÈ¯",
+				ExportExcelUtil importExcel = new ExportExcelUtil("åœè½¦åˆ¸",
 						heards, bodyList);
 				importExcel.createExcelFile(os);
 			} catch (IOException e) {

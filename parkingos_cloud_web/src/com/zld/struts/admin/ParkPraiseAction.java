@@ -25,9 +25,9 @@ import com.zld.utils.SqlInfo;
 public class ParkPraiseAction extends Action {
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(ParkPraiseAction.class);
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
@@ -67,7 +67,7 @@ public class ParkPraiseAction extends Action {
 			List<Map<String, Object>> list1 = new ArrayList<Map<String,Object>>();
 			List<Map<String, Object>> list2 = new ArrayList<Map<String,Object>>();
 			List<Object> params = new ArrayList<Object>();
-			
+
 			if(sqlInfo!=null){
 				sql1 +=" where "+sqlInfo.getSql();
 				sql2 +=" where "+sqlInfo.getSql();
@@ -102,7 +102,7 @@ public class ParkPraiseAction extends Action {
 			request.setAttribute("parkid", RequestUtil.processParams(request, "parkid"));
 			String type = RequestUtil.processParams(request, "type");
 			request.setAttribute("otype", type);
-			if(type.equals("c")){//ÆÀÂÛÁÐ±í
+			if(type.equals("c")){//è¯„è®ºåˆ—è¡¨
 				return mapping.findForward("commentdetail");
 			}else{
 				return mapping.findForward("praisedetail");
@@ -160,7 +160,7 @@ public class ParkPraiseAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void getAllPark(List<Map<String, Object>> list1,List<Map<String, Object>> list2){
 		for(Map<String, Object> map : list2){
 			Long comid = (Long)map.get("comid");
@@ -178,7 +178,7 @@ public class ParkPraiseAction extends Action {
 			}
 		}
 	}
-	
+
 	private void setParkName(List<Map<String, Object>> list){
 		List<Object> comids = new ArrayList<Object>();
 		if(!list.isEmpty()){
@@ -209,18 +209,18 @@ public class ParkPraiseAction extends Action {
 			}
 		}
 	}
-	
+
 	private List<Map<String, Object>> setList(List<Map<String, Object>> list){
 		List<Map<String, Object>> result = new ArrayList<Map<String,Object>>();
 		List<Long> comidList = new ArrayList<Long>();
 		for(Map<String, Object> map : list){
 			Long comId = (Long)map.get("comid");
 			Integer praise = (Integer)map.get("praise");
-			if(praise == 1){//ºÃÆÀ
+			if(praise == 1){//å¥½è¯„
 				comidList.add(comId);
 				map.put("zcount", map.get("pcount"));
 				result.add(map);
-			}else{//²îÆÀ
+			}else{//å·®è¯„
 				if(comidList.contains(comId)){
 					for(Map<String, Object> map2 : result){
 						Long cid = (Long)map2.get("comid");
@@ -238,7 +238,7 @@ public class ParkPraiseAction extends Action {
 		}
 		return result;
 	}
-	
+
 	private void setComment(List<Map<String, Object>> list1,List<Map<String,Object>> list2){
 		if(!list1.isEmpty()){
 			for(Map<String, Object> map : list1){
@@ -252,10 +252,10 @@ public class ParkPraiseAction extends Action {
 						break;
 					}
 				}
-			}	
+			}
 		}
 	}
-	
+
 	class ListSort implements Comparator<Map<String, Object>>{
 
 		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
@@ -266,6 +266,6 @@ public class ParkPraiseAction extends Action {
 			if(b2 == null) b2 = 0L;
 			return b2.compareTo(b1);
 		}
-		
+
 	}
 }

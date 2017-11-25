@@ -31,7 +31,7 @@ public class CityParkAccountAnlysisAction extends Action {
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µ«¬ºµƒ”√ªßid
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ÁôªÂΩïÁöÑÁî®Êà∑id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -44,7 +44,7 @@ public class CityParkAccountAnlysisAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			request.setAttribute("btime", df2.format(System.currentTimeMillis()));
@@ -110,8 +110,8 @@ public class CityParkAccountAnlysisAction extends Action {
 					scount += Integer.valueOf(map.get("scount")+"");
 				}
 			}
-			String res = "Ω·À„Ω∂Ó£∫"+StringUtils.formatDouble(total)+"£¨Ωª“◊ ˝¡ø£∫"+scount;
-			
+			String res = "ÁªìÁÆóÈáëÈ¢ùÔºö"+StringUtils.formatDouble(total)+"Ôºå‰∫§ÊòìÊï∞ÈáèÔºö"+scount;
+
 			String json = JsonUtil.anlysisMap2Json(list,1,count, fieldsstr,"comid",res);
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("gettotal")){
@@ -132,16 +132,16 @@ public class CityParkAccountAnlysisAction extends Action {
 			Long e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime+" 23:59:59");
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			list = pgOnlyReadService.getAll("select * from order_tb where ishd=? and total>=? " +
-					" and state=? and pay_type=? and c_type !=? and end_time between ? and ? and comid=? order by end_time desc ", 
+							" and state=? and pay_type=? and c_type !=? and end_time between ? and ? and comid=? order by end_time desc ",
 					new Object[]{0, 0, 1, 2, 4, b, e , parkid});
 			int count = list!=null?list.size():0;
 			String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 		}
-		
+
 		return null;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	private void setName(List list){
 		List<Object> comids = new ArrayList<Object>();
@@ -179,7 +179,7 @@ public class CityParkAccountAnlysisAction extends Action {
 			}
 		}
 	}
-	
+
 	private Map<String, Object> getTotal(HttpServletRequest request, Long cityid, Long groupid){
 		SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 		String nowtime= df2.format(System.currentTimeMillis());
@@ -216,14 +216,14 @@ public class CityParkAccountAnlysisAction extends Action {
 			}
 			sql += " comid in ("+preParams+") ";
 			params.addAll(parks);
-			
+
 			count = pgOnlyReadService.getCount(sql, params);
 		}
 		Map<String, Object> infoMap = new HashMap<String, Object>();
 		infoMap.put("count", count);
 		return infoMap;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> idsList = new ArrayList<Object>();
@@ -235,7 +235,7 @@ public class CityParkAccountAnlysisAction extends Action {
 				else
 					preParams += ",?";
 			}
-			
+
 			List<Map<String, Object>> list2 = pgOnlyReadService.getAllMap("select id,company_name,groupid from com_info_tb where id in ("+preParams+") ", idsList);
 			if(list2 != null && !list2.isEmpty()){
 				for(Map<String, Object> map : list){

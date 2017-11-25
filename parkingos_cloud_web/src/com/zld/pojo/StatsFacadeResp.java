@@ -18,5 +18,5 @@ public class StatsFacadeResp extends BaseResp implements Serializable {
 	public String toString() {
 		return "StatsFacadeResp [classes=" + classes + "]";
 	}
-	
+
 }

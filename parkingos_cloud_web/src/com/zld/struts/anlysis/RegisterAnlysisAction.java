@@ -26,7 +26,7 @@ public class RegisterAnlysisAction extends Action {
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		if(uin == null){
 			response.sendRedirect("login.do");
 			return null;
@@ -38,7 +38,7 @@ public class RegisterAnlysisAction extends Action {
 			return mapping.findForward("trend");
 		}else if(action.equals("querytrend")){
 			String sql = "select reg_count atotal,carnumber_count ctotal,reg_time " +
-			" from register_anlysis_tb ";
+					" from register_anlysis_tb ";
 			List list = null;
 			String btime = RequestUtil.processParams(request, "btime");
 			String etime = RequestUtil.processParams(request, "etime");

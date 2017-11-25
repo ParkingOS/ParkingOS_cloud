@@ -19,20 +19,20 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 /**
- * 泊车点管理，在总管理员后台
+ * 娉婅溅鐐圭鐞嗭紝鍦ㄦ�荤鐞嗗憳鍚庡彴
  * @author Administrator
  *
  */
 public class ParkTicketManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 
-	
+
 	private Logger logger = Logger.getLogger(ParkTicketManageAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -71,10 +71,10 @@ public class ParkTicketManageAction extends Action{
 			Integer haveget= RequestUtil.getInteger(request, "haveget", 0);
 			Double money = RequestUtil.getDouble(request, "money", 0d);
 			int ret = daService.update("update park_ticket_tb set comid=?,tnumber=?,exptime=?, haveget=?" +
-					",money=? where id =?", 
+							",money=? where id =?",
 					new Object[]{parkid,tnumber,exptime,haveget,money,id});
 			AjaxUtil.ajaxOutput(response, ret+"");
-			
+
 		}else if(action.equals("create")){
 			Long parkid = RequestUtil.getLong(request, "comid", -1L);
 			Integer tnumber= RequestUtil.getInteger(request, "tnumber", 0);
@@ -82,7 +82,7 @@ public class ParkTicketManageAction extends Action{
 			Integer haveget= RequestUtil.getInteger(request, "haveget", 0);
 			Double money = RequestUtil.getDouble(request, "money", 0d);
 			int ret = daService.update("insert into park_ticket_tb (comid,tnumber,exptime,haveget,money)" +
-					" values(?,?,?,?,?)",
+							" values(?,?,?,?,?)",
 					new Object[]{parkid,tnumber,exptime,haveget,money});
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}else if(action.equals("delete")){
@@ -92,5 +92,5 @@ public class ParkTicketManageAction extends Action{
 		}
 		return null;
 	}
-	
+
 }

@@ -31,20 +31,20 @@ import com.zld.utils.TimeTools;
 public class ParkManageAction extends Action {
 	@Autowired
 	private DataBaseService daService;
-	
+
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
-	
+
 	@Autowired
 	private PublicMethods publicMethods;
-	
+
 	@Autowired
 	private LogService logService;
 	private Logger logger = Logger.getLogger(ParkManageAction.class);
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception{
 		String action = RequestUtil.processParams(request, "action");
 		String token =RequestUtil.processParams(request, "token");
@@ -53,14 +53,14 @@ public class ParkManageAction extends Action {
 		Map<String,Object> infoMap  = new HashMap<String, Object>();
 		if(token==null||"null".equals(token)||"".equals(token)){
 			infoMap.put("result", "fail");
-			infoMap.put("message", "tokenÎŞĞ§!");
+			infoMap.put("message", "tokenæ— æ•ˆ!");
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(infoMap));
 			return null;
 		}
 		Long uid = validToken(token);
 		if(uid == null){
 			infoMap.put("result", "fail");
-			infoMap.put("message", "tokenÎŞĞ§!");
+			infoMap.put("message", "tokenæ— æ•ˆ!");
 			return null;
 		}
 		if(action.equals("create")){
@@ -68,21 +68,21 @@ public class ParkManageAction extends Action {
 			Double latitude =RequestUtil.getDouble(request, "latitude",0d);
 			Long count = daService.getLong("select count(*) from com_info_tb where longitude=? and latitude=?",
 					new Object[]{longitude,latitude});
-			if(count>0){//¾­Î³¶ÈÖØ¸´ÁË
+			if(count>0){//ç»çº¬åº¦é‡å¤äº†
 				AjaxUtil.ajaxOutput(response, "-1");
 				return null;
 			}
 			Integer result = createAdmin(request,uid);
-			String log = "°İ·Ã´ïÈË¿Í»§¶ËĞÂ½¨ÁËÍ£³µ³¡,"+result;
+			String log = "æ‹œè®¿è¾¾äººå®¢æˆ·ç«¯æ–°å»ºäº†åœè½¦åœº,"+result;
 			if(result == 1){
 				AjaxUtil.ajaxOutput(response, "1");
 				logService.updateSysLog(comId, uid.toString(),log, 100);
 			}else {
 				AjaxUtil.ajaxOutput(response, "{\"info\":\"fail\"}");
 			}
-			
-			//http://192.168.199.239/zld/parkmanage.do?action=create&token=e6c435a27cf1f4a11d11c56d0cebc614&company_name="ÎÒµÄ²âÊÔÍ£³µ³¡"&longitude=116.316884&latitude=39.990120
-		}else if(action.equals("edit")){//¿Í»§¶ËĞŞ¸Ä	
+
+			//http://192.168.199.239/zld/parkmanage.do?action=create&token=e6c435a27cf1f4a11d11c56d0cebc614&company_name="æˆ‘çš„æµ‹è¯•åœè½¦åœº"&longitude=116.316884&latitude=39.990120
+		}else if(action.equals("edit")){//å®¢æˆ·ç«¯ä¿®æ”¹
 			String company =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "company_name"));
 			String address =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
 			String phone =RequestUtil.processParams(request, "phone");
@@ -97,23 +97,23 @@ public class ParkManageAction extends Action {
 			Double latitude =RequestUtil.getDouble(request, "latitude",0.0);
 			String resume = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "resume"));
 			String remarks = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "remarks"));
-			String mcompany =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "mcompany"));//¾­Óª¹«Ë¾
-			String record_number =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "record_number"));//±¸°¸ºÅ
-			Integer activity = RequestUtil.getInteger(request, "activity", 0);//³µ³¡»î¶¯£º0 Ã»ÓĞ»î¶¯ 1ÉêÇë»î¶¯ 2:ÉêÇëÍ¨¹ı
-			String activity_content = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "activity_content"));//»î¶¯ÄÚÈİ
+			String mcompany =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "mcompany"));//ç»è¥å…¬å¸
+			String record_number =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "record_number"));//å¤‡æ¡ˆå·
+			Integer activity = RequestUtil.getInteger(request, "activity", 0);//è½¦åœºæ´»åŠ¨ï¼š0 æ²¡æœ‰æ´»åŠ¨ 1ç”³è¯·æ´»åŠ¨ 2:ç”³è¯·é€šè¿‡
+			String activity_content = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "activity_content"));//æ´»åŠ¨å†…å®¹
 			if(activity_content.equals("")) activity_content = null;
 			//share_number = getShareNumber(Long.valueOf(id), share_number);
 			if(state==-1)
 				state=0;
 			if(!Check.checkPhone(phone) && !Check.checkMobile(phone)) phone = null;
-			//¼ì²é¾­Î³¶È
+			//æ£€æŸ¥ç»çº¬åº¦
 			Long count = daService.getLong("select count(*) from com_info_tb where longitude=? and latitude=? and id<>? ",
 					new Object[]{longitude,latitude,Long.valueOf(id)});
-			if(count > 0){//¾­Î³¶ÈÖØ¸´ÁË
+			if(count > 0){//ç»çº¬åº¦é‡å¤äº†
 				AjaxUtil.ajaxOutput(response, "-1");
 				return null;
 			}
-			//±¸×¢×Ö¶ÎÓĞ¿ÉÄÜºÜ³¤£¬Ö±½ÓÔÚÄÚÈİºóÃæÌí¼Ó£¬ÒòÎª³õÊ¼ÖµÊÇnull£¬±ØĞë×öÅĞ¶Ï
+			//å¤‡æ³¨å­—æ®µæœ‰å¯èƒ½å¾ˆé•¿ï¼Œç›´æ¥åœ¨å†…å®¹åé¢æ·»åŠ ï¼Œå› ä¸ºåˆå§‹å€¼æ˜¯nullï¼Œå¿…é¡»åšåˆ¤æ–­
 			Long rcount = daService.getLong("select count(*) from com_info_tb where remarks is null and id=?", new Object[]{Long.valueOf(id)});
 			String remarksString = "remarks=?";
 			if(rcount == 0){
@@ -128,15 +128,15 @@ public class ParkManageAction extends Action {
 					"update_time=? ,longitude=?,latitude=?,resume=?,"+remarksString+",mcompany=?,record_number=?,isfixed=?,state=?,isview=?,activity=?,activity_content=? where id=? ";
 			int result = daService.update(sql, values);
 			AjaxUtil.ajaxOutput(response, result+"");
-			String log = "¿Í»§¶ËĞŞ¸ÄÁËÍ£³µ³¡,³µ³¡±àºÅ£º"+id+"ĞŞ¸ÄÈË£º"+uid;
+			String log = "å®¢æˆ·ç«¯ä¿®æ”¹äº†åœè½¦åœº,è½¦åœºç¼–å·ï¼š"+id+"ä¿®æ”¹äººï¼š"+uid;
 			logService.updateSysLog(Long.valueOf(id), uid.toString(),log+"("+sql+",params:"+StringUtils.objArry2String(values)+")", 101);
-			//http://192.168.199.239/zld/parkmanage.do?action=edit&id=694&token=68e6c58a77e37a866f81a7c9325247b3&company_name=ÖĞ¹Ø´åSOHO&longitude=116.316173&latitude=39.989740&resume=²âÊÔÊı¾İ
+			//http://192.168.199.239/zld/parkmanage.do?action=edit&id=694&token=68e6c58a77e37a866f81a7c9325247b3&company_name=ä¸­å…³æ‘SOHO&longitude=116.316173&latitude=39.989740&resume=æµ‹è¯•æ•°æ®
 		}else if(action.equals("delete")){
 			String sql = "update com_info_tb set state=?,update_time=? where id =?";
 			Object [] values = new Object[]{1,System.currentTimeMillis()/1000,Long.valueOf(comId)};
 			int result = daService.update(sql, values);
 			AjaxUtil.ajaxOutput(response, result+"");
-			logService.updateSysLog(comId, uid.toString(),"É¾³ıÁËÍ£³µ³¡£¬±àºÅ£º"+comId, 102);
+			logService.updateSysLog(comId, uid.toString(),"åˆ é™¤äº†åœè½¦åœºï¼Œç¼–å·ï¼š"+comId, 102);
 			//http://192.168.199.239/zld/parkmanage.do?action=delete&comid=1757&token=e6c435a27cf1f4a11d11c56d0cebc614
 		}else if(action.equals("query")){
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
@@ -144,7 +144,7 @@ public class ParkManageAction extends Action {
 			List<Object> params = new ArrayList<Object>();
 			Integer epay = RequestUtil.getInteger(request, "epay", -1);
 			Integer isfixed = RequestUtil.getInteger(request, "isfixed", -1);
-			Long groupuid = RequestUtil.getLong(request, "uid", -1L);//×éÄÚ³ÉÔ±
+			Long groupuid = RequestUtil.getLong(request, "uid", -1L);//ç»„å†…æˆå‘˜
 			String sql = "select id,company_name,state,create_time,parking_type,mcompany,record_number,isfixed,longitude,latitude,isview from com_info_tb where uid=? and state !=? ";
 			String sqlcount = "select count(*) from com_info_tb where uid=? and state !=? ";
 			params.add(groupuid);
@@ -182,7 +182,7 @@ public class ParkManageAction extends Action {
 			Integer is_hasparker = RequestUtil.getInteger(request, "is_hasparker", -1);
 			Integer isfixed = RequestUtil.getInteger(request, "isfixed", -1);
 			Long biz_id = RequestUtil.getLong(request, "biz_id", -1L);
-			Long groupuid = RequestUtil.getLong(request, "uid", -1L);//×éÄÚ³ÉÔ±
+			Long groupuid = RequestUtil.getLong(request, "uid", -1L);//ç»„å†…æˆå‘˜
 			company_name = "%" + company_name + "%";
 			String sql = "select id,company_name,state,create_time,parking_type,mcompany,record_number,isfixed,longitude,latitude,isview from com_info_tb where state!=? and company_name like ? ";
 			params.add(1);
@@ -225,7 +225,7 @@ public class ParkManageAction extends Action {
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			list = daService.getAll(sql, params, pageNum, pageSize);
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(list));
-			//http://192.168.199.239/zld/parkmanage.do?action=quickquery&token=e6c435a27cf1f4a11d11c56d0cebc614&company_name=½»µÀ¿Ú
+			//http://192.168.199.239/zld/parkmanage.do?action=quickquery&token=e6c435a27cf1f4a11d11c56d0cebc614&company_name=äº¤é“å£
 		}else if(action.equals("detail")){
 			String sql = "select * from com_info_tb where id=?";
 			Map<String, Object> map = new HashMap<String, Object>();
@@ -235,13 +235,13 @@ public class ParkManageAction extends Action {
 			}
 			map = daService.getMap(sql, new Object[]{comId});
 			getOrderCount(map);
-			//·µ³µ³¡Í¼Æ¬
+			//è¿”è½¦åœºå›¾ç‰‡
 			Map<String, Object> picMap = pgOnlyReadService
 					.getMap("select picurl from com_picturs_tb where comid=? order by create_time desc limit 1",
 							new Object[] { comId });
 			if(picMap != null){
 				map.put("picurl", picMap.get("picurl"));
-			} 
+			}
 			Map<String, Object> codeMap = pgOnlyReadService
 					.getMap("select code from qr_code_tb where comid=? and type=? and state=? order by ctime desc limit ? ",
 							new Object[] { comId, 4, 0, 1 });
@@ -275,7 +275,7 @@ public class ParkManageAction extends Action {
 				AjaxUtil.ajaxOutput(response, "-2");
 				return null;
 			}
-			//ÓÃ»§±í
+			//ç”¨æˆ·è¡¨
 			String sql="insert into user_info_tb (nickname,password,strid," +
 					"reg_time,mobile,auth_flag,comid) " +
 					"values (?,?,?,?,?,?,?)";
@@ -287,8 +287,8 @@ public class ParkManageAction extends Action {
 			else {
 				AjaxUtil.ajaxOutput(response, "0");
 			}
-			logService.updateSysLog(comId, uid.toString(),"´´½¨ÁËÍ£³µÔ±", 202);
-			//http://192.168.199.239/zld/parkmanage.do?action=addcontact&token=e6c435a27cf1f4a11d11c56d0cebc614&comid=1477&strid="1416826942457"&nickname=Íõº£Ïé&auth_flag=9&address=±±¾©
+			logService.updateSysLog(comId, uid.toString(),"åˆ›å»ºäº†åœè½¦å‘˜", 202);
+			//http://192.168.199.239/zld/parkmanage.do?action=addcontact&token=e6c435a27cf1f4a11d11c56d0cebc614&comid=1477&strid="1416826942457"&nickname=ç‹æµ·ç¥¥&auth_flag=9&address=åŒ—äº¬
 		}else if(action.equals("editcontact")){
 			String nickname =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "nickname"));
 			String mobile =RequestUtil.processParams(request, "mobile");
@@ -301,7 +301,7 @@ public class ParkManageAction extends Action {
 			Long role =RequestUtil.getLong(request, "auth_flag", 2L);
 			if(nickname.equals("")) nickname=null;
 			if(mobile.equals("")) mobile=null;
-			//¼ì²éÊÇ·ñÓĞÖØ¸´µÄ
+			//æ£€æŸ¥æ˜¯å¦æœ‰é‡å¤çš„
 			String sqlcount = "select count(1) from user_info_tb where auth_flag=? and mobile=? and id!=?";
 			Long count = daService.getLong(sqlcount, new Object[]{role,mobile,id});
 			if(count > 0){
@@ -311,8 +311,8 @@ public class ParkManageAction extends Action {
 			String sql = "update user_info_tb set nickname=?,mobile=?,auth_flag=?,isview=? where id=? ";
 			int result = daService.update(sql, new Object[]{nickname,mobile,role,isview,id});
 			AjaxUtil.ajaxOutput(response, result+"");
-			logService.updateSysLog(comId, uid.toString(),"ĞŞ¸ÄÁËÍ£³µ³¡ÈËÔ±,±àºÅ£º"+id, 203);
-			//http://192.168.199.239/zld/parkmanage.do?action=editcontact&id=12583&token=e6c435a27cf1f4a11d11c56d0cebc614&comid=1477&strid="1416826942457"&nickname=Íõº£Ïé&auth_flag=9&address=±±¾©
+			logService.updateSysLog(comId, uid.toString(),"ä¿®æ”¹äº†åœè½¦åœºäººå‘˜,ç¼–å·ï¼š"+id, 203);
+			//http://192.168.199.239/zld/parkmanage.do?action=editcontact&id=12583&token=e6c435a27cf1f4a11d11c56d0cebc614&comid=1477&strid="1416826942457"&nickname=ç‹æµ·ç¥¥&auth_flag=9&address=åŒ—äº¬
 		}else if(action.equals("deletecontact")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			if(id == -1){
@@ -322,7 +322,7 @@ public class ParkManageAction extends Action {
 			String sql = "update user_info_tb set state=? where id=?";
 			int result = daService.update(sql, new Object[]{1,id});
 			AjaxUtil.ajaxOutput(response, result+"");
-			logService.updateSysLog(comId, uid.toString(),"½ûÓÃÁËÍ£³µ³¡ÈËÔ±,±àºÅ£º"+id, 204);
+			logService.updateSysLog(comId, uid.toString(),"ç¦ç”¨äº†åœè½¦åœºäººå‘˜,ç¼–å·ï¼š"+id, 204);
 			//http://192.168.199.239/zld/parkmanage.do?action=deletecontact&id=12583&token=e6c435a27cf1f4a11d11c56d0cebc614
 		}else if(action.equals("querycontact")){
 			Map comMap = daService.getMap("select isfixed from com_info_Tb where id = ? ", new Object[]{comId});
@@ -348,14 +348,14 @@ public class ParkManageAction extends Action {
 			map = daService.getMap(sql, new Object[]{id});
 			sql = "select sum(lala_scroe)+sum(nfc_score)+sum(praise_scroe)+sum(pai_score)+sum(online_scroe)+sum(recom_scroe) score from collector_scroe_tb where uin=? and create_time between ? and ? ";
 			Map<String, Object> curMap = new HashMap<String, Object>();
-			//±¾ÖÜ»ı·Ö
+			//æœ¬å‘¨ç§¯åˆ†
 			curMap = daService.getMap(sql, new Object[]{id,monday,etime});
 			Map<String, Object> lastMap = new HashMap<String, Object>();
 			lastMap = daService.getMap(sql, new Object[]{id,monday-7*24*60*60,monday-1});
 			map.put("curweekscore", curMap.get("score"));
 			map.put("lastweekscore", lastMap.get("score"));
 			map.put("qr", getQrCode(id));
-			//ÉèÖÃÌáÏÖ²ÎÊı
+			//è®¾ç½®æç°å‚æ•°
 			getWithdraw(map);
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(map));
 			//http://192.168.199.239/zld/parkmanage.do?action=contactdetail&id=11354&token=ed7efd992edb35fa7ce594d12b910ad1
@@ -373,12 +373,12 @@ public class ParkManageAction extends Action {
 			}
 			int result = daService.update("update user_info_tb set password=?,md5pass=? where id=?", new Object[]{password,md5pass,cid});
 			if(result == 1){
-				logger.error("ÊĞ³¡×¨Ô±:"+uid+"ĞŞ¸ÄÁËÁªÏµÈË"+cid+"µÄÃÜÂë£¬ĞÂÃÜÂë:"+password+",Ê±¼ä£º"+TimeTools.getTime_yyyyMMdd_HHmmss(System.currentTimeMillis()));
+				logger.error("å¸‚åœºä¸“å‘˜:"+uid+"ä¿®æ”¹äº†è”ç³»äºº"+cid+"çš„å¯†ç ï¼Œæ–°å¯†ç :"+password+",æ—¶é—´ï¼š"+TimeTools.getTime_yyyyMMdd_HHmmss(System.currentTimeMillis()));
 				AjaxUtil.ajaxOutput(response, "1");
 			}else{
 				AjaxUtil.ajaxOutput(response, "0");
 			}
-			logService.updateSysLog(comId, uid.toString(),"ĞŞ¸ÄÁËÍ£³µ³¡ÈËÔ±ÃÜÂë,±àºÅ£º"+cid, 206);
+			logService.updateSysLog(comId, uid.toString(),"ä¿®æ”¹äº†åœè½¦åœºäººå‘˜å¯†ç ,ç¼–å·ï¼š"+cid, 206);
 			//http://192.168.199.239/zld/parkmanage.do?action=modifypw&token=e6c435a27cf1f4a11d11c56d0cebc614&id=&password=
 		}else if(action.equals("bizquery")){
 			String sql = "select id,name from bizcircle_tb where state=? order by id";
@@ -416,26 +416,26 @@ public class ParkManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * ÑéÖ¤tokenÊÇ·ñÓĞĞ§
+	 * éªŒè¯tokenæ˜¯å¦æœ‰æ•ˆ
 	 * @param token
 	 * @return uin
 	 */
 	private Long validToken(String token) {
 		Map tokenMap = pgOnlyReadService.getMap("select * from user_session_tb where token=?", new Object[]{token});
- 		Long uin = null;
+		Long uin = null;
 		if(tokenMap!=null&&tokenMap.get("uin")!=null){
 			uin = (Long) tokenMap.get("uin");
 		}
 		return uin;
 	}
-	
-	//×¢²áÍ£³µ³¡¹ÜÀíÔ±ÕÊºÅ
+
+	//æ³¨å†Œåœè½¦åœºç®¡ç†å‘˜å¸å·
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Integer createAdmin(HttpServletRequest request,Long uid){
- 		Long time = System.currentTimeMillis()/1000;
-		//³µ³¡ĞÅÏ¢
+		Long time = System.currentTimeMillis()/1000;
+		//è½¦åœºä¿¡æ¯
 		String company =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "company_name"));
 		company = company.replace("\r", "").replace("\n", "");
 		String address =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
@@ -454,20 +454,20 @@ public class ParkManageAction extends Action {
 		Integer book = RequestUtil.getInteger(request, "book", 0);
 		Integer navi = RequestUtil.getInteger(request, "navi", 0);
 		Integer monthlypay = RequestUtil.getInteger(request, "monthlypay", 0);
-		Integer isnight = RequestUtil.getInteger(request, "isnight", 0);//Ò¹ÍíÍ£³µ£¬0:Ö§³Ö£¬1²»Ö§³Ö
-		String mcompany =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "mcompany"));//¾­Óª¹«Ë¾
-		String record_number =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "record_number"));//±¸°¸ºÅ
+		Integer isnight = RequestUtil.getInteger(request, "isnight", 0);//å¤œæ™šåœè½¦ï¼Œ0:æ”¯æŒï¼Œ1ä¸æ”¯æŒ
+		String mcompany =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "mcompany"));//ç»è¥å…¬å¸
+		String record_number =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "record_number"));//å¤‡æ¡ˆå·
 		String resume = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "resume"));
 		String remarks = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "remarks"));
 		Integer epay = RequestUtil.getInteger(request, "epay", 0);
-		Integer activity = RequestUtil.getInteger(request, "activity", 0);//³µ³¡»î¶¯£º0 Ã»ÓĞ»î¶¯ 1ÉêÇë»î¶¯ 2:ÉêÇëÍ¨¹ı
-		String activity_content = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "activity_content"));//»î¶¯ÄÚÈİ
+		Integer activity = RequestUtil.getInteger(request, "activity", 0);//è½¦åœºæ´»åŠ¨ï¼š0 æ²¡æœ‰æ´»åŠ¨ 1ç”³è¯·æ´»åŠ¨ 2:ç”³è¯·é€šè¿‡
+		String activity_content = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "activity_content"));//æ´»åŠ¨å†…å®¹
 		if(activity_content.equals("")) activity_content = null;
 		if(resume.equals("")) resume = null;
 		if(remarks.equals("")) remarks = null;
 		if(!Check.checkPhone(phone) && !Check.checkMobile(phone)) phone = null;
 		Long comId = daService.getLong("SELECT nextval('seq_com_info_tb'::REGCLASS) AS newid",null);
-		
+
 		List<Map> sqlsList = new ArrayList<Map>();
 		Map comMap = new HashMap();
 		//String share_number =RequestUtil.processParams(request, "share_number");
@@ -479,7 +479,7 @@ public class ParkManageAction extends Action {
 		comMap.put("sql", comsql);
 		comMap.put("values", comvalues);
 		sqlsList.add(comMap);
-		
+
 		boolean r =  daService.bathUpdate(sqlsList);
 		if(r){
 			if(city>0)
@@ -490,7 +490,7 @@ public class ParkManageAction extends Action {
 			return -1;
 		}
 	}
-	
+
 	private boolean checkStrid(String strid){
 		String sql = "select count(*) from user_info_tb where strid =?";
 		Long result = daService.getLong(sql, new Object[]{strid});
@@ -498,9 +498,9 @@ public class ParkManageAction extends Action {
 			return false;
 		}
 		return true;
-		
+
 	}
-	
+
 	private void getParkPics(Map<String, Object> map){
 		String sql = "select picurl from com_picturs_tb where comid=? order by create_time desc limit 1";
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
@@ -512,8 +512,8 @@ public class ParkManageAction extends Action {
 			map.put("picurl", null);
 		}
 	}
-	
-	//ÌáÏÖ¹ıµÄÊÕ·ÑÔ±
+
+	//æç°è¿‡çš„æ”¶è´¹å‘˜
 	private void getWithdraw(Map<String, Object> map){
 		Long count = daService.getLong("select count(*) total from withdrawer_tb where state=3 and uin=?", new Object[]{map.get("id")});
 		if(count > 0){
@@ -522,11 +522,11 @@ public class ParkManageAction extends Action {
 			map.put("withdraw", 0);
 		}
 	}
-	
-	//»ñÈ¡³µ³¡×òÈÕµÄ¶©µ¥Á¿
+
+	//è·å–è½¦åœºæ˜¨æ—¥çš„è®¢å•é‡
 	private void getOrderCount(Map<String, Object> map){
 		Long comid = (Long)map.get("id");
-		Long todaybeigintime = TimeTools.getToDayBeginTime();//½ñÌìµÄ¿ªÊ¼Ê±¼ä
+		Long todaybeigintime = TimeTools.getToDayBeginTime();//ä»Šå¤©çš„å¼€å§‹æ—¶é—´
 		String ordersql = "select count(id) from order_tb where c_type!=? and total>=? and state=? and pay_type=? and end_time between ? and ? and comid=? ";
 		Long ordercount = pgOnlyReadService.getLong(ordersql, new Object[] {4, 1,
 				1, 2, todaybeigintime - 24 * 60 * 60, todaybeigintime - 1, comid});
@@ -537,7 +537,7 @@ public class ParkManageAction extends Action {
 		map.put("ordercount", ordercount);
 		map.put("directcount", directcount);
 	}
-	
+
 	private String getQrCode(Long uin){
 		Map qrMap = daService.getMap("select code from qr_code_tb where uid=? and type=? ", new Object[]{uin,1});
 		String code = "";

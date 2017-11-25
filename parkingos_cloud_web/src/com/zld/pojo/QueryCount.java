@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
 import com.zld.service.PgOnlyReadService;
 
 /**
- * ¿ªÆôÏß³Ì²éÑ¯ÊıÁ¿
+ * å¼€å¯çº¿ç¨‹æŸ¥è¯¢æ•°é‡
  * @author whx
  */
 public class QueryCount implements Callable<Long> {
@@ -15,7 +15,7 @@ public class QueryCount implements Callable<Long> {
 	private ArrayList<Object> params;
 	private PgOnlyReadService readService;
 	public QueryCount(PgOnlyReadService readService, String sql,
-			ArrayList<Object> params){
+					  ArrayList<Object> params){
 		this.sql = sql;
 		this.params = params;
 		this.readService = readService;

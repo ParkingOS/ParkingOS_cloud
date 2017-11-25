@@ -32,11 +32,11 @@ public class WorksiteManageAction extends Action {
 	private MongoDbUtils mongoDbUtils;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	private Logger logger = Logger.getLogger(WorksiteManageAction.class);
-	
+
 	/*
-	 * ¹¤×÷Õ¾ÉèÖÃ
+	 * å·¥ä½œç«™è®¾ç½®
 	 */
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
@@ -74,7 +74,7 @@ public class WorksiteManageAction extends Action {
 			logger.error("insert into com_worksite_tb....");
 			String worksite_name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "worksite_name"));
 			String description = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "description"));
-			Integer net_type = RequestUtil.getInteger(request, "net_type", 0);//Ä¬ÈÏÊÇÍøÂç×´¿öÊÇ0£ºÁ÷Á¿
+			Integer net_type = RequestUtil.getInteger(request, "net_type", 0);//é»˜è®¤æ˜¯ç½‘ç»œçŠ¶å†µæ˜¯0ï¼šæµé‡
 			if(worksite_name.equals("")) worksite_name = null;
 			if(description.equals("")) description = null;
 			Map<String, Object> map = new HashMap<String, Object>();
@@ -97,7 +97,7 @@ public class WorksiteManageAction extends Action {
 			}
 			String worksite_name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "worksite_name"));
 			String description = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "description"));
-			Integer net_type = RequestUtil.getInteger(request, "net_type", 0);//Ä¬ÈÏÊÇÍøÂç×´¿öÊÇ0£ºÁ÷Á¿
+			Integer net_type = RequestUtil.getInteger(request, "net_type", 0);//é»˜è®¤æ˜¯ç½‘ç»œçŠ¶å†µæ˜¯0ï¼šæµé‡
 			String sql = "update com_worksite_tb set worksite_name=?,description=?,net_type=? where id=?";
 			int r = daService.update(sql, new Object[]{worksite_name,description,net_type,id});
 			logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" worksite");
@@ -106,7 +106,7 @@ public class WorksiteManageAction extends Action {
 					int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_worksite_tb",id,System.currentTimeMillis()/1000,1});
 					logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" worksite ,add sync ret:"+re);
 				}
-				mongoDbUtils.saveLogs( request,0, 3, "ĞŞ¸ÄÁË¹¤×÷Õ¾£¨±àºÅ£º"+id+"£©£º"+worksite_name);
+				mongoDbUtils.saveLogs( request,0, 3, "ä¿®æ”¹äº†å·¥ä½œç«™ï¼ˆç¼–å·ï¼š"+id+"ï¼‰ï¼š"+worksite_name);
 				AjaxUtil.ajaxOutput(response, "1");
 			}else{
 				AjaxUtil.ajaxOutput(response, "0");
@@ -123,7 +123,7 @@ public class WorksiteManageAction extends Action {
 					int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_worksite_tb",Long.valueOf(id),System.currentTimeMillis()/1000,2});
 					logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" worksite ,add sync ret:"+re);
 				}
-				mongoDbUtils.saveLogs( request,0, 4, "É¾³ıÁË¹¤×÷Õ¾£¨±àºÅ£º"+id+"£©£º"+wMap);
+				mongoDbUtils.saveLogs( request,0, 4, "åˆ é™¤äº†å·¥ä½œç«™ï¼ˆç¼–å·ï¼š"+id+"ï¼‰ï¼š"+wMap);
 				AjaxUtil.ajaxOutput(response, "1");
 			}else{
 				AjaxUtil.ajaxOutput(response, "0");

@@ -29,14 +29,14 @@ public class CityInduceL3ManageAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null){
@@ -92,10 +92,10 @@ public class CityInduceL3ManageAction extends Action {
 			int r = deleteInduce(request);
 			AjaxUtil.ajaxOutput(response, r + "");
 		}
-		
+
 		return null;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		Integer comid = RequestUtil.getInteger(request, "comid_start", -1);
 		SqlInfo sqlInfo1 = null;
@@ -104,14 +104,14 @@ public class CityInduceL3ManageAction extends Action {
 		}
 		return sqlInfo1;
 	}
-	
+
 	private int deleteInduce(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
-		int r = daService.update("update induce_tb set is_delete=? where id=? ", 
+		int r = daService.update("update induce_tb set is_delete=? where id=? ",
 				new Object[]{1, id});
 		return r;
 	}
-	
+
 	private String editInduce(HttpServletRequest request, Long updator_id){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
@@ -126,7 +126,7 @@ public class CityInduceL3ManageAction extends Action {
 		if(latitude == 0d) latitude = null;
 		if(did.equals("")) did = null;
 		if(did != null && !did.equals("")){
-			Long count = pgOnlyReadService.getLong("select count(id) from induce_tb where is_delete=? and did=? and id<>? ", 
+			Long count = pgOnlyReadService.getLong("select count(id) from induce_tb where is_delete=? and did=? and id<>? ",
 					new Object[]{0, did, id});
 			if(count > 0){
 				return "-2";
@@ -139,7 +139,7 @@ public class CityInduceL3ManageAction extends Action {
 		induceSqlMap.put("values", new Object[]{name, type, longitude, latitude, address, ntime, updator_id, did, id});
 		bathSql.add(induceSqlMap);
 		if(comid > 0){
-			Long count = pgOnlyReadService.getLong("select count(id) from induce_park_tb where induce_id=? ", 
+			Long count = pgOnlyReadService.getLong("select count(id) from induce_park_tb where induce_id=? ",
 					new Object[]{id});
 			if(count > 0){
 				induceParkSqlMap.put("sql", "update induce_park_tb set comid=? where induce_id=? ");
@@ -161,7 +161,7 @@ public class CityInduceL3ManageAction extends Action {
 		}
 		return "0";
 	}
-	
+
 	private String createInduce(HttpServletRequest request, Long cityid, Long creator_id){
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
@@ -175,7 +175,7 @@ public class CityInduceL3ManageAction extends Action {
 		if(latitude == 0d) latitude = null;
 		if(did.equals("")) did = null;
 		if(did != null && !did.equals("")){
-			Long count = pgOnlyReadService.getLong("select count(id) from induce_tb where is_delete=? and did=? ", 
+			Long count = pgOnlyReadService.getLong("select count(id) from induce_tb where is_delete=? and did=? ",
 					new Object[]{0, did});
 			if(count > 0){
 				return "-2";
@@ -199,7 +199,7 @@ public class CityInduceL3ManageAction extends Action {
 		}
 		return "0";
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> creators = new ArrayList<Object>();
@@ -213,7 +213,7 @@ public class CityInduceL3ManageAction extends Action {
 				else
 					preParams += ",?";
 			}
-			
+
 			List<Map<String, Object>> list2 = pgOnlyReadService.getAllMap("select id,nickname from user_info_tb where id in ("+preParams+")", creators);
 			if(list2 != null && !list2.isEmpty()){
 				for(Map<String, Object> map : list){
@@ -227,7 +227,7 @@ public class CityInduceL3ManageAction extends Action {
 					}
 				}
 			}
-			
+
 			list2 = pgOnlyReadService.getAllMap("select id,nickname from user_info_tb where id in ("+preParams+")", updators);
 			if(list2 != null && !list2.isEmpty()){
 				for(Map<String, Object> map : list){

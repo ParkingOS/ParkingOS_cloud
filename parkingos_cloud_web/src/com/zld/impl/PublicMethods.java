@@ -1,19 +1,13 @@
 package com.zld.impl;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.concurrent.ExecutorService;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.zld.CustomDefind;
+import com.zld.service.DataBaseService;
+import com.zld.service.LogService;
+import com.zld.service.PgOnlyReadService;
+import com.zld.utils.*;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -26,25 +20,17 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.zld.CustomDefind;
-import com.zld.service.DataBaseService;
-import com.zld.service.LogService;
-import com.zld.service.PgOnlyReadService;
-import com.zld.utils.Check;
-import com.zld.utils.CountPrice;
-import com.zld.utils.ExecutorsUtil;
-import com.zld.utils.HttpsProxy;
-import com.zld.utils.SendMessage;
-import com.zld.utils.StringUtils;
-import com.zld.utils.TimeTools;
-import com.zld.utils.ZLDType;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 
 /**
- * memcached¹¤¾ß£¬¹ºÂò°üÔÂ²úÆ·£¬Ö§¸¶¶©µ¥£¬²éÑ¯³µÅÆºÅÂë 
+ * memcachedå·¥å…·ï¼Œè´­ä¹°åŒ…æœˆäº§å“ï¼Œæ”¯ä»˜è®¢å•ï¼ŒæŸ¥è¯¢è½¦ç‰Œå·ç 
  * @author Administrator
  *
  */
@@ -52,9 +38,9 @@ import com.zld.utils.ZLDType;
 @Repository
 public class PublicMethods {
 
-	
+
 	private Logger logger = Logger.getLogger(PublicMethods.class);
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -65,58 +51,58 @@ public class PublicMethods {
 	private MemcacheUtils memcacheUtils;
 	@Autowired
 	private CommonMethods methods;
-	
+
 
 	/**
-	 * ¹ºÂòÍ£³µÈ¯
-	 * @param uin   ³µÖ÷ÕË»§
-	 * @param value ¹ºÂò½ğ¶î
-	 * @param number¹ºÂòÊıÁ¿
-	 * @param ptype Ö§¸¶ÀàĞÍ 0Óà¶î 1Ö§¸¶±¦ 2Î¢ĞÅ£¬4Óà¶î+Ö§¸¶±¦,5Óà¶î+Î¢ĞÅ
-	 * @return 
+	 * è´­ä¹°åœè½¦åˆ¸
+	 * @param uin   è½¦ä¸»è´¦æˆ·
+	 * @param value è´­ä¹°é‡‘é¢
+	 * @param numberè´­ä¹°æ•°é‡
+	 * @param ptype æ”¯ä»˜ç±»å‹ 0ä½™é¢ 1æ”¯ä»˜å® 2å¾®ä¿¡ï¼Œ4ä½™é¢+æ”¯ä»˜å®,5ä½™é¢+å¾®ä¿¡
+	 * @return
 	 */
 	public int buyTickets(Long uin, Integer value, Integer number,Integer ptype) {
 		logger.error("buyticket>>>uin:"+uin+",value"+value+",number:"+number+",ptype:"+ptype);
 		boolean isAuth = isAuthUser(uin);
-		//ÕÛ¿Û
+		//æŠ˜æ‰£
 		Double discount = Double.valueOf(CustomDefind.getValue("NOAUTHDISCOUNT"));
 		if(isAuth){
 			discount=Double.valueOf(CustomDefind.getValue("AUTHDISCOUNT"));
 		}
 		logger.error("buyticket>>>uin:"+uin+",discount"+discount);
-		 //ÕË»§Óà¶îÖ§¸¶
+		//è´¦æˆ·ä½™é¢æ”¯ä»˜
 		Double balance =null;
 		Map userMap = null;
-		//³µÖ÷ÕæÊµÕË»§Óà¶î
+		//è½¦ä¸»çœŸå®è´¦æˆ·ä½™é¢
 		userMap = daService.getPojo("select balance,wxp_openid from user_info_tb where id =?",	new Object[]{uin});
 		if(userMap!=null&&userMap.get("balance")!=null){
 			balance = Double.valueOf(userMap.get("balance")+"");
 		}
-		//Ã¿ÕÅÓ¦¸¶½ğ¶î
+		//æ¯å¼ åº”ä»˜é‡‘é¢
 		Double etotal =  StringUtils.formatDouble(value*discount);
-		//Ó¦¸¶½ğ¶î
+		//åº”ä»˜é‡‘é¢
 		Double total = StringUtils.formatDouble(etotal*number);
 		logger.error(uin+",balance:"+balance+",total:"+total);
 		logger.error("buyticket>>>uin:"+uin+",discount"+discount+",total:"+total+",balance:"+balance);
-		if(total>balance){//Óà¶î²»×ã
-			logger.error(uin+",balance:"+balance+",total:"+total+",Óà¶î²»×ã");
+		if(total>balance){//ä½™é¢ä¸è¶³
+			logger.error(uin+",balance:"+balance+",total:"+total+",ä½™é¢ä¸è¶³");
 			return -1;
 		}
-		
+
 		List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-		//¸üĞÂÓÃ»§Óà¶î
+		//æ›´æ–°ç”¨æˆ·ä½™é¢
 		Map<String, Object> userSqlMap = new HashMap<String, Object>();
-		//¸üĞÂÓÃ»§Óà¶î
+		//æ›´æ–°ç”¨æˆ·ä½™é¢
 		Map<String, Object> userAccSqlMap = new HashMap<String, Object>();
-		
+
 		Long ntime = System.currentTimeMillis()/1000;
 		Long ttime = TimeTools.getToDayBeginTime();
-	    userSqlMap.put("sql", "update user_info_tb  set balance =balance-? where id=?");
+		userSqlMap.put("sql", "update user_info_tb  set balance =balance-? where id=?");
 		userSqlMap.put("values", new Object[]{total,uin});
 		bathSql.add(userSqlMap);
-		
+
 		userAccSqlMap.put("sql", "insert into user_account_tb(uin,amount,type,create_time,remark,pay_type,target) values(?,?,?,?,?,?,?)");
-		userAccSqlMap.put("values", new Object[]{uin,total,1,ntime,"¹ºÂòÍ£³µÈ¯("+number+"ÕÅ"+value+"Ôª)",ptype,2});
+		userAccSqlMap.put("values", new Object[]{uin,total,1,ntime,"è´­ä¹°åœè½¦åˆ¸("+number+"å¼ "+value+"å…ƒ)",ptype,2});
 		bathSql.add(userAccSqlMap);
 		if(number > 0){
 			for(int i=0;i<number;i++){
@@ -134,27 +120,27 @@ public class PublicMethods {
 			return 0;
 		}
 	}
-	
-	
+
+
 	/**
-	 * ³µÖ÷´òÉÍÊÕ·ÑÔ±
+	 * è½¦ä¸»æ‰“èµæ”¶è´¹å‘˜
 	 * @param uin
 	 * @param uid
 	 * @param orderId
 	 * @param ticketId
 	 * @param money
 	 * @param comId
-	 * @param ptype 0Óà¶î£¬1Ö§¸¶±¦£¬2Î¢ĞÅ£¬4Óà¶î+Ö§¸¶±¦,5Óà¶î+Î¢ĞÅ,7Í£³µÈ¯ 
+	 * @param ptype 0ä½™é¢ï¼Œ1æ”¯ä»˜å®ï¼Œ2å¾®ä¿¡ï¼Œ4ä½™é¢+æ”¯ä»˜å®,5ä½™é¢+å¾®ä¿¡,7åœè½¦åˆ¸
 	 * @return
 	 */
 	public int doparkUserReward(Long uin,Long uid,Long orderId,Long ticketId,Double money,Integer ptype,Integer bind_flag) {
 		logger.error("doparkUserReward>>>uin:"+uin+",uid:"+uid+",orderid:"+orderId+",money:"+money+",ptype"+ptype+",bind_flag:"+bind_flag);
 		Long comId = daService.getLong("select comid from user_info_tb where id=? ", new Object[]{uid});
-		//²éÍ£³µÈ¯½ğ¶î
+		//æŸ¥åœè½¦åˆ¸é‡‘é¢
 		Long count = daService.getLong("select count(id) from parkuser_reward_tb where uin=? and order_id=? ", new Object[]{uin,orderId});
 		if(count>0){
-			logger.error("ÒÑ´òÉÍ¹ı>>>uin:"+uin+",orderid:"+orderId+",uid:"+uid);
-			//ÒÑ´òÉÍ¹ı
+			logger.error("å·²æ‰“èµè¿‡>>>uin:"+uin+",orderid:"+orderId+",uid:"+uid);
+			//å·²æ‰“èµè¿‡
 			return -2;
 		}
 		Long ntime = System.currentTimeMillis()/1000;
@@ -163,10 +149,10 @@ public class PublicMethods {
 			ticketMoney = getTicketMoney(ticketId, 4, uid, money, 2, comId, orderId);
 		}
 		logger.error("uin:"+uin+",uid:"+uid+",orderid:"+orderId+",ticketMoney:"+ticketMoney+",money:"+money+",ticketid:"+ticketId);
-		//²éÓÃ»§Óà¶î
+		//æŸ¥ç”¨æˆ·ä½™é¢
 		Map<String, Object> userMap = null;
 		Double ubalance =null;
-		//³µÖ÷ÕæÊµÕË»§Óà¶î
+		//è½¦ä¸»çœŸå®è´¦æˆ·ä½™é¢
 		if(bind_flag == 1){
 			userMap = daService.getPojo("select balance from user_info_tb where id =?",	new Object[]{uin});
 		}else{
@@ -175,47 +161,47 @@ public class PublicMethods {
 		if(userMap!=null&&userMap.get("balance")!=null){
 			ubalance = Double.valueOf(userMap.get("balance")+"");
 			logger.error(":uin:"+uin+",uid:"+uid+",orderid:"+orderId+",ubalance:"+ubalance+",ticketMoney:"+ticketMoney);
-			ubalance +=ticketMoney;//ÓÃ»§Óà¶î¼ÓÉÏÓÅ»İÈ¯½ğ¶î
+			ubalance +=ticketMoney;//ç”¨æˆ·ä½™é¢åŠ ä¸Šä¼˜æƒ åˆ¸é‡‘é¢
 		}
-		if(ubalance==null||ubalance<money){//ÕÊ»§Óà¶î²»×ã
-			logger.error("´òÉÍÕË»§Óà¶î²»×ã£¬ÕË»§Óà¶î£º"+ubalance+",´òÉÍ·Ñ½ğ¶î£º"+money+",uin:"+uin+",orderid:"+orderId+",ticketMoney:"+ticketMoney);
+		if(ubalance==null||ubalance<money){//å¸æˆ·ä½™é¢ä¸è¶³
+			logger.error("æ‰“èµè´¦æˆ·ä½™é¢ä¸è¶³ï¼Œè´¦æˆ·ä½™é¢ï¼š"+ubalance+",æ‰“èµè´¹é‡‘é¢ï¼š"+money+",uin:"+uin+",orderid:"+orderId+",ticketMoney:"+ticketMoney);
 			return -1;
 		}
 		logger.error("uin:"+uin+",orderid:"+orderId+",uid:"+uid+",ticketMoney:"+ticketMoney);
-		
+
 		List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-		//Í£³µÈ¯
+		//åœè½¦åˆ¸
 		Map<String, Object> ticketSqlMap = new HashMap<String, Object>();
-		//¸üĞÂÓÃ»§Óà¶î
+		//æ›´æ–°ç”¨æˆ·ä½™é¢
 		Map<String, Object> userSqlMap = new HashMap<String, Object>();
-		//ÓÃ»§ÕË»§
+		//ç”¨æˆ·è´¦æˆ·
 		Map<String, Object> userAccSqlMap = new HashMap<String, Object>();
-		//ÊÕ·ÑÔ±Óà¶î
+		//æ”¶è´¹å‘˜ä½™é¢
 		Map<String, Object> parkuserSqlMap = new HashMap<String, Object>();
-		//ÊÕ·ÑÔ±ÕË»§
+		//æ”¶è´¹å‘˜è´¦æˆ·
 		Map<String, Object> parkuserAccSqlMap = new HashMap<String, Object>();
-		//Í£³µ±¦ÕË»§
+		//åœè½¦å®è´¦æˆ·
 		Map<String, Object> tingchebaoAccountsqlMap = new HashMap<String, Object>();
-		//´òÉÍ¼ÇÂ¼
+		//æ‰“èµè®°å½•
 		Map<String, Object> prakuserRewardsqlMap = new HashMap<String, Object>();
-		
+
 		Map<String, Object> userTicketAccountsqlMap = new HashMap<String, Object>();
-		//´òÉÍ»ı·Ö
+		//æ‰“èµç§¯åˆ†
 		Map<String, Object> rewardsqlMap = new HashMap<String, Object>();
-		//´òÉÍ»ı·ÖÃ÷Ï¸
+		//æ‰“èµç§¯åˆ†æ˜ç»†
 		Map<String, Object> rewardAccountsqlMap = new HashMap<String, Object>();
-		
+
 		String carNumber = getCarNumber(uin);
-		if(ticketMoney>0){//ÓÃÁËÍ£³µÈ¯
+		if(ticketMoney>0){//ç”¨äº†åœè½¦åˆ¸
 			ticketSqlMap.put("sql", "update ticket_tb  set state=?,comid=?,utime=?,umoney=?,orderid=? where id=?");
 			ticketSqlMap.put("values", new Object[]{1,comId,ntime,ticketMoney,orderId,ticketId});
 			bathSql.add(ticketSqlMap);
-			
+
 			tingchebaoAccountsqlMap.put("sql", "insert into tingchebao_account_tb(amount,type,create_time,remark,utype,orderid) values(?,?,?,?,?,?)");
-			tingchebaoAccountsqlMap.put("values", new Object[]{ticketMoney,1,ntime,"³µÖ÷"+carNumber+"£¬Ê¹ÓÃÍ£³µ´ú½ğÈ¯´òÉÍÊÕ·ÑÔ±"+uid,7,orderId});
+			tingchebaoAccountsqlMap.put("values", new Object[]{ticketMoney,1,ntime,"è½¦ä¸»"+carNumber+"ï¼Œä½¿ç”¨åœè½¦ä»£é‡‘åˆ¸æ‰“èµæ”¶è´¹å‘˜"+uid,7,orderId});
 			bathSql.add(tingchebaoAccountsqlMap);
 		}
-		if(money>ticketMoney){//Òª³µÖ÷Óà¶îÖ§¸¶
+		if(money>ticketMoney){//è¦è½¦ä¸»ä½™é¢æ”¯ä»˜
 			if(bind_flag == 1){
 				userSqlMap.put("sql", "update user_info_tb  set balance =balance-? where id=?");
 			}else{
@@ -224,32 +210,32 @@ public class PublicMethods {
 			userSqlMap.put("values", new Object[]{money-ticketMoney,uin});
 			bathSql.add(userSqlMap);
 		}
-		
+
 		userAccSqlMap.put("sql", "insert into user_account_tb(uin,amount,type,create_time,remark,pay_type,orderid) values(?,?,?,?,?,?,?)");
-		userAccSqlMap.put("values", new Object[]{uin,money,1,ntime,"´òÉÍÊÕ·ÑÔ±-"+uid,ptype,orderId});
+		userAccSqlMap.put("values", new Object[]{uin,money,1,ntime,"æ‰“èµæ”¶è´¹å‘˜-"+uid,ptype,orderId});
 		bathSql.add(userAccSqlMap);
-		
-		if(ticketMoney>0&&ticketId!=null){//Ê¹ÓÃÍ£³µÈ¯£¬¸ø³µÖ÷ÕË»§ÏÈ³äÖµ
+
+		if(ticketMoney>0&&ticketId!=null){//ä½¿ç”¨åœè½¦åˆ¸ï¼Œç»™è½¦ä¸»è´¦æˆ·å…ˆå……å€¼
 			userTicketAccountsqlMap.put("sql", "insert into user_account_tb(uin,amount,type,create_time,remark,pay_type,orderid) values(?,?,?,?,?,?,?)");
-			userTicketAccountsqlMap.put("values", new Object[]{uin,ticketMoney,0,ntime-1,"´òÉÍ-Í£³µÈ¯³äÖµ",7,orderId});
+			userTicketAccountsqlMap.put("values", new Object[]{uin,ticketMoney,0,ntime-1,"æ‰“èµ-åœè½¦åˆ¸å……å€¼",7,orderId});
 			bathSql.add(userTicketAccountsqlMap);
 		}
-		
-		//¸üĞÂÊÕ·ÑÔ±ÕË»§
+
+		//æ›´æ–°æ”¶è´¹å‘˜è´¦æˆ·
 		parkuserSqlMap.put("sql", "update user_info_tb  set balance =balance+? where id=?");
 		parkuserSqlMap.put("values", new Object[]{money,uid});
 		bathSql.add(parkuserSqlMap);
-		
+
 		parkuserAccSqlMap.put("sql", "insert into parkuser_account_tb(uin,amount,type,create_time,remark,target,orderid) values(?,?,?,?,?,?,?)");
-		parkuserAccSqlMap.put("values", new Object[]{uid,money,0,ntime,"´òÉÍ·Ñ_"+carNumber,4,orderId});
+		parkuserAccSqlMap.put("values", new Object[]{uid,money,0,ntime,"æ‰“èµè´¹_"+carNumber,4,orderId});
 		bathSql.add(parkuserAccSqlMap);
-		
+
 		Long rewardId = daService.getkey("seq_parkuser_reward_tb");
 		prakuserRewardsqlMap.put("sql", "insert into parkuser_reward_tb(id,uin,uid,money,ctime,comid,order_id,ticket_id) values(?,?,?,?,?,?,?,?)");
 		prakuserRewardsqlMap.put("values", new Object[]{rewardId,uin,uid,money,ntime,comId,orderId,ticketId});
 		bathSql.add(prakuserRewardsqlMap);
-		
-		/*//´òÉÍ»ı·Ö
+
+		/*//æ‰“èµç§¯åˆ†
 		Long btime = TimeTools.getToDayBeginTime();
 		Long rewardCount = daService.getLong("select count(id) from parkuser_reward_tb where uid=? and ctime>=? ",
 				new Object[] { uid, btime });
@@ -259,24 +245,24 @@ public class PublicMethods {
 		if(tscoreMap != null && tscoreMap.get("tscore") != null){
 			tscore = Double.valueOf(tscoreMap.get("tscore") + "");
 		}
-		logger.error("ÊÕ·ÑÔ±½ñÈÕ»ı·ÖÊÕÈë£ºuid:"+uid+",tscore:"+tscore+",±¾´Î»ı·Ö:"+rscore+",rewardCount:"+rewardCount);
-		if(tscore < 5000){//Ã¿Ìì×î¶àÊÕÈë5000»ı·Ö
+		logger.error("æ”¶è´¹å‘˜ä»Šæ—¥ç§¯åˆ†æ”¶å…¥ï¼šuid:"+uid+",tscore:"+tscore+",æœ¬æ¬¡ç§¯åˆ†:"+rscore+",rewardCount:"+rewardCount);
+		if(tscore < 5000){//æ¯å¤©æœ€å¤šæ”¶å…¥5000ç§¯åˆ†
 			if(tscore + rscore > 5000){
 				rscore = 5000 - tscore;
-				logger.error("½ñÈÕ»ı·ÖÒÑ¾­´ïÉÏÏŞ£¬tscore:"+tscore+",rscore:"+rscore+",uid:"+uid);
+				logger.error("ä»Šæ—¥ç§¯åˆ†å·²ç»è¾¾ä¸Šé™ï¼Œtscore:"+tscore+",rscore:"+rscore+",uid:"+uid);
 			}
 			rewardsqlMap.put("sql", "update user_info_tb set reward_score=reward_score+? where id=? ");
 			rewardsqlMap.put("values", new Object[]{rscore, uid});
 			bathSql.add(rewardsqlMap);
-			
+
 			rewardAccountsqlMap.put("sql", "insert into reward_account_tb(uin,score,type,create_time,target,reward_id,remark) values(?,?,?,?,?,?,?) ");
-			rewardAccountsqlMap.put("values", new Object[]{uid, rscore, 0, ntime, 0, rewardId,"´òÉÍ "+carNumber});
+			rewardAccountsqlMap.put("values", new Object[]{uid, rscore, 0, ntime, 0, rewardId,"æ‰“èµ "+carNumber});
 			bathSql.add(rewardAccountsqlMap);
 		}*/
 		boolean result = daService.bathUpdate(bathSql);
 		logger.error("uin:"+uin+",uid:"+uid+",orderid:"+orderId+",result:"+result);
 		if(result){
-			if(ticketId > 0){//»º´æ´¦Àí
+			if(ticketId > 0){//ç¼“å­˜å¤„ç†
 				Map<Long, Long> tcacheMap = memcacheUtils.doMapLongLongCache("reward_userticket_cache", null, null);
 				Long ttime = TimeTools.getToDayBeginTime();
 				if(tcacheMap!=null){
@@ -287,8 +273,8 @@ public class PublicMethods {
 				}
 				memcacheUtils.doMapLongLongCache("reward_userticket_cache", tcacheMap, "update");
 			}
-			
-			if(ticketMoney > 0){//¸üĞÂÃ¿ÈÕ²¹ÌùÉÏÏŞ
+
+			if(ticketMoney > 0){//æ›´æ–°æ¯æ—¥è¡¥è´´ä¸Šé™
 				updateAllowCache(comId, ticketId, ticketMoney);
 				logger.error("update allowance today>>>uin:"+uin+",orderid:"+orderId+",ticketMoney:"+ticketMoney);
 			}
@@ -297,15 +283,15 @@ public class PublicMethods {
 			return 0;
 		}
 	}
-	
+
 	/**
-	 * 
-	 * @param uin ÓÃ»§ÕÊºÅ
-	 * @param pid ²úÆ·±àºÅ¡¡
-	 * @param number ¹ºÂòÊıÁ¿
-	 * @param start ¿ªÊ¼Ê±¼ä£¬¸ñÊ½£º20140815
-	 * @param ptype :0Óà¶î£¬1Ö§¸¶±¦£¬2Î¢ĞÅ£¬3ÍøÒø£¬4Óà¶î+Ö§¸¶±¦,5Óà¶î+Î¢ĞÅ,6Óà¶î+ÍøÒø
-	 * @return  0Ê§°Ü,1³É¹¦¡¡-1Óà¶î²»×ã
+	 *
+	 * @param uin ç”¨æˆ·å¸å·
+	 * @param pid äº§å“ç¼–å·ã€€
+	 * @param number è´­ä¹°æ•°é‡
+	 * @param start å¼€å§‹æ—¶é—´ï¼Œæ ¼å¼ï¼š20140815
+	 * @param ptype :0ä½™é¢ï¼Œ1æ”¯ä»˜å®ï¼Œ2å¾®ä¿¡ï¼Œ3ç½‘é“¶ï¼Œ4ä½™é¢+æ”¯ä»˜å®,5ä½™é¢+å¾®ä¿¡,6ä½™é¢+ç½‘é“¶
+	 * @return  0å¤±è´¥,1æˆåŠŸã€€-1ä½™é¢ä¸è¶³
 	 */
 	public int buyProducts(Long uin,Map productMap,Integer number,String start,int ptype){
 //		Map productMap = daService.getPojo("select * from product_package_tb where id=? and state=? and remain_number>?",
@@ -313,22 +299,22 @@ public class PublicMethods {
 //		if(productMap==null||productMap.isEmpty())
 //			return 0;
 		Long pid = (Long)productMap.get("id");
-		//1²éÑ¯Óà¶î
+		//1æŸ¥è¯¢ä½™é¢
 		BigDecimal _balance  = (BigDecimal)daService.getObject("select balance from user_info_Tb where id=?",
 				new Object[]{uin}, BigDecimal.class);
 		Double balance = 0d;
 		if(_balance!=null)
 			balance = _balance.doubleValue();
-		logger.error("µ±Ç°¿Í»§Óà¶î£º"+balance);
+		logger.error("å½“å‰å®¢æˆ·ä½™é¢ï¼š"+balance);
 		Double price = Double.valueOf(productMap.get("price")+"");
-		//logger.error("²úÆ·¼Û¸ñ:"+price);
-		//2¿ÛÓÃ»§½ğ¶î
-		//3¼ÓÈëÍ£³µ³¡ÕÊºÅ½ğ¶î
-		//µÇ¼ÇÓÃ»§°üÔÂ²úÆ·
-		logger.error("²úÆ·¼Û¸ñ:"+price);
-		
+		//logger.error("äº§å“ä»·æ ¼:"+price);
+		//2æ‰£ç”¨æˆ·é‡‘é¢
+		//3åŠ å…¥åœè½¦åœºå¸å·é‡‘é¢
+		//ç™»è®°ç”¨æˆ·åŒ…æœˆäº§å“
+		logger.error("äº§å“ä»·æ ¼:"+price);
+
 		Long comid = (Long)productMap.get("comid");
-		
+
 		boolean b = false;
 		Double total = number*price;
 		String time = start.substring(0,4)+"-"+start.substring(4,6)+"-"+start.substring(6);
@@ -337,108 +323,108 @@ public class PublicMethods {
 		calendar.setTimeInMillis(btime);
 		calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)+Integer.valueOf(number));
 		Long etime = calendar.getTimeInMillis();
-		if(balance>=total){//Óà¶î¿ÉÒÔ¹ºÂò²úÆ·
+		if(balance>=total){//ä½™é¢å¯ä»¥è´­ä¹°äº§å“
 			List<Map<String , Object>> sqlMaps = new ArrayList<Map<String,Object>>();
-			logger.error ("Óà¶î¿ÉÒÔ¹ºÂò²úÆ·...");
-			
+			logger.error ("ä½™é¢å¯ä»¥è´­ä¹°äº§å“...");
+
 			Map<String, Object> usersqlMap = new HashMap<String, Object>();
 			usersqlMap.put("sql", "update user_info_tb set balance = balance-? where id=? ");
 			usersqlMap.put("values", new Object[]{total,uin});
 			sqlMaps.add(usersqlMap);
-			
+
 			Map<String, Object> userAccountsqlMap = new HashMap<String, Object>();
 			userAccountsqlMap.put("sql", "insert into user_account_tb(uin,amount,type,create_time,remark,pay_type) values(?,?,?,?,?,?)");
-			userAccountsqlMap.put("values", new Object[]{uin,total,1,System.currentTimeMillis()/1000,"¹ºÂò-"+productMap.get("p_name"),ptype});
+			userAccountsqlMap.put("values", new Object[]{uin,total,1,System.currentTimeMillis()/1000,"è´­ä¹°-"+productMap.get("p_name"),ptype});
 			sqlMaps.add(userAccountsqlMap);
-			
+
 			Map<String, Object> comsqlMap = new HashMap<String, Object>();
 			comsqlMap.put("sql", "update com_info_tb set money=money+?,total_money=total_money+? where id=? ");
 			comsqlMap.put("values", new Object[]{total,total,comid});
 			sqlMaps.add(comsqlMap);
-			
+
 			Map<String, Object> buysqlMap = new HashMap<String, Object>();
 			buysqlMap.put("sql", "insert into carower_product(pid,uin,create_time,b_time,e_time,total) values(?,?,?,?,?,?)");
 			buysqlMap.put("values", new Object[]{pid,uin,System.currentTimeMillis()/1000,btime/1000,etime/1000-1,total});
 			sqlMaps.add(buysqlMap);
-			
+
 			Map<String, Object> ppSqlMap =new HashMap<String, Object>();
 			ppSqlMap.put("sql", "update product_package_tb set remain_number=remain_number-? where id=?");
 			ppSqlMap.put("values", new Object[]{1,pid});
 			sqlMaps.add(ppSqlMap);
-			
+
 			b= daService.bathUpdate(sqlMaps);
-			logger.error("¹ºÂò²úÆ·³É¹¦...");
-		}else 
+			logger.error("è´­ä¹°äº§å“æˆåŠŸ...");
+		}else
 			return -1;
-		//4Ğ´ÓÃ»§¿Û·ÑÈÕÖ¾
-		//5Ğ´³µ³¡³äÖµÈÕÖ¾
-		if(b){//¹ºÂò³É¹¦
+		//4å†™ç”¨æˆ·æ‰£è´¹æ—¥å¿—
+		//5å†™è½¦åœºå……å€¼æ—¥å¿—
+		if(b){//è´­ä¹°æˆåŠŸ
 			Map comMap = daService.getMap("select company_name from com_info_tb where id = ?", new Object[]{productMap.get("comid")});
-			daService.update( "insert into money_record_tb(comid,create_time,amount,uin,type,remark,pay_type) values (?,?,?,?,?,?,?)", 
+			daService.update( "insert into money_record_tb(comid,create_time,amount,uin,type,remark,pay_type) values (?,?,?,?,?,?,?)",
 					new Object[]{productMap.get("comid"),System.currentTimeMillis()/1000,total,uin,
-					ZLDType.MONEY_CONSUM,comMap.get("company_name")+" ¹ºÂò-"+productMap.get("p_name"),ptype});
-			logger.error("³äÖµÈÕÖ¾Ğ´Èë³É¹¦...");
-			//·¢ËÍ¶ÌĞÅ ,³µ³¡¹ÜÀíÔ±¼°³µÖ÷;
-			
+							ZLDType.MONEY_CONSUM,comMap.get("company_name")+" è´­ä¹°-"+productMap.get("p_name"),ptype});
+			logger.error("å……å€¼æ—¥å¿—å†™å…¥æˆåŠŸ...");
+			//å‘é€çŸ­ä¿¡ ,è½¦åœºç®¡ç†å‘˜åŠè½¦ä¸»;
+
 			Map userMap1 = daService.getMap("select mobile from user_info_tb where id=? ",new Object[]{uin});
 			Map userMap2 = daService.getMap("select mobile,nickname from user_info_tb where comid=? and auth_flag=? limit ?", new Object[]{productMap.get("comid"),1,1});
-			
+
 			String umobile = userMap1.get("mobile")==null?"":userMap1.get("mobile")+"";//(String)daService.getObject("select mobile from user_info_tb where id=? ",new Object[]{uin},String.class);
 			String pmobile = userMap2.get("mobile")==null?"":userMap2.get("mobile")+"";//(String)daService.getObject("select mobile from user_info_tb where comid=? and auth_flag=? ", new Object[]{productMap.get("comid"),1},String.class);
 			String puserName = userMap2.get("nickname")==null?"":userMap2.get("nickname")+"";
-			
+
 			String exprise = "";
 			//List userList = daService.getAll("select mobile,nickname,id from user_info_tb where (comid=? or id=?) ", new Object[]{uin});
-			
+
 			if(!umobile.equals(""))
-				exprise = TimeTools.getTimeStr_yyyy_MM_dd(btime)+"ÖÁ"+TimeTools.getTimeStr_yyyy_MM_dd(etime);
+				exprise = TimeTools.getTimeStr_yyyy_MM_dd(btime)+"è‡³"+TimeTools.getTimeStr_yyyy_MM_dd(etime);
 			String carNumber ="";
 			if(!umobile.equals("")||!pmobile.equals(""))
 				carNumber = getCarNumber(uin);//(String)daService.getObject("select id,car_number from car_info_tb where uin=? ", new Object[]{uin},String.class);
-			//¿ªÊ¼·¢¶ÌĞÅ
+			//å¼€å§‹å‘çŸ­ä¿¡
 			if(!umobile.equals("")&&Check.checkMobile(umobile));
-//				SendMessage.sendMessage(umobile, "×ğ¾´µÄ"+carNumber+"³µÖ÷ÄúºÃ£¬ÄúÒÑÍ¨¹ıÍ£³µ±¦¹ºÂò"+comMap.get("company_name")+"°üÔÂ·şÎñ£¬·ÑÓÃ"+total+"Ôª£¬ÓĞĞ§ÆÚ"+exprise+
-//						"£¬Äú¿ÉÒÔÆ¾´Ë¶ÌĞÅµ½"+comMap.get("company_name")+"»»È¡ÏàÓ¦ÔÂ¿¨¡£¿Í·ş£º01053618108 ¡¾Í£³µ±¦¡¿");
-				SendMessage.sendMultiMessage(umobile, "×ğ¾´µÄ"+carNumber+"³µÖ÷ÄúºÃ£¬ÄúÒÑÍ¨¹ıÍ£³µ±¦¹ºÂò"+comMap.get("company_name")+"°üÔÂ·şÎñ£¬·ÑÓÃ"+total+"Ôª£¬ÓĞĞ§ÆÚ"+exprise+
-						"£¬Äú¿ÉÒÔÆ¾´Ë¶ÌĞÅµ½"+comMap.get("company_name")+"»»È¡ÏàÓ¦ÔÂ¿¨¡£È·¶¨ÔÂ¿¨°ìÀíÊÖĞøºÍÊ±¼ä¿ÉÒÔÌáÇ°ºÍ¸Ã³µ³¡¸ºÔğÈË"+puserName+"(ÊÖ»ú£º"+pmobile+")ÁªÏµ£¬ÆäËûÒÉÎÊ¿É×ÉÑ¯Í£³µ±¦¿Í·ş£º01053618108 ¡¾Í£³µ±¦¡¿");
-				
-				
+//				SendMessage.sendMessage(umobile, "å°Šæ•¬çš„"+carNumber+"è½¦ä¸»æ‚¨å¥½ï¼Œæ‚¨å·²é€šè¿‡åœè½¦å®è´­ä¹°"+comMap.get("company_name")+"åŒ…æœˆæœåŠ¡ï¼Œè´¹ç”¨"+total+"å…ƒï¼Œæœ‰æ•ˆæœŸ"+exprise+
+//						"ï¼Œæ‚¨å¯ä»¥å‡­æ­¤çŸ­ä¿¡åˆ°"+comMap.get("company_name")+"æ¢å–ç›¸åº”æœˆå¡ã€‚å®¢æœï¼š01053618108 ã€åœè½¦å®ã€‘");
+			SendMessage.sendMultiMessage(umobile, "å°Šæ•¬çš„"+carNumber+"è½¦ä¸»æ‚¨å¥½ï¼Œæ‚¨å·²é€šè¿‡åœè½¦å®è´­ä¹°"+comMap.get("company_name")+"åŒ…æœˆæœåŠ¡ï¼Œè´¹ç”¨"+total+"å…ƒï¼Œæœ‰æ•ˆæœŸ"+exprise+
+					"ï¼Œæ‚¨å¯ä»¥å‡­æ­¤çŸ­ä¿¡åˆ°"+comMap.get("company_name")+"æ¢å–ç›¸åº”æœˆå¡ã€‚ç¡®å®šæœˆå¡åŠç†æ‰‹ç»­å’Œæ—¶é—´å¯ä»¥æå‰å’Œè¯¥è½¦åœºè´Ÿè´£äºº"+puserName+"(æ‰‹æœºï¼š"+pmobile+")è”ç³»ï¼Œå…¶ä»–ç–‘é—®å¯å’¨è¯¢åœè½¦å®å®¢æœï¼š01053618108 ã€åœè½¦å®ã€‘");
+
+
 			if(!pmobile.equals("")&&Check.checkMobile(pmobile))
-				SendMessage.sendMultiMessage(pmobile,"×ğ¾´µÄºÏ×÷»ï°éÄúºÃ£¬³µÖ÷"+carNumber+"(ÊÖ»ú£º"+umobile+")ÒÑÍ¨¹ıÍ£³µ±¦¹ºÂò¹ó³µ³¡°üÔÂ·şÎñ1¸öÔÂ£¬·ÑÓÃ"+total+"Ôª£¬Äú¿ÉÒÔÔÚºóÌ¨²é¿´ÏàÓ¦ĞÅÏ¢¡£"+
-						"³µÖ÷½«Æ¾¶ÌĞÅÇ°À´»»È¡ÔÂ¿¨£¬Äú¿ÉÒÔÌáÇ°ÓëÖ®ÁªÏµÈ·ÈÏÏàÓ¦ĞÅÏ¢£¬²¢±¸ºÃÏàÓ¦ÔÂ¿¨£¬Ğ»Ğ»¡£¿Í·ş£º01053618108 ¡¾Í£³µ±¦¡¿");
-				
-//				SendMessage.sendMessage(pmobile, "×ğ¾´µÄºÏ×÷»ï°éÄúºÃ£¬³µÖ÷"+carNumber+"ÒÑÍ¨¹ıÍ£³µ±¦¹ºÂò¹ó³µ³¡°üÔÂ·şÎñ1¸öÔÂ£¬·ÑÓÃ"+total+"Ôª£¬Äú¿ÉÒÔÔÚºóÌ¨²é¿´ÏàÓ¦ĞÅÏ¢¡£"+
-//						"³µÖ÷½«Æ¾¶ÌĞÅÇ°À´»»È¡ÔÂ¿¨£¬Çë±¸ºÃÏàÓ¦ÔÂ¿¨£¬Ğ»Ğ»¡£¿Í·ş£º01053618108 ¡¾Í£³µ±¦¡¿");
+				SendMessage.sendMultiMessage(pmobile,"å°Šæ•¬çš„åˆä½œä¼™ä¼´æ‚¨å¥½ï¼Œè½¦ä¸»"+carNumber+"(æ‰‹æœºï¼š"+umobile+")å·²é€šè¿‡åœè½¦å®è´­ä¹°è´µè½¦åœºåŒ…æœˆæœåŠ¡1ä¸ªæœˆï¼Œè´¹ç”¨"+total+"å…ƒï¼Œæ‚¨å¯ä»¥åœ¨åå°æŸ¥çœ‹ç›¸åº”ä¿¡æ¯ã€‚"+
+						"è½¦ä¸»å°†å‡­çŸ­ä¿¡å‰æ¥æ¢å–æœˆå¡ï¼Œæ‚¨å¯ä»¥æå‰ä¸ä¹‹è”ç³»ç¡®è®¤ç›¸åº”ä¿¡æ¯ï¼Œå¹¶å¤‡å¥½ç›¸åº”æœˆå¡ï¼Œè°¢è°¢ã€‚å®¢æœï¼š01053618108 ã€åœè½¦å®ã€‘");
+
+//				SendMessage.sendMessage(pmobile, "å°Šæ•¬çš„åˆä½œä¼™ä¼´æ‚¨å¥½ï¼Œè½¦ä¸»"+carNumber+"å·²é€šè¿‡åœè½¦å®è´­ä¹°è´µè½¦åœºåŒ…æœˆæœåŠ¡1ä¸ªæœˆï¼Œè´¹ç”¨"+total+"å…ƒï¼Œæ‚¨å¯ä»¥åœ¨åå°æŸ¥çœ‹ç›¸åº”ä¿¡æ¯ã€‚"+
+//						"è½¦ä¸»å°†å‡­çŸ­ä¿¡å‰æ¥æ¢å–æœˆå¡ï¼Œè¯·å¤‡å¥½ç›¸åº”æœˆå¡ï¼Œè°¢è°¢ã€‚å®¢æœï¼š01053618108 ã€åœè½¦å®ã€‘");
 			return 1;
 		}
 		return 0;
 	}
-	
+
 
 	/**
-	 * ´¦ÀíÔ¤¸¶·Ñ¶©µ¥
-	 * @param orderMap ¶©µ¥
-	 * @param total ÊµÊÕ½ğ¶î
-	 * @return 0Ê§°Ü 1³É¹¦
+	 * å¤„ç†é¢„ä»˜è´¹è®¢å•
+	 * @param orderMap è®¢å•
+	 * @param total å®æ”¶é‡‘é¢
+	 * @return 0å¤±è´¥ 1æˆåŠŸ
 	 */
 	public Map<String, Object> doMidPayOrder(Map<String, Object> orderMap, Double total, Long uid){
-		logger.error("ÖĞÑëÏÖ½ğÔ¤Ö§¸¶½áËãdoMidPayOrder£¬orderid:"+orderMap.get("id")+",Ô¤Ö§¸¶½ğ¶î£º"+orderMap.get("total")+",uin:"+orderMap.get("uin")+",Í£³µ·Ñ½ğ¶î£ºtotal:"+total+",car_number:"+orderMap.get("car_number"));
+		logger.error("ä¸­å¤®ç°é‡‘é¢„æ”¯ä»˜ç»“ç®—doMidPayOrderï¼Œorderid:"+orderMap.get("id")+",é¢„æ”¯ä»˜é‡‘é¢ï¼š"+orderMap.get("total")+",uin:"+orderMap.get("uin")+",åœè½¦è´¹é‡‘é¢ï¼štotal:"+total+",car_number:"+orderMap.get("car_number"));
 		Double prefee = Double.valueOf(orderMap.get("total") + "");
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		Long orderid = (Long)orderMap.get("id");
 		Long comid = (Long)orderMap.get("comid");
 		Integer state = (Integer)orderMap.get("state");
 		Long create_time = (Long)orderMap.get("create_time");
-		Integer car_type = (Integer)orderMap.get("car_type");//0£ºÍ¨ÓÃ£¬1£ºĞ¡³µ£¬2£º´ó³µ
+		Integer car_type = (Integer)orderMap.get("car_type");//0ï¼šé€šç”¨ï¼Œ1ï¼šå°è½¦ï¼Œ2ï¼šå¤§è½¦
 		Integer pid = (Integer)orderMap.get("pid");
 		if(state == 1){
-			logger.error("doMidPayOrder>>>>orderid:"+orderid+",¶©µ¥ÒÑÖ§¸¶£¬·µ»Ø£¡");
+			logger.error("doMidPayOrder>>>>orderid:"+orderid+",è®¢å•å·²æ”¯ä»˜ï¼Œè¿”å›ï¼");
 			resultMap.put("result", -1);
 			return resultMap;
 		}
 		Long ntime = System.currentTimeMillis()/1000;
-		
-		//¼ì²é¼õÃâÈ¯Ê¹ÓÃÇé¿ö
+
+		//æ£€æŸ¥å‡å…åˆ¸ä½¿ç”¨æƒ…å†µ
 		Double distotal = 0d;
 		Double umoney = 0d;
 		Map<String, Object> shopticketMap = daService
@@ -450,13 +436,13 @@ public class PublicMethods {
 			umoney = Double.valueOf(shopticketMap.get("umoney") + "");
 			Long end_time = ntime;
 			logger.error("doMidPayOrder>>>>>:orderid:"+orderid+",shopticketid:"+shopticketMap.get("id")+",type:"+type+",umoney:"+umoney);
-			if(type == 4){//È«Ãâ
+			if(type == 4){//å…¨å…
 				distotal = total;
-				logger.error("doMidPayOrder>>>>È«ÃâÈ¯:orderid:"+orderid+",distotal:"+distotal);
+				logger.error("doMidPayOrder>>>>å…¨å…åˆ¸:orderid:"+orderid+",distotal:"+distotal);
 			}else if(type == 3){
 				if(create_time + money * 60 * 60 > end_time){
 					distotal = total;
-					logger.error("doMidPayOrder>>>>¼õÊ±È¯:orderid:"+orderid+",distotal:"+distotal);
+					logger.error("doMidPayOrder>>>>å‡æ—¶åˆ¸:orderid:"+orderid+",distotal:"+distotal);
 				}else{
 					end_time = end_time - money * 60 *60;
 					Double dtotal = 0d;
@@ -468,19 +454,19 @@ public class PublicMethods {
 					if(total > dtotal){
 						distotal = StringUtils.formatDouble(total - dtotal);
 					}
-					logger.error("doMidPayOrder>>>>¼õÊ±È¯:orderid:"+orderid+",distotal="+distotal);
+					logger.error("doMidPayOrder>>>>å‡æ—¶åˆ¸:orderid:"+orderid+",distotal="+distotal);
 				}
 			}
 			resultMap.put("ticket_type", type);
 		}
 		resultMap.put("distotal", distotal);
-		
+
 		List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-		//¸üĞÂ¶©µ¥×´Ì¬£¬ÊÕ·Ñ³É¹¦
+		//æ›´æ–°è®¢å•çŠ¶æ€ï¼Œæ”¶è´¹æˆåŠŸ
 		Map<String, Object> orderSqlMap = new HashMap<String, Object>();
-		//¸üĞÂÓÃÈ¯½ğ¶î
+		//æ›´æ–°ç”¨åˆ¸é‡‘é¢
 		Map<String, Object> ticketSqlMap = new HashMap<String, Object>();
-		
+
 		orderSqlMap.put("sql", "update order_tb set state=?,total=?,end_time=? where id=?");
 		orderSqlMap.put("values", new Object[]{1,total,System.currentTimeMillis()/1000,orderid});
 		bathSql.add(orderSqlMap);
@@ -489,11 +475,11 @@ public class PublicMethods {
 			ticketSqlMap.put("values", new Object[]{distotal, shopticketMap.get("id")});
 			bathSql.add(ticketSqlMap);
 		}
-		prefee = StringUtils.formatDouble(prefee - umoney + distotal);//³µÖ÷Êµ¼ÊÔ¤Ö§¸¶½ğ¶î
-		logger.error("doMidPayOrder>>>>>:ÖØĞÂ¼ÆËãºóµÄÔ¤Ö§¸¶½ğ¶îprefee:"+prefee+",orderid:"+orderid);
+		prefee = StringUtils.formatDouble(prefee - umoney + distotal);//è½¦ä¸»å®é™…é¢„æ”¯ä»˜é‡‘é¢
+		logger.error("doMidPayOrder>>>>>:é‡æ–°è®¡ç®—åçš„é¢„æ”¯ä»˜é‡‘é¢prefee:"+prefee+",orderid:"+orderid);
 		resultMap.put("prefee", prefee);
 		if(prefee < total){
-			//ÊÕÏÖ½ğ¼ÇÂ¼
+			//æ”¶ç°é‡‘è®°å½•
 			Map<String, Object> cashsqlMap = new HashMap<String, Object>();
 			cashsqlMap.put("sql", "insert into parkuser_cash_tb(uin,amount,type,orderid,create_time) values(?,?,?,?,?)");
 			cashsqlMap.put("values", new Object[]{uid, total - prefee, 0, orderid, System.currentTimeMillis()/1000});
@@ -508,71 +494,71 @@ public class PublicMethods {
 		resultMap.put("result", -1);
 		return resultMap;
 	}
-	
+
 	private boolean backWeixinTicket(Double money, Long orderId, Long uin){
-		Integer bonus = 5;//5ÕÛ
-		if(money>=1&&memcacheUtils.readBackTicketCache(uin)){//Ò»ÌìÖ»·µÒ»´Îºì°ü
+		Integer bonus = 5;//5æŠ˜
+		if(money>=1&&memcacheUtils.readBackTicketCache(uin)){//ä¸€å¤©åªè¿”ä¸€æ¬¡çº¢åŒ…
 			String sql = "insert into order_ticket_tb (uin,order_id,money,bnum,ctime,exptime,bwords,type) values(?,?,?,?,?,?,?,?)";
 			Object []values = null;
 			Long ctime = System.currentTimeMillis()/1000;
 			Long exptime = ctime + 24*60*60;
-			values = new Object[]{uin,orderId,bonus,5,ctime,exptime,"Î¢ĞÅÖ§¸¶´òÕÛÈ¯",1};
-			logger.error(">>>>>Î¢ĞÅÔ¤Ö§¸¶ºì°ü,5ÕÅ"+bonus+"ÕÛÈ¯...");
+			values = new Object[]{uin,orderId,bonus,5,ctime,exptime,"å¾®ä¿¡æ”¯ä»˜æ‰“æŠ˜åˆ¸",1};
+			logger.error(">>>>>å¾®ä¿¡é¢„æ”¯ä»˜çº¢åŒ…,5å¼ "+bonus+"æŠ˜åˆ¸...");
 			int ret = daService.update(sql, values);
-			logger.error(">>>>>Î¢ĞÅÔ¤Ö§¸¶ºì°ü ret :"+ret);
+			logger.error(">>>>>å¾®ä¿¡é¢„æ”¯ä»˜çº¢åŒ… ret :"+ret);
 			if(ret==1){
 				memcacheUtils.updateBackTicketCache(uin);
 				return true;
 			}
 		}else {
 			if(money< 1){
-				logger.error(">>>>>>>>Ö§¸¶½ğ¶îĞ¡ÓÚ1Ôª£¬²»·µºì°ü>>>>>>uin:"+uin+",orderid:"+orderId+",money:"+money);
+				logger.error(">>>>>>>>æ”¯ä»˜é‡‘é¢å°äº1å…ƒï¼Œä¸è¿”çº¢åŒ…>>>>>>uin:"+uin+",orderid:"+orderId+",money:"+money);
 			}else if(!memcacheUtils.readBackTicketCache(uin)){
-				logger.error(">>>>>>>>Ò»ÌìÖ»·µÒ»´Îºì°ü£¬ÒÑ¾­·µ¹ı£¬²»·µºì°ü>>>>>>uin:"+uin+",orderid:"+orderId+",money:"+money);
+				logger.error(">>>>>>>>ä¸€å¤©åªè¿”ä¸€æ¬¡çº¢åŒ…ï¼Œå·²ç»è¿”è¿‡ï¼Œä¸è¿”çº¢åŒ…>>>>>>uin:"+uin+",orderid:"+orderId+",money:"+money);
 			}
-			logger.error(">>>>>Î¢ĞÅÖ§¸¶ºì°ü,ÒÑ¾­·¢¹ı£¬²»·¢ÁË.....");
+			logger.error(">>>>>å¾®ä¿¡æ”¯ä»˜çº¢åŒ…,å·²ç»å‘è¿‡ï¼Œä¸å‘äº†.....");
 		}
 		return false;
-		
+
 	}
 
 	/**
-	 * ²é³µÅÆºÅ
+	 * æŸ¥è½¦ç‰Œå·
 	 * @param uin
 	 * @return
 	 */
 	public String getCarNumber(Long uin){
-		String carNumber="³µÅÆºÅÎ´Öª";//³µÖ÷³µÅÆºÅ
-		Map carNuberMap = daService.getPojo("select car_number from car_info_tb where uin=? and state=?  ", 
+		String carNumber="è½¦ç‰Œå·æœªçŸ¥";//è½¦ä¸»è½¦ç‰Œå·
+		Map carNuberMap = daService.getPojo("select car_number from car_info_tb where uin=? and state=?  ",
 				new Object[]{uin,1});
 		if(carNuberMap!=null&&carNuberMap.get("car_number")!=null&&!carNuberMap.get("car_number").toString().equals(""))
 			carNumber = (String)carNuberMap.get("car_number");
 		return carNumber;
 	}
-	
-	
+
+
 	public Map getPriceMap(Long comid){
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
-		//¿ªÊ¼Ğ¡Ê±
+		//å¼€å§‹å°æ—¶
 		int bhour = calendar.get(Calendar.HOUR_OF_DAY);
 		List<Map<String, Object>> priceList=pgOnlyReadService.getAll("select * from price_tb where comid=? " +
 				"and state=? and pay_type=? order by id desc", new Object[]{comid,0,0});
-		if(priceList==null||priceList.size()==0){//Ã»ÓĞ°´Ê±¶Î²ßÂÔ
-			//²é°´´Î²ßÂÔ
+		if(priceList==null||priceList.size()==0){//æ²¡æœ‰æŒ‰æ—¶æ®µç­–ç•¥
+			//æŸ¥æŒ‰æ¬¡ç­–ç•¥
 			priceList=pgOnlyReadService.getAll("select * from price_tb where comid=? " +
 					"and state=? and pay_type=? order by id desc", new Object[]{comid,0,1});
-			if(priceList==null||priceList.size()==0){//Ã»ÓĞ°´´Î²ßÂÔ£¬·µ»ØÌáÊ¾
+			if(priceList==null||priceList.size()==0){//æ²¡æœ‰æŒ‰æ¬¡ç­–ç•¥ï¼Œè¿”å›æç¤º
 				return null;
-			}else {//ÓĞ°´´Î²ßÂÔ£¬Ö±½Ó·µ»ØÒ»´ÎµÄÊÕ·Ñ
-				 return priceList.get(0);
+			}else {//æœ‰æŒ‰æ¬¡ç­–ç•¥ï¼Œç›´æ¥è¿”å›ä¸€æ¬¡çš„æ”¶è´¹
+				return priceList.get(0);
 			}
-			//·¢¶ÌĞÅ¸ø¹ÜÀíÔ±£¬Í¨¹ıÉèÖÃºÃ¼Û¸ñ
-		}else {//´Ó°´Ê±¶Î¼Û¸ñ²ßÂÔÖĞ·Ö¼ğ³öÈÕ¼äºÍÒ¹¼äÊÕ·Ñ²ßÂÔ
+			//å‘çŸ­ä¿¡ç»™ç®¡ç†å‘˜ï¼Œé€šè¿‡è®¾ç½®å¥½ä»·æ ¼
+		}else {//ä»æŒ‰æ—¶æ®µä»·æ ¼ç­–ç•¥ä¸­åˆ†æ‹£å‡ºæ—¥é—´å’Œå¤œé—´æ”¶è´¹ç­–ç•¥
 			if(priceList.size()>0){
 				for(Map map : priceList){
 					Integer btime = (Integer)map.get("b_time");
 					Integer etime = (Integer)map.get("e_time");
-					if(btime<etime){//ÈÕ¼ä
+					if(btime<etime){//æ—¥é—´
 						if(bhour>=btime&&bhour<etime)
 							return map;
 					}else {
@@ -585,24 +571,24 @@ public class PublicMethods {
 		return null;
 	}
 	/**
-	 * ¼ÆËã¶©µ¥½ğ¶î
+	 * è®¡ç®—è®¢å•é‡‘é¢
 	 * @param start
 	 * @param end
 	 * @param comId
-	 * @param car_type 0£ºÍ¨ÓÃ£¬1£ºĞ¡³µ£¬2£º´ó³µ
-	 * @return ¶©µ¥½ğ¶î_ÊÇ·ñÓÅ»İ
+	 * @param car_type 0ï¼šé€šç”¨ï¼Œ1ï¼šå°è½¦ï¼Œ2ï¼šå¤§è½¦
+	 * @return è®¢å•é‡‘é¢_æ˜¯å¦ä¼˜æƒ 
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public  String getPrice(Long start,Long end,Long comId,Integer car_type){
 //		String pid = CustomDefind.CUSTOMPARKIDS;
-//		if(pid.equals(comId.toString())){//¶¨ÖÆ¼Û¸ñ²ßÂÔ
-//			return "´ı½áËã";
+//		if(pid.equals(comId.toString())){//å®šåˆ¶ä»·æ ¼ç­–ç•¥
+//			return "å¾…ç»“ç®—";
 //		}
-//		
-		if(car_type == 0){//0:Í¨ÓÃ
+//
+		if(car_type == 0){//0:é€šç”¨
 			Long count = daService.getLong("select count(*) from com_info_tb where id=? and car_type=?", new Object[]{comId,1});
-			if(count > 0){//Çø·Ö´óĞ¡³µ
-				car_type = 1;//Ä¬ÈÏ³ÉĞ¡³µ¼Æ·Ñ²ßÂÔ
+			if(count > 0){//åŒºåˆ†å¤§å°è½¦
+				car_type = 1;//é»˜è®¤æˆå°è½¦è®¡è´¹ç­–ç•¥
 			}
 		}
 		Map priceMap1=null;
@@ -610,12 +596,12 @@ public class PublicMethods {
 		List<Map<String, Object>> priceList=pgOnlyReadService.getAll("select * from price_tb where comid=? " +
 				"and state=? and pay_type=? and car_type=? order by id desc", new Object[]{comId,0,0,car_type});
 		if(priceList==null||priceList.size()==0){
-			//²é°´´Î²ßÂÔ
+			//æŸ¥æŒ‰æ¬¡ç­–ç•¥
 			priceList=pgOnlyReadService.getAll("select * from price_tb where comid=? " +
 					"and state=? and pay_type=? and car_type=? order by id desc", new Object[]{comId,0,1,car_type});
-			if(priceList==null||priceList.size()==0){//Ã»ÓĞÈÎºÎ²ßÂÔ
+			if(priceList==null||priceList.size()==0){//æ²¡æœ‰ä»»ä½•ç­–ç•¥
 				return "0.0";
-			}else {//ÓĞ°´´Î²ßÂÔ£¬·µ»ØN´ÎµÄÊÕ·Ñ
+			}else {//æœ‰æŒ‰æ¬¡ç­–ç•¥ï¼Œè¿”å›Næ¬¡çš„æ”¶è´¹
 				Map timeMap =priceList.get(0);
 				Object ounit  = timeMap.get("unit");
 				Double total = Double.valueOf(timeMap.get("price")+"");
@@ -623,12 +609,12 @@ public class PublicMethods {
 					if(ounit!=null){
 						Integer unit = Integer.valueOf(ounit.toString());
 						if(unit>0){
-							Long du = (end-start)/60;//Ê±³¤Ãë
+							Long du = (end-start)/60;//æ—¶é•¿ç§’
 							int times = du.intValue()/unit;
 							if(du%unit!=0)
 								times +=1;
 							total = times*total;
-							
+
 						}
 					}
 				} catch (NumberFormatException e) {
@@ -638,8 +624,8 @@ public class PublicMethods {
 			}
 		}else {
 			priceMap1=priceList.get(0);
-			boolean pm1 = false;//ÕÒµ½map1,±ØĞëÊÇ½áÊøÊ±¼ä´óÓÚ¿ªÊ¼Ê±¼ä
-			boolean pm2 = false;//ÕÒµ½map2
+			boolean pm1 = false;//æ‰¾åˆ°map1,å¿…é¡»æ˜¯ç»“æŸæ—¶é—´å¤§äºå¼€å§‹æ—¶é—´
+			boolean pm2 = false;//æ‰¾åˆ°map2
 			Integer payType = (Integer)priceMap1.get("pay_type");
 			if(payType==0&&priceList.size()>1){
 				for(Map map : priceList){
@@ -668,22 +654,22 @@ public class PublicMethods {
 		double minPriceUnit = getminPriceUnit(comId);
 		Map assistMap = daService.getMap("select * from price_assist_tb where comid = ? and type = ?", new Object[]{comId,0});
 		Map orderInfp = CountPrice.getAccount(start, end, priceMap1, priceMap2,minPriceUnit,assistMap);
-		
+
 		//Double count= StringUtils.getAccount(start, end, priceMap1, priceMap2);
-		return StringUtils.formatDouble(orderInfp.get("collect"))+"";	
+		return StringUtils.formatDouble(orderInfp.get("collect"))+"";
 	}
 	/**
-	 * 
+	 *
 	 * @param start
 	 * @param end
-	 * @param pid ¼Æ·Ñ·½Ê½£º0°´Ê±(0.5/15·ÖÖÓ)£¬1°´´Î£¨12Ğ¡Ê±ÄÚ10Ôª,Ç°1/30min£¬ºóÃ¿Ğ¡Ê±1Ôª£©
+	 * @param pid è®¡è´¹æ–¹å¼ï¼š0æŒ‰æ—¶(0.5/15åˆ†é’Ÿ)ï¼Œ1æŒ‰æ¬¡ï¼ˆ12å°æ—¶å†…10å…ƒ,å‰1/30minï¼Œåæ¯å°æ—¶1å…ƒï¼‰
 	 * @return
 	 */
 	public String getCustomPrice(Long start,Long end,Integer pid) {
-		/**Ò»Ôª/°ëĞ¡Ê±     12Ğ¡Ê±ÄÚ·â¶¥10Ôª¡£12Ğ¡Ê±ºò£¬Ã¿¼ÓÒ»Ğ¡Ê±£¬¼ÓÒ»Ôª¡£*/
-		logger.error(">>>>>>¶¨ÖÆ¼Û¸ñ³µ³¡,pid(0°´Ê±(0.5/15·ÖÖÓ)£¬1°´´Î£¨12Ğ¡Ê±ÄÚ10Ôª,Ç°1/30min£¬ºóÃ¿Ğ¡Ê±1Ôª£©)="+pid);
-		Long duration = (end-start)/60;//·ÖÖÓ
-		Long hour = duration/(60);//Ğ¡Ê±Êı;
+		/**ä¸€å…ƒ/åŠå°æ—¶     12å°æ—¶å†…å°é¡¶10å…ƒã€‚12å°æ—¶å€™ï¼Œæ¯åŠ ä¸€å°æ—¶ï¼ŒåŠ ä¸€å…ƒã€‚*/
+		logger.error(">>>>>>å®šåˆ¶ä»·æ ¼è½¦åœº,pid(0æŒ‰æ—¶(0.5/15åˆ†é’Ÿ)ï¼Œ1æŒ‰æ¬¡ï¼ˆ12å°æ—¶å†…10å…ƒ,å‰1/30minï¼Œåæ¯å°æ—¶1å…ƒï¼‰)="+pid);
+		Long duration = (end-start)/60;//åˆ†é’Ÿ
+		Long hour = duration/(60);//å°æ—¶æ•°;
 		if(pid==0){
 			Long t = duration/15;
 			if(duration%15!=0)
@@ -699,7 +685,7 @@ public class PublicMethods {
 						tLong += 1L;
 					return StringUtils.formatDouble(tLong)+"";
 				}
-				else 
+				else
 					return 10.0+"";
 			}else {
 				return 10.0+(hour-12)+"";
@@ -712,15 +698,15 @@ public class PublicMethods {
 
 	//@SuppressWarnings({ "rawtypes", "unchecked" })
 	public String handleOrder(Long comId,Map orderMap) throws Exception{
-		Map dayMap=null;//ÈÕ¼ä²ßÂÔ
-		Map nigthMap=null;//Ò¹¼ä²ßÂÔ
-		//°´Ê±¶Î¼Û¸ñ²ßÂÔ
+		Map dayMap=null;//æ—¥é—´ç­–ç•¥
+		Map nigthMap=null;//å¤œé—´ç­–ç•¥
+		//æŒ‰æ—¶æ®µä»·æ ¼ç­–ç•¥
 		List<Map<String ,Object>> priceList=null;//SystemMemcachee.getPriceByComid(comId);
 		priceList=pgOnlyReadService.getAll("select * from price_tb where comid=? " +
-					"and state=? and pay_type=? order by id desc", new Object[]{comId,0,0});
+				"and state=? and pay_type=? order by id desc", new Object[]{comId,0,0});
 		Long ntime = System.currentTimeMillis()/1000;
-		if(priceList==null||priceList.size()==0){//Ã»ÓĞ°´Ê±¶Î²ßÂÔ
-			//²é°´´Î²ßÂÔ
+		if(priceList==null||priceList.size()==0){//æ²¡æœ‰æŒ‰æ—¶æ®µç­–ç•¥
+			//æŸ¥æŒ‰æ¬¡ç­–ç•¥
 			priceList=pgOnlyReadService.getAll("select * from price_tb where comid=? " +
 					"and state=? and pay_type=? order by id desc", new Object[]{comId,0,1});
 			Long btLong = (Long)orderMap.get("create_time");
@@ -733,29 +719,29 @@ public class PublicMethods {
 			orMap.put("etime", etime);
 			orMap.put("duration", StringUtils.getTimeString(start, end));
 			orMap.put("orderid", orderMap.get("id"));
-			orMap.put("carnumber",orderMap.get("car_number")==null?"³µÅÆºÅÎ´Öª": orderMap.get("car_number"));
+			orMap.put("carnumber",orderMap.get("car_number")==null?"è½¦ç‰Œå·æœªçŸ¥": orderMap.get("car_number"));
 			orMap.put("handcash", "0");
 			orMap.put("uin", orderMap.get("uin"));
-			if(priceList==null||priceList.size()==0){//Ã»ÓĞ°´´Î²ßÂÔ£¬·µ»ØÌáÊ¾
-				//·µ»Ø¸øÊÕ·ÑÔ±£¬ÊÖ¹¤ÊäÈë¼Û¸ñ
+			if(priceList==null||priceList.size()==0){//æ²¡æœ‰æŒ‰æ¬¡ç­–ç•¥ï¼Œè¿”å›æç¤º
+				//è¿”å›ç»™æ”¶è´¹å‘˜ï¼Œæ‰‹å·¥è¾“å…¥ä»·æ ¼
 				orMap.put("total", "0.00");
 				orMap.put("collect", "0.00");
 				orMap.put("handcash", "1");
-			}else {//ÓĞ°´´Î²ßÂÔ£¬Ö±½Ó·µ»ØÒ»´ÎµÄÊÕ·Ñ
+			}else {//æœ‰æŒ‰æ¬¡ç­–ç•¥ï¼Œç›´æ¥è¿”å›ä¸€æ¬¡çš„æ”¶è´¹
 				Map timeMap =priceList.get(0);
 				Object ounit  = timeMap.get("unit");
 //				orMap.put("btime", btime);
 //				orMap.put("etime", etime);
 //				orMap.put("duration", StringUtils.getTimeString(start, end));
 //				orMap.put("orderid", orderMap.get("id"));
-//				orMap.put("carnumber",orderMap.get("car_number")==null?"³µÅÆºÅÎ´Öª": orderMap.get("car_number"));
-//				
+//				orMap.put("carnumber",orderMap.get("car_number")==null?"è½¦ç‰Œå·æœªçŸ¥": orderMap.get("car_number"));
+//
 				orMap.put("collect", timeMap.get("price"));
 				orMap.put("total", timeMap.get("price"));
 				if(ounit!=null){
 					Integer unit = Integer.valueOf(ounit.toString());
 					if(unit>0){
-						Long du = (end-start)/60;//Ê±³¤Ãë
+						Long du = (end-start)/60;//æ—¶é•¿ç§’
 						int times = du.intValue()/unit;
 						if(du%unit!=0)
 							times +=1;
@@ -766,10 +752,10 @@ public class PublicMethods {
 				}
 			}
 			return StringUtils.createJson(orMap);
-		}else {//´Ó°´Ê±¶Î¼Û¸ñ²ßÂÔÖĞ·Ö¼ğ³öÈÕ¼äºÍÒ¹¼äÊÕ·Ñ²ßÂÔ
+		}else {//ä»æŒ‰æ—¶æ®µä»·æ ¼ç­–ç•¥ä¸­åˆ†æ‹£å‡ºæ—¥é—´å’Œå¤œé—´æ”¶è´¹ç­–ç•¥
 			dayMap= priceList.get(0);
-			boolean pm1 = false;//ÕÒµ½map1,±ØĞëÊÇ½áÊøÊ±¼ä´óÓÚ¿ªÊ¼Ê±¼ä
-			boolean pm2 = false;//ÕÒµ½map2
+			boolean pm1 = false;//æ‰¾åˆ°map1,å¿…é¡»æ˜¯ç»“æŸæ—¶é—´å¤§äºå¼€å§‹æ—¶é—´
+			boolean pm2 = false;//æ‰¾åˆ°map2
 			if(priceList.size()>1){
 				for(Map map : priceList){
 					if(pm1&&pm2)
@@ -793,29 +779,29 @@ public class PublicMethods {
 			}
 		}
 		double minPriceUnit = getminPriceUnit(comId);
-		
+
 		Map assistMap = daService.getMap("select * from price_assist_tb where comid = ? and type = ?", new Object[]{comId,0});
-		
+
 		Map<String, Object> orMap=CountPrice.getAccount((Long)orderMap.get("create_time"),ntime, dayMap, nigthMap,minPriceUnit,assistMap);
 		orMap.put("orderid", orderMap.get("id"));
 		orMap.put("uin", orderMap.get("uin"));
-		String hascard = "1";//ÊÇ·ñÓĞ³µÅÆ
+		String hascard = "1";//æ˜¯å¦æœ‰è½¦ç‰Œ
 		String carNumber = (String)orderMap.get("car_number");
 		if(carNumber==null||carNumber.toString().trim().equals("")){
-			carNumber="³µÅÆºÅÎ´Öª";
+			carNumber="è½¦ç‰Œå·æœªçŸ¥";
 			hascard = "0";
 		}
 		orMap.put("carnumber",carNumber);
 		orMap.put("hascard", hascard);
 		orMap.put("handcash", "0");
 		orMap.put("car_type", orderMap.get("car_type"));
-		logger.error("½áËã¶©µ¥£¬·µ»Ø£º"+orMap);
-		return StringUtils.createJson(orMap);	
+		logger.error("ç»“ç®—è®¢å•ï¼Œè¿”å›ï¼š"+orMap);
+		return StringUtils.createJson(orMap);
 	}
-	
+
 	/**
-	 * Ö§³Ö¶à¼Û¸ñ²ßÂÔ//20141118
-	 * //V1115ÒÔÉÏ°æ±¾ÊµÏÖ°üÔÂ²úÆ·¼°¶à¼Û¸ñ²ßÂÔµÄÖ§³Ö
+	 * æ”¯æŒå¤šä»·æ ¼ç­–ç•¥//20141118
+	 * //V1115ä»¥ä¸Šç‰ˆæœ¬å®ç°åŒ…æœˆäº§å“åŠå¤šä»·æ ¼ç­–ç•¥çš„æ”¯æŒ
 	 * @param comId
 	 * @param orderMap
 	 * @return
@@ -824,41 +810,41 @@ public class PublicMethods {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public String getOrderPrice(Long comId,Map orderMap) throws Exception{
 		Long uin = (Long) orderMap.get("uin");
-		Double pretotal = StringUtils.formatDouble(orderMap.get("total"));//Ô¤Ö§¸¶½ğ¶î
-		//Integer preState =(Integer)orderMap.get("pre_state");//Ô¤Ö§¸¶×´Ì¬ ,1ÕıÔÚÔ¤Ö§¸¶,2µÈ´ı³µÖ÷Íê³ÉÔ¤Ö§¸¶
-	//	System.err.println("Ô¤Ö§¸¶ £º"+pretotal);
+		Double pretotal = StringUtils.formatDouble(orderMap.get("total"));//é¢„æ”¯ä»˜é‡‘é¢
+		//Integer preState =(Integer)orderMap.get("pre_state");//é¢„æ”¯ä»˜çŠ¶æ€ ,1æ­£åœ¨é¢„æ”¯ä»˜,2ç­‰å¾…è½¦ä¸»å®Œæˆé¢„æ”¯ä»˜
+		//	System.err.println("é¢„æ”¯ä»˜ ï¼š"+pretotal);
 		Long ntime = System.currentTimeMillis()/1000;
 		Map<String, Object> orMap=new HashMap<String, Object>();
 		Long btLong = (Long)orderMap.get("create_time");
 //		if(ntime>btLong){
-//			
+//
 //		}else {
 //			ntime = ntime +60;
 //		}
-		Integer cType = (Integer)orderMap.get("c_type");//½ø³¡·½Ê½ £¬0:NFC,1:IBeacon,2:ÕÕÅÆ   3Í¨µÀÕÕÅÆ 4Ö±¸¶ 5ÔÂ¿¨ÓÃ»§ 6³µÎ»¶şÎ¬Âë
+		Integer cType = (Integer)orderMap.get("c_type");//è¿›åœºæ–¹å¼ ï¼Œ0:NFC,1:IBeacon,2:ç…§ç‰Œ   3é€šé“ç…§ç‰Œ 4ç›´ä»˜ 5æœˆå¡ç”¨æˆ· 6è½¦ä½äºŒç»´ç 
 		String btimestr =  TimeTools.getTime_MMdd_HHmm(btLong*1000);
 		String etimestr =  TimeTools.getTime_MMdd_HHmm(ntime*1000);
 		String btime = btimestr.substring(6);
 		String etime = etimestr.substring(6);
 		Long start = (Long)orderMap.get("create_time");
-		Integer pid = (Integer)orderMap.get("pid");//¼Æ·Ñ·½Ê½£º0°´´Î(0.5/h)£¬1°´Ê±£¨12Ğ¡Ê±ÄÚ10Ôª£¬ºóÃ¿Ğ¡Ê±1Ôª£©
+		Integer pid = (Integer)orderMap.get("pid");//è®¡è´¹æ–¹å¼ï¼š0æŒ‰æ¬¡(0.5/h)ï¼Œ1æŒ‰æ—¶ï¼ˆ12å°æ—¶å†…10å…ƒï¼Œåæ¯å°æ—¶1å…ƒï¼‰
 		Integer type = (Integer)orderMap.get("type");
 		Integer state = (Integer)orderMap.get("state");
 		Long end = ntime;
-		String hascard = "1";//ÊÇ·ñÓĞ³µÅÆ
-		//²éÑ¯³µÅÆºÅ
+		String hascard = "1";//æ˜¯å¦æœ‰è½¦ç‰Œ
+		//æŸ¥è¯¢è½¦ç‰Œå·
 		String carNumber = (String)orderMap.get("car_number");
 		if(carNumber==null||carNumber.toString().trim().equals("")){
 			carNumber=null;
 			if(uin!=null)
 				carNumber = getCarNumber(uin);
 			if(carNumber==null){
-				carNumber="³µÅÆºÅÎ´Öª";
+				carNumber="è½¦ç‰Œå·æœªçŸ¥";
 				hascard = "0";
 			}
 		}
 		orMap.put("carnumber",carNumber);
-		
+
 		List<Map<String, Object>> cardList = pgOnlyReadService.getAll("select car_number from car_info_Tb where uin=? ", new Object[]{uin});
 		if(cardList!=null&&cardList.size()>0){
 			String cards = "";
@@ -871,7 +857,7 @@ public class PublicMethods {
 			orMap.put("cards", "[]");
 		}
 		Integer isfast = (Integer)orderMap.get("type");
-		if(isfast!=null&&isfast==2){//µÚÈı·½¿¨ºÅÉú³ÉµÄ¶©µ¥,³µÅÆºÅÓ¦¸ÃĞ´µÚÈı·½¿¨ºÅ
+		if(isfast!=null&&isfast==2){//ç¬¬ä¸‰æ–¹å¡å·ç”Ÿæˆçš„è®¢å•,è½¦ç‰Œå·åº”è¯¥å†™ç¬¬ä¸‰æ–¹å¡å·
 			String cardno = (String) orderMap.get("nfc_uuid");
 			if(cardno!=null&&cardno.indexOf("_")!=-1)
 				orMap.put("carnumber", cardno.substring(cardno.indexOf("_")+1));
@@ -884,65 +870,65 @@ public class PublicMethods {
 		orMap.put("etimestr", etimestr);
 		orMap.put("duration", StringUtils.getTimeString(start, end));
 		orMap.put("orderid", orderMap.get("id"));
-		//orMap.put("carnumber",orderMap.get("car_number")==null?"³µÅÆºÅÎ´Öª": orderMap.get("car_number"));
+		//orMap.put("carnumber",orderMap.get("car_number")==null?"è½¦ç‰Œå·æœªçŸ¥": orderMap.get("car_number"));
 		orMap.put("uin", orderMap.get("uin"));
 		orMap.put("total", "0.00");
 		orMap.put("collect", "0.00");
 		orMap.put("handcash", "1");
 		orMap.put("isedit", 0);
-		//orMap.put("state", orderMap.get("state")==null?"0":orderMap.get("state"));//¶©µ¥×´Ì¬£¬0»ò¿ÕÎ´½áËã£¬1ÒÑ½áËã£¬2ÌÓµ¥
+		//orMap.put("state", orderMap.get("state")==null?"0":orderMap.get("state"));//è®¢å•çŠ¶æ€ï¼Œ0æˆ–ç©ºæœªç»“ç®—ï¼Œ1å·²ç»“ç®—ï¼Œ2é€ƒå•
 		orMap.put("car_type", orderMap.get("car_type"));
 		orMap.put("prepay", pretotal);
 		orMap.put("isfast", type);
 		//String pid = CustomDefind.CUSTOMPARKIDS;
-		
-		if(pid!=null&&pid>-1){//¶¨ÖÆ¼Û¸ñ²ßÂÔ
+
+		if(pid!=null&&pid>-1){//å®šåˆ¶ä»·æ ¼ç­–ç•¥
 //			orMap.put("collect0", getCustomPrice(start, end, pid));
 			orMap.put("handcash", "0");
-//			Long duration = (end-start)/60;//·ÖÖÓ
+//			Long duration = (end-start)/60;//åˆ†é’Ÿ
 //			Long t = duration/15;
 //			if(duration%15!=0)
 //				t= t+1;
 			orMap.put("collect",getCustomPrice(start, end, pid));
-//			logger.error("½áËã¶©µ¥£¬·µ»Ø£º"+orMap);
-			return StringUtils.createJson(orMap);	
+//			logger.error("ç»“ç®—è®¢å•ï¼Œè¿”å›ï¼š"+orMap);
+			return StringUtils.createJson(orMap);
 		}
-		//ÏÈÅĞ¶ÏÔÂ¿¨
+		//å…ˆåˆ¤æ–­æœˆå¡
 		Map<String, Object> pMap =null;
-		if(uin!=null&&uin!=-1&&(cType==3||cType==5)){//Í¨µÀÕÕÅÆÈë³¡Ê±£¬½áËãÊ±Òª²éÒ»ÏÂÊÇ·ñÊÇÔÂ¿¨
+		if(uin!=null&&uin!=-1&&(cType==3||cType==5)){//é€šé“ç…§ç‰Œå…¥åœºæ—¶ï¼Œç»“ç®—æ—¶è¦æŸ¥ä¸€ä¸‹æ˜¯å¦æ˜¯æœˆå¡
 			pMap= daService.getMap("select p.* from product_package_tb p," +
-					"carower_product c where c.pid=p.id and p.comid=? and c.uin=? and c.e_time>? order by c.id desc limit ?", 
+							"carower_product c where c.pid=p.id and p.comid=? and c.uin=? and c.e_time>? order by c.id desc limit ?",
 					new Object[]{comId,uin,ntime,1});
 			if(pMap!=null&&!pMap.isEmpty()){
 				//System.out.println(pMap);
 				Long limitDay = (Long)pMap.get("limitday");
-				
-				//Integer ptype = (Integer)pMap.get("type");//Ì×²ÍÀàĞÍ  0:È«Ìì 1Ò¹¼ä 2ÈÕ¼ä 3ÔÂ¿¨Ê±¼äÄÚÓÅ»İ 4Ö¸¶¨Ğ¡Ê±ÄÚÃâ·Ñ
+
+				//Integer ptype = (Integer)pMap.get("type");//å¥—é¤ç±»å‹  0:å…¨å¤© 1å¤œé—´ 2æ—¥é—´ 3æœˆå¡æ—¶é—´å†…ä¼˜æƒ  4æŒ‡å®šå°æ—¶å†…å…è´¹
 				Long day = (limitDay-ntime)/(24*60*60)+1;
 				orMap.put("limitday", day+"");
 				orMap.put("handcash", "2");
-				//logger.error("½áËã¶©µ¥£¬·µ»Ø£º"+orMap);
+				//logger.error("ç»“ç®—è®¢å•ï¼Œè¿”å›ï¼š"+orMap);
 				//return StringUtils.createJson(orMap);
 			}
 		}
-		
+
 		Integer car_type = (Integer)orderMap.get("car_type");
-		if(car_type == 0){//0:Í¨ÓÃ
+		if(car_type == 0){//0:é€šç”¨
 			Long count = daService.getLong("select count(*) from com_info_tb where id=? and car_type=?", new Object[]{comId,1});
-			if(count > 0){//Çø·Ö´óĞ¡³µ
-				car_type = 1;//Ä¬ÈÏ³ÉĞ¡³µ¼Æ·Ñ²ßÂÔ
+			if(count > 0){//åŒºåˆ†å¤§å°è½¦
+				car_type = 1;//é»˜è®¤æˆå°è½¦è®¡è´¹ç­–ç•¥
 			}
 		}
-		Map dayMap=null;//ÈÕ¼ä²ßÂÔ
-		Map nigthMap=null;//Ò¹¼ä²ßÂÔ
-		//°´Ê±¶Î¼Û¸ñ²ßÂÔ
+		Map dayMap=null;//æ—¥é—´ç­–ç•¥
+		Map nigthMap=null;//å¤œé—´ç­–ç•¥
+		//æŒ‰æ—¶æ®µä»·æ ¼ç­–ç•¥
 		List<Map<String ,Object>> priceList1=pgOnlyReadService.getAll("select * from price_tb where comid=? " +
-					"and state=? and pay_type=? and car_type=? order by id desc", new Object[]{comId,0,0,car_type});
-		//²é°´´Î²ßÂÔ
+				"and state=? and pay_type=? and car_type=? order by id desc", new Object[]{comId,0,0,car_type});
+		//æŸ¥æŒ‰æ¬¡ç­–ç•¥
 		List<Map<String ,Object>> priceList2=pgOnlyReadService.getAll("select * from price_tb where comid=? " +
 				"and state=? and pay_type=? and car_type=? order by id desc", new Object[]{comId,0,1,car_type});
-		//boolean isHasTimePrice=false;//ÊÇ·ñÓĞ°´´Î¼Û¸ñ
-		if(priceList2!=null&&!priceList2.isEmpty()){//°´´Î²ßÂÔ
+		//boolean isHasTimePrice=false;//æ˜¯å¦æœ‰æŒ‰æ¬¡ä»·æ ¼
+		if(priceList2!=null&&!priceList2.isEmpty()){//æŒ‰æ¬¡ç­–ç•¥
 			int i=0;
 			String total0 = "";
 			String total1 = "[";
@@ -952,7 +938,7 @@ public class PublicMethods {
 				if(ounit!=null){
 					Integer unit = Integer.valueOf(ounit.toString());
 					if(unit>0){
-						Long du = (end-start)/60;//Ê±³¤Ãë
+						Long du = (end-start)/60;//æ—¶é•¿ç§’
 						int times = du.intValue()/unit;
 						if(du%unit!=0)
 							times +=1;
@@ -973,12 +959,12 @@ public class PublicMethods {
 			orMap.put("handcash", "0");
 			//isHasTimePrice = true;
 		}
-		boolean isHasDatePrice = false;//ÊÇ·ñÓĞ°´Ê±¶Î¼Û¸ñ
-		if(priceList1!=null&&!priceList1.isEmpty()){//´Ó°´Ê±¶Î¼Û¸ñ²ßÂÔÖĞ·Ö¼ğ³öÈÕ¼äºÍÒ¹¼äÊÕ·Ñ²ßÂÔ
+		boolean isHasDatePrice = false;//æ˜¯å¦æœ‰æŒ‰æ—¶æ®µä»·æ ¼
+		if(priceList1!=null&&!priceList1.isEmpty()){//ä»æŒ‰æ—¶æ®µä»·æ ¼ç­–ç•¥ä¸­åˆ†æ‹£å‡ºæ—¥é—´å’Œå¤œé—´æ”¶è´¹ç­–ç•¥
 			dayMap= priceList1.get(0);
-			boolean pm1 = false;//ÕÒµ½map1,±ØĞëÊÇ½áÊøÊ±¼ä´óÓÚ¿ªÊ¼Ê±¼ä
-			boolean pm2 = false;//ÕÒµ½map2
-			Integer isEdit = 0;//ÊÇ·ñ¿É±à¼­¼Û¸ñ£¬Ä¿Ç°Ö»¶ÔÈÕ¼ä°´Ê±¼Û¸ñÉúĞ§,0·ñ£¬1ÊÇ£¬Ä¬ÈÏ0
+			boolean pm1 = false;//æ‰¾åˆ°map1,å¿…é¡»æ˜¯ç»“æŸæ—¶é—´å¤§äºå¼€å§‹æ—¶é—´
+			boolean pm2 = false;//æ‰¾åˆ°map2
+			Integer isEdit = 0;//æ˜¯å¦å¯ç¼–è¾‘ä»·æ ¼ï¼Œç›®å‰åªå¯¹æ—¥é—´æŒ‰æ—¶ä»·æ ¼ç”Ÿæ•ˆ,0å¦ï¼Œ1æ˜¯ï¼Œé»˜è®¤0
 			if(priceList1.size()>1){
 				for(Map map : priceList1){
 					if(pm1&&pm2)
@@ -1019,18 +1005,18 @@ public class PublicMethods {
 			orMap.put("handcash", "0");
 			isHasDatePrice = true;
 		}
-		
-		if(!isHasDatePrice){//Ã»ÓĞ°´Ê±¶Î¼Û¸ñ
+
+		if(!isHasDatePrice){//æ²¡æœ‰æŒ‰æ—¶æ®µä»·æ ¼
 			orMap.put("collect", orMap.get("collect0"));
 			orMap.remove("collect0");
 		}
-		
+
 		//orMap.put("prestate", preState);
-		
-		//logger.error("½áËã¶©µ¥£¬·µ»Ø£º"+orMap);
-		return StringUtils.createJson(orMap);	
+
+		//logger.error("ç»“ç®—è®¢å•ï¼Œè¿”å›ï¼š"+orMap);
+		return StringUtils.createJson(orMap);
 	}
-	//ËùÓĞlalaÇëÇóµ÷ÓÃ´Ë·½·¨£¬¿ÉÒÔ±ÜÃâÒ»ÃëÄÚÀ­¼¸´Î¶¼¼ÆÈë³É¼¨
+	//æ‰€æœ‰lalaè¯·æ±‚è°ƒç”¨æ­¤æ–¹æ³•ï¼Œå¯ä»¥é¿å…ä¸€ç§’å†…æ‹‰å‡ æ¬¡éƒ½è®¡å…¥æˆç»©
 	/*public  boolean isCanLaLa(Integer number,Long uin,Long time) throws Exception{
 		//logger.error("lala scroe ---uin:"+uin+",sharenumber:"+number+",time:"+TimeTools.getTime_yyyyMMdd_HHmmss(time*1000));
 		Map<Long, Long> lalaMap = memcacheUtils.doMapLongLongCache("zld_lala_time_cache",null, null);
@@ -1043,76 +1029,76 @@ public class PublicMethods {
 				lastDate=TimeTools.getTime_yyyyMMdd_HHmmss(lastTime*1000);
 				if(time<lastTime+15*60){
 					isLalaScore=false;
-					ParkingMap.setLastLalaTime(uin, lastTime);//Í¬²½Ê±¼äµ½±¾µØ»º´æ
+					ParkingMap.setLastLalaTime(uin, lastTime);//åŒæ­¥æ—¶é—´åˆ°æœ¬åœ°ç¼“å­˜
 				}
 			}
 		}else {
-//				logger.error("error, no memcached £¡£¡£¡please check memcached ip config........");
+//				logger.error("error, no memcached ï¼ï¼ï¼please check memcached ip config........");
 			lalaMap=new HashMap<Long, Long>();
 		}
 		if(isLalaScore){
 			lalaMap.put(uin, time);
-			ParkingMap.setLastLalaTime(uin, time);//Í¬²½Ê±¼äµ½±¾µØ»º´æ
+			ParkingMap.setLastLalaTime(uin, time);//åŒæ­¥æ—¶é—´åˆ°æœ¬åœ°ç¼“å­˜
 			memcacheUtils.doMapLongLongCache("zld_lala_time_cache", lalaMap, "update");
 		}
 		logger.error("lala scroe ---return :"+isLalaScore+"---uin:"+uin+",sharenumber:"+number+",time:"+TimeTools.getTime_yyyyMMdd_HHmmss(time*1000)+",lastTime:"+lastDate);
 		return isLalaScore;
 	}*/
 	/**
-	 * ´Ó»º´æÖĞÈ¡ËÙÍ¨¿¨ÓÃ»§
+	 * ä»ç¼“å­˜ä¸­å–é€Ÿé€šå¡ç”¨æˆ·
 	 * @param uuid
 	 * @return
 	 */
 	public Long getUinByUUID(String uuid){
 		Long uin = memcacheUtils.getUinUuid(uuid);
-		if(uin!=null&&uin==-1){//Î´³õÊ¼»¯»º´æ 
-			logger.error("³õÊ¼»¯ËÙÍ¨¿¨ÓÃ»§.....");
+		if(uin!=null&&uin==-1){//æœªåˆå§‹åŒ–ç¼“å­˜
+			logger.error("åˆå§‹åŒ–é€Ÿé€šå¡ç”¨æˆ·.....");
 			List<Map<String, Object>> list = pgOnlyReadService.getAll("select nfc_uuid,uin from com_nfc_tb where uin>?",new Object[]{0});
-			logger.error(">>>>>>>>>>>>>>>³õÊ¼»¯°ó¶¨NFCÓÃ»§Êı£º"+list.size());
+			logger.error(">>>>>>>>>>>>>>>åˆå§‹åŒ–ç»‘å®šNFCç”¨æˆ·æ•°ï¼š"+list.size());
 			Map<String, Long> uinUuidMap = new HashMap<String, Long>();
 			if(list!=null&&list.size()>0){
 				for(Map<String, Object> map : list){
 					uinUuidMap.put(map.get("nfc_uuid")+"",(Long)map.get("uin"));
 				}
 				uin = uinUuidMap.get(uuid);
-				logger.error("»º´æËÙÍ¨¿¨ÓÃ»§.....size:"+uinUuidMap.size());
+				logger.error("ç¼“å­˜é€Ÿé€šå¡ç”¨æˆ·.....size:"+uinUuidMap.size());
 				memcacheUtils.setUinUuid(uinUuidMap);
 			}
 		}
 		return uin;
 	}
 	/**
-	 * ¸üĞÂËÙÍ¨¿¨»º´æ 
+	 * æ›´æ–°é€Ÿé€šå¡ç¼“å­˜
 	 * @param uuid
 	 * @param uin
 	 */
 	public void updateUinUuidMap(String uuid,Long uin){
 //		Map<String,Long> uuidUinMap = memcacheUtils.doUinUuidCache("uuid_uin_map", null, null);
 //		if(uuidUinMap!=null){
-//			logger.error("¸üĞÂËÙÍ¨¿¨»º´æ ...");
+//			logger.error("æ›´æ–°é€Ÿé€šå¡ç¼“å­˜ ...");
 //			uuidUinMap.put(uuid, uin);
 //			memcacheUtils.setUinUuid(uuidUinMap);
 //		}else {
-			logger.error("³õÊ¼»¯ËÙÍ¨¿¨ÓÃ»§.....");
-			List<Map<String, Object>> list = pgOnlyReadService.getAll("select nfc_uuid,uin from com_nfc_tb where uin>?",new Object[]{0});
-			logger.error(">>>>>>>>>>>>>>>³õÊ¼»¯°ó¶¨NFCÓÃ»§Êı£º"+list.size());
-			Map<String, Long> uinUuidMap = new HashMap<String, Long>();
-			if(list!=null&&list.size()>0){
-				for(Map<String, Object> map : list){
-					uinUuidMap.put(map.get("nfc_uuid")+"",(Long)map.get("uin"));
-				}
-				//uinUuidMap.put(uuid, uin);
-				logger.error("»º´æËÙÍ¨¿¨ÓÃ»§.....size:"+uinUuidMap.size());
-				memcacheUtils.setUinUuid(uinUuidMap);
+		logger.error("åˆå§‹åŒ–é€Ÿé€šå¡ç”¨æˆ·.....");
+		List<Map<String, Object>> list = pgOnlyReadService.getAll("select nfc_uuid,uin from com_nfc_tb where uin>?",new Object[]{0});
+		logger.error(">>>>>>>>>>>>>>>åˆå§‹åŒ–ç»‘å®šNFCç”¨æˆ·æ•°ï¼š"+list.size());
+		Map<String, Long> uinUuidMap = new HashMap<String, Long>();
+		if(list!=null&&list.size()>0){
+			for(Map<String, Object> map : list){
+				uinUuidMap.put(map.get("nfc_uuid")+"",(Long)map.get("uin"));
 			}
+			//uinUuidMap.put(uuid, uin);
+			logger.error("ç¼“å­˜é€Ÿé€šå¡ç”¨æˆ·.....size:"+uinUuidMap.size());
+			memcacheUtils.setUinUuid(uinUuidMap);
+		}
 //		}
 	}
-	
+
 	public int backNewUserTickets(Long ntime,Long key){
-		return 0;//2015-03-10£¬¿ª¿¨¼°Áìºì°üÊ±²»ÔÙÏÈĞ´ÈëÍ£³µÈ¯£¬µÇÂ¼Ê±ÅĞ¶ÏºÚÃûµ¥ºóÌí¼ÓÍ£³µÈ¯
+		return 0;//2015-03-10ï¼Œå¼€å¡åŠé¢†çº¢åŒ…æ—¶ä¸å†å…ˆå†™å…¥åœè½¦åˆ¸ï¼Œç™»å½•æ—¶åˆ¤æ–­é»‘åå•åæ·»åŠ åœè½¦åˆ¸
 	}
-	
-	//»ñÈ¡½ÇÉ«µÄ¹¦ÄÜÈ¨ÏŞ
+
+	//è·å–è§’è‰²çš„åŠŸèƒ½æƒé™
 	public List<Object> getAuthByRole(Long roleid) throws JSONException{
 		String auth = "[]";
 		List<Object> authids = new ArrayList<Object>();
@@ -1132,11 +1118,11 @@ public class PublicMethods {
 		}
 		return authids;
 	}
-	
-	//»ñÈ¡Êı¾İÈ¨ÏŞ
+
+	//è·å–æ•°æ®æƒé™
 	public List<Object> getDataAuth(Long id){
 		List<Object> params = new ArrayList<Object>();
-		params.add(id);//×Ô¼º
+		params.add(id);//è‡ªå·±
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		list = pgOnlyReadService.getAll("select authorizer from dataauth_tb where authorizee=? order by authorizer desc ", new Object[]{id});
 		for(Map<String, Object> map : list){
@@ -1147,19 +1133,39 @@ public class PublicMethods {
 		}
 		return params;
 	}
+
 	/**
-	 * ¸ù¾İ³µÅÆ,³µ³¡±àºÅ²éÑ¯ÊÇ·ñÊÇÔÂ¿¨
+	 * æ·»åŠ æ˜¯å¦æ˜¯æœˆå¡è½¦è¾†çš„åˆ¤æ–­çš„æ–°é€»è¾‘
+	 * å…¶ä¸­å–æ¶ˆæœˆå¡ä¼šå‘˜å¯¹æœ‰æ•ˆæœŸçš„é™åˆ¶
+	 * @param pid
+	 * @param comid
+	 * @return
+	 */
+	public boolean isMonthUserNew(Long pid, Long comId,String carNumUnique){
+		if (pid != null && pid != -1) {
+			Map<String, Object> pMap = daService.getMap("select p.b_time,p.e_time,p.type from product_package_tb p," +
+							"carower_product c where c.pid=p.id and p.comid=? and c.car_number=? order by c.id desc limit ?",
+					new Object[]{comId,carNumUnique,1});
+			if(pMap!= null && !pMap.isEmpty()){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * æ ¹æ®è½¦ç‰Œ,è½¦åœºç¼–å·æŸ¥è¯¢æ˜¯å¦æ˜¯æœˆå¡
 	 * @param carNumber
 	 * @return
 	 */
 	public boolean isMonthUser(Long uin,Long comId){
-		//ÏÈÅĞ¶ÏÔÂ¿¨
+		//å…ˆåˆ¤æ–­æœˆå¡
 	/*	if(carNumber==null||"".equals(carNumber))
 			return false;
 		Long uin  = null;
-		
+
 		Map carMap = daService.getMap("select uin from car_info_tb where car_number=?", new Object[]{carNumber});
-		
+
 		if(carMap==null||carMap.get("uin")==null){
 			return false;
 		}
@@ -1167,7 +1173,7 @@ public class PublicMethods {
 		if(uin!=null&&uin!=-1){
 			Long ntime = System.currentTimeMillis()/1000;
 			Map<String, Object> pMap = daService.getMap("select p.b_time,p.e_time,p.type from product_package_tb p," +
-					"carower_product c where c.pid=p.id and p.comid=? and c.uin=? and c.e_time>? and c.b_time<? order by c.id desc limit ?", 
+							"carower_product c where c.pid=p.id and p.comid=? and c.uin=? and c.e_time>? and c.b_time<? order by c.id desc limit ?",
 					new Object[]{comId,uin,ntime,ntime,1});
 			if(pMap!=null&&!pMap.isEmpty()){
 				//System.out.println(pMap);
@@ -1175,19 +1181,19 @@ public class PublicMethods {
 				Integer e_time = (Integer)pMap.get("e_time");
 				Calendar c = Calendar.getInstance();
 				Integer hour = c.get(Calendar.HOUR_OF_DAY);
-				Integer type = (Integer)pMap.get("type");//0:È«Ìì 1Ò¹¼ä 2ÈÕ¼ä
+				Integer type = (Integer)pMap.get("type");//0:å…¨å¤© 1å¤œé—´ 2æ—¥é—´
 				boolean isVip = false;
-				if(type==0){//0:È«Ìì 1Ò¹¼ä 2ÈÕ¼ä
-					logger.error("È«Ìì°üÔÂÓÃ»§£¬uin£º"+uin);
+				if(type==0){//0:å…¨å¤© 1å¤œé—´ 2æ—¥é—´
+					logger.error("å…¨å¤©åŒ…æœˆç”¨æˆ·ï¼Œuinï¼š"+uin);
 					isVip = true;
-				}else if(type==2){//0:È«Ìì 1Ò¹¼ä 2ÈÕ¼ä
+				}else if(type==2){//0:å…¨å¤© 1å¤œé—´ 2æ—¥é—´
 					if(hour>=b_time&&hour<=e_time){
-						logger.error("ÈÕ¼ä°üÔÂÓÃ»§£¬uin£º"+uin);
+						logger.error("æ—¥é—´åŒ…æœˆç”¨æˆ·ï¼Œuinï¼š"+uin);
 						isVip = true;
 					}
-				}else if(type==1){//0:È«Ìì 1Ò¹¼ä 2ÈÕ¼ä
+				}else if(type==1){//0:å…¨å¤© 1å¤œé—´ 2æ—¥é—´
 					if(hour<=e_time||hour>=b_time){
-						logger.error("Ò¹¼ä°üÔÂÓÃ»§£¬uin£º"+uin);
+						logger.error("å¤œé—´åŒ…æœˆç”¨æˆ·ï¼Œuinï¼š"+uin);
 						isVip = true;
 					}
 				}
@@ -1197,37 +1203,37 @@ public class PublicMethods {
 		return false;
 	}
 	/**
-	 * È¡¿ÉÓÃÍ£³µÈ¯£¬Î´ÈÏÖ¤³µÖ÷×î¶àÊ¹ÓÃ3ÔªÈ¯¡£ Í£³µ³¡×¨ÓÃÍ£³µÈ¯ÓÅÏÈ
+	 * å–å¯ç”¨åœè½¦åˆ¸ï¼Œæœªè®¤è¯è½¦ä¸»æœ€å¤šä½¿ç”¨3å…ƒåˆ¸ã€‚ åœè½¦åœºä¸“ç”¨åœè½¦åˆ¸ä¼˜å…ˆ
 	 * @param uin
 	 * @param fee
-	 * @param type: //0¸üÔç°æ±¾£¬²»·µ±È¶©µ¥½ğ¶î´óµÄÈ¯£¬1ÀÏ°æ±¾£¬×Ô¶¯Ñ¡È¯Ê±£¬·µ»ØÆÕÍ¨È¯µÄ×î¸ßµÖ¿Û½ğ¶î£¬2ĞÂ°æ±¾£¬¸ù¾İÈ¯ÀàĞÍ·µ»Ø×î¸ßµÖ¿Û½ğ¶î
+	 * @param type: //0æ›´æ—©ç‰ˆæœ¬ï¼Œä¸è¿”æ¯”è®¢å•é‡‘é¢å¤§çš„åˆ¸ï¼Œ1è€ç‰ˆæœ¬ï¼Œè‡ªåŠ¨é€‰åˆ¸æ—¶ï¼Œè¿”å›æ™®é€šåˆ¸çš„æœ€é«˜æŠµæ‰£é‡‘é¢ï¼Œ2æ–°ç‰ˆæœ¬ï¼Œæ ¹æ®åˆ¸ç±»å‹è¿”å›æœ€é«˜æŠµæ‰£é‡‘é¢
 	 * @param comId
 	 * @return
 	 */
-	
+
 	//http://127.0.0.1/zld/carowner.do?action=getaccount&mobile=13641309140&total=10&uid=21694&utype=1
 	public  Map<String, Object> getTickets(Long uin,Double fee,Long comId,Integer type,Long uid){
 		Map<String, Object> map=null;
 		Integer limit = CustomDefind.getUseMoney(fee,0);
 		Double splimit = StringUtils.formatDouble(CustomDefind.getValue("TICKET_LIMIT"));
-		if(type==0){//0¸üÔç°æ±¾£¬²»·µ±È¶©µ¥½ğ¶î´óµÄÈ¯£¬1ÀÏ°æ±¾£¬×Ô¶¯Ñ¡È¯Ê±£¬·µ»ØÆÕÍ¨È¯µÄ×î¸ßµÖ¿Û½ğ¶î£¬2ĞÂ°æ±¾£¬¸ù¾İÈ¯ÀàĞÍ·µ»Ø×î¸ßµÖ¿Û½ğ¶î
-			 logger.error("uin:"+uin+",comid:"+comId+",type:"+type+",fee:"+fee);
-			 map= useTickets(uin, fee, comId,uid,type);
+		if(type==0){//0æ›´æ—©ç‰ˆæœ¬ï¼Œä¸è¿”æ¯”è®¢å•é‡‘é¢å¤§çš„åˆ¸ï¼Œ1è€ç‰ˆæœ¬ï¼Œè‡ªåŠ¨é€‰åˆ¸æ—¶ï¼Œè¿”å›æ™®é€šåˆ¸çš„æœ€é«˜æŠµæ‰£é‡‘é¢ï¼Œ2æ–°ç‰ˆæœ¬ï¼Œæ ¹æ®åˆ¸ç±»å‹è¿”å›æœ€é«˜æŠµæ‰£é‡‘é¢
+			logger.error("uin:"+uin+",comid:"+comId+",type:"+type+",fee:"+fee);
+			map= useTickets(uin, fee, comId,uid,type);
 		}else {
 			logger.error("uin:"+uin+",comid:"+comId+",type:"+type+",fee:"+fee+",uselimit:"+limit);
 			map = methods.getTickets(uin,fee,comId,uid);
 			if(map!=null){
 				Integer ttype = (Integer)map.get("type");
 				Integer res = (Integer)map.get("resources");
-				if(ttype==1||res==1)//ÆÕÍ¨È¯
+				if(ttype==1||res==1)//æ™®é€šåˆ¸
 					map.put("limit",StringUtils.formatDouble(fee-splimit));
-				else {//³µ³¡×¨ÓÃÈ¯
+				else {//è½¦åœºä¸“ç”¨åˆ¸
 					map.put("limit",limit);
 				}
 			}
 		}
 		logger.error("uin:"+uin+",comid:"+comId+",fee:"+fee+",map:"+map);
-		if(map!=null){//²éÒ»ÏÂÓĞÃ»ÓĞÏàÍ¬½ğ¶îµÄ³µ³¡×¨ÓÃÈ¯
+		if(map!=null){//æŸ¥ä¸€ä¸‹æœ‰æ²¡æœ‰ç›¸åŒé‡‘é¢çš„è½¦åœºä¸“ç”¨åˆ¸
 			Integer money = (Integer)map.get("money");
 			Long limitday=(Long)map.get("limit_day");
 			Integer ttype = (Integer)map.get("type");
@@ -1245,18 +1251,18 @@ public class PublicMethods {
 		}
 		return map;
 	}
-	
+
 	/**
-	 * È¡¿ÉÓÃÍ£³µÈ¯
-	 * @param uin    ³µÖ÷ÕË»§
-	 * @param total  ¶©µ¥½ğ¶î
-	 * @param comId  ³µ³¡±àºÅ 
-	 * @param uid    ÊÕ·ÑÔ±±àºÅ
-	 * @param utype  0¸üÔç°æ±¾£¬²»·µ±È¶©µ¥½ğ¶î´óµÄÈ¯£¬1ÀÏ°æ±¾£¬×Ô¶¯Ñ¡È¯Ê±£¬·µ»ØÆÕÍ¨È¯µÄ×î¸ßµÖ¿Û½ğ¶î£¬2ĞÂ°æ±¾£¬¸ù¾İÈ¯ÀàĞÍ·µ»Ø×î¸ßµÖ¿Û½ğ¶î
-	 * @return   ¿ÉÓÃÍ£³µÈ¯
+	 * å–å¯ç”¨åœè½¦åˆ¸
+	 * @param uin    è½¦ä¸»è´¦æˆ·
+	 * @param total  è®¢å•é‡‘é¢
+	 * @param comId  è½¦åœºç¼–å·
+	 * @param uid    æ”¶è´¹å‘˜ç¼–å·
+	 * @param utype  0æ›´æ—©ç‰ˆæœ¬ï¼Œä¸è¿”æ¯”è®¢å•é‡‘é¢å¤§çš„åˆ¸ï¼Œ1è€ç‰ˆæœ¬ï¼Œè‡ªåŠ¨é€‰åˆ¸æ—¶ï¼Œè¿”å›æ™®é€šåˆ¸çš„æœ€é«˜æŠµæ‰£é‡‘é¢ï¼Œ2æ–°ç‰ˆæœ¬ï¼Œæ ¹æ®åˆ¸ç±»å‹è¿”å›æœ€é«˜æŠµæ‰£é‡‘é¢
+	 * @return   å¯ç”¨åœè½¦åˆ¸
 	 */
 	public Map<String, Object> useTickets(Long uin,Double total,Long comId,Long uid,Integer utype){
-		//²é³öËùÓĞ¿ÉÓÃµÄÈ¯
+		//æŸ¥å‡ºæ‰€æœ‰å¯ç”¨çš„åˆ¸
 		//Long ntime = System.currentTimeMillis()/1000;
 		Integer limit = CustomDefind.getUseMoney(total,0);
 		boolean blackuser = isBlackUser(uin);
@@ -1265,86 +1271,86 @@ public class PublicMethods {
 		if(!isauth){
 			if(blackuser||blackparkuser){
 				if(blackuser){
-					logger.error("³µÖ÷ÔÚºÚÃûµ¥ÄÚuin:"+uin+",fee:"+total+",comid:"+comId);
+					logger.error("è½¦ä¸»åœ¨é»‘åå•å†…uin:"+uin+",fee:"+total+",comid:"+comId);
 				}
 				if(blackparkuser){
-					logger.error("³µ³¡ÔÚºÚÃûµ¥ÄÚuin:"+uin+",fee:"+total+",comid:"+comId);
+					logger.error("è½¦åœºåœ¨é»‘åå•å†…uin:"+uin+",fee:"+total+",comid:"+comId);
 				}
 				return null;
 			}
 		}else{
-			logger.error("³µÖ÷uin:"+uin+"ÊÇÈÏÖ¤³µÖ÷£¬ÓÃÈ¯²»ÅĞ¶ÏÊÇ·ñÊÇºÚÃûµ¥£¬³µ³¡ÊÇ·ñºÚÃûµ¥¡£");
+			logger.error("è½¦ä¸»uin:"+uin+"æ˜¯è®¤è¯è½¦ä¸»ï¼Œç”¨åˆ¸ä¸åˆ¤æ–­æ˜¯å¦æ˜¯é»‘åå•ï¼Œè½¦åœºæ˜¯å¦é»‘åå•ã€‚");
 		}
 		double ticketquota=-1;
 		if(uid!=-1){
 			Map usrMap =daService.getMap("select ticketquota from user_info_Tb where id =? and ticketquota<>?", new Object[]{uid,-1});
 			if(usrMap!=null){
 				ticketquota = Double.parseDouble(usrMap.get("ticketquota")+"");
-				logger.error("¸ÃÊÕ·ÑÔ±:"+uid+"µÄÓÃÈ¯¶î¶ÈÊÇ£º"+ticketquota+"£¬(-1´ú±íÃ»ÏŞÖÆ)");
+				logger.error("è¯¥æ”¶è´¹å‘˜:"+uid+"çš„ç”¨åˆ¸é¢åº¦æ˜¯ï¼š"+ticketquota+"ï¼Œ(-1ä»£è¡¨æ²¡é™åˆ¶)");
 			}
 		}
-		//ËùÓĞ¿ÉÓÃÍ£³µÈ¯
+		//æ‰€æœ‰å¯ç”¨åœè½¦åˆ¸
 		List<Map<String,Object>> allTickets =methods.getUseTickets(uin, total);
 		Map<String, Object> ticketMap=null;
 		logger.error(allTickets);
 		if(allTickets!=null&&!allTickets.isEmpty()){
-			double spr_abs = 100;             //×¨ÓÃÈ¯µÖ¿Û½ğ¶îÓëÖ§¸¶½ğ¶îµÄ²îÖµ
-			Integer spr_money_limit_abs=100;  //×¨ÓÃÈ¯µÖ¿Û½ğ¶îÓëÈ¯½ğ¶îµÄ²îÖµ
-			double comm_abs = 100;            //ÆÕÍ¨È¯µÖ¿Û½ğ¶îÓëÈ¯½ğ¶î½ğ¶îµÄ²îÖµ
-			Integer comm_money_limit_abs=100; //ÆÕÍ¨È¯µÖ¿Û½ğ¶îÓëÈ¯½ğ¶îµÄ²îÖµ
-			double buy_abs = 100;             //¹ºÂòÈ¯µÖ¿Û½ğ¶îÓëÖ§¸¶½ğ¶îµÄ²îÖµ
-			Integer buy_money_limit_abs=100;  //¹ºÂòÈ¯µÖ¿Û½ğ¶îÓëÈ¯½ğ¶îµÄ²îÖµ
-			Integer comm_index=-1;  //ÆÕÍ¨È¯Ë÷Òı      
-			Integer spr_index=-1;  //×¨ÓÃÈ¯Ë÷Òı
-			Integer buy_index=-1;  //¹ºÈ¯Ë÷Òı
-			Integer comm_money=0;  //ÆÕÍ¨È¯µÖ¿Û½ğ¶î
-			Integer spr_money=0;   //×¨ÓÃÈ¯µÖ¿Û½ğ¶î
-			Integer buy_money=0;   //¹ºÈ¯È¯µÖ¿Û½ğ¶î
-			Integer index=-1;      //±éÀúË÷Òı
-			Integer spr_ticket_money=0;  //×¨ÓÃÈ¯½ğ¶î
-			Integer buy_ticket_money=0;  //¹ºÈ¯È¯½ğ¶î
-			Integer comm_ticket_money=0; //ÆÕÍ¨È¯½ğ¶î
+			double spr_abs = 100;             //ä¸“ç”¨åˆ¸æŠµæ‰£é‡‘é¢ä¸æ”¯ä»˜é‡‘é¢çš„å·®å€¼
+			Integer spr_money_limit_abs=100;  //ä¸“ç”¨åˆ¸æŠµæ‰£é‡‘é¢ä¸åˆ¸é‡‘é¢çš„å·®å€¼
+			double comm_abs = 100;            //æ™®é€šåˆ¸æŠµæ‰£é‡‘é¢ä¸åˆ¸é‡‘é¢é‡‘é¢çš„å·®å€¼
+			Integer comm_money_limit_abs=100; //æ™®é€šåˆ¸æŠµæ‰£é‡‘é¢ä¸åˆ¸é‡‘é¢çš„å·®å€¼
+			double buy_abs = 100;             //è´­ä¹°åˆ¸æŠµæ‰£é‡‘é¢ä¸æ”¯ä»˜é‡‘é¢çš„å·®å€¼
+			Integer buy_money_limit_abs=100;  //è´­ä¹°åˆ¸æŠµæ‰£é‡‘é¢ä¸åˆ¸é‡‘é¢çš„å·®å€¼
+			Integer comm_index=-1;  //æ™®é€šåˆ¸ç´¢å¼•
+			Integer spr_index=-1;  //ä¸“ç”¨åˆ¸ç´¢å¼•
+			Integer buy_index=-1;  //è´­åˆ¸ç´¢å¼•
+			Integer comm_money=0;  //æ™®é€šåˆ¸æŠµæ‰£é‡‘é¢
+			Integer spr_money=0;   //ä¸“ç”¨åˆ¸æŠµæ‰£é‡‘é¢
+			Integer buy_money=0;   //è´­åˆ¸åˆ¸æŠµæ‰£é‡‘é¢
+			Integer index=-1;      //éå†ç´¢å¼•
+			Integer spr_ticket_money=0;  //ä¸“ç”¨åˆ¸é‡‘é¢
+			Integer buy_ticket_money=0;  //è´­åˆ¸åˆ¸é‡‘é¢
+			Integer comm_ticket_money=0; //æ™®é€šåˆ¸é‡‘é¢
 			for(Map<String,Object> map: allTickets){
-				Long cid = (Long)map.get("comid");//¹«Ë¾±àºÅ
+				Long cid = (Long)map.get("comid");//å…¬å¸ç¼–å·
 				Integer money = (Integer)map.get("money");
 				Integer type=(Integer)map.get("type");
 				Integer useLimit = (Integer)map.get("limit");
 				Integer res = (Integer)map.get("resources");
 				index ++;
-				if(utype==0&&money>=limit){//0¸üÔç°æ±¾£¬²»·µµÖ¿Û½ğ¶î±È¶©µ¥½ğ¶î´óµÄÈ¯
+				if(utype==0&&money>=limit){//0æ›´æ—©ç‰ˆæœ¬ï¼Œä¸è¿”æŠµæ‰£é‡‘é¢æ¯”è®¢å•é‡‘é¢å¤§çš„åˆ¸
 					continue;
 				}
-				if(type==1&&cid!=null&&!cid.equals(comId)){//·Ç´Ë³µ³¡µÄ×¨ÓÃÈ¯²»·µ
+				if(type==1&&cid!=null&&!cid.equals(comId)){//éæ­¤è½¦åœºçš„ä¸“ç”¨åˆ¸ä¸è¿”
 					continue;
 				}
-				if(ticketquota!=-1&&ticketquota>money){//È¯¶î´óÓÚÊÕ·ÑÔ±ÓÃÈ¯×î¸ß½ğ¶î£¬²»·µ»Ø
+				if(ticketquota!=-1&&ticketquota>money){//åˆ¸é¢å¤§äºæ”¶è´¹å‘˜ç”¨åˆ¸æœ€é«˜é‡‘é¢ï¼Œä¸è¿”å›
 					continue;
 				}
-				if(!isauth&&money>1){//·ÇÈÏÖ¤³µÖ÷²»ÄÜÊ¹ÓÃ´óÓÚ1ÔªÒÔÉÏµÄÈ¯
+				if(!isauth&&money>1){//éè®¤è¯è½¦ä¸»ä¸èƒ½ä½¿ç”¨å¤§äº1å…ƒä»¥ä¸Šçš„åˆ¸
 					continue;
 				}
-				if(useLimit==0){//µÖ¿Û½ğ¶îÎª0
+				if(useLimit==0){//æŠµæ‰£é‡‘é¢ä¸º0
 					continue;
 				}
-				if(money>Math.ceil(total)&&res==1){//¹ºÂòµÄÈ¯¶î´óÓÚ¶©µ¥½ğ¶î
+				if(money>Math.ceil(total)&&res==1){//è´­ä¹°çš„åˆ¸é¢å¤§äºè®¢å•é‡‘é¢
 					continue;
 				}
-				if(type==1){//×¨ÓÃÈ¯£¬È¡×îĞ¡Ö§¸¶½ğ¶îÓëµÖ¿Û½ğ¶î²î¶î
-					double abs = total-useLimit;   
+				if(type==1){//ä¸“ç”¨åˆ¸ï¼Œå–æœ€å°æ”¯ä»˜é‡‘é¢ä¸æŠµæ‰£é‡‘é¢å·®é¢
+					double abs = total-useLimit;
 					Integer mlabs = money-useLimit;
 					if(spr_abs>abs){
 						spr_abs =abs;
 						spr_money_limit_abs=mlabs;
-						spr_index=index;  //±£´æË÷Òı
-						spr_money=useLimit; //±£´æµÖ¿Û½ğ¶î
-						spr_ticket_money=money;//±£´æÈ¯½ğ¶î
-					}else if(spr_abs==abs&&spr_money_limit_abs>mlabs){//µ±Ç°Ö§¸¶½ğ¶îÓëµÖ¿Û½ğ¶î²îÖµÓëÉÏÒ»ÕÅÈ¯Ò»ÑùÊ±£¬È¡È¯½ğ¶îÓëµÖ¿Û½ğ¶î²îÖµ×îĞ¡µÄ
+						spr_index=index;  //ä¿å­˜ç´¢å¼•
+						spr_money=useLimit; //ä¿å­˜æŠµæ‰£é‡‘é¢
+						spr_ticket_money=money;//ä¿å­˜åˆ¸é‡‘é¢
+					}else if(spr_abs==abs&&spr_money_limit_abs>mlabs){//å½“å‰æ”¯ä»˜é‡‘é¢ä¸æŠµæ‰£é‡‘é¢å·®å€¼ä¸ä¸Šä¸€å¼ åˆ¸ä¸€æ ·æ—¶ï¼Œå–åˆ¸é‡‘é¢ä¸æŠµæ‰£é‡‘é¢å·®å€¼æœ€å°çš„
 						spr_index=index;
 						spr_money=useLimit;
 						spr_ticket_money=money;
 					}
 				}else {
-					if(res==1){//¹ºÂòÈ¯
+					if(res==1){//è´­ä¹°åˆ¸
 						double abs = total-useLimit;
 						Integer mlabs = money-useLimit;
 						if(buy_abs>abs){
@@ -1359,7 +1365,7 @@ public class PublicMethods {
 							buy_ticket_money=money;
 						}
 						map.put("isbuy", "1");
-					}else {//ÆÕÍ¨È¯
+					}else {//æ™®é€šåˆ¸
 						double abs = total-useLimit;
 						Integer mlabs = money-useLimit;
 						if(comm_abs>abs){
@@ -1377,14 +1383,14 @@ public class PublicMethods {
 				}
 			}
 			logger.error(spr_index+":"+spr_money+":"+spr_ticket_money+","+buy_index+":"+buy_money+":"+
-						buy_ticket_money+","+comm_index+":"+comm_money+":"+comm_ticket_money);
-			if(spr_money>=comm_money&&spr_money>=buy_money){//¸ù¾İµÖ¿Û½ğ¶î£¬Ñ¡×î´óµÄ£¬ÓÅÏÈÑ¡×¨ÓÃÈ¯
-				if(spr_money==buy_money){//×¨ÓÃÈ¯ºÍ¹ºÂòÈ¯µÖ¿Û½ğ¶îÏàÍ¬Ê±£¬Ñ¡È¯Ãæ½ğ¶îĞ¡µÄ
+					buy_ticket_money+","+comm_index+":"+comm_money+":"+comm_ticket_money);
+			if(spr_money>=comm_money&&spr_money>=buy_money){//æ ¹æ®æŠµæ‰£é‡‘é¢ï¼Œé€‰æœ€å¤§çš„ï¼Œä¼˜å…ˆé€‰ä¸“ç”¨åˆ¸
+				if(spr_money==buy_money){//ä¸“ç”¨åˆ¸å’Œè´­ä¹°åˆ¸æŠµæ‰£é‡‘é¢ç›¸åŒæ—¶ï¼Œé€‰åˆ¸é¢é‡‘é¢å°çš„
 					if(spr_ticket_money>buy_ticket_money){
 						ticketMap=allTickets.get(buy_index);
 					}
 				}
-				if(spr_money==comm_money){//×¨ÓÃÈ¯ºÍÆÕÍ¨È¯µÖ¿Û½ğ¶îÏàÍ¬Ê±£¬Ñ¡È¯Ãæ½ğ¶îĞ¡µÄ
+				if(spr_money==comm_money){//ä¸“ç”¨åˆ¸å’Œæ™®é€šåˆ¸æŠµæ‰£é‡‘é¢ç›¸åŒæ—¶ï¼Œé€‰åˆ¸é¢é‡‘é¢å°çš„
 					if(spr_ticket_money>comm_ticket_money){
 						ticketMap=allTickets.get(comm_index);
 					}
@@ -1392,9 +1398,9 @@ public class PublicMethods {
 				if(ticketMap==null&&spr_index>-1){
 					ticketMap=allTickets.get(spr_index);
 				}
-				if(utype<2&&ticketMap!=null)//ÀÏ°æ±¾·µ»ØÆÕÍ¨È¯µÄµÖ¿ÛÉÏÏŞ£¬·ÀÖ¹Ö§¸¶Ê§°Ü
+				if(utype<2&&ticketMap!=null)//è€ç‰ˆæœ¬è¿”å›æ™®é€šåˆ¸çš„æŠµæ‰£ä¸Šé™ï¼Œé˜²æ­¢æ”¯ä»˜å¤±è´¥
 					ticketMap.put("limit", limit<1?1:limit);
-			}else if(comm_money>=buy_money&&comm_index>-1){//¸ù¾İµÖ¿Û½ğ¶î£¬Ñ¡×î´óµÄ£¬Ã»ÓĞ×¨ÓÃÈ¯Ê±ÓÅÏÈÑ¡ÆÕÍ¨È¯
+			}else if(comm_money>=buy_money&&comm_index>-1){//æ ¹æ®æŠµæ‰£é‡‘é¢ï¼Œé€‰æœ€å¤§çš„ï¼Œæ²¡æœ‰ä¸“ç”¨åˆ¸æ—¶ä¼˜å…ˆé€‰æ™®é€šåˆ¸
 				if(buy_money==comm_money){
 					if(comm_ticket_money>buy_ticket_money){
 						ticketMap=allTickets.get(buy_index);
@@ -1409,19 +1415,19 @@ public class PublicMethods {
 				if(utype<2&&ticketMap!=null)
 					ticketMap.put("limit", limit<1?1:limit);
 			}
-			logger.error("uin:"+uin+",total:"+total+",comid:"+comId+",uid:"+uid+",utype:"+utype+"Ñ¡È¯½á¹û£º"+ticketMap);
+			logger.error("uin:"+uin+",total:"+total+",comid:"+comId+",uid:"+uid+",utype:"+utype+"é€‰åˆ¸ç»“æœï¼š"+ticketMap);
 		}
 		return ticketMap;
 	}
 	/**
-	 * È¡¿ÉÓÃÍ£³µÈ¯£¬Î´ÈÏÖ¤³µÖ÷×î¶àÊ¹ÓÃ3ÔªÈ¯¡£
+	 * å–å¯ç”¨åœè½¦åˆ¸ï¼Œæœªè®¤è¯è½¦ä¸»æœ€å¤šä½¿ç”¨3å…ƒåˆ¸ã€‚
 	 * @param uin
 	 * @param fee
 	 * @return
 	 */
 	/*@SuppressWarnings("unchecked")
 	public Map<String, Object> useTickets(Long uin,Double fee,Long comId,Long uid){
-		//²é³öËùÓĞ¿ÉÓÃµÄÈ¯
+		//æŸ¥å‡ºæ‰€æœ‰å¯ç”¨çš„åˆ¸
 		//Long ntime = System.currentTimeMillis()/1000;
 		Integer limit = CustomDefind.getUseMoney(fee,0);
 		Double splimit = StringUtils.formatDouble(CustomDefind.getValue("TICKET_LIMIT"));
@@ -1431,15 +1437,15 @@ public class PublicMethods {
 		if(!isauth){
 			if(blackuser||blackparkuser){
 				if(blackuser){
-					logger.error("³µÖ÷ÔÚºÚÃûµ¥ÄÚuin:"+uin+",fee:"+fee+",comid:"+comId);
+					logger.error("è½¦ä¸»åœ¨é»‘åå•å†…uin:"+uin+",fee:"+fee+",comid:"+comId);
 				}
 				if(blackparkuser){
-					logger.error("³µ³¡ÔÚºÚÃûµ¥ÄÚuin:"+uin+",fee:"+fee+",comid:"+comId);
+					logger.error("è½¦åœºåœ¨é»‘åå•å†…uin:"+uin+",fee:"+fee+",comid:"+comId);
 				}
 				return null;
 			}
 		}else{
-			logger.error("³µÖ÷uin:"+uin+"ÊÇÈÏÖ¤³µÖ÷£¬ÓÃÈ¯²»ÅĞ¶ÏÊÇ·ñÊÇºÚÃûµ¥£¬³µ³¡ÊÇ·ñºÚÃûµ¥¡£");
+			logger.error("è½¦ä¸»uin:"+uin+"æ˜¯è®¤è¯è½¦ä¸»ï¼Œç”¨åˆ¸ä¸åˆ¤æ–­æ˜¯å¦æ˜¯é»‘åå•ï¼Œè½¦åœºæ˜¯å¦é»‘åå•ã€‚");
 		}
 		List<Map<String, Object>> list = null;
 		double ticketquota=-1;
@@ -1447,15 +1453,15 @@ public class PublicMethods {
 			Map usrMap =daService.getMap("select ticketquota from user_info_Tb where id =? and ticketquota<>?", new Object[]{uid,-1});
 			if(usrMap!=null){
 				ticketquota = Double.parseDouble(usrMap.get("ticketquota")+"");
-				logger.error("¸ÃÊÕ·ÑÔ±:"+uid+"µÄÓÃÈ¯¶î¶ÈÊÇ£º"+ticketquota+"£¬(-1´ú±íÃ»ÏŞÖÆ)");
+				logger.error("è¯¥æ”¶è´¹å‘˜:"+uid+"çš„ç”¨åˆ¸é¢åº¦æ˜¯ï¼š"+ticketquota+"ï¼Œ(-1ä»£è¡¨æ²¡é™åˆ¶)");
 			}
 		}
-		if(!isauth){//Î´ÈÏÖ¤³µÖ÷×î¶àÊ¹ÓÃ2ÔªÈ¯¡£
-			double noAuth = 1.0;//Î´ÈÏÖ¤³µÖ÷×î¸ßÊÔÓÃnoAuth(2)ÔªÈ¯,ÒÔºó¸Ä¶¯Õâ¸öÖµ¾Íok
+		if(!isauth){//æœªè®¤è¯è½¦ä¸»æœ€å¤šä½¿ç”¨2å…ƒåˆ¸ã€‚
+			double noAuth = 1.0;//æœªè®¤è¯è½¦ä¸»æœ€é«˜è¯•ç”¨noAuth(2)å…ƒåˆ¸,ä»¥åæ”¹åŠ¨è¿™ä¸ªå€¼å°±ok
 			if(ticketquota>=0&&ticketquota<=noAuth){
 //				ticketquota = ticketquota+1;
 			}else{
-				ticketquota=noAuth;//Î´ÈÏÖ¤³µÖ÷×î¶àÊ¹ÓÃ2ÔªÈ¯
+				ticketquota=noAuth;//æœªè®¤è¯è½¦ä¸»æœ€å¤šä½¿ç”¨2å…ƒåˆ¸
 			}
 			list=	daService.getAll("select * from ticket_tb where uin = ? " +
 					"and state=? and limit_day>=? and type<? and money<?  order by limit_day",
@@ -1477,14 +1483,14 @@ public class PublicMethods {
 //				logger.error("ticket>>>uin:"+uin+",comId:"+comId+",tcomid:"+tcomid+",type:"+type+",ticketid:"+map.get("id"));
 				if(comId!=null&&comId!=-1&&tcomid!=null&&type == 1){
 					if(comId.intValue()!=tcomid.intValue()){
-						logger.error(">>>>get ticket:²»ÊÇÕâ¸ö³µ³¡µÄÍ£³µÈ¯£¬²»ÄÜÓÃ....comId:"+comId+",tcomid:"+tcomid+",uin:"+uin);
+						logger.error(">>>>get ticket:ä¸æ˜¯è¿™ä¸ªè½¦åœºçš„åœè½¦åˆ¸ï¼Œä¸èƒ½ç”¨....comId:"+comId+",tcomid:"+tcomid+",uin:"+uin);
 						i++;
 						continue;
 					}
 				}
 				Integer res = (Integer)map.get("resources");
-				if(limit==0&&res==0&&type==0){//Ö§¸¶½ğ¶îĞ¡ÓÚ3Ôª£¬²»ÏÈÆÕÍ¨È¯
-					i++;					
+				if(limit==0&&res==0&&type==0){//æ”¯ä»˜é‡‘é¢å°äº3å…ƒï¼Œä¸å…ˆæ™®é€šåˆ¸
+					i++;
 					continue;
 				}
 				if(type==1||res==1){
@@ -1496,19 +1502,19 @@ public class PublicMethods {
 				if(money>limit.intValue()){
 					i++;
 					continue;
-				}else if(limit.intValue()==money){//È¯Öµ+1Ôª µÈÓÚ Ö§¸¶½ğ¶îÊ±Ö±½Ó·µ»Ø
+				}else if(limit.intValue()==money){//åˆ¸å€¼+1å…ƒ ç­‰äº æ”¯ä»˜é‡‘é¢æ—¶ç›´æ¥è¿”å›
 					return map;
 				}
-				//ÅĞ¶Ï ÊÇ·ñ ÓĞ ²»ÊÇ¸Ã³µ³¡µÄ×¨ÓÃÈ¯
-				
+				//åˆ¤æ–­ æ˜¯å¦ æœ‰ ä¸æ˜¯è¯¥è½¦åœºçš„ä¸“ç”¨åˆ¸
+
 				map.remove("comid");
 				//map.remove("limit_day");
 				_over3day_moneys.add(i+"_"+Math.abs(limit-money));
 				i++;
 			}
-			if(_over3day_moneys.size()>0){//3ÌìÒÔÉÏÍ£³µÈ¯ÓëÍ£³µ·ÑµÄ¾ø¶ÔÖµ·ÖÎö £¬È¡¾ø¶ÔÖµ×îĞ¡µÄ
-				int sk = 0;//±£´æindex
-				double sv=0;//±£´æ×îĞ¡Öµ
+			if(_over3day_moneys.size()>0){//3å¤©ä»¥ä¸Šåœè½¦åˆ¸ä¸åœè½¦è´¹çš„ç»å¯¹å€¼åˆ†æ ï¼Œå–ç»å¯¹å€¼æœ€å°çš„
+				int sk = 0;//ä¿å­˜index
+				double sv=0;//ä¿å­˜æœ€å°å€¼
 				int index = 0;
 				for(String s : _over3day_moneys){
 					int k = Integer.valueOf(s.split("_")[0]);
@@ -1528,82 +1534,82 @@ public class PublicMethods {
 				return list.get(sk);
 			}
 		}else{
-			logger.error("Î´Ñ¡µ½È¯uin:"+uin+",comid:"+comId+",fee:"+fee);
+			logger.error("æœªé€‰åˆ°åˆ¸uin:"+uin+",comid:"+comId+",fee:"+fee);
 		}
 		return null;
 	}*/
-	//¶©µ¥·µÆ´ÊÖÆøºì°ü
+	//è®¢å•è¿”æ‹¼æ‰‹æ°”çº¢åŒ…
 	public void backTicket(double money,Long orderId,Long uin,Long comid,String openid){
 		Long ctime = System.currentTimeMillis()/1000;
-		//³µ³¡×¨ÓÃÈ¯
+		//è½¦åœºä¸“ç”¨åˆ¸
 		Map btcomMap = daService.getMap("select * from park_ticket_tb where comid=? ", new Object[]{comid});
 		if(money>=1&&btcomMap!=null){
-			logger.error(">>>>back ticket comid="+comid+",ÓĞ×¨ÓÃÍ£³µÈ¯");
+			logger.error(">>>>back ticket comid="+comid+",æœ‰ä¸“ç”¨åœè½¦åˆ¸");
 			Integer num = (Integer)btcomMap.get("tnumber");
 			Integer exptime = (Integer)btcomMap.get("exptime");
 			Integer haveget = (Integer)btcomMap.get("haveget");
 			Long btid = (Long)btcomMap.get("id");
 			Double amount =StringUtils.formatDouble(btcomMap.get("money"));
-			if(haveget<num){//»¹¿ÉÒÔÁì
+			if(haveget<num){//è¿˜å¯ä»¥é¢†
 				int ret = daService.update("update park_ticket_tb set haveget=? where id = ? and tnumber>=? ",  new Object[]{haveget+1,btid,haveget+1});
 				if(ret==1){
 					ret = daService.update( "insert into ticket_tb (create_time,limit_day,money,state,uin,comid,type) values(?,?,?,?,?,?,?) ",
 							new Object[]{TimeTools.getToDayBeginTime(),TimeTools.getToDayBeginTime()+(exptime+1)*24*60*60-1,amount,0,uin,comid,1});
-					logger.error(">>>>back ticket comid="+comid+",×¨ÓÃÍ£³µÈ¯£º½ğ¶î £º"+amount+",×ÜÊıÁ¿:"+num+",ÒÑÊ¹ÓÃ:"+(haveget+1)+"£¬ÓÃ»§£º"+uin+",ÁìÈ¯½á¹û:"+ret);
+					logger.error(">>>>back ticket comid="+comid+",ä¸“ç”¨åœè½¦åˆ¸ï¼šé‡‘é¢ ï¼š"+amount+",æ€»æ•°é‡:"+num+",å·²ä½¿ç”¨:"+(haveget+1)+"ï¼Œç”¨æˆ·ï¼š"+uin+",é¢†åˆ¸ç»“æœ:"+ret);
 				}
 			}
 		}
-		
-		if(money>=1&&memcacheUtils.readBackTicketCache(uin)){//Ò»ÌìÖ»·µÒ»´Îºì°ü
+
+		if(money>=1&&memcacheUtils.readBackTicketCache(uin)){//ä¸€å¤©åªè¿”ä¸€æ¬¡çº¢åŒ…
 			String sql = "insert into order_ticket_tb (uin,order_id,money,bnum,ctime,exptime,bwords) values(?,?,?,?,?,?,?)";
 			Object []values = null;
 			String content= CustomDefind.getValue("DESCRIPTION");
 			Long exptime = ctime + 24*60*60;
 			Long count = daService.getLong("select count(*) from user_account_tb where type=? and uin=? ", new Object[]{1, uin});
-			if(count == 1){//³µÖ÷Ê×±ÊÖ§¸¶·µÌØÊâ´óÀñ°ü
+			if(count == 1){//è½¦ä¸»é¦–ç¬”æ”¯ä»˜è¿”ç‰¹æ®Šå¤§ç¤¼åŒ…
 				values = new Object[]{uin,orderId,36,18,ctime,exptime,content};
-				logger.error(">>>>>³µÖ÷Ê×±ÊÏû·Ñ£¬·µ18¸öºì°ü36Ôª...");
-			}else if(money>=1&&money<10){//ÊÖ»úÖ§¸¶´óÓÚ1ÔªĞ¡ÓÚ10Ôª£¬·µ3¸öºì°ü¹²8Ôª
+				logger.error(">>>>>è½¦ä¸»é¦–ç¬”æ¶ˆè´¹ï¼Œè¿”18ä¸ªçº¢åŒ…36å…ƒ...");
+			}else if(money>=1&&money<10){//æ‰‹æœºæ”¯ä»˜å¤§äº1å…ƒå°äº10å…ƒï¼Œè¿”3ä¸ªçº¢åŒ…å…±8å…ƒ
 				values = new Object[]{uin,orderId,18,12,ctime,exptime,content};
-				logger.error(">>>>>¶©µ¥·µÆ´ÊÖÆøºì°ü,´óÓÚ1ÔªĞ¡ÓÚ10Ôª£¬·µ3¸öºì°ü¹²8Ôª...");
-			}else if(money>=10){// ÊÖ»úÖ§¸¶´óÓÚ10Ôª£¬·µ8¸öºì°ü¹²18Ôª
+				logger.error(">>>>>è®¢å•è¿”æ‹¼æ‰‹æ°”çº¢åŒ…,å¤§äº1å…ƒå°äº10å…ƒï¼Œè¿”3ä¸ªçº¢åŒ…å…±8å…ƒ...");
+			}else if(money>=10){// æ‰‹æœºæ”¯ä»˜å¤§äº10å…ƒï¼Œè¿”8ä¸ªçº¢åŒ…å…±18å…ƒ
 				values = new Object[]{uin,orderId,28,20,ctime,exptime,content};
-				logger.error(">>>>>¶©µ¥·µÆ´ÊÖÆøºì°ü,´óÓÚ10Ôª£¬·µ8¸öºì°ü¹²18Ôª...");
+				logger.error(">>>>>è®¢å•è¿”æ‹¼æ‰‹æ°”çº¢åŒ…,å¤§äº10å…ƒï¼Œè¿”8ä¸ªçº¢åŒ…å…±18å…ƒ...");
 			}
 			else {
-				logger.error(">>>>>¶©µ¥·µÆ´ÊÖÆøºì°ü,²»×ãÒ»Ôª£¬²»ÍæÁË.....");
+				logger.error(">>>>>è®¢å•è¿”æ‹¼æ‰‹æ°”çº¢åŒ…,ä¸è¶³ä¸€å…ƒï¼Œä¸ç©äº†.....");
 				return;
 			}
 			int ret = daService.update(sql, values);
-			logger.error(">>>>>¶©µ¥·µÆ´ÊÖÆøºì°ü,money :"+money+" ret :"+ret);
+			logger.error(">>>>>è®¢å•è¿”æ‹¼æ‰‹æ°”çº¢åŒ…,money :"+money+" ret :"+ret);
 			if(ret==1)
 				memcacheUtils.updateBackTicketCache(uin);
-			/*if(openid==null){//¿Í»§¶ËÖ§¸¶£¬Á¢¼´·µÈıÔªÍ£³µÈ¯¡£openidÎª¿ÕÊ±£¬ÊÇ¿Í»§¶ËÖ§¸¶
+			/*if(openid==null){//å®¢æˆ·ç«¯æ”¯ä»˜ï¼Œç«‹å³è¿”ä¸‰å…ƒåœè½¦åˆ¸ã€‚openidä¸ºç©ºæ—¶ï¼Œæ˜¯å®¢æˆ·ç«¯æ”¯ä»˜
 				ret = daService.update( "insert into ticket_tb (create_time,limit_day,money,state,uin,type) values(?,?,?,?,?,?) ",
 						new Object[]{TimeTools.getToDayBeginTime(),TimeTools.getToDayBeginTime()+16*24*60*60-1,3,0,uin,0});
-				logger.error(">>>>back ticket ¿Í»§¶ËÖ§¸¶£º½ğ¶î £º3,ÓÃ»§£º"+uin+",ÁìÈ¯½á¹û:"+ret);
-				logService.insertUserMesg(5, uin, "¹§Ï²Äú»ñµÃÒ»ÕÅÈıÔªÍ£³µÈ¯", "Í£³µÈ¯ÌáĞÑ");
+				logger.error(">>>>back ticket å®¢æˆ·ç«¯æ”¯ä»˜ï¼šé‡‘é¢ ï¼š3,ç”¨æˆ·ï¼š"+uin+",é¢†åˆ¸ç»“æœ:"+ret);
+				logService.insertUserMesg(5, uin, "æ­å–œæ‚¨è·å¾—ä¸€å¼ ä¸‰å…ƒåœè½¦åˆ¸", "åœè½¦åˆ¸æé†’");
 			}*/
 		}else {
-			logger.error(">>>>>¶©µ¥·µÆ´ÊÖÆøºì°ü,ÒÑ¾­·¢¹ı£¬²»·¢ÁË.....");
+			logger.error(">>>>>è®¢å•è¿”æ‹¼æ‰‹æ°”çº¢åŒ…,å·²ç»å‘è¿‡ï¼Œä¸å‘äº†.....");
 		}
-		
+
 	}
-	
-	
+
+
 
 	public boolean isBlackUser(Long uin){
 		List<Long> blackUserList = memcacheUtils.doListLongCache("zld_black_users", null, null);
 //		logger.error(">>>zld black users :"+blackUserList);
-		//ÊÇ·ñÔÚºÚÃûµ¥ 
+		//æ˜¯å¦åœ¨é»‘åå•
 		boolean isBlack = true;
-		if(blackUserList==null||!blackUserList.contains(uin))//²»ÔÚºÚÃûµ¥ÖĞ¿ÉÒÔ´¦ÀíÍÆ¼ö·µÏÖ
+		if(blackUserList==null||!blackUserList.contains(uin))//ä¸åœ¨é»‘åå•ä¸­å¯ä»¥å¤„ç†æ¨èè¿”ç°
 			isBlack=false;
 //		if(blackUserList!=null&&blackUserList.size()>5)
 //			clearBlackUser();
 		return isBlack;
 	}
-	//ÅĞ¶Ï³µ³¡ÊÇ·ñÔÚºÚÃûµ¥ÄÚ£¬uidÊÇÊÕ·ÑÔ±Ê±£¬isparkuser´«true,uidÎª³µ³¡Ê±£¬isparkuser´«false
+	//åˆ¤æ–­è½¦åœºæ˜¯å¦åœ¨é»‘åå•å†…ï¼Œuidæ˜¯æ”¶è´¹å‘˜æ—¶ï¼Œisparkuserä¼ true,uidä¸ºè½¦åœºæ—¶ï¼Œisparkuserä¼ false
 	public boolean isBlackParkUser(long uid,Boolean isparkuser){
 		boolean isBlack = false;
 		String parkback = CustomDefind.getValue("PARKBACK");
@@ -1615,7 +1621,7 @@ public class PublicMethods {
 					count += daService.getLong("select count(*) from user_info_tb where id=? and comid =?", new Object[]{uid,Long.parseLong(string)});
 					if(count>0){
 						isBlack=true;
-						logger.error("ÊÕ·ÑÔ±uid:"+uid+"ËùÔÚµÄ³µ³¡ÔÚºÚÃûµ¥ÄÚ£¬ËùÓĞ·µÏÖ,ÍÆ¼ö½±,ËùÓĞÈ¯È¡Ïû");
+						logger.error("æ”¶è´¹å‘˜uid:"+uid+"æ‰€åœ¨çš„è½¦åœºåœ¨é»‘åå•å†…ï¼Œæ‰€æœ‰è¿”ç°,æ¨èå¥–,æ‰€æœ‰åˆ¸å–æ¶ˆ");
 						break;
 					}
 				}
@@ -1623,36 +1629,36 @@ public class PublicMethods {
 				for (String string : str) {
 					if(Long.parseLong(string)==uid){
 						isBlack=true;
-						logger.error("³µ³¡:"+uid+"ÔÚºÚÃûµ¥ÄÚ£¬ËùÓĞ·µÏÖ,ÍÆ¼ö½±,ËùÓĞÈ¯È¡Ïû");
+						logger.error("è½¦åœº:"+uid+"åœ¨é»‘åå•å†…ï¼Œæ‰€æœ‰è¿”ç°,æ¨èå¥–,æ‰€æœ‰åˆ¸å–æ¶ˆ");
 						break;
 					}
 				}
 			}
 		}
-		logger.error("ÅĞ¶Ï³µ³¡»òÕßÊÕ·ÑÔ±£¨ËùÔÚµÄ³µ³¡£©ÊÇ·ñÔÚºÚÃûµ¥ÖĞ£º"+isBlack);
+		logger.error("åˆ¤æ–­è½¦åœºæˆ–è€…æ”¶è´¹å‘˜ï¼ˆæ‰€åœ¨çš„è½¦åœºï¼‰æ˜¯å¦åœ¨é»‘åå•ä¸­ï¼š"+isBlack);
 		return isBlack;
 	}
-	
+
 	public boolean isAuthUser(long uin){
 		Map userMap = daService.getMap("select is_auth from user_info_tb where id =? ", new Object[]{uin});
 		Integer isAuth = 0;
 		if(userMap!=null&&userMap.get("is_auth")!=null)
 			isAuth=(Integer)userMap.get("is_auth");
 		boolean ret = isAuth==1?true:false;
-		logger.error("uin:"+uin+"ÊÇ·ñÊÇÈÏÖ¤ÓÃ»§ret:"+ret+"(true:ÈÏÖ¤ÓÃ»§£¬false:²»ÊÇÈÏÖ¤ÓÃ»§)");
+		logger.error("uin:"+uin+"æ˜¯å¦æ˜¯è®¤è¯ç”¨æˆ·ret:"+ret+"(true:è®¤è¯ç”¨æˆ·ï¼Œfalse:ä¸æ˜¯è®¤è¯ç”¨æˆ·)");
 		return ret;
 	}
-	
+
 	public void clearBlackUser(){
 		List<Long> blackUserList = memcacheUtils.doListLongCache("zld_black_users", null, null);
 		//logger.error(">>>zld black users :"+blackUserList);
-		if(blackUserList!=null){//²»ÔÚºÚÃûµ¥ÖĞ¿ÉÒÔ´¦ÀíÍÆ¼ö·µÏÖ
+		if(blackUserList!=null){//ä¸åœ¨é»‘åå•ä¸­å¯ä»¥å¤„ç†æ¨èè¿”ç°
 			blackUserList=new ArrayList<Long>();
 			memcacheUtils.doListLongCache("zld_black_users", blackUserList, "update");
 		}
 	}
 	/**
-	 * ÉÏ´«ÕÕÆ¬
+	 * ä¸Šä¼ ç…§ç‰‡
 	 * @param request
 	 * @param uin
 	 * @return
@@ -1661,15 +1667,15 @@ public class PublicMethods {
 	public String uploadPicToMongodb (HttpServletRequest request,Long uin,String table) throws Exception{
 		logger.error(">>>>>begin upload order picture....");
 		Map<String, String> extMap = new HashMap<String, String>();
-	    extMap.put(".jpg", "image/jpeg");
-	    extMap.put(".jpeg", "image/jpeg");
-	    extMap.put(".png", "image/png");
-	    extMap.put(".gif", "image/gif");
-		request.setCharacterEncoding("UTF-8"); // ÉèÖÃ´¦ÀíÇëÇó²ÎÊıµÄ±àÂë¸ñÊ½
-		DiskFileItemFactory  factory = new DiskFileItemFactory(); // ½¨Á¢FileItemFactory¶ÔÏó
+		extMap.put(".jpg", "image/jpeg");
+		extMap.put(".jpeg", "image/jpeg");
+		extMap.put(".png", "image/png");
+		extMap.put(".gif", "image/gif");
+		request.setCharacterEncoding("UTF-8"); // è®¾ç½®å¤„ç†è¯·æ±‚å‚æ•°çš„ç¼–ç æ ¼å¼
+		DiskFileItemFactory  factory = new DiskFileItemFactory(); // å»ºç«‹FileItemFactoryå¯¹è±¡
 		factory.setSizeThreshold(16*4096*1024);
 		ServletFileUpload upload = new ServletFileUpload(factory);
-		// ·ÖÎöÇëÇó£¬²¢µÃµ½ÉÏ´«ÎÄ¼şµÄFileItem¶ÔÏó
+		// åˆ†æè¯·æ±‚ï¼Œå¹¶å¾—åˆ°ä¸Šä¼ æ–‡ä»¶çš„FileItemå¯¹è±¡
 		upload.setSizeMax(16*4096*1024);
 		List<FileItem> items = null;
 		try {
@@ -1678,61 +1684,61 @@ public class PublicMethods {
 			e.printStackTrace();
 			return "-1";
 		}
-		String filename = ""; // ÉÏ´«ÎÄ¼ş±£´æµ½·şÎñÆ÷µÄÎÄ¼şÃû
-		InputStream is = null; // µ±Ç°ÉÏ´«ÎÄ¼şµÄInputStream¶ÔÏó
-		// Ñ­»·´¦ÀíÉÏ´«ÎÄ¼ş
+		String filename = ""; // ä¸Šä¼ æ–‡ä»¶ä¿å­˜åˆ°æœåŠ¡å™¨çš„æ–‡ä»¶å
+		InputStream is = null; // å½“å‰ä¸Šä¼ æ–‡ä»¶çš„InputStreamå¯¹è±¡
+		// å¾ªç¯å¤„ç†ä¸Šä¼ æ–‡ä»¶
 		for (FileItem item : items){
-			// ´¦ÀíÆÕÍ¨µÄ±íµ¥Óò
+			// å¤„ç†æ™®é€šçš„è¡¨å•åŸŸ
 			if (item.isFormField()){
 				/*if(item.getFieldName().equals("comid")){
 					if(!item.getString().equals(""))
 						comId = item.getString("UTF-8");
 				}*/
-				
-			}else if (item.getName() != null && !item.getName().equals("")){// ´¦ÀíÉÏ´«ÎÄ¼ş
-				// ´Ó¿Í»§¶Ë·¢ËÍ¹ıÀ´µÄÉÏ´«ÎÄ¼şÂ·¾¶ÖĞ½ØÈ¡ÎÄ¼şÃû
+
+			}else if (item.getName() != null && !item.getName().equals("")){// å¤„ç†ä¸Šä¼ æ–‡ä»¶
+				// ä»å®¢æˆ·ç«¯å‘é€è¿‡æ¥çš„ä¸Šä¼ æ–‡ä»¶è·¯å¾„ä¸­æˆªå–æ–‡ä»¶å
 				logger.error(item.getName());
 				filename = item.getName().substring(item.getName().lastIndexOf("\\")+1);
-				is = item.getInputStream(); // µÃµ½ÉÏ´«ÎÄ¼şµÄInputStream¶ÔÏó
-				
+				is = item.getInputStream(); // å¾—åˆ°ä¸Šä¼ æ–‡ä»¶çš„InputStreamå¯¹è±¡
+
 			}
 		}
-		String file_ext =filename.substring(filename.lastIndexOf(".")).toLowerCase();// À©Õ¹Ãû
+		String file_ext =filename.substring(filename.lastIndexOf(".")).toLowerCase();// æ‰©å±•å
 		String picurl = uin+"_"+System.currentTimeMillis()+file_ext;
-		BufferedInputStream in = null;  
+		BufferedInputStream in = null;
 		ByteArrayOutputStream byteout =null;
-	    try {
-	    	in = new BufferedInputStream(is);   
-	    	byteout = new ByteArrayOutputStream(1024);        	       
-		      
-	 	    byte[] temp = new byte[1024];        
-	 	    int bytesize = 0;        
-	 	    while ((bytesize = in.read(temp)) != -1) {        
-	 	          byteout.write(temp, 0, bytesize);        
-	 	    }        
-	 	      
-	 	    byte[] content = byteout.toByteArray(); 
-	 	    DB mydb = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
-		    mydb.requestStart();
-			  
-		    DBCollection collection = mydb.getCollection(table);
-		  //  DBCollection collection = mydb.getCollection("records_test");
-			  
+		try {
+			in = new BufferedInputStream(is);
+			byteout = new ByteArrayOutputStream(1024);
+
+			byte[] temp = new byte[1024];
+			int bytesize = 0;
+			while ((bytesize = in.read(temp)) != -1) {
+				byteout.write(temp, 0, bytesize);
+			}
+
+			byte[] content = byteout.toByteArray();
+			DB mydb = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
+			mydb.requestStart();
+
+			DBCollection collection = mydb.getCollection(table);
+			//  DBCollection collection = mydb.getCollection("records_test");
+
 			BasicDBObject document = new BasicDBObject();
 			document.put("uin",  uin);
 			document.put("ctime",  System.currentTimeMillis()/1000);
 			document.put("type", extMap.get(file_ext));
 			document.put("content", content);
 			document.put("filename", picurl);
-			  //¿ªÊ¼ÊÂÎñ
+			//å¼€å§‹äº‹åŠ¡
 			mydb.requestStart();
 			collection.insert(document);
-			  //½áÊøÊÂÎñ
+			//ç»“æŸäº‹åŠ¡
 			mydb.requestDone();
-			in.close();        
-		    is.close();
-		    byteout.close();
-		    logger.error(">>>>ÉÏ´«Í¼Æ¬Íê³É .....");
+			in.close();
+			is.close();
+			byteout.close();
+			logger.error(">>>>ä¸Šä¼ å›¾ç‰‡å®Œæˆ .....");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "-1";
@@ -1744,48 +1750,48 @@ public class PublicMethods {
 			if(is!=null)
 				is.close();
 		}
-	    
+
 		return picurl;
 	}
 
-/**
- * Óà¶îÖ§¸¶²´³µ·Ñ
- * @param id
- * @param total
- * @param ticketId ÓÅ»İÈ¯±àºÅ 
- * @return
- */
+	/**
+	 * ä½™é¢æ”¯ä»˜æ³Šè½¦è´¹
+	 * @param id
+	 * @param total
+	 * @param ticketId ä¼˜æƒ åˆ¸ç¼–å·
+	 * @return
+	 */
 	public int payCarStopOrder(Long id,Double total,Long ticketId) {
 		Long ntime = System.currentTimeMillis()/1000;
-		
-		//²é³µÖ÷£¬²´³µÔ±£¬²´³µµã±àºÅ£¬³µÅÆºÅ
+
+		//æŸ¥è½¦ä¸»ï¼Œæ³Šè½¦å‘˜ï¼Œæ³Šè½¦ç‚¹ç¼–å·ï¼Œè½¦ç‰Œå·
 		Map cotMap = daService.getMap("select cid,uin,euid,car_number from carstop_order_tb where id=?  ", new Object[]{id});
 		Long uin =(Long) cotMap.get("uin");
 		Long uid =(Long) cotMap.get("euid");
 		Long cid =(Long) cotMap.get("cid");
 		String carNumber = (String)cotMap.get("car_number");
-		
-		//²´³µÔ±ËùÊô,comidÎª0ÊÇÍ£³µ±¦²´³µÔ±£¬ÎªÆäËüÊ±ÔòÎª¶ÔÓ¦µÄÍ£³µ³¡
+
+		//æ³Šè½¦å‘˜æ‰€å±,comidä¸º0æ˜¯åœè½¦å®æ³Šè½¦å‘˜ï¼Œä¸ºå…¶å®ƒæ—¶åˆ™ä¸ºå¯¹åº”çš„åœè½¦åœº
 		Long comId  = -1L;
 		Map userMap=daService.getMap("select comid from user_info_Tb where id =?", new Object[]{uid});
 		if(userMap!=null){
 			comId = (Long)userMap.get("comid");
 		}
-		//²é²´³µµãÃû³Æ 
+		//æŸ¥æ³Šè½¦ç‚¹åç§°
 		Map csMap = daService.getMap("select name from car_stops_tb where id=? ", new Object[]{cid});
 		String comName ="";
 		if(csMap!=null)
 			comName = (String)csMap.get("name");
-		//²éÍ£³µÈ¯
+		//æŸ¥åœè½¦åˆ¸
 		Double ticketMoney = 0d;
 		if(ticketId!=null&&ticketId>0){
-			if(!memcacheUtils.readUseTicketCache(uin))//³¬¹ıÊ¹ÓÃ3´Î£¬·µ»Ø²»³É¹¦!
+			if(!memcacheUtils.readUseTicketCache(uin))//è¶…è¿‡ä½¿ç”¨3æ¬¡ï¼Œè¿”å›ä¸æˆåŠŸ!
 				return -13;
 			Map ticketMap = daService.getMap("select money,type from ticket_tb where limit_day>=? and id=? and state=?",
 					new Object[]{TimeTools.getToDayBeginTime(),ticketId,0});
 			if(ticketMap!=null&&ticketMap.get("money")!=null&&Check.isDouble(ticketMap.get("money")+"")){
 				Integer type = (Integer)ticketMap.get("type");
-				if(type!=null&&type==2){//¼ÃÄÏÊĞ³¡Î¢ĞÅ×¨ÓÃÈ¯
+				if(type!=null&&type==2){//æµå—å¸‚åœºå¾®ä¿¡ä¸“ç”¨åˆ¸
 					ticketMoney = Double.valueOf(ticketMap.get("money")+"");
 					ticketMoney = (10-ticketMoney)*total*0.1;
 				}else {
@@ -1793,96 +1799,96 @@ public class PublicMethods {
 				}
 			}
 		}
-		
-		if(ticketMoney>total){//ÓÅ»İÈ¯½ğ¶î´óÓÚÖ§¸¶½ğ¶î
+
+		if(ticketMoney>total){//ä¼˜æƒ åˆ¸é‡‘é¢å¤§äºæ”¯ä»˜é‡‘é¢
 			ticketMoney=total;
-		}else {//³µÖ÷ÕË»§Óà¶î¼ÓÉÏÓÅ»İÈ¯½ğ¶î
+		}else {//è½¦ä¸»è´¦æˆ·ä½™é¢åŠ ä¸Šä¼˜æƒ åˆ¸é‡‘é¢
 			Double ubalance =null;
-			//³µÖ÷ÕË»§Óà¶î
+			//è½¦ä¸»è´¦æˆ·ä½™é¢
 			userMap = daService.getPojo("select balance from user_info_tb where id =?",	new Object[]{uin});
 			if(userMap!=null&&userMap.get("balance")!=null){
 				ubalance = Double.valueOf(userMap.get("balance")+"");
-				ubalance +=ticketMoney;//ÓÃ»§Óà¶î¼ÓÉÏÓÅ»İÈ¯½ğ¶î
+				ubalance +=ticketMoney;//ç”¨æˆ·ä½™é¢åŠ ä¸Šä¼˜æƒ åˆ¸é‡‘é¢
 			}
-			logger.error(">>>>>>>>>>>>>>>>>>ticket money£º"+ticketMoney);
-			if(ubalance==null||ubalance<total){//ÕÊ»§Óà¶î²»×ã
+			logger.error(">>>>>>>>>>>>>>>>>>ticket moneyï¼š"+ticketMoney);
+			if(ubalance==null||ubalance<total){//å¸æˆ·ä½™é¢ä¸è¶³
 				return -12;
 			}
 		}
 		logger.error(">>>>>>>>>>carstoporder,comid:"+comId+",ticket:"+ticketId+",uin:"+uin+",uid:"+uid);
-		
+
 		List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
-		//¸üĞÂÓÃ»§Óà¶î
+		//æ›´æ–°ç”¨æˆ·ä½™é¢
 		Map<String, Object> userSqlMap = new HashMap<String, Object>();
-		//¸üĞÂÍ£³µ³¡Óà¶î
-	    Map<String, Object> comSqlMap = new HashMap<String, Object>();
-		//³µÖ÷ÕË»§
+		//æ›´æ–°åœè½¦åœºä½™é¢
+		Map<String, Object> comSqlMap = new HashMap<String, Object>();
+		//è½¦ä¸»è´¦æˆ·
 		Map<String, Object> userAccountsqlMap =new HashMap<String, Object>();
-		//³µ³¡ÕË»§
+		//è½¦åœºè´¦æˆ·
 		Map<String, Object> parkAccountsqlMap =new HashMap<String, Object>();
-		//³µÖ÷ÕË»§¼ÓÍ£³µÈ¯
+		//è½¦ä¸»è´¦æˆ·åŠ åœè½¦åˆ¸
 		Map<String, Object> userTicketAccountsqlMap =new HashMap<String, Object>();
-		//Ê¹ÓÃÍ£³µÈ¯¸üĞÂ
+		//ä½¿ç”¨åœè½¦åˆ¸æ›´æ–°
 		Map<String, Object> ticketsqlMap =new HashMap<String, Object>();
-		//Í£³µ±¦ÕË»§¿ÛÍ£³µÈ¯½ğ¶î
+		//åœè½¦å®è´¦æˆ·æ‰£åœè½¦åˆ¸é‡‘é¢
 		Map<String, Object> tingchebaoAccountsqlMap =new HashMap<String, Object>();
-		
-		//¿Û³ı³µÖ÷ÕË»§Óà¶î
+
+		//æ‰£é™¤è½¦ä¸»è´¦æˆ·ä½™é¢
 		userSqlMap.put("sql", "update user_info_tb  set balance =balance-? where id=?");
 		userSqlMap.put("values", new Object[]{total-ticketMoney,uin});
 		if(total-ticketMoney>0)
 			bathSql.add(userSqlMap);
-		//³µÖ÷ÕË»§ÓÅ»İÈ¯³äÖµ
-		if(ticketMoney>0&&ticketId!=null&&ticketId>0){//Ê¹ÓÃÍ£³µÈ¯£¬¸ø³µÖ÷ÕË»§ÏÈ³äÖµ
+		//è½¦ä¸»è´¦æˆ·ä¼˜æƒ åˆ¸å……å€¼
+		if(ticketMoney>0&&ticketId!=null&&ticketId>0){//ä½¿ç”¨åœè½¦åˆ¸ï¼Œç»™è½¦ä¸»è´¦æˆ·å…ˆå……å€¼
 			userTicketAccountsqlMap.put("sql", "insert into user_account_tb(uin,amount,type,create_time,remark,pay_type) values(?,?,?,?,?,?)");
-			userTicketAccountsqlMap.put("values", new Object[]{uin,ticketMoney,0,ntime-1,"Í£³µÈ¯³äÖµ",7});
+			userTicketAccountsqlMap.put("values", new Object[]{uin,ticketMoney,0,ntime-1,"åœè½¦åˆ¸å……å€¼",7});
 			bathSql.add(userTicketAccountsqlMap);
 		}
-		//³µÖ÷ÕË»§Ö§¸¶Í£³µ·ÑÃ÷Ï¸
+		//è½¦ä¸»è´¦æˆ·æ”¯ä»˜åœè½¦è´¹æ˜ç»†
 		userAccountsqlMap.put("sql", "insert into user_account_tb(uin,amount,type,create_time,remark,pay_type,uid,target) values(?,?,?,?,?,?,?,?)");
-		userAccountsqlMap.put("values", new Object[]{uin,total,1,ntime,"²´³µ·Ñ-"+comName,0,uid,1});
+		userAccountsqlMap.put("values", new Object[]{uin,total,1,ntime,"æ³Šè½¦è´¹-"+comName,0,uid,1});
 		bathSql.add(userAccountsqlMap);
 
-		//²»ÉèÖÃÄ¬ÈÏ¸ø¸öÈËÕË»§20141120Ëï×ÜÒªÇóĞŞ¸Ä
-		if(comId!=0){//Ğ´Èë¹«Ë¾ÕË»§
+		//ä¸è®¾ç½®é»˜è®¤ç»™ä¸ªäººè´¦æˆ·20141120å­™æ€»è¦æ±‚ä¿®æ”¹
+		if(comId!=0){//å†™å…¥å…¬å¸è´¦æˆ·
 			comSqlMap.put("sql", "update com_info_tb  set total_money =total_money+?,money=money+? where id=?");
 			comSqlMap.put("values", new Object[]{total,total,comId});
 			bathSql.add(comSqlMap);
-			
+
 			parkAccountsqlMap.put("sql", "insert into park_account_tb(comid,amount,type,create_time,remark,uid,source) values(?,?,?,?,?,?,?)");
-			parkAccountsqlMap.put("values",  new Object[]{comId,total,0,ntime,"²´³µ·Ñ_"+carNumber,uid,2});
+			parkAccountsqlMap.put("values",  new Object[]{comId,total,0,ntime,"æ³Šè½¦è´¹_"+carNumber,uid,2});
 			bathSql.add(parkAccountsqlMap);
-		}else {//Ğ´ÈëÍ£³µ³¡ÕË»§
+		}else {//å†™å…¥åœè½¦åœºè´¦æˆ·
 			parkAccountsqlMap.put("sql", "insert into tingchebao_account_tb(amount,type,create_time,remark,utype) values(?,?,?,?,?)");
-			parkAccountsqlMap.put("values", new Object[]{total,1,ntime,"²´³µ·Ñ-³µÖ÷"+carNumber,5});
+			parkAccountsqlMap.put("values", new Object[]{total,1,ntime,"æ³Šè½¦è´¹-è½¦ä¸»"+carNumber,5});
 			bathSql.add(parkAccountsqlMap);
 		}
-		
-		//ÓÅ»İÈ¯Ê¹ÓÃºó£¬¸üĞÂÈ¯×´Ì¬£¬Ìí¼ÓÍ£³µ±¦ÕË»§Ö§¸¶¼ÇÂ¼
+
+		//ä¼˜æƒ åˆ¸ä½¿ç”¨åï¼Œæ›´æ–°åˆ¸çŠ¶æ€ï¼Œæ·»åŠ åœè½¦å®è´¦æˆ·æ”¯ä»˜è®°å½•
 		if(ticketMoney>0&&ticketId!=null&&ticketId>0){
 			ticketsqlMap.put("sql", "update ticket_tb  set state=?,comid=?,utime=?,umoney=? where id=?");
 			ticketsqlMap.put("values", new Object[]{1,comId,System.currentTimeMillis()/1000,ticketMoney,ticketId});
 			bathSql.add(ticketsqlMap);
-			
+
 			tingchebaoAccountsqlMap.put("sql", "insert into tingchebao_account_tb(amount,type,create_time,remark,utype) values(?,?,?,?,?)");
-			tingchebaoAccountsqlMap.put("values", new Object[]{ticketMoney,1,ntime,"³µÖ÷"+carNumber+"£¬Ê¹ÓÃÍ£³µ´ú½ğÈ¯",0});
+			tingchebaoAccountsqlMap.put("values", new Object[]{ticketMoney,1,ntime,"è½¦ä¸»"+carNumber+"ï¼Œä½¿ç”¨åœè½¦ä»£é‡‘åˆ¸",0});
 			bathSql.add(tingchebaoAccountsqlMap);
-			memcacheUtils.updateUseTicketCache(uin);//ÓÃÈ¯»º´æÊ¹ÓÃÈ¯´ÎÊı
+			memcacheUtils.updateUseTicketCache(uin);//ç”¨åˆ¸ç¼“å­˜ä½¿ç”¨åˆ¸æ¬¡æ•°
 		}
-		
+
 		boolean result= daService.bathUpdate(bathSql);
-		logger.error(">>>>>>>>>>>>>>>Ö§¸¶ £º"+result);
-		if(result){//½áËã³É¹¦£¬´¦Àí·µÈ¯¼°·µÏÖ 
-			//´¦Àí·µÏÖ£¨³µ³¡£©£¬·µÈ¯£¨³µÖ÷£©
-			/* Ã¿´ÎÓÃÓà¶î»òÎ¢ĞÅ»òÖ§¸¶±¦Ö§¸¶1ÔªÒÔÉÏµÄÍê³ÉµÄ£¬²¹Ìù³µ³¡2Ôª£¬²¹Ìù³µÖ÷3ÔªµÄÍ£³µÈ¯£¬
-			 * ³µ³¡·µÏÖ²»ÏŞ(Í¬Ò»³µÖ÷Ã¿ÈÕÖ»ÄÜ·µ3´Î)£¬
-			 * ³µÖ÷Ã¿ÈÕ·µÈ¯ÏŞ3ÕÅÈ¯
-			 * Ã¿¸ö³µÖ÷Ã¿ÌìÊ¹ÓÃÍ£³µÈ¯²»³¬¹ı3µ¥ */
+		logger.error(">>>>>>>>>>>>>>>æ”¯ä»˜ ï¼š"+result);
+		if(result){//ç»“ç®—æˆåŠŸï¼Œå¤„ç†è¿”åˆ¸åŠè¿”ç°
+			//å¤„ç†è¿”ç°ï¼ˆè½¦åœºï¼‰ï¼Œè¿”åˆ¸ï¼ˆè½¦ä¸»ï¼‰
+			/* æ¯æ¬¡ç”¨ä½™é¢æˆ–å¾®ä¿¡æˆ–æ”¯ä»˜å®æ”¯ä»˜1å…ƒä»¥ä¸Šçš„å®Œæˆçš„ï¼Œè¡¥è´´è½¦åœº2å…ƒï¼Œè¡¥è´´è½¦ä¸»3å…ƒçš„åœè½¦åˆ¸ï¼Œ
+			 * è½¦åœºè¿”ç°ä¸é™(åŒä¸€è½¦ä¸»æ¯æ—¥åªèƒ½è¿”3æ¬¡)ï¼Œ
+			 * è½¦ä¸»æ¯æ—¥è¿”åˆ¸é™3å¼ åˆ¸
+			 * æ¯ä¸ªè½¦ä¸»æ¯å¤©ä½¿ç”¨åœè½¦åˆ¸ä¸è¶…è¿‡3å• */
 			boolean isBlack = isBlackUser(uin);
 			if(!isBlack){
 				backTicket(total-ticketMoney, 997L, uin,comId,"");
 			}else {
-				logger.error(">>>>>black>>>>³µÖ÷£º"+uin+",ÔÚºÚÃûµ¥ÄÚ£¬²»ÄÜ·µºì°ü......");
+				logger.error(">>>>>black>>>>è½¦ä¸»ï¼š"+uin+",åœ¨é»‘åå•å†…ï¼Œä¸èƒ½è¿”çº¢åŒ…......");
 			}
 			if(total>=1)
 				handleRecommendCode(uin,isBlack);
@@ -1891,112 +1897,112 @@ public class PublicMethods {
 			return -7;
 		}
 	}
-	
+
 	/*
-	 * Î¢ĞÅ¹«ÖÚºÅÒ¡Ò»Ò¡°ó¶¨ÕËºÅ
+	 * å¾®ä¿¡å…¬ä¼—å·æ‘‡ä¸€æ‘‡ç»‘å®šè´¦å·
 	 */
-	public int sharkbinduser(String openid, Long uin, Long bind_count){//Ò¡Ò»Ò¡°ó¶¨ÕËºÅ
+	public int sharkbinduser(String openid, Long uin, Long bind_count){//æ‘‡ä¸€æ‘‡ç»‘å®šè´¦å·
 		Long curTime = System.currentTimeMillis()/1000;
 		List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
 		Map<String, Object> wxuserMap = daService.getMap(
 				"select * from wxp_user_tb where openid=? ",
-				new Object[] { openid });//Î´°ó¶¨ÕË»§
-		logger.error(">>>>>>>>>>>>>½øÈë°ó¶¨Î¢ĞÅ¹«ÖÚºÅ>>>>>>>>>>>>,openid:"+openid);
-		if(wxuserMap != null){//Ê¹ÓÃ¹ıÒ¡Ò»Ò¡Ö±¸¶
-			logger.error(">>>>>>>>>>>>>>>>>°ÑĞéÄâÕË»§µÄĞÅÏ¢×ªÒÆµ½°ó¶¨µÄÕæÊµÕÊ»§Àï>>>>>>>>>>>>>£¬ĞéÄâÕËºÅuin£º"+wxuserMap.get("uin")+",ÕæÊµÕËºÅuin:"+uin);
-			logger.error(">>>>>>>>>>>´¦ÀíĞéÄâÕË»§µÄÍÆ¼öÂß¼­>>>>>>>>>>>>>>>>>>");
+				new Object[] { openid });//æœªç»‘å®šè´¦æˆ·
+		logger.error(">>>>>>>>>>>>>è¿›å…¥ç»‘å®šå¾®ä¿¡å…¬ä¼—å·>>>>>>>>>>>>,openid:"+openid);
+		if(wxuserMap != null){//ä½¿ç”¨è¿‡æ‘‡ä¸€æ‘‡ç›´ä»˜
+			logger.error(">>>>>>>>>>>>>>>>>æŠŠè™šæ‹Ÿè´¦æˆ·çš„ä¿¡æ¯è½¬ç§»åˆ°ç»‘å®šçš„çœŸå®å¸æˆ·é‡Œ>>>>>>>>>>>>>ï¼Œè™šæ‹Ÿè´¦å·uinï¼š"+wxuserMap.get("uin")+",çœŸå®è´¦å·uin:"+uin);
+			logger.error(">>>>>>>>>>>å¤„ç†è™šæ‹Ÿè´¦æˆ·çš„æ¨èé€»è¾‘>>>>>>>>>>>>>>>>>>");
 //			handleWxRecommendCode((Long)wxuserMap.get("uin"), bind_count);
-			Double wx_balance = 0d;//ĞéÄâÕË»§ÀïµÄÓà¶î
+			Double wx_balance = 0d;//è™šæ‹Ÿè´¦æˆ·é‡Œçš„ä½™é¢
 			if(wxuserMap.get("balance") != null){
-				 wx_balance = Double.valueOf(wxuserMap.get("balance") + "");
+				wx_balance = Double.valueOf(wxuserMap.get("balance") + "");
 			}
 			/*Map<String, Object> recomsqlMap =new HashMap<String, Object>();
 			recomsqlMap.put("sql", "update recommend_tb set nid=? where nid=?");
 			recomsqlMap.put("values", new Object[]{ uin, wxuserMap.get("uin") });
 			bathSql.add(recomsqlMap);*/
-			
+
 			Map<String, Object> trueUsersqlMap =new HashMap<String, Object>();
 			trueUsersqlMap.put("sql", "update user_info_tb set balance=balance+? where id=?");
 			trueUsersqlMap.put("values", new Object[]{ wx_balance, uin });
 			bathSql.add(trueUsersqlMap);
-			
+
 			Map<String, Object> userAccountsqlMap =new HashMap<String, Object>();
 			userAccountsqlMap.put("sql", "update user_account_tb set uin=? where uin=?");
 			userAccountsqlMap.put("values", new Object[]{uin, wxuserMap.get("uin")});
 			bathSql.add(userAccountsqlMap);
-			
+
 			//order_ticket_tb
 			Map<String, Object> orderTicketsqlMap =new HashMap<String, Object>();
 			orderTicketsqlMap.put("sql", "update order_ticket_tb set uin=? where uin=?");
 			orderTicketsqlMap.put("values", new Object[]{uin, wxuserMap.get("uin")});
 			bathSql.add(orderTicketsqlMap);
-			
+
 			//ticket_tb
 			Map<String, Object> ticketsqlMap =new HashMap<String, Object>();
 			ticketsqlMap.put("sql", "update ticket_tb set uin=? where uin=?");
 			ticketsqlMap.put("values", new Object[]{uin, wxuserMap.get("uin")});
 			bathSql.add(ticketsqlMap);
-			
-			//Î¢ĞÅ¹«ÖÚºÅÓÃ»§±í
+
+			//å¾®ä¿¡å…¬ä¼—å·ç”¨æˆ·è¡¨
 			Map<String, Object> wxusersqlMap =new HashMap<String, Object>();
 			wxusersqlMap.put("sql", "delete from wxp_user_tb where openid=?");
 			wxusersqlMap.put("values", new Object[]{ openid });
 			bathSql.add(wxusersqlMap);
-			
-			//ÓÃ»§ÕÊ»§±í
+
+			//ç”¨æˆ·å¸æˆ·è¡¨
 			Map<String, Object> userPayAccountsqlMap =new HashMap<String, Object>();
 			userPayAccountsqlMap.put("sql", "update user_payaccount_tb set uin=? where uin=?");
 			userPayAccountsqlMap.put("values", new Object[]{uin, wxuserMap.get("uin")});
 			bathSql.add(userPayAccountsqlMap);
-			
-			//ÈÕÖ¾±í
+
+			//æ—¥å¿—è¡¨
 			Map<String, Object> logsqlMap =new HashMap<String, Object>();
 			logsqlMap.put("sql", "update alipay_log set uin=? where uin=?");
 			logsqlMap.put("values", new Object[]{uin, wxuserMap.get("uin")});
 			bathSql.add(logsqlMap);
-			
+
 			Map<String, Object> ordersqlMap = new HashMap<String, Object>();
 			ordersqlMap.put("sql", "update order_tb set uin=? where uin=? ");
 			ordersqlMap.put("values", new Object[]{uin, wxuserMap.get("uin")});
 			bathSql.add(ordersqlMap);
-			
+
 			Map<String, Object> rewardsqlMap = new HashMap<String, Object>();
 			rewardsqlMap.put("sql", "update parkuser_reward_tb set uin=? where uin=? ");
 			rewardsqlMap.put("values", new Object[]{uin, wxuserMap.get("uin")});
 			bathSql.add(rewardsqlMap);
-			
-			Integer addcar_flag = 0;//²»Ìí¼Ó³µÅÆºÅ
+
+			Integer addcar_flag = 0;//ä¸æ·»åŠ è½¦ç‰Œå·
 			if(wxuserMap.get("car_number") != null){
 				Long count = daService.getLong("select count(*) from car_info_tb where car_number=? ",
 						new Object[] { wxuserMap.get("car_number") });
 				if(count == 0){
-					addcar_flag = 1;//Ìí¼Ó³µÅÆºÅ
+					addcar_flag = 1;//æ·»åŠ è½¦ç‰Œå·
 					Map<String, Object> carsqlMap = new HashMap<String, Object>();
 					carsqlMap.put("sql", "insert into car_info_Tb (uin,car_number,create_time) values(?,?,?)");
 					carsqlMap.put("values", new Object[]{uin, wxuserMap.get("car_number"), curTime});
 					bathSql.add(carsqlMap);
 				}
 			}
-			
-			
+
+
 			boolean b = daService.bathUpdate2(bathSql);
 			if(b){
 				b = memcacheUtils.readUseTicketCache((Long)wxuserMap.get("uin"));
-				
+
 				if(!b){
 					memcacheUtils.updateUseTicketCache(uin);
-					logger.error(">>>>>>>>>>>>>>>Î¢ĞÅ¹«ÖÚºÅ°ó¶¨ÕË»§£¬¸ÃĞéÄâÕËºÅ½ñÌìÒÑÓÃ¹ıÈ¯£¬°ó¶¨µÄÕæÊµÕËºÅĞ´µ½»º´æÀï£¬ĞéÄâÕËºÅ£º"+wxuserMap.get("uin")+"ÕæÊµÕËºÅ£º"+uin);
+					logger.error(">>>>>>>>>>>>>>>å¾®ä¿¡å…¬ä¼—å·ç»‘å®šè´¦æˆ·ï¼Œè¯¥è™šæ‹Ÿè´¦å·ä»Šå¤©å·²ç”¨è¿‡åˆ¸ï¼Œç»‘å®šçš„çœŸå®è´¦å·å†™åˆ°ç¼“å­˜é‡Œï¼Œè™šæ‹Ÿè´¦å·ï¼š"+wxuserMap.get("uin")+"çœŸå®è´¦å·ï¼š"+uin);
 				}else{
-					logger.error(">>>>>>>>>>>>>>>Î¢ĞÅ¹«ÖÚºÅ°ó¶¨ÕË»§£¬¸ÃĞéÄâÕËºÅ½ñÌìÃ»ÓĞÓÃ¹ıÈ¯£¬ĞéÄâÕËºÅ£º"+wxuserMap.get("uin")+"ÕæÊµÕËºÅ£º"+uin);
+					logger.error(">>>>>>>>>>>>>>>å¾®ä¿¡å…¬ä¼—å·ç»‘å®šè´¦æˆ·ï¼Œè¯¥è™šæ‹Ÿè´¦å·ä»Šå¤©æ²¡æœ‰ç”¨è¿‡åˆ¸ï¼Œè™šæ‹Ÿè´¦å·ï¼š"+wxuserMap.get("uin")+"çœŸå®è´¦å·ï¼š"+uin);
 				}
-				
+
 				if(addcar_flag == 1){
-					logger.error(">>>>>>>>>>>ĞéÄâÕËºÅÀïÓĞ³£ÓÃ³µÅÆºÅ£¬²¢ÇÒÖ®Ç°³µÖ÷Ã»ÓĞ×¢²á³µÅÆ£¬°Ñ¸Ã³µÅÆ×¢²áÎªÓÃ»§³µÅÆ£¬ĞéÄâÕËºÅ£º"+wxuserMap.get("uin")+",ÕæÊµÕËºÅ£º"+uin+",³µÅÆºÅ£º"+wxuserMap.get("car_number"));
+					logger.error(">>>>>>>>>>>è™šæ‹Ÿè´¦å·é‡Œæœ‰å¸¸ç”¨è½¦ç‰Œå·ï¼Œå¹¶ä¸”ä¹‹å‰è½¦ä¸»æ²¡æœ‰æ³¨å†Œè½¦ç‰Œï¼ŒæŠŠè¯¥è½¦ç‰Œæ³¨å†Œä¸ºç”¨æˆ·è½¦ç‰Œï¼Œè™šæ‹Ÿè´¦å·ï¼š"+wxuserMap.get("uin")+",çœŸå®è´¦å·ï¼š"+uin+",è½¦ç‰Œå·ï¼š"+wxuserMap.get("car_number"));
 					Map<String, Object> userMap = daService.getMap(
 							"select mobile from user_info_tb where id=? ",
 							new Object[] { uin });
 					if(userMap != null){
-						logger.error(">>>>>>>>>>´¦ÀíÌí¼Ó³µÅÆºÅºóµÄ²éÑ¯Àñ°üÂß¼­,ĞéÄâÕËºÅ£º"+wxuserMap.get("uin")+",ÕæÊµÕËºÅ£º"+uin+",³µÅÆºÅ£º"+wxuserMap.get("car_number"));
+						logger.error(">>>>>>>>>>å¤„ç†æ·»åŠ è½¦ç‰Œå·åçš„æŸ¥è¯¢ç¤¼åŒ…é€»è¾‘,è™šæ‹Ÿè´¦å·ï¼š"+wxuserMap.get("uin")+",çœŸå®è´¦å·ï¼š"+uin+",è½¦ç‰Œå·ï¼š"+wxuserMap.get("car_number"));
 						methods.checkBonus((String)userMap.get("mobile"), uin);
 					}
 				}
@@ -2005,53 +2011,53 @@ public class PublicMethods {
 		}
 		return 0;
 	}
-	
+
 	public int handleWxRecommendCode(Long nid, Long bind_count){
-		logger.error("handleWxRecommendCode>>>>>±»ÍÆ¼öÈËnid:"+nid);
+		logger.error("handleWxRecommendCode>>>>>è¢«æ¨èäººnid:"+nid);
 		Map<String, Object> userMap = daService.getMap("select wxp_openid from user_info_tb where id=? ", new Object[]{nid});
-		
+
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
 		list = pgOnlyReadService.getAll("select * from recommend_tb where (nid=? or openid=?) and type=? and state=? ",
-						new Object[] { nid,userMap.get("wxp_openid"), 0, 0 });
+				new Object[] { nid,userMap.get("wxp_openid"), 0, 0 });
 		Long count = daService.getLong("select count(*) from car_info_tb where uin=? and state=? ", new Object[]{nid, 1});
 		boolean isBlack = isBlackUser(nid);
 		if(list.isEmpty()){
-			logger.error("handleWxRecommendCode>>>>>¸ÃÓÃ»§Ã»ÓĞ±»ÍÆ¼ö¼ÇÂ¼,±»ÍÆ¼öÈËnid:"+nid);
+			logger.error("handleWxRecommendCode>>>>>è¯¥ç”¨æˆ·æ²¡æœ‰è¢«æ¨èè®°å½•,è¢«æ¨èäººnid:"+nid);
 			return 1;
 		}else{
-			logger.error("handleWxRecommendCode>>>>>¸ÃÓÃ»§ÓĞ±»ÍÆ¼ö¼ÇÂ¼,±»ÍÆ¼öÈËuin:"+nid);
+			logger.error("handleWxRecommendCode>>>>>è¯¥ç”¨æˆ·æœ‰è¢«æ¨èè®°å½•,è¢«æ¨èäººuin:"+nid);
 			if(bind_count == 0){
-				logger.error("handleWxRecommendCode>>>>>¿ªÊ¼´¦Àí³É¹¦ÍÆ¼öÂß¼­£¬¸øÊÕ·ÑÔ±·µÇ®,±»ÍÆ¼öÈËuin:"+nid);
+				logger.error("handleWxRecommendCode>>>>>å¼€å§‹å¤„ç†æˆåŠŸæ¨èé€»è¾‘ï¼Œç»™æ”¶è´¹å‘˜è¿”é’±,è¢«æ¨èäººuin:"+nid);
 			}else{
-				logger.error("handleWxRecommendCode>>>>>¸ÃÌõÍÆ¼ö¼ÇÂ¼ÎŞĞ§,±»ÍÆ¼öÈËuin:"+nid);
+				logger.error("handleWxRecommendCode>>>>>è¯¥æ¡æ¨èè®°å½•æ— æ•ˆ,è¢«æ¨èäººuin:"+nid);
 			}
 			if(isBlack){
-				logger.error("handleWxRecommendCode>>>>>¸ÃÓÃ»§ÔÚºÚÃûµ¥Àï£¬ÍÆ¼öÊ§Ğ§£¬²»·µÇ®uin:"+nid);
+				logger.error("handleWxRecommendCode>>>>>è¯¥ç”¨æˆ·åœ¨é»‘åå•é‡Œï¼Œæ¨èå¤±æ•ˆï¼Œä¸è¿”é’±uin:"+nid);
 			}
 		}
 		if(count > 0){
-			logger.error("handleWxRecommendCode>>>>>:ÓĞ³µÅÆcount:"+count+",uin:"+nid);
+			logger.error("handleWxRecommendCode>>>>>:æœ‰è½¦ç‰Œcount:"+count+",uin:"+nid);
 			for(Map<String, Object> map : list){
-				Double money = 5d;//Ä¬ÈÏ·µ5¿é
+				Double money = 5d;//é»˜è®¤è¿”5å—
 				Long uid = -1L;
-				Integer parker_flag = 0;//0:·ÇÊÕ·ÑÔ±ÍÆ¼ö£¬1ÊÕ·ÑÔ±ÍÆ¼ö
+				Integer parker_flag = 0;//0:éæ”¶è´¹å‘˜æ¨èï¼Œ1æ”¶è´¹å‘˜æ¨è
 				if(map.get("pid") != null){
 					uid = (Long)map.get("pid");
 					Map usrMap =daService.getMap("select recommendquota from user_info_Tb where id =? ", new Object[]{uid});
 					if(usrMap!=null){
 						money = StringUtils.formatDouble(Double.parseDouble(usrMap.get("recommendquota")+""));
-						logger.error("¸ÃÊÕ·ÑÔ±µÄÍÆ¼ö½±¶î¶ÈÊÇ£º"+money);
+						logger.error("è¯¥æ”¶è´¹å‘˜çš„æ¨èå¥–é¢åº¦æ˜¯ï¼š"+money);
 					}
 					boolean isParkBlack = isBlackParkUser(uid,true);
 					if(isParkBlack)
 //						continue;
 						return 0;
 					Long count1 = daService.getLong(
-									"select count(*) from user_info_tb where id=? and (auth_flag=? or auth_flag=?) ",
-									new Object[] { uid, 1, 2 });
+							"select count(*) from user_info_tb where id=? and (auth_flag=? or auth_flag=?) ",
+							new Object[] { uid, 1, 2 });
 					if(count1 > 0){
-						parker_flag = 1;//ÊÇÊÕ·ÑÔ±ÍÆ¼öµÄ
+						parker_flag = 1;//æ˜¯æ”¶è´¹å‘˜æ¨èçš„
 					}
 				}
 				if(map.get("money") != null && Double.valueOf(map.get("money") + "")>0){
@@ -2062,51 +2068,51 @@ public class PublicMethods {
 						Long comId = -1L;
 						Map comMap = daService.getPojo("select comid from user_info_tb where id=?  ",new Object[] {uid});
 						Map msetMap =null;
-						Integer giveMoneyTo = null;//²éÑ¯ÊÕ·ÑÉè¶¨ mtype:0:¹«Ë¾ÕË»§£¬1£º¸öÈËÕË»§'
+						Integer giveMoneyTo = null;//æŸ¥è¯¢æ”¶è´¹è®¾å®š mtype:0:å…¬å¸è´¦æˆ·ï¼Œ1ï¼šä¸ªäººè´¦æˆ·'
 						if(comMap!=null){
 							comId =(Long)comMap.get("comid");
 							if(comId!=null&&comId>0);
-								msetMap = daService.getPojo("select giveto from money_set_tb where comid=? and mtype=? ",
+							msetMap = daService.getPojo("select giveto from money_set_tb where comid=? and mtype=? ",
 									new Object[]{comId,4});
 						}
 						if(msetMap!=null)
 							giveMoneyTo =(Integer)msetMap.get("giveto");
-						if(giveMoneyTo!=null&&giveMoneyTo==0&&comId!=null&&comId>0){//·µÏÖ¸øÍ£³µ³¡ÕË»§
+						if(giveMoneyTo!=null&&giveMoneyTo==0&&comId!=null&&comId>0){//è¿”ç°ç»™åœè½¦åœºè´¦æˆ·
 							Map<String, Object> comqlMap = new HashMap<String, Object>();
-							//Í£³µ³¡ÕË»§·µÏÖ
+							//åœè½¦åœºè´¦æˆ·è¿”ç°
 							comqlMap.put("sql", "update com_info_tb set total_money=total_money+?,money=money+?  where id=? ");
 							comqlMap.put("values", new Object[]{money,money,comId});
 							bathSql.add(comqlMap);
-							
-							//Ğ´ÈëÍ£³µ³¡ÕË»§Ã÷Ï¸
+
+							//å†™å…¥åœè½¦åœºè´¦æˆ·æ˜ç»†
 							Map<String, Object> parkAccountMap = new HashMap<String, Object>();
 							parkAccountMap.put("sql", "insert into park_account_tb(comid,amount,type,create_time,remark,uid,source) " +
 									"values(?,?,?,?,?,?,?)");
-							parkAccountMap.put("values", new Object[]{comId,money,0,System.currentTimeMillis()/1000,"ÍÆ¼ö½±Àø",uid,3});
+							parkAccountMap.put("values", new Object[]{comId,money,0,System.currentTimeMillis()/1000,"æ¨èå¥–åŠ±",uid,3});
 							bathSql.add(parkAccountMap);
-							logger.error(uid+">>>ÍÆ¼ö½±Àø¸øÍ£³µ³¡");
-							
-						}else {//·µÏÖ¸øÊÕ·ÑÔ±ÕË»§
+							logger.error(uid+">>>æ¨èå¥–åŠ±ç»™åœè½¦åœº");
+
+						}else {//è¿”ç°ç»™æ”¶è´¹å‘˜è´¦æˆ·
 							Map<String, Object> usersqlMap = new HashMap<String, Object>();
-							//ÊÕ·ÑÔ±ÕË»§·µÏÖ
+							//æ”¶è´¹å‘˜è´¦æˆ·è¿”ç°
 							usersqlMap.put("sql", "update user_info_tb set balance=balance+? where id=? ");
 							usersqlMap.put("values", new Object[]{money,uid});
 							bathSql.add(usersqlMap);
-							
-							//Ğ´ÈëÊÕ·ÑÔ±ÕË»§Ã÷Ï¸
+
+							//å†™å…¥æ”¶è´¹å‘˜è´¦æˆ·æ˜ç»†
 							Map<String, Object> parkuserAccountMap = new HashMap<String, Object>();
 							parkuserAccountMap.put("sql", "insert into parkuser_account_tb(uin,amount,type,create_time,remark,target) " +
 									"values(?,?,?,?,?,?)");
-							parkuserAccountMap.put("values", new Object[]{uid,money,0,System.currentTimeMillis()/1000,"ÍÆ¼ö½±Àø",3});
+							parkuserAccountMap.put("values", new Object[]{uid,money,0,System.currentTimeMillis()/1000,"æ¨èå¥–åŠ±",3});
 							bathSql.add(parkuserAccountMap);
 						}
-						//¸üĞÂÍÆ¼ö¼ÇÂ¼
+						//æ›´æ–°æ¨èè®°å½•
 						Map<String, Object> recomsqlMap = new HashMap<String, Object>();
 						recomsqlMap.put("sql", "update recommend_tb set state=? where (nid=? or openid=?) and pid=?");
 						recomsqlMap.put("values", new Object[]{1,nid,userMap.get("wxp_openid"),uid});
 						bathSql.add(recomsqlMap);
 					}else{
-						//¸üĞÂÍÆ¼ö¼ÇÂ¼
+						//æ›´æ–°æ¨èè®°å½•
 						Map<String, Object> recomsqlMap = new HashMap<String, Object>();
 						recomsqlMap.put("sql", "update recommend_tb set state=? where (nid=? or openid=?) and pid=?");
 						recomsqlMap.put("values", new Object[]{3,nid,userMap.get("wxp_openid"),uid});
@@ -2118,33 +2124,33 @@ public class PublicMethods {
 			if(!bathSql.isEmpty()){
 				b = daService.bathUpdate2(bathSql);
 			}
-			
+
 			if(b){
-				logger.error("handleWxRecommendCode>>>>>ÍÆ¼öÂß¼­´¦Àí³É¹¦,±»ÍÆ¼öÈËuin:"+nid);
+				logger.error("handleWxRecommendCode>>>>>æ¨èé€»è¾‘å¤„ç†æˆåŠŸ,è¢«æ¨èäººuin:"+nid);
 			}else{
-				logger.error("handleWxRecommendCode>>>>>ÍÆ¼öÂß¼­´¦ÀíÊ§°Üuin:"+nid);
+				logger.error("handleWxRecommendCode>>>>>æ¨èé€»è¾‘å¤„ç†å¤±è´¥uin:"+nid);
 			}
-			
+
 			if(b){
 				return 1;
 			}else{
 				return 0;
 			}
 		}else{
-			logger.error("handleWxRecommendCode>>>>>:ÎŞ³µÅÆcount:"+count+",uin:"+nid);
+			logger.error("handleWxRecommendCode>>>>>:æ— è½¦ç‰Œcount:"+count+",uin:"+nid);
 			return 0;
 		}
 	}
-	
+
 	/**
-	 * È¡Í£³µ³¡
+	 * å–åœè½¦åœº
 	 * @param lat
 	 * @param lon
-	 * @param payableÊÇ·ñ¿ÉÖ§¸¶
-	 * @return 2000ÒÔÄÚµÄÍ£³µ³¡
+	 * @param payableæ˜¯å¦å¯æ”¯ä»˜
+	 * @return 2000ä»¥å†…çš„åœè½¦åœº
 	 */
 	public List<Map<String, Object>> getPark2kmList(Double lat,Double lon,Integer payable){
-//		payable=1;//Ç¿ÖÆ¹ıÂË²»¿ÉÖ§¸¶³µ³¡
+//		payable=1;//å¼ºåˆ¶è¿‡æ»¤ä¸å¯æ”¯ä»˜è½¦åœº
 		double lon1 = 0.023482756;
 		double lat1 = 0.017978752;
 		String sql = "select id,company_name as name,longitude lng,latitude lat,parking_total total,share_number," +
@@ -2157,7 +2163,7 @@ public class PublicMethods {
 		params.add(lat+lat1);
 		params.add(0);
 		params.add(1);
-	//	params.add(1);
+		//	params.add(1);
 //		if(payable==1){
 //			sql +=" and isfixed=? and epay=? ";
 //			params.add(1);
@@ -2167,25 +2173,25 @@ public class PublicMethods {
 		list = pgOnlyReadService.getAll(sql, params, 0, 0);
 		return list;
 	}
-	
+
 	/**
-	 * ÁìÈ¡ºì°ü×¢²áÓÃ»§
-	 * @param mobile ÊÖ»úºÅ
-	 * @param media Ã½ÌåÀ´Ô´ 
-	 * @param getcode ÊÇ·ñ»ñÈ¡ÑéÖ¤Âë
+	 * é¢†å–çº¢åŒ…æ³¨å†Œç”¨æˆ·
+	 * @param mobile æ‰‹æœºå·
+	 * @param media åª’ä½“æ¥æº
+	 * @param getcode æ˜¯å¦è·å–éªŒè¯ç 
 	 * @return
 	 */
 	public Long regUser(String mobile,Long media,Long uid,boolean getcode){
 		Long uin = daService.getkey("seq_user_info_tb");
 		Long ntime = System.currentTimeMillis()/1000;
 		String strid = "zlduser"+uin;
-		//ÓÃ»§±í
+		//ç”¨æˆ·è¡¨
 		String sql= "insert into user_info_tb (id,nickname,password,strid," +
 				"reg_time,mobile,auth_flag,comid,media,recom_code) " +
 				"values (?,?,?,?,?,?,?,?,?,?)";
-		Object[] values= new Object[]{uin,"³µÖ÷",strid,strid,ntime,mobile,4,0,media.intValue(),uid};
-		//2015-03-10£¬¿ª¿¨¼°Áìºì°üÊ±²»ÔÙÏÈĞ´ÈëÍ£³µÈ¯£¬µÇÂ¼Ê±ÅĞ¶ÏºÚÃûµ¥ºóÌí¼ÓÍ£³µÈ¯
-		/*if(media==8||media==7){//7"ÈÚ360",8"³µÉú»î"
+		Object[] values= new Object[]{uin,"è½¦ä¸»",strid,strid,ntime,mobile,4,0,media.intValue(),uid};
+		//2015-03-10ï¼Œå¼€å¡åŠé¢†çº¢åŒ…æ—¶ä¸å†å…ˆå†™å…¥åœè½¦åˆ¸ï¼Œç™»å½•æ—¶åˆ¤æ–­é»‘åå•åæ·»åŠ åœè½¦åˆ¸
+		/*if(media==8||media==7){//7"è360",8"è½¦ç”Ÿæ´»"
 			String tsql = "insert into ticket_tb (create_time,limit_day,money,state,uin) values(?,?,?,?,?) ";
 			List<Object[]> insertvalues = new ArrayList<Object[]>();
 			//Long ntime = System.currentTimeMillis()/1000;
@@ -2203,18 +2209,18 @@ public class PublicMethods {
 			insertvalues.add(v6);insertvalues.add(v7);insertvalues.add(v8);insertvalues.add(v9);insertvalues.add(v10);
 			int result= daService.bathInsert(tsql, insertvalues, new int[]{4,4,4,4,4});
 			if(result>0){
-				logService.insertUserMesg(1, uin, "¹§Ï²Äú»ñµÃÊ®ÕÅ10ÔªÍ£³µÈ¯!", "ºì°üÌáĞÑ");
+				logService.insertUserMesg(1, uin, "æ­å–œæ‚¨è·å¾—åå¼ 10å…ƒåœè½¦åˆ¸!", "çº¢åŒ…æé†’");
 			}
 		}else {*/
-			int ts = backNewUserTickets(ntime, uin);
-			logger.error("ÁìÈ¡ºì°ü×¢²áÓÃ»§£¬·µÈ¯£º"+ts+",²»Ö±½ÓĞ´ÈëÍ£³µÈ¯±íÖĞ£¬µÇÂ¼Ê±ÑéÖ¤ÊÇ·ñÊÇºÚÃûµ¥ºó·µ»¹");
+		int ts = backNewUserTickets(ntime, uin);
+		logger.error("é¢†å–çº¢åŒ…æ³¨å†Œç”¨æˆ·ï¼Œè¿”åˆ¸ï¼š"+ts+",ä¸ç›´æ¥å†™å…¥åœè½¦åˆ¸è¡¨ä¸­ï¼Œç™»å½•æ—¶éªŒè¯æ˜¯å¦æ˜¯é»‘åå•åè¿”è¿˜");
 //		}
 		int r = daService.update(sql,values);
-		logger.error("ÁìÈ¡ºì°ü×¢²áÓÃ»§£¬×¢²á½á¹û£º"+r);
+		logger.error("é¢†å–çº¢åŒ…æ³¨å†Œç”¨æˆ·ï¼Œæ³¨å†Œç»“æœï¼š"+r);
 		if(r==1){
-			//×¢²á³É¹¦£¬²éÒ»ÏÂÊÇ·ñÊÇÊÕ·ÑÔ±ÍÆ¼ö
+			//æ³¨å†ŒæˆåŠŸï¼ŒæŸ¥ä¸€ä¸‹æ˜¯å¦æ˜¯æ”¶è´¹å‘˜æ¨è
 			if(media==999&&uid>0){
-				Map userMap = daService.getMap("select comid from user_info_Tb where id =? and auth_flag in(?,?) and state=?", 
+				Map userMap = daService.getMap("select comid from user_info_Tb where id =? and auth_flag in(?,?) and state=?",
 						new Object[]{uid,1,2,0}) ;
 				Long comId =null;
 				if(userMap!=null){
@@ -2224,37 +2230,37 @@ public class PublicMethods {
 					int rem = daService.update("insert into recommend_tb (pid,nid,type,state,create_time) values(?,?,?,?,?)",
 							new Object[]{uid,uin,0,0,System.currentTimeMillis()/1000});
 //					if(uid!=null&&comId!=null)
-//						logService.updateScroe(5, uid, comId);//ÍÆ¼ö³µÖ÷£¬µÃ1»ı·Ö 
+//						logService.updateScroe(5, uid, comId);//æ¨èè½¦ä¸»ï¼Œå¾—1ç§¯åˆ†
 					//int backmoney = daService.update("update user_info_tb set balance=balance+5 where id=?", new Object[]{uid});
-					logger.error("ÊÕ·ÑÔ±ÍÆ¼ö³µÖ÷£¬Í¨¹ıÁìÈ¡ºì°ü×¢²á³É¹¦,ÍÆ¼ö¼ÇÂ¼£º"+rem);
+					logger.error("æ”¶è´¹å‘˜æ¨èè½¦ä¸»ï¼Œé€šè¿‡é¢†å–çº¢åŒ…æ³¨å†ŒæˆåŠŸ,æ¨èè®°å½•ï¼š"+rem);
 				}else {
-					logger.error("ÊÕ·ÑÔ±ÍÆ¼ö³µÖ÷£¬Í¨¹ıÁìÈ¡ºì°ü×¢²á³É¹¦£¬µ«ÍÆ¼öµÄÊÕ·ÑÔ±²»´æÔÚ:"+uid);
+					logger.error("æ”¶è´¹å‘˜æ¨èè½¦ä¸»ï¼Œé€šè¿‡é¢†å–çº¢åŒ…æ³¨å†ŒæˆåŠŸï¼Œä½†æ¨èçš„æ”¶è´¹å‘˜ä¸å­˜åœ¨:"+uid);
 				}
 			}
-			
-			
+
+
 			int	eb = daService.update("insert into user_profile_tb (uin,low_recharge,limit_money,auto_cash," +
-					"create_time,update_time) values(?,?,?,?,?,?)", 
+							"create_time,update_time) values(?,?,?,?,?,?)",
 					new Object[]{uin,10,25,1,ntime,ntime});
-			logger.error("ÊÕ·ÑÔ±ÍÆ¼ö³µÖ÷£¬×Ô¶¯Ö§¸¶ÉèÖÃ:"+eb);
+			logger.error("æ”¶è´¹å‘˜æ¨èè½¦ä¸»ï¼Œè‡ªåŠ¨æ”¯ä»˜è®¾ç½®:"+eb);
 			if(!getcode){
-				//×¢²á³É¹¦£¬·¢ËÍ¶ÌĞÅ
-				String mesg ="Îå±Êµç×ÓÍ£³µ·Ñ£¬Èı±ÊÀ´×ÔÍ£³µ±¦¡£Í£³µÌìÌìÓĞÓÅ»İ£¬8ÔªÇ®Í£5´Î³µ£¬ÏÂÔØµØÖ·£º http://t.cn/RZJ4UAv ¡¾Í£³µ±¦¡¿";
+				//æ³¨å†ŒæˆåŠŸï¼Œå‘é€çŸ­ä¿¡
+				String mesg ="äº”ç¬”ç”µå­åœè½¦è´¹ï¼Œä¸‰ç¬”æ¥è‡ªåœè½¦å®ã€‚åœè½¦å¤©å¤©æœ‰ä¼˜æƒ ï¼Œ8å…ƒé’±åœ5æ¬¡è½¦ï¼Œä¸‹è½½åœ°å€ï¼š http://t.cn/RZJ4UAv ã€åœè½¦å®ã€‘";
 				SendMessage.sendMultiMessage(mobile, mesg);
 			}
 			return uin;
 		}
 		return -1L;
 	}
-	
+
 	/**
-	 * ´¦ÀíÊÕ·ÑÔ±ÍÆ¼ö·µÏÖ£¬ĞèÏû·ÑÒ»±Ê£¬ÇÒÖ§¸¶Óà¶î1ÔªÒÔÉÏ£¬²»ÔÚºÚÃûµ¥ÄÚµÄ³µÖ÷£¬²Å·µÏÖ¸øÊÕ·ÑÔ±
-	 * @param uin  ³µÖ÷
+	 * å¤„ç†æ”¶è´¹å‘˜æ¨èè¿”ç°ï¼Œéœ€æ¶ˆè´¹ä¸€ç¬”ï¼Œä¸”æ”¯ä»˜ä½™é¢1å…ƒä»¥ä¸Šï¼Œä¸åœ¨é»‘åå•å†…çš„è½¦ä¸»ï¼Œæ‰è¿”ç°ç»™æ”¶è´¹å‘˜
+	 * @param uin  è½¦ä¸»
 	 */
 	private void handleRecommendCode(Long uin,boolean isBlack){
 		Long recom_code = null;
 		Map recomMap = daService.getMap("select pid from recommend_tb where nid=? and state=? and type=? ", new Object[]{uin,0,0});
-		if(recomMap==null||recomMap.isEmpty()){//Ã»ÓĞÏà¹Ø³µÖ÷Î´´¦ÀíµÄÍÆ¼ö£¬Ö±½Ó·µ»Ø
+		if(recomMap==null||recomMap.isEmpty()){//æ²¡æœ‰ç›¸å…³è½¦ä¸»æœªå¤„ç†çš„æ¨èï¼Œç›´æ¥è¿”å›
 			logger.error(">>>>>>>>>>handle recommend,error: no pid ,uin:"+uin);
 			return ;
 		}else {
@@ -2262,7 +2268,7 @@ public class PublicMethods {
 		}
 		//logger.error();
 		Map usrMap = daService.getMap("select recom_code from user_info_tb where id=?", new Object[]{uin});
-		if(usrMap == null){//³µÖ÷ÊÇĞéÄâÕË»§£¬»¹Î´°ó¶¨ÕË»§
+		if(usrMap == null){//è½¦ä¸»æ˜¯è™šæ‹Ÿè´¦æˆ·ï¼Œè¿˜æœªç»‘å®šè´¦æˆ·
 			return;
 		}
 		logger.error(">>>>>>>>>>handle recommend"+usrMap);
@@ -2274,113 +2280,113 @@ public class PublicMethods {
 		usrMap =daService.getMap("select auth_flag,mobile,recommendquota from user_info_Tb where id =? ", new Object[]{uid});
 		logger.error(">>>>>>>>>>handle recommend"+usrMap);
 		String mobile = "";
-		
-		//ÍÆ¼öÈË½ÇÉ«
+
+		//æ¨èäººè§’è‰²
 		Long auth_flag = null;
 		Double recommendquota = 5d;
 		if(usrMap!=null){
 			auth_flag = (Long) usrMap.get("auth_flag");
 			mobile = (String)usrMap.get("mobile");
 			recommendquota = StringUtils.formatDouble(Double.parseDouble(usrMap.get("recommendquota")+""));
-			logger.error("¸ÃÊÕ·ÑÔ±µÄÍÆ¼ö½±¶î¶ÈÊÇ£º"+recommendquota);
+			logger.error("è¯¥æ”¶è´¹å‘˜çš„æ¨èå¥–é¢åº¦æ˜¯ï¼š"+recommendquota);
 		}
-		
+
 		if(isBlack){
 			String mobile_end = mobile.substring(7);
 			int result =daService.update("insert into parkuser_message_tb(type,ctime,uin,title,content) values(?,?,?,?,?)",
-					new Object[]{0,System.currentTimeMillis()/1000, uid, "ÍÆ¼öÌáĞÑ", "ÄãÍÆ¼öµÄ³µÖ÷£¨ÊÖ»úÎ²ºÅ"+mobile_end+"£©£¬ÕË»§ÓĞË¢µ¥ÏÓÒÉ£¬½±ÀøÈ¡Ïû¡£"} );
+					new Object[]{0,System.currentTimeMillis()/1000, uid, "æ¨èæé†’", "ä½ æ¨èçš„è½¦ä¸»ï¼ˆæ‰‹æœºå°¾å·"+mobile_end+"ï¼‰ï¼Œè´¦æˆ·æœ‰åˆ·å•å«Œç–‘ï¼Œå¥–åŠ±å–æ¶ˆã€‚"} );
 			int result1 = daService.update("update recommend_tb set state=? where nid=? and pid=?", new Object[]{2,uin,uid});
-			logger.error(">>>>>>>>>½±Àø³µ³¡ÊÕ·ÑÔ± £¬±»ÍÆ¼öµÄ³µÖ÷ÔÚºÚÃûµ¥ÖĞ£¬½±ÀøÈ¡Ïû:·¢ÏûÏ¢£º"+result+"£¬ÍÆ¼ö¸üĞÂÎªºÚÃûµ¥£º"+result1);
+			logger.error(">>>>>>>>>å¥–åŠ±è½¦åœºæ”¶è´¹å‘˜ ï¼Œè¢«æ¨èçš„è½¦ä¸»åœ¨é»‘åå•ä¸­ï¼Œå¥–åŠ±å–æ¶ˆ:å‘æ¶ˆæ¯ï¼š"+result+"ï¼Œæ¨èæ›´æ–°ä¸ºé»‘åå•ï¼š"+result1);
 			return ;
 		}
-		
-		//ÊÇÊÕ·ÑÔ±ÍÆ¼öµÄ³µÖ÷£¬Ä¿Ç°Ã»ÓĞ³µÖ÷ÍÆ¼ö³µÖ÷µÄ¼ÇÂ¼
+
+		//æ˜¯æ”¶è´¹å‘˜æ¨èçš„è½¦ä¸»ï¼Œç›®å‰æ²¡æœ‰è½¦ä¸»æ¨èè½¦ä¸»çš„è®°å½•
 		if(auth_flag!=null&&(auth_flag==1||auth_flag==2)){
 			Long count  = daService.getLong("select count(ID) from recommend_tb where nid=? and pid=? and state=? and type=?", new Object[]{uin,uid,0,0});
-			//ÍÆ¼öÀàĞÍ.0£º³µÖ÷£¬1:³µ³¡
+			//æ¨èç±»å‹.0ï¼šè½¦ä¸»ï¼Œ1:è½¦åœº
 			logger.error("is recom:"+count);
-			if(count!=null&&count>0){//±»ÍÆ¼ö¹ı£¬ÍÆ¼öÈËµÄ½±ÀøÃ»ÓĞÖ§¸¶//½±Àø³µ³¡ÊÕ·ÑÔ±ÕËºÅ5Ôª
+			if(count!=null&&count>0){//è¢«æ¨èè¿‡ï¼Œæ¨èäººçš„å¥–åŠ±æ²¡æœ‰æ”¯ä»˜//å¥–åŠ±è½¦åœºæ”¶è´¹å‘˜è´¦å·5å…ƒ
 				List<Map<String , Object>> sqlMaps = new ArrayList<Map<String,Object>>();
 				Long comId = -1L;
 				Map comMap = daService.getPojo("select comid from user_info_tb where id=?  ",new Object[] {uid});
 				Map msetMap =null;
-				Integer giveMoneyTo = null;//²éÑ¯ÊÕ·ÑÉè¶¨ mtype:0:¹«Ë¾ÕË»§£¬1£º¸öÈËÕË»§'
+				Integer giveMoneyTo = null;//æŸ¥è¯¢æ”¶è´¹è®¾å®š mtype:0:å…¬å¸è´¦æˆ·ï¼Œ1ï¼šä¸ªäººè´¦æˆ·'
 				if(comMap!=null){
 					comId =(Long)comMap.get("comid");
 					if(comId!=null&&comId>0);
-						msetMap = daService.getPojo("select giveto from money_set_tb where comid=? and mtype=? ",
+					msetMap = daService.getPojo("select giveto from money_set_tb where comid=? and mtype=? ",
 							new Object[]{comId,4});
 				}
 				if(msetMap!=null)
 					giveMoneyTo =(Integer)msetMap.get("giveto");
-				if(comId!=null&&comId>0&&giveMoneyTo!=null&&giveMoneyTo==0){//·µÏÖ¸øÍ£³µ³¡ÕË»§
+				if(comId!=null&&comId>0&&giveMoneyTo!=null&&giveMoneyTo==0){//è¿”ç°ç»™åœè½¦åœºè´¦æˆ·
 					Map<String, Object> comqlMap = new HashMap<String, Object>();
-					//Í£³µ³¡ÕË»§·µÏÖ
+					//åœè½¦åœºè´¦æˆ·è¿”ç°
 					comqlMap.put("sql", "update com_info_tb set total_money=total_money+?,money=money+?  where id=? ");
 					comqlMap.put("values", new Object[]{recommendquota,recommendquota,comId});
 					sqlMaps.add(comqlMap);
-					
-					//Ğ´ÈëÍ£³µ³¡ÕË»§Ã÷Ï¸
+
+					//å†™å…¥åœè½¦åœºè´¦æˆ·æ˜ç»†
 					Map<String, Object> parkAccountMap = new HashMap<String, Object>();
 					parkAccountMap.put("sql", "insert into park_account_tb(comid,amount,type,create_time,remark,uid,source) " +
 							"values(?,?,?,?,?,?,?)");
-					parkAccountMap.put("values", new Object[]{comId,recommendquota,0,System.currentTimeMillis()/1000,"ÍÆ¼ö½±Àø",uid,3});
+					parkAccountMap.put("values", new Object[]{comId,recommendquota,0,System.currentTimeMillis()/1000,"æ¨èå¥–åŠ±",uid,3});
 					sqlMaps.add(parkAccountMap);
-					logger.error(uid+">>>ÍÆ¼ö½±Àø¸øÍ£³µ³¡");
+					logger.error(uid+">>>æ¨èå¥–åŠ±ç»™åœè½¦åœº");
 				}else {
 					Map<String, Object> usersqlMap = new HashMap<String, Object>();
-					//ÊÕ·ÑÔ±ÕË»§¼Ó5Ôª
+					//æ”¶è´¹å‘˜è´¦æˆ·åŠ 5å…ƒ
 					usersqlMap.put("sql", "update user_info_tb set balance=balance+? where id=? ");
 					usersqlMap.put("values", new Object[]{recommendquota,uid});
 					sqlMaps.add(usersqlMap);
-				
-					//Ğ´ÈëÊÕ·ÑÔ±ÕË»§Ã÷Ï¸
+
+					//å†™å…¥æ”¶è´¹å‘˜è´¦æˆ·æ˜ç»†
 					Map<String, Object> parkuserAccountMap = new HashMap<String, Object>();
 					parkuserAccountMap.put("sql", "insert into parkuser_account_tb(uin,amount,type,create_time,remark,target) " +
 							"values(?,?,?,?,?,?)");
-					parkuserAccountMap.put("values", new Object[]{uid,recommendquota,0,System.currentTimeMillis()/1000,"ÍÆ¼ö½±Àø",3});
+					parkuserAccountMap.put("values", new Object[]{uid,recommendquota,0,System.currentTimeMillis()/1000,"æ¨èå¥–åŠ±",3});
 					sqlMaps.add(parkuserAccountMap);
-					
+
 				}
-				//¸üĞÂÍÆ¼ö¼ÇÂ¼
+				//æ›´æ–°æ¨èè®°å½•
 				Map<String, Object> recomsqlMap = new HashMap<String, Object>();
 				recomsqlMap.put("sql", "update recommend_tb set state=?,money=? where nid=? and pid=?");
 				recomsqlMap.put("values", new Object[]{1,recommendquota,uin,uid});
 				sqlMaps.add(recomsqlMap);
-				
+
 				logger.error(count);
 				boolean ret = daService.bathUpdate(sqlMaps);
-				if(ret){//Ğ´ÈëÊÕ·ÑÔ±ÏûÏ¢±í
-					
+				if(ret){//å†™å…¥æ”¶è´¹å‘˜æ¶ˆæ¯è¡¨
+
 					String mobile_end = mobile.substring(7);
 					int result =daService.update("insert into parkuser_message_tb(type,ctime,uin,title,content) values(?,?,?,?,?)",
-							new Object[]{0,System.currentTimeMillis()/1000, uid, "ÍÆ¼öÌáĞÑ", "ÄãÍÆ¼öµÄ³µÖ÷£¨ÊÖ»úÎ²ºÅ"+mobile_end+"£©×¢²á³É¹¦£¬Äã»ñµÃ"+recommendquota+"Ôª½±Àø¡£"} );
-					logger.error(">>>>>>>>>½±Àø³µ³¡ÊÕ·ÑÔ±ÍÆ¼ö³µÖ÷"+recommendquota+"ÔªÏûÏ¢:"+result);
+							new Object[]{0,System.currentTimeMillis()/1000, uid, "æ¨èæé†’", "ä½ æ¨èçš„è½¦ä¸»ï¼ˆæ‰‹æœºå°¾å·"+mobile_end+"ï¼‰æ³¨å†ŒæˆåŠŸï¼Œä½ è·å¾—"+recommendquota+"å…ƒå¥–åŠ±ã€‚"} );
+					logger.error(">>>>>>>>>å¥–åŠ±è½¦åœºæ”¶è´¹å‘˜æ¨èè½¦ä¸»"+recommendquota+"å…ƒæ¶ˆæ¯:"+result);
 				}
-				logger.error(">>>>>>>>>½±Àø³µ³¡ÊÕ·ÑÔ±ÍÆ¼ö³µÖ÷"+recommendquota+"Ôª£º"+ret);
+				logger.error(">>>>>>>>>å¥–åŠ±è½¦åœºæ”¶è´¹å‘˜æ¨èè½¦ä¸»"+recommendquota+"å…ƒï¼š"+ret);
 			}
 		}else {
 			logger.error(uid);
 		}
 	}
-	
+
 	public String getCollectMesgSwith(){
 		String swith = memcacheUtils.doStringCache("collectormesg_swith", null, null);
 		if(swith==null)
 			return "0";
 		return swith;
 	}
-	
-	
+
+
 	/*public void updateSorceq(Long btime,Long etime,Integer cType,Long uid,Long comId){
-		if(cType!=null&&btime!=null&&(etime-btime>=15*60)){//¶©µ¥Ê±³¤³¬¹ı15·ÖÖÓ£¬¿ÉÒÔ¼ÆÒ»´Î0.2µÄ»ı·Ö
-			if(cType==0)//NFC»ı·Ö  ( Ë¢NFC¿¨£¬»òÉ¨ÅÆÉú³ÉÓĞĞ§¶©µ¥£¬·ÇÔÚÏßÖ§¸¶»ı0.01·Ö£¬ÔÚÏßÖ§¸¶³¬¹ıÒ»Ôª£¬»ı2·Ö¡£)
+		if(cType!=null&&btime!=null&&(etime-btime>=15*60)){//è®¢å•æ—¶é•¿è¶…è¿‡15åˆ†é’Ÿï¼Œå¯ä»¥è®¡ä¸€æ¬¡0.2çš„ç§¯åˆ†
+			if(cType==0)//NFCç§¯åˆ†  ( åˆ·NFCå¡ï¼Œæˆ–æ‰«ç‰Œç”Ÿæˆæœ‰æ•ˆè®¢å•ï¼Œéåœ¨çº¿æ”¯ä»˜ç§¯0.01åˆ†ï¼Œåœ¨çº¿æ”¯ä»˜è¶…è¿‡ä¸€å…ƒï¼Œç§¯2åˆ†ã€‚)
 				logService.updateScroe(2, uid,comId);
-			else if(cType==2||cType==3)//É¨ÅÆ»òÕÕÅÆ»ı·Ö 
+			else if(cType==2||cType==3)//æ‰«ç‰Œæˆ–ç…§ç‰Œç§¯åˆ†
 				logService.updateScroe(4, uid,comId);
 		}
 	}*/
-	
+
 	public void setCityCache(Long comid,Integer city){
 		Map<Long, Integer> map = memcacheUtils.doMapLongIntegerCache("comid_backmoney_cache", null, null);
 		if(map==null||map.size()<20){
@@ -2410,61 +2416,61 @@ public class PublicMethods {
 			}
 		}
 	}
-	
+
 	public boolean isCanBackMoney(Long comid){
-		logger.error(">>>ËùÓĞ³µ³¡²»·µÏÖ");
+		logger.error(">>>æ‰€æœ‰è½¦åœºä¸è¿”ç°");
 		return false;
 //		Map<Long, Integer> map = memcacheUtils.doMapLongIntegerCache("comid_backmoney_cache", null, null);
 //		if(map==null){
-//			logger.error(">>>Ã»ÓĞ·Ç±±¾©³µ³¡£¬Ö±½Ó·µÏÖ...");
+//			logger.error(">>>æ²¡æœ‰éåŒ—äº¬è½¦åœºï¼Œç›´æ¥è¿”ç°...");
 //			return true;
 //		}else {
-//			logger.error(">>>·Ç±±¾©³µ³¡»º´æÎª:"+map.size()+",comid:"+comid);
+//			logger.error(">>>éåŒ—äº¬è½¦åœºç¼“å­˜ä¸º:"+map.size()+",comid:"+comid);
 //			if(map.containsKey(comid)){
 //				/*Integer times = map.get(comid);
-//				Integer rand = RandomUtils.nextInt(10);//ÔÚ0-9ÖĞÈ¡Ëæ»úÊı£¬Îª8Ê±·µÏÖ
-//				if(rand==8){//·µÏÖ
+//				Integer rand = RandomUtils.nextInt(10);//åœ¨0-9ä¸­å–éšæœºæ•°ï¼Œä¸º8æ—¶è¿”ç°
+//				if(rand==8){//è¿”ç°
 //					times = times+1;
 //					map.put(comid, times);
 //					memcacheUtils.doMapLongIntegerCache("comid_backmoney_cache", map, "update");
-//					logger.error(">>>¼ÃÄÏ³µ³¡£¬²»·ûºÏ·µÏÖ¼ÆÊı,ÏÂ¸ö¼ÆÊı£º"+times+"£¬»º´æÎª:"+map);
+//					logger.error(">>>æµå—è½¦åœºï¼Œä¸ç¬¦åˆè¿”ç°è®¡æ•°,ä¸‹ä¸ªè®¡æ•°ï¼š"+times+"ï¼Œç¼“å­˜ä¸º:"+map);
 //					return true;
 //				}else {
 //					return false;
 //				}
-//				logger.error(">>>¼ÃÄÏ³µ³¡£¬·µÏÖ¼ÆÊı:"+times);
+//				logger.error(">>>æµå—è½¦åœºï¼Œè¿”ç°è®¡æ•°:"+times);
 //				if(times%10==0){
-//					logger.error(">>>¼ÃÄÏ³µ³¡£¬·ûºÏ·µÏÖ¼ÆÊı:"+times);
+//					logger.error(">>>æµå—è½¦åœºï¼Œç¬¦åˆè¿”ç°è®¡æ•°:"+times);
 //					return true;
 //				}else {
 //					times = times+1;
 //					map.put(comid, times);
 //					memcacheUtils.doMapLongIntegerCache("comid_backmoney_cache", map, "update");
-//					logger.error(">>>¼ÃÄÏ³µ³¡£¬²»·ûºÏ·µÏÖ¼ÆÊı,ÏÂ¸ö¼ÆÊı£º"+times+"£¬»º´æÎª:"+map);
+//					logger.error(">>>æµå—è½¦åœºï¼Œä¸ç¬¦åˆè¿”ç°è®¡æ•°,ä¸‹ä¸ªè®¡æ•°ï¼š"+times+"ï¼Œç¼“å­˜ä¸º:"+map);
 //					return false;
 //				}*/
 //				return false;
 //			}else {
-//				logger.error(">>>²»ÔÚ·Ç±±¾©³µ³¡»º´æÄÚ£¬Ö±½Ó·µÏÖ...");
-//				return true;	
+//				logger.error(">>>ä¸åœ¨éåŒ—äº¬è½¦åœºç¼“å­˜å†…ï¼Œç›´æ¥è¿”ç°...");
+//				return true;
 //			}
 //		}
 	}
-	
-	
+
+
 	private Double getBackMoney(){
 		Double moneys[] = new Double[]{0d,1d,2d,3d,4d};
 		Integer rand = RandomUtils.nextInt(5);
 		return moneys[rand];
 	}
-	
+
 	private double getminPriceUnit(Long comId){
 		Map com =daService.getPojo("select * from com_info_tb where id=? "
 				, new Object[]{comId});
 		double minPriceUnit = Double.valueOf(com.get("minprice_unit")+"");
 		return minPriceUnit;
 	}
-	
+
 	public boolean isCanSendShortMesg(String mobile){
 		Map<String, String> sendCache = memcacheUtils.doMapStringStringCache("verification_code_cache", null, null);
 		Long ttime = TimeTools.getToDayBeginTime();
@@ -2480,7 +2486,7 @@ public class PublicMethods {
 				if(time.equals(ttime)){
 					Integer times = Integer.valueOf(dayt[1]);
 					if(times>9){
-						logger.error(mobile+"·¢ËÍÑéÖ¤Âë³¬¹ı10´Î");
+						logger.error(mobile+"å‘é€éªŒè¯ç è¶…è¿‡10æ¬¡");
 						return false;
 					}else {
 						value = time+"_"+(times+1);
@@ -2493,45 +2499,45 @@ public class PublicMethods {
 				sendCache.put(mobile, ttime+"_"+1);
 			}
 		}
-		 memcacheUtils.doMapStringStringCache("verification_code_cache", sendCache, "update");
+		memcacheUtils.doMapStringStringCache("verification_code_cache", sendCache, "update");
 		return true;
 	}
 
 	/**
-	 * ¼ÆËãÍ£³µÈ¯×î¸ßµÖ¿Û½ğ¶î
-	 * @param type 0´òÉÍ£¬1Ö§¸¶
-	 * @param uin  ³µÖ÷ÕË»§
-	 * @param uid  ÊÕ·ÑÔ±ÕË»§
-	 * @param total  Í£³µ·Ñ½ğ¶î
-	 * @return µÖ¿Û½ğ¶î
+	 * è®¡ç®—åœè½¦åˆ¸æœ€é«˜æŠµæ‰£é‡‘é¢
+	 * @param type 0æ‰“èµï¼Œ1æ”¯ä»˜
+	 * @param uin  è½¦ä¸»è´¦æˆ·
+	 * @param uid  æ”¶è´¹å‘˜è´¦æˆ·
+	 * @param total  åœè½¦è´¹é‡‘é¢
+	 * @return æŠµæ‰£é‡‘é¢
 	 */
 	public Double useTicket(Long uin,Long uid,Integer type,Double total){
 		boolean isAuth = isAuthUser(uin);
-		Double maxMoney = 1.0;//Î´ÈÏÖ¤£¬×î¸ßµÖÒ»Ôª
-		if(type==0&&isAuth){//0´òÉÍ
+		Double maxMoney = 1.0;//æœªè®¤è¯ï¼Œæœ€é«˜æŠµä¸€å…ƒ
+		if(type==0&&isAuth){//0æ‰“èµ
 			Double rewardquota = 2.0;
 			Map user = daService.getMap("select rewardquota from user_info_tb where id = ?", new Object[]{uid});
 			if(user!=null&&user.get("rewardquota")!=null)
 				rewardquota =StringUtils.formatDouble(user.get("rewardquota"));
-			if(rewardquota>total)//ÊÕ·ÑÔ±×î¸ß´òÉÍÉèÖÃ½ğ¶î´óÓÚ´òÉÍ½ğ¶îÊ±£¬ÓÃÈ¯×î¸ßÉèÖÃÎª´òÉÍ½ğ¶î
+			if(rewardquota>total)//æ”¶è´¹å‘˜æœ€é«˜æ‰“èµè®¾ç½®é‡‘é¢å¤§äºæ‰“èµé‡‘é¢æ—¶ï¼Œç”¨åˆ¸æœ€é«˜è®¾ç½®ä¸ºæ‰“èµé‡‘é¢
 				rewardquota= total;
 			maxMoney= rewardquota;
-		}else if(type==1&&isAuth){//1Ö§¸¶
-			//Ö§¸¶½ğ¶îÓëÍ£³µÈ¯½ğ¶î²îÖµ£¬ÈçµÖ¿Û½ğ¶îÓë¶©µ¥½ğ¶îµÄ²îÖµÎª1£¬Ôò¶©µ¥Îª10ÔªÊ±£¬È¯×î¸ßµÖ¿Û9Ôª£¬
-			//20ÔªµÄÈ¯Ò²Ö»ÄÜµÖ¿Û9Ôª£¬Èç¹ûÎª2£¬Ôò×î¸ßµÖ¿Û8Ôª
+		}else if(type==1&&isAuth){//1æ”¯ä»˜
+			//æ”¯ä»˜é‡‘é¢ä¸åœè½¦åˆ¸é‡‘é¢å·®å€¼ï¼Œå¦‚æŠµæ‰£é‡‘é¢ä¸è®¢å•é‡‘é¢çš„å·®å€¼ä¸º1ï¼Œåˆ™è®¢å•ä¸º10å…ƒæ—¶ï¼Œåˆ¸æœ€é«˜æŠµæ‰£9å…ƒï¼Œ
+			//20å…ƒçš„åˆ¸ä¹Ÿåªèƒ½æŠµæ‰£9å…ƒï¼Œå¦‚æœä¸º2ï¼Œåˆ™æœ€é«˜æŠµæ‰£8å…ƒ
 			Double uselimit = StringUtils.formatDouble(CustomDefind.getValue("TICKET_LIMIT"));
 			maxMoney= total-uselimit;
 		}
 		return maxMoney;
 	}
-	
+
 	/**
-	 * »ñÈ¡´ú½ğÈ¯µÖ¿Û½ğ¶î
+	 * è·å–ä»£é‡‘åˆ¸æŠµæ‰£é‡‘é¢
 	 * @param ticketId
-	 * @param ptype 0ÕË»§³äÖµ£»1°üÔÂ²úÆ·£»2Í£³µ·Ñ½áËã£»3Ö±¸¶;4´òÉÍ 5¹ºÂòÍ£³µÈ¯
+	 * @param ptype 0è´¦æˆ·å……å€¼ï¼›1åŒ…æœˆäº§å“ï¼›2åœè½¦è´¹ç»“ç®—ï¼›3ç›´ä»˜;4æ‰“èµ 5è´­ä¹°åœè½¦åˆ¸
 	 * @param uid
-	 * @param total ½ğ¶î
-	 * @param utype 0ÆÕÍ¨Ñ¡È¯£¨Ä¬ÈÏ£©1¿ÉÓÃ´óÓÚ×î´óµÖ¿Û½ğ¶îµÄÍ£³µÈ¯
+	 * @param total é‡‘é¢
+	 * @param utype 0æ™®é€šé€‰åˆ¸ï¼ˆé»˜è®¤ï¼‰1å¯ç”¨å¤§äºæœ€å¤§æŠµæ‰£é‡‘é¢çš„åœè½¦åˆ¸
 	 * @param comid
 	 * @param orderId
 	 * @return
@@ -2550,9 +2556,9 @@ public class PublicMethods {
 		}
 		return ticketMoney;
 	}
-	
+
 	/**
-	 * »ñÈ¡´òÕÛÈ¯µÖ¿Û½ğ¶î
+	 * è·å–æ‰“æŠ˜åˆ¸æŠµæ‰£é‡‘é¢
 	 * @param uin
 	 * @param uid
 	 * @param total
@@ -2567,8 +2573,8 @@ public class PublicMethods {
 		return ticketMoney;
 	}
 	public boolean isEtcPark(Long comid){
-		boolean b = false;
-		List<Long> tcache = memcacheUtils.doListLongCache("etclocal_park_cache", null, null);
+		boolean b = true;
+		/*List<Long> tcache = memcacheUtils.doListLongCache("etclocal_park_cache", null, null);
 		if(tcache!=null&&tcache.contains(comid)){
 			b = true;
 		}else {
@@ -2595,21 +2601,21 @@ public class PublicMethods {
 //				}
 //			}
 //		}
-		logger.error("comid:"+comid+" is etc local park return :"+b);
+		logger.error("comid:"+comid+" is etc local park return :"+b);*/
 		return b;
 	}
-	
+
 	private void updateAllowCache(Long comid,Long ticketId, Double ticketMoney){
 		logger.error("updateAllowCache>>>ticketId:"+ticketId+",ticketMoney:"+ticketMoney+",comid:"+comid);
 		if(ticketMoney > 0){
-			Double tcballow = ticketMoney;//Í£³µ±¦²¹ÌùµÄ²¿·Ö
+			Double tcballow = ticketMoney;//åœè½¦å®è¡¥è´´çš„éƒ¨åˆ†
 			if(ticketId != null && ticketId > 0){
 				Map<String, Object> ticketMap = daService.getMap(
 						"select * from ticket_tb where id=? ",
 						new Object[] { ticketId });
 				Integer type = (Integer)ticketMap.get("type");
 				Integer resources = (Integer)ticketMap.get("resources");
-				if(type == 0 && resources == 1){//¹ºÂòÈ¯
+				if(type == 0 && resources == 1){//è´­ä¹°åˆ¸
 					if(ticketMap.get("pmoney") != null){
 						Double pmoney = Double.valueOf(ticketMap.get("pmoney") + "");
 						logger.error("updateAllowCache>>>ticketId:"+ticketId+",ticketMoney:"+ticketMoney);
@@ -2639,13 +2645,13 @@ public class PublicMethods {
 		pass ="hxzldpass";
 		return pass;
 	}
-	
+
 	public void updateShopTicket(Long orderid, Long uin){
-		int r = daService.update("update ticket_tb set state=?,uin=?,utime=? where orderid=? ", 
+		int r = daService.update("update ticket_tb set state=?,uin=?,utime=? where orderid=? ",
 				new Object[]{1, uin, System.currentTimeMillis()/1000, orderid});
 	}
 	/**
-	 * Í¬²½³µÖ÷Óà¶îµ½²´Á´
+	 * åŒæ­¥è½¦ä¸»ä½™é¢åˆ°æ³Šé“¾
 	 * @param uin
 	 * @param money
 	 */
@@ -2654,11 +2660,11 @@ public class PublicMethods {
 		messagePool.execute(new Runnable() {
 			@Override
 			public void run() {
-				logger.error("delete user plateNumber,ĞèÒªÍ¬²½µ½²´Á´Æ½Ì¨");
+				logger.error("delete user plateNumber,éœ€è¦åŒæ­¥åˆ°æ³Šé“¾å¹³å°");
 				String url = CustomDefind.UNIONIP+"user/updateuser";
 				Map<String, Object> paramMap = new HashMap<String, Object>();
 				paramMap.put("user_id", uin);
-				paramMap.put("type",4);//1½áËã¶©µ¥  2ĞŞ¸Ä¶©µ¥½ğ¶î 4É¾³ı³µÅÆ
+				paramMap.put("type",4);//1ç»“ç®—è®¢å•  2ä¿®æ”¹è®¢å•é‡‘é¢ 4åˆ é™¤è½¦ç‰Œ
 				paramMap.put("plate_number", plateNumber);
 				paramMap.put("union_id", CustomDefind.UNIONID);
 				paramMap.put("rand", Math.random());

@@ -23,12 +23,12 @@ public class CityManageAction extends Action {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
-		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//是否是超级管理员
+		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//鏄惁鏄秴绾х鐞嗗憳
 		if(uin == null){
 			response.sendRedirect("login.do");
 			return null;
@@ -52,15 +52,19 @@ public class CityManageAction extends Action {
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("create")){
 			String name = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "name"));
-			int r = daService.update("insert into org_city_merchants(name, ctime) values(?,?) ", 
-					new Object[]{name, System.currentTimeMillis()/1000});
+			String union_id = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "union_id"));
+			String ukey = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "ukey"));
+			int r = daService.update("insert into org_city_merchants(name, ctime, union_id, ukey) values(?,?,?,?) ",
+					new Object[]{name, System.currentTimeMillis()/1000, union_id, ukey});
 			AjaxUtil.ajaxOutput(response, r + "");
 		}else if(action.equals("edit")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			String name = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "name"));
+			String union_id = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "union_id"));
+			String ukey = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "ukey"));
 			if(id > 0){
-				int r = daService.update("update org_city_merchants set name=? where id=? ", 
-						new Object[]{name, id});
+				int r = daService.update("update org_city_merchants set name=?, union_id=?, ukey=? where id=? ",
+						new Object[]{name, union_id, ukey, id});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
 			}
@@ -68,7 +72,7 @@ public class CityManageAction extends Action {
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			if(id > 0){
-				int r = daService.update("update org_city_merchants set state=? where id=? ", 
+				int r = daService.update("update org_city_merchants set state=? where id=? ",
 						new Object[]{1, id});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -77,7 +81,7 @@ public class CityManageAction extends Action {
 		}else if(action.equals("set")){
 			Long cityid = RequestUtil.getLong(request, "id", -1L);
 			request.setAttribute("treeurl", "getdata.do?action=citysetting&cityid="+cityid);
-			request.setAttribute("title", "城市设置");
+			request.setAttribute("title", "鍩庡競璁剧疆");
 			return mapping.findForward("tree");
 		}
 		return null;

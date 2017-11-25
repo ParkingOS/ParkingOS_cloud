@@ -2,5 +2,5 @@ package com.zld;
 
 
 public class Constants {
-	public static String SNESOR_SIGN = "PCLOUD-SENSOR-SERVER";//天泊车检器xmemcache加一个头部标识，防止重复
+	public static String SNESOR_SIGN = "PCLOUD-SENSOR-SERVER";//澶╂硦杞︽鍣▁memcache鍔犱竴涓ご閮ㄦ爣璇嗭紝闃叉閲嶅
 }

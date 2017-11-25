@@ -32,10 +32,10 @@ public class CameraManageAction extends Action {
 	private MongoDbUtils mongoDbUtils;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	private Logger logger = Logger.getLogger(CameraManageAction.class);
 	/*
-	 * Í¨µÀÉèÖÃ
+	 * é€šé“è®¾ç½®
 	 */
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
@@ -71,7 +71,7 @@ public class CameraManageAction extends Action {
 		}else if(action.equals("getworksites")){
 			String sql = "select * from com_worksite_tb where comid=?";
 			List<Map> list = daService.getAll(sql, new Object[]{comid});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"},";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"},";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+="{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("worksite_name")+"\"},";
@@ -119,7 +119,7 @@ public class CameraManageAction extends Action {
 				AjaxUtil.ajaxOutput(response, "-1");
 				return null;
 			}
-			//±à¼­
+			//ç¼–è¾‘
 			String sql = "update com_camera_tb set camera_name=?,ip=?,port=?,cusername=?,manufacturer=?,passid=? where id=?";
 			int re = daService.update(sql, new Object[]{camera_name,ip,port,cusername,manufacturer,passid,cameraid});
 			if(re == 1){
@@ -129,7 +129,7 @@ public class CameraManageAction extends Action {
 				}else{
 					logger.error("parkadmin or admin:"+nickname+" edit comid:"+comid+" camera");
 				}
-				mongoDbUtils.saveLogs( request,0, 3, "ĞŞ¸ÄÁËÉãÏñÍ·:"+camera_name);
+				mongoDbUtils.saveLogs( request,0, 3, "ä¿®æ”¹äº†æ‘„åƒå¤´:"+camera_name);
 				AjaxUtil.ajaxOutput(response, "1");
 			}else{
 				AjaxUtil.ajaxOutput(response, "0");
@@ -146,7 +146,7 @@ public class CameraManageAction extends Action {
 				}else{
 					logger.error("parkadmin or admin:"+nickname+" delete comid:"+comid+" camera");
 				}
-				mongoDbUtils.saveLogs( request,0, 4, "É¾³ıÁËÉãÏñÍ·:"+camMap);
+				mongoDbUtils.saveLogs( request,0, 4, "åˆ é™¤äº†æ‘„åƒå¤´:"+camMap);
 				AjaxUtil.ajaxOutput(response, "1");
 			}else{
 				AjaxUtil.ajaxOutput(response, "0");
@@ -168,7 +168,7 @@ public class CameraManageAction extends Action {
 				}else{
 					logger.error("parkadmin or admin:"+nickname+" edit password comid:"+comid+" camera");
 				}
-				mongoDbUtils.saveLogs( request,0, 3, "ÖØÖÃÁËÉãÏñÍ·ÃÜÂë£¬±àºÅ"+cameraid+"£¬ĞÂÃÜÂë"+newpass);
+				mongoDbUtils.saveLogs( request,0, 3, "é‡ç½®äº†æ‘„åƒå¤´å¯†ç ï¼Œç¼–å·"+cameraid+"ï¼Œæ–°å¯†ç "+newpass);
 				AjaxUtil.ajaxOutput(response, "1");
 			}else{
 				AjaxUtil.ajaxOutput(response, "0");

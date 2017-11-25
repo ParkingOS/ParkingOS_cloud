@@ -28,14 +28,14 @@ public class  WorkGroupManageAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -43,13 +43,13 @@ public class  WorkGroupManageAction extends Action {
 			response.sendRedirect("login.do");
 			return null;
 		}
-		
+
 		if(cityid == null && groupid == null){
 			return null;
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("addberthsec")){
@@ -154,7 +154,7 @@ public class  WorkGroupManageAction extends Action {
 			Long count = 0L;
 			List<Object> params = new ArrayList<Object>();
 			List<Object> parks = null;
-		    params.add(groupid);
+			params.add(groupid);
 			count = daService.getCount(countSql,params);
 			if(count>0){
 				list = daService.getAll(sql + " order by create_time desc ", params, pageNum, pageSize);
@@ -245,16 +245,16 @@ public class  WorkGroupManageAction extends Action {
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			List list = null;
 			Long count = 0L;
-			List<Object> params = new ArrayList<Object>(); 
+			List<Object> params = new ArrayList<Object>();
 			params.add(2);
-		    params.add(groupid);
-		    params.add(0);
-		
-				count = daService.getCount(countSql,params);
-				if(count>0){
-					list = daService.getAll(sql ,params, pageNum, pageSize);
-				}
-			
+			params.add(groupid);
+			params.add(0);
+
+			count = daService.getCount(countSql,params);
+			if(count>0){
+				list = daService.getAll(sql ,params, pageNum, pageSize);
+			}
+
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("queryallinspector")){
@@ -300,7 +300,7 @@ public class  WorkGroupManageAction extends Action {
 			if(berthMap!=null&&berthMap.get("berthsec_id")!=null){
 				Map map = daService.getMap("select * from parkuser_work_record_tb where berthsec_id = ? and end_time is null", new Object[]{(Long)berthMap.get("berthsec_id")});
 				if(map!=null){
-					AjaxUtil.ajaxOutput(response, "该泊位段有人正在上班，不能删除！");
+					AjaxUtil.ajaxOutput(response, "璇ユ硦浣嶆鏈変汉姝ｅ湪涓婄彮锛屼笉鑳藉垹闄わ紒");
 					return null;
 				}
 			}
@@ -315,7 +315,7 @@ public class  WorkGroupManageAction extends Action {
 			if(employeeMap!=null&&employeeMap.get("employee_id")!=null){
 				Map map = daService.getMap("select * from parkuser_work_record_tb where uid = ? and end_time is null", new Object[]{(Long)employeeMap.get("employee_id")});
 				if(map!=null){
-					AjaxUtil.ajaxOutput(response, "该收费员正在上班，不能删除！");
+					AjaxUtil.ajaxOutput(response, "璇ユ敹璐瑰憳姝ｅ湪涓婄彮锛屼笉鑳藉垹闄わ紒");
 					return null;
 				}
 			}
@@ -329,24 +329,24 @@ public class  WorkGroupManageAction extends Action {
 					new Object[]{id});
 			AjaxUtil.ajaxOutput(response, "" + r);
 		}
-		
+
 		return null;
 	}
-	
+
 	private int editGroup(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		String workgroup_name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "workgroup_name"));
 		Integer is_active = RequestUtil.getInteger(request, "is_active", 0);
-		int r = daService.update("update work_group_tb set workgroup_name=?,update_time=?,is_active=? where id=? ", 
+		int r = daService.update("update work_group_tb set workgroup_name=?,update_time=?,is_active=? where id=? ",
 				new Object[]{workgroup_name,  System.currentTimeMillis()/1000,is_active, id});
 		return r;
 	}
-	
+
 	private int createGroup(HttpServletRequest request){
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		String workgroup_name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "workgroup_name"));
-	    Integer is_active=RequestUtil.getInteger(request, "is_active",0);
-		int r = daService.update("insert into work_group_tb(workgroup_name,create_time,is_active,company_id) values(?,?,?,?)", 
+		Integer is_active=RequestUtil.getInteger(request, "is_active",0);
+		int r = daService.update("insert into work_group_tb(workgroup_name,create_time,is_active,company_id) values(?,?,?,?)",
 				new Object[]{workgroup_name,System.currentTimeMillis()/1000,1,groupid});
 		return r;
 	}
@@ -359,7 +359,7 @@ public class  WorkGroupManageAction extends Action {
 		int r=0;
 		for(String id : cids){
 			long ID = Long.parseLong(id);
-			r=daService.update("insert into work_berthsec_tb(work_group_id,berthsec_id,state) values(?,?,?)", 
+			r=daService.update("insert into work_berthsec_tb(work_group_id,berthsec_id,state) values(?,?,?)",
 					new Object[]{work_group_id,ID,0});
 			//paramssimp +=",?";
 			//params.add(Long.valueOf(id));
@@ -379,7 +379,7 @@ public class  WorkGroupManageAction extends Action {
 		int r=0;
 		for(String id : cids){
 			long ID = Long.parseLong(id);
-			r=daService.update("insert into work_employee_tb(work_group_id,employee_id,state) values(?,?,?)", 
+			r=daService.update("insert into work_employee_tb(work_group_id,employee_id,state) values(?,?,?)",
 					new Object[]{work_group_id,ID,0});
 			//paramssimp +=",?";
 			//params.add(Long.valueOf(id));

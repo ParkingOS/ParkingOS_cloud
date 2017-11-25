@@ -1,24 +1,5 @@
 package com.zld.struts.city;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.mongodb.BasicDBObject;
 import com.zld.AjaxUtil;
 import com.zld.impl.CommonMethods;
@@ -28,14 +9,23 @@ import com.zld.pojo.QueryList;
 import com.zld.pojo.QuerySum;
 import com.zld.service.DataBaseService;
 import com.zld.service.PgOnlyReadService;
-import com.zld.utils.Check;
-import com.zld.utils.ExecutorsUtil;
-import com.zld.utils.ExportExcelUtil;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
-import com.zld.utils.TimeTools;
+import com.zld.utils.*;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public class CityOrderManageAction extends Action {
 	@Autowired
@@ -43,19 +33,19 @@ public class CityOrderManageAction extends Action {
 	@Autowired
 	private DataBaseService dataBaseService;
 	@Autowired
-	private CommonMethods commonMethods; 
+	private CommonMethods commonMethods;
 	@Autowired
 	private MongoDbUtils mongoDbUtils;
-	
+
 	private Logger logger = Logger.getLogger(CityOrderManageAction.class);
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -68,7 +58,7 @@ public class CityOrderManageAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		ExecutorService pool = ExecutorsUtil.getExecutorService();//»ñÈ¡Ïß³Ì³Ø
+		ExecutorService pool = ExecutorsUtil.getExecutorService();//è·å–çº¿ç¨‹æ± 
 		if(action.equals("")){
 			request.setAttribute("from", RequestUtil.processParams(request, "from"));
 			List<Map<String, Object>> authList = (List<Map<String, Object>>)request.getSession().getAttribute("authlist");
@@ -114,12 +104,12 @@ public class CityOrderManageAction extends Action {
 					" where o.state=? and o.ishd=? and o.end_time between ? and ? ";
 			String sumSql = "select sum(o.total) total from order_tb o left join com_park_tb p on o.berthnumber=p.id" +
 					" where o.state=? and o.ishd=? and o.end_time between ? and ? ";
-			//ÏÖ½ğÖ§¸¶-×Ü½ğ¶î
-			String cashSql = "select sum(o.total) total from order_tb o left join com_park_tb p on o.berthnumber=p.id" +
-					" where pay_type=1 and o.state=? and o.ishd=? and o.end_time between ? and ? ";
-			//µç×Ó(ÊÖ»ú)Ö§¸¶-×Ü½ğ¶î
-			String elecSql = "select sum(o.total) total from order_tb o left join com_park_tb p on o.berthnumber=p.id" +
-					" where pay_type=2 and o.state=? and o.ishd=? and o.end_time between ? and ?";
+			//ç°é‡‘æ”¯ä»˜-æ€»é‡‘é¢
+			String cashSql = "select sum(o.cash_prepay) pretotal,sum(o.cash_pay) total from order_tb o left join com_park_tb p on o.berthnumber=p.id" +
+					" where o.state=? and o.ishd=? and o.end_time between ? and ? ";
+			//ç”µå­(æ‰‹æœº)æ”¯ä»˜-æ€»é‡‘é¢
+			String elecSql = "select sum(o.electronic_prepay) pretotal, sum(o.electronic_pay) total from order_tb o left join com_park_tb p on o.berthnumber=p.id" +
+					" where o.state=? and o.ishd=? and o.end_time between ? and ?";
 			params.add(1);
 			params.add(0);
 			params.add(b);
@@ -144,7 +134,7 @@ public class CityOrderManageAction extends Action {
 				cashSql +=" and o.comid in ("+preParams+") ";
 				elecSql +=" and o.comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -172,6 +162,8 @@ public class CityOrderManageAction extends Action {
 				}else{
 					orderfield = "o." + orderfield;
 				}
+				logger.error(sql);
+				logger.error(params);
 				sql += " order by " + orderfield + " " + orderby + " nulls last ";
 				QuerySum querySum = new QuerySum(pgOnlyReadService, sumSql, params);
 				QueryCount queryCount = new QueryCount(pgOnlyReadService, countSql, params);
@@ -191,20 +183,22 @@ public class CityOrderManageAction extends Action {
 				}
 				Map<String, Object> cashMap = futureCash.get();
 				if(cashMap != null && cashMap.get("total") != null){
-					cash_total = Double.valueOf(cashMap.get("total") + "");
+					cash_total = StringUtils.formatDouble(cashMap.get("total")) + StringUtils.formatDouble(cashMap.get("pretotal"));
 				}
 				Map<String, Object> elecMap = futureElec.get();
 				if(elecMap != null && elecMap.get("total") != null){
-					elec_total = Double.valueOf(elecMap.get("total") + "");
+					elec_total = StringUtils.formatDouble(elecMap.get("total")) + StringUtils.formatDouble(elecMap.get("pretotal"));
 				}
 				getCollector(list);
 				queryShopTicket(list);
 			}
-			String json = JsonUtil.anlysisMap2Json(list,pageNum,count, fieldsstr,"id", "¶©µ¥×Ü½ğ¶î£º"+total+"Ôª,ÏÖ½ğÖ§¸¶£º"+cash_total+"Ôª,ÊÖ»úÖ§¸¶£º"+elec_total+"Ôª");
+
+			String json = JsonUtil.anlysisMap2Json(list,pageNum,count, fieldsstr,"id", "è®¢å•æ€»é‡‘é¢ï¼š"+String.format("%.2f",total)+"å…ƒ,ç°é‡‘æ”¯ä»˜ï¼š"
+					+String.format("%.2f",cash_total)+"å…ƒ,æ‰‹æœºæ”¯ä»˜ï¼š"+String.format("%.2f",elec_total)+"å…ƒ");
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("getcollname")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			Map<String, Object> map = pgOnlyReadService.getMap("select nickname from user_info_tb where id=? ", 
+			Map<String, Object> map = pgOnlyReadService.getMap("select nickname from user_info_tb where id=? ",
 					new Object[]{id});
 			String nickname = "";
 			if(map != null && map.get("nickname") != null){
@@ -213,7 +207,7 @@ public class CityOrderManageAction extends Action {
 			AjaxUtil.ajaxOutput(response, nickname);
 		}else if(action.equals("getpassname")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			Map<String, Object> map = pgOnlyReadService.getMap("select passname from com_pass_tb where id=? ", 
+			Map<String, Object> map = pgOnlyReadService.getMap("select passname from com_pass_tb where id=? ",
 					new Object[]{id});
 			String passname = "";
 			if(map != null && map.get("passname") != null){
@@ -222,7 +216,7 @@ public class CityOrderManageAction extends Action {
 			AjaxUtil.ajaxOutput(response, passname);
 		}else if(action.equals("getfreereason")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			Map<String, Object> map = pgOnlyReadService.getMap("select name from free_reasons_tb where id=? ", 
+			Map<String, Object> map = pgOnlyReadService.getMap("select name from free_reasons_tb where id=? ",
 					new Object[]{id});
 			String name = "";
 			if(map != null && map.get("name") != null){
@@ -239,7 +233,7 @@ public class CityOrderManageAction extends Action {
 			params.add(1);
 			params.add(0);
 			String sql = "select *,(end_time-create_time) as duration from order_tb where state=? and ishd=? ";
-			
+
 			List<Object> parks = null;
 			if(cityid > 0){
 				parks = commonMethods.getparks(cityid);
@@ -256,7 +250,7 @@ public class CityOrderManageAction extends Action {
 				}
 				sql += " and comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					sql +=" and "+sqlInfo.getSql();
 					params.addAll(sqlInfo.getParams());
@@ -276,30 +270,30 @@ public class CityOrderManageAction extends Action {
 				getBerthName(list);
 				getBerthSegName(list);
 			}
-			
+
 			List<List<String>> bodyList = new ArrayList<List<String>>();
 			String [] heards = null;
 			if(list != null && !list.isEmpty()){
-				mongoDbUtils.saveLogs(request,0, 5, "µ¼³ö¶©µ¥ÊıÁ¿£º"+list.size()+"Ìõ");
+				mongoDbUtils.saveLogs(request,0, 5, "å¯¼å‡ºè®¢å•æ•°é‡ï¼š"+list.size()+"æ¡");
 				String [] f = new String[]{"id","company_name","berthsec_name","cid","car_number","c_type","create_time","end_time","duration","pay_type","total","prepaid","uid","collector","state","isclick","in_passname","out_passname"};
-				heards = new String[]{"¶©µ¥±àºÅ","³µ³¡Ãû³Æ","ËùÊô²´Î»¶Î","²´Î»±àºÅ","³µÅÆºÅ","½ø³¡·½Ê½","½ø³¡Ê±¼ä","³ö³¡Ê±¼ä","Í£³µÊ±³¤","Ö§¸¶·½Ê½","½ğ¶î","Ô¤¸¶½ğ¶î","ÊÕ¿îÈËÕËºÅ","ÊÕ¿îÈËÃû³Æ","¶©µ¥×´Ì¬","½áËã·½Ê½","½ø³¡Í¨µÀ","³ö³¡Í¨µÀ"};
+				heards = new String[]{"è®¢å•ç¼–å·","è½¦åœºåç§°","æ‰€å±æ³Šä½æ®µ","æ³Šä½ç¼–å·","è½¦ç‰Œå·","è¿›åœºæ–¹å¼","è¿›åœºæ—¶é—´","å‡ºåœºæ—¶é—´","åœè½¦æ—¶é•¿","æ”¯ä»˜æ–¹å¼","é‡‘é¢","é¢„ä»˜é‡‘é¢","æ”¶æ¬¾äººè´¦å·","æ”¶æ¬¾äººåç§°","è®¢å•çŠ¶æ€","ç»“ç®—æ–¹å¼","è¿›åœºé€šé“","å‡ºåœºé€šé“"};
 				for(Map<String, Object> map : list){
 					List<String> values = new ArrayList<String>();
 					for(String field : f){
-						Object v = map.get(field); 
+						Object v = map.get(field);
 						if(v == null)
 							v = "";
 						if("c_type".equals(field)){
-							switch(Integer.valueOf(v + "")){//0:NFC,1:IBeacon,2:ÕÕÅÆ   3Í¨µÀÕÕÅÆ 4Ö±¸¶ 5ÔÂ¿¨ÓÃ»§
-								case 0:values.add("NFCË¢¿¨");break;
+							switch(Integer.valueOf(v + "")){//0:NFC,1:IBeacon,2:ç…§ç‰Œ   3é€šé“ç…§ç‰Œ 4ç›´ä»˜ 5æœˆå¡ç”¨æˆ·
+								case 0:values.add("NFCåˆ·å¡");break;
 								case 1:values.add("Ibeacon");break;
-								case 2:values.add("ÊÖ»úÉ¨ÅÆ");break;
-								case 3:values.add("Í¨µÀÉ¨ÅÆ");break;
-								case 4:values.add("Ö±¸¶");break;
-								case 5:values.add("È«ÌìÔÂ¿¨");break;
-								case 6:values.add("³µÎ»¶şÎ¬Âë");break;
-								case 7:values.add("ÔÂ¿¨µÚ¶şÁ¾³µ");break;
-								case 8:values.add("·Ö¶ÎÔÂ¿¨");break;
+								case 2:values.add("æ‰‹æœºæ‰«ç‰Œ");break;
+								case 3:values.add("é€šé“æ‰«ç‰Œ");break;
+								case 4:values.add("ç›´ä»˜");break;
+								case 5:values.add("å…¨å¤©æœˆå¡");break;
+								case 6:values.add("è½¦ä½äºŒç»´ç ");break;
+								case 7:values.add("æœˆå¡ç¬¬äºŒè¾†è½¦");break;
+								case 8:values.add("åˆ†æ®µæœˆå¡");break;
 								default:values.add("");
 							}
 						}else if("duration".equals(field)){
@@ -312,27 +306,27 @@ public class CityOrderManageAction extends Action {
 							}
 						}else if("pay_type".equals(field)){
 							switch(Integer.valueOf(v + "")){
-								case 0:values.add("ÕË»§Ö§¸¶");break;
-								case 1:values.add("ÏÖ½ğÖ§¸¶");break;
-								case 2:values.add("ÊÖ»úÖ§¸¶");break;
-								case 3:values.add("°üÔÂ");break;
-								case 4:values.add("ÖĞÑëÔ¤Ö§¸¶ÏÖ½ğ");break;
-								case 5:values.add("ÖĞÑëÔ¤Ö§¸¶ÒøÁª¿¨");break;
-								case 6:values.add("ÖĞÑëÔ¤Ö§¸¶ÉÌ¼Ò¿¨");break;
-								case 8:values.add("Ãâ·Ñ");break;
+								case 0:values.add("è´¦æˆ·æ”¯ä»˜");break;
+								case 1:values.add("ç°é‡‘æ”¯ä»˜");break;
+								case 2:values.add("æ‰‹æœºæ”¯ä»˜");break;
+								case 3:values.add("åŒ…æœˆ");break;
+								case 4:values.add("ä¸­å¤®é¢„æ”¯ä»˜ç°é‡‘");break;
+								case 5:values.add("ä¸­å¤®é¢„æ”¯ä»˜é“¶è”å¡");break;
+								case 6:values.add("ä¸­å¤®é¢„æ”¯ä»˜å•†å®¶å¡");break;
+								case 8:values.add("å…è´¹");break;
 								default:values.add("");
 							}
 						}else if("state".equals(field)){
 							switch(Integer.valueOf(v + "")){
-								case 0:values.add("Î´Ö§¸¶");break;
-								case 1:values.add("ÒÑÖ§¸¶");break;
-								case 2:values.add("ÌÓµ¥");break;
+								case 0:values.add("æœªæ”¯ä»˜");break;
+								case 1:values.add("å·²æ”¯ä»˜");break;
+								case 2:values.add("é€ƒå•");break;
 								default:values.add("");
 							}
 						}else if("isclick".equals(field)){
 							switch(Integer.valueOf(v + "")){
-								case 0:values.add("ÏµÍ³½áËã");break;
-								case 1:values.add("ÊÖ¶¯½áËã");break;
+								case 0:values.add("ç³»ç»Ÿç»“ç®—");break;
+								case 1:values.add("æ‰‹åŠ¨ç»“ç®—");break;
 								default:values.add("");
 							}
 						}else if("in_passname".equals(field) || "out_passname".equals(field)){
@@ -361,8 +355,8 @@ public class CityOrderManageAction extends Action {
 					bodyList.add(values);
 				}
 			}
-			
-			String fname = "¶©µ¥Êı¾İ" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
+
+			String fname = "è®¢å•æ•°æ®" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
 			fname = StringUtils.encodingFileName(fname);
 			java.io.OutputStream os;
 			try {
@@ -371,7 +365,7 @@ public class CityOrderManageAction extends Action {
 						+ fname + ".xls");
 				response.setContentType("application/x-download");
 				os = response.getOutputStream();
-				ExportExcelUtil importExcel = new ExportExcelUtil("¶©µ¥Êı¾İ",
+				ExportExcelUtil importExcel = new ExportExcelUtil("è®¢å•æ•°æ®",
 						heards, bodyList);
 				importExcel.createExcelFile(os);
 			} catch (IOException e) {
@@ -384,8 +378,8 @@ public class CityOrderManageAction extends Action {
 			}else if(groupid>0&&groupid!=null) {
 				collList= getgroupcollectors(groupid);
 			}
-		    
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"}";
+
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"}";
 			if(collList != null && !collList.isEmpty()){
 				for(Map map : collList){
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("nickname")+"\"}";
@@ -394,10 +388,10 @@ public class CityOrderManageAction extends Action {
 			result += "]";
 			AjaxUtil.ajaxOutput(response, result);
 		}
-		
+
 		return null;
 	}
-	
+
 	private List<Map<String, Object>> getcollectors(Long cityid){
 		try {
 			if(cityid != null && cityid > 0){
@@ -410,7 +404,7 @@ public class CityOrderManageAction extends Action {
 						else
 							preParams += ",?";
 					}
-					
+
 					List<Map<String, Object>> collList = pgOnlyReadService.getAllMap("select id,nickname " +
 							" from user_info_tb where id in ("+preParams+")", idList);
 					return collList;
@@ -433,7 +427,7 @@ public class CityOrderManageAction extends Action {
 						else
 							preParams += ",?";
 					}
-					
+
 					List<Map<String, Object>> collList = pgOnlyReadService.getAllMap("select id,nickname " +
 							" from user_info_tb where id in ("+preParams+")", idList);
 					return collList;
@@ -444,7 +438,7 @@ public class CityOrderManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		String cid = RequestUtil.processParams(request, "cid");
 		SqlInfo sqlInfo1 = null;
@@ -453,14 +447,14 @@ public class CityOrderManageAction extends Action {
 		}
 		return sqlInfo1;
 	}
-	
+
 	private List<String> getOrderPic(Long orderId) {
 		BasicDBObject conditions = new BasicDBObject();
 		conditions.put("orderid", orderId);
 		List<String> fileNames = mongoDbUtils.getOrderPicUrls("carstop_pics", conditions);
 		return fileNames;
 	}
-	
+
 	private void getParkname(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> idList = new ArrayList<Object>();
@@ -474,7 +468,7 @@ public class CityOrderManageAction extends Action {
 						preParams += ",?";
 				}
 			}
-			
+
 			List<Map<String, Object>> rlist = pgOnlyReadService.getAllMap("select id,company_name from com_info_tb where id in ("
 					+ preParams + ") ", idList);
 			if(rlist != null && !rlist.isEmpty()){
@@ -490,7 +484,7 @@ public class CityOrderManageAction extends Action {
 			}
 		}
 	}
-	
+
 	private void getBerthSegName(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> idList = new ArrayList<Object>();
@@ -504,7 +498,7 @@ public class CityOrderManageAction extends Action {
 						preParams += ",?";
 				}
 			}
-			
+
 			List<Map<String, Object>> rlist = pgOnlyReadService.getAllMap("select id,berthsec_name from com_berthsecs_tb where id in ("
 					+ preParams + ") ", idList);
 			if(rlist != null && !rlist.isEmpty()){
@@ -522,7 +516,7 @@ public class CityOrderManageAction extends Action {
 			}
 		}
 	}
-	
+
 	private void getBerthName(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> idList = new ArrayList<Object>();
@@ -536,7 +530,7 @@ public class CityOrderManageAction extends Action {
 						preParams += ",?";
 				}
 			}
-			
+
 			List<Map<String, Object>> rlist = pgOnlyReadService.getAllMap("select id,cid from com_park_tb where id in ("
 					+ preParams + ") ", idList);
 			if(rlist != null && !rlist.isEmpty()){
@@ -554,26 +548,26 @@ public class CityOrderManageAction extends Action {
 			}
 		}
 	}
-	
+
 	private void getCollector(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> idList = new ArrayList<Object>();
 			String preParams  ="";
 			for(Map<String, Object> order : list){
 				if(!idList.contains(order.get("uid"))){
-					idList.add(order.get("uid"));
+					idList.add(order.get("out_uid"));
 					if(preParams.equals(""))
 						preParams ="?";
 					else
 						preParams += ",?";
 				}
 			}
-			
+
 			List<Map<String, Object>> rlist = pgOnlyReadService.getAllMap("select id,nickname from user_info_tb where id in ("
 					+ preParams + ") ", idList);
 			if(rlist != null && !rlist.isEmpty()){
 				for(Map<String, Object> map : list){
-					Long uid = (Long)map.get("uid");
+					Long uid = (Long)map.get("out_uid");
 					for(Map<String, Object> map2 : rlist){
 						Long id = (Long)map2.get("id");
 						if(uid.intValue() == id.intValue()){
@@ -584,7 +578,7 @@ public class CityOrderManageAction extends Action {
 			}
 		}
 	}
-	
+
 	private void getPassName(List<Map<String, Object>> list) {
 		if(list != null && !list.isEmpty()){
 			List<Object> idList = new ArrayList<Object>();
@@ -597,7 +591,7 @@ public class CityOrderManageAction extends Action {
 					else
 						preParams += ",?";
 				}
-				
+
 				if(!idList.contains(order.get("out_passid"))){
 					idList.add(order.get("out_passid"));
 					if(preParams.equals(""))
@@ -606,9 +600,9 @@ public class CityOrderManageAction extends Action {
 						preParams += ",?";
 				}
 			}
-			
+
 			List<Map<String, Object>> rList = pgOnlyReadService.getAllMap("select passname,id from com_pass_tb where id in ("
-						+ preParams + ")", idList);
+					+ preParams + ")", idList);
 			if(rList != null && !rList.isEmpty()){
 				for(Map<String, Object> map : list){
 					Long in_passid = (Long)map.get("in_passid");
@@ -631,7 +625,7 @@ public class CityOrderManageAction extends Action {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void queryShopTicket(List<Map<String, Object>> orderList){
 		List<Object> oidList = new ArrayList<Object>();
@@ -644,9 +638,9 @@ public class CityOrderManageAction extends Action {
 				else
 					preParams += ",?";
 			}
-			
+
 			List<Map<String, Object>> list = pgOnlyReadService.getAllMap("select orderid,sum(umoney) shopmon from ticket_tb where orderid in ("
-							+ preParams + ") group by orderid ", oidList);
+					+ preParams + ") group by orderid ", oidList);
 			if(list != null && !list.isEmpty()){
 				for(Map<String, Object> map : orderList){
 					Long id = (Long)map.get("id");

@@ -1,18 +1,6 @@
 package com.zld.struts.admin;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-
+import com.zld.CustomDefind;
 import com.zld.impl.MongoDbUtils;
 import com.zld.service.DataBaseService;
 import com.zld.service.PgOnlyReadService;
@@ -20,16 +8,27 @@ import com.zld.utils.Check;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.StringUtils;
 import com.zld.utils.ZLDType;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
 /**
- * µÇÂ¼£¬×Ü¹ÜÀíÔ±£¬Í£³µ³¡ºóÌ¨¹ÜÀíÔ±£¬²ÆÎñµÈ½ÇÉ«¿ÉÒÔµÇÂ¼ 
+ * ç™»å½•ï¼Œæ€»ç®¡ç†å‘˜ï¼Œåœè½¦åœºåå°ç®¡ç†å‘˜ï¼Œè´¢åŠ¡ç­‰è§’è‰²å¯ä»¥ç™»å½•
  * @author Administrator
  *
  */
 public class LoginAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
-	
+
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
@@ -39,15 +38,15 @@ public class LoginAction extends Action{
 	@SuppressWarnings("unchecked")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action= RequestUtil.getString(request, "action");
-		if(action.equals("out")){//ÍË³ö
+		if(action.equals("out")){//é€€å‡º
 			String ip = StringUtils.getIpAddr(request);
 			Long uin = (Long)request.getSession().getAttribute("loginuin");
 			Long comid = (Long)request.getSession().getAttribute("comid");
 			if(uin!=null)
-				mongoDbUtils.saveLogs(request,0, 0, uin+"ÍË³öµÇÂ¼");
+				mongoDbUtils.saveLogs(request,0, 0, uin+"é€€å‡ºç™»å½•");
 			request.getSession().invalidate();
 			return mapping.findForward("fail");
 		}
@@ -62,58 +61,62 @@ public class LoginAction extends Action{
 			values=new Object[]{0,username,pass};
 			sql +=" strid=? and password=? ";
 		}
+		request.getSession().setAttribute("unionId", CustomDefind.getValue("UNIONID"));
+		request.getSession().setAttribute("custumgroup", CustomDefind.getValue("CUSTUMGROUP"));
 		String target = "success";
+		logger.error(sql+">"+StringUtils.objArry2String(values));
 		Map<String, Object> user = daService.getPojo(sql, values);
+		logger.error(user);
 		if(user==null){
-			request.setAttribute("errormessage", "ÕÊºÅ»òÃÜÂë²»ÕıÈ·!");
+			request.setAttribute("errormessage", "å¸å·æˆ–å¯†ç ä¸æ­£ç¡®!");
 			request.setAttribute("username", username);
 			return mapping.findForward("fail");
 		}
-		String logourl = "images/logo_top.png";
+		String logourl = "images/logo_top.png?a=111";
 		Long role = -1L;
 		if(user.get("auth_flag") != null){
 			role = Long.valueOf(user.get("auth_flag").toString());
 		}
 		Long roleId = (Long)user.get("role_id");
-		Map<String, Object> roleMap = daService.getMap("select * from user_role_tb where id =?", 
+		Map<String, Object> roleMap = daService.getMap("select * from user_role_tb where id =?",
 				new Object[]{roleId});
-		request.getSession().setAttribute("isadmin", 0);//ÊÇ·ñÊÇ¹ÜÀíÔ± 0·ñ1ÊÇ
-		request.getSession().setAttribute("loginroleid", roleId);//½ÇÉ« -1Ã»ÓĞ
-		request.getSession().setAttribute("adminid", -1L);//µ±Ç°½ÇÉ«ËùÊôµÄ¹ÜÀíÔ±ÕË»§
-		request.getSession().setAttribute("supperadmin",0);//ÊÇ·ñ×Ü¹ÜÀíÔ± 0·ñ1ÊÇ
+		request.getSession().setAttribute("isadmin", 0);//æ˜¯å¦æ˜¯ç®¡ç†å‘˜ 0å¦1æ˜¯
+		request.getSession().setAttribute("loginroleid", roleId);//è§’è‰² -1æ²¡æœ‰
+		request.getSession().setAttribute("adminid", -1L);//å½“å‰è§’è‰²æ‰€å±çš„ç®¡ç†å‘˜è´¦æˆ·
+		request.getSession().setAttribute("supperadmin",0);//æ˜¯å¦æ€»ç®¡ç†å‘˜ 0å¦1æ˜¯
 		request.getSession().setAttribute("loginuin",user.get("id"));
 		request.getSession().setAttribute("comid",user.get("comid"));
 		if(roleMap!=null){
 			if(roleId == 0 || roleId == 8){
-				request.getSession().setAttribute("supperadmin",1);//ÊÇ·ñ×Ü¹ÜÀíÔ± 0·ñ1ÊÇ
+				request.getSession().setAttribute("supperadmin",1);//æ˜¯å¦æ€»ç®¡ç†å‘˜ 0å¦1æ˜¯
 			}
 		}
 		if(roleId!=null && roleId > -1){
-			Map<String, Object> orgMap = pgOnlyReadService.getMap("select name from zld_orgtype_tb where id=? ", 
+			Map<String, Object> orgMap = pgOnlyReadService.getMap("select name from zld_orgtype_tb where id=? ",
 					new Object[]{roleMap.get("oid")});
 			if(orgMap == null){
-				request.setAttribute("errormessage", "×éÖ¯ÀàĞÍ²»´æÔÚ£¡");
+				request.setAttribute("errormessage", "ç»„ç»‡ç±»å‹ä¸å­˜åœ¨ï¼");
 				target="fail";
 			}else{
-				request.getSession().setAttribute("oid", roleMap.get("oid"));//¸ÃµÇÂ¼½ÇÉ«ËùÊô×éÖ¯ÀàĞÍ
+				request.getSession().setAttribute("oid", roleMap.get("oid"));//è¯¥ç™»å½•è§’è‰²æ‰€å±ç»„ç»‡ç±»å‹
 				target ="parkmanage";
 				String orgname = (String)orgMap.get("name");
-				if(orgname.contains("³µ³¡")){
-					request.getSession().setAttribute("isadmin", 1);//ÊÇ·ñÊÇ¹ÜÀíÔ± 0·ñ1ÊÇ
-					request.setAttribute("cloudname", "ÖÇ»ÛÍ£³µÔÆ-³µ³¡ÔÆ");
+				if(orgname.contains("è½¦åœº")){
+					request.getSession().setAttribute("isadmin", 1);//æ˜¯å¦æ˜¯ç®¡ç†å‘˜ 0å¦1æ˜¯
+					request.setAttribute("cloudname", " æ™ºæ…§åœè½¦äº‘-è½¦åœºäº‘ ");
 					Long count = pgOnlyReadService.getLong("select count(id) from com_info_tb where state=? and id=? ",
 							new Object[] { 0, user.get("comid") });
-					
+
 					if(count == 0){
-						request.setAttribute("errormessage", "³µ³¡²»´æÔÚ»òÕß³µ³¡Î´Í¨¹ıÉóºË!");
+						request.setAttribute("errormessage", "è½¦åœºä¸å­˜åœ¨æˆ–è€…è½¦åœºæœªé€šè¿‡å®¡æ ¸!");
 						target="fail";
 					}else{
-						Map<String, Object> comMap = daService.getMap("select chanid from com_info_tb where id=? ", 
+						Map<String, Object> comMap = daService.getMap("select chanid from com_info_tb where id=? ",
 								new Object[]{user.get("comid")});
 						if(comMap != null && comMap.get("chanid") != null){
 							Long chanid = (Long)comMap.get("chanid");
 							if(chanid > 0){
-								Map<String, Object> map = daService.getMap("select * from logo_tb where type=? and orgid=? ", 
+								Map<String, Object> map = daService.getMap("select * from logo_tb where type=? and orgid=? ",
 										new Object[]{0, chanid});
 								if(map != null&& map.get("url_fir") != null){
 									logourl = "cloudlogo.do?action=downloadlogo&type=0&orgid="+chanid+"&number=0&r="+Math.random();
@@ -121,50 +124,51 @@ public class LoginAction extends Action{
 							}
 						}
 					}
-				}else if(orgname.contains("ÇşµÀ")){
-					request.getSession().setAttribute("isadmin", 1);//ÊÇ·ñÊÇ¹ÜÀíÔ± 0·ñ1ÊÇ
-					request.setAttribute("cloudname", "ÖÇ»ÛÍ£³µÔÆ-ÇşµÀÔÆ");
+				}else if(orgname.contains("æ¸ é“")){
+					request.getSession().setAttribute("isadmin", 1);//æ˜¯å¦æ˜¯ç®¡ç†å‘˜ 0å¦1æ˜¯
+					request.setAttribute("cloudname", "æ™ºæ…§åœè½¦äº‘-æ¸ é“äº‘ ");
 					request.getSession().setAttribute("comid",0L);
 					request.getSession().setAttribute("chanid",user.get("chanid"));
-					Long chancount = pgOnlyReadService.getLong("select count(id) from org_channel_tb where id=? and state=? ", 
+					Long chancount = pgOnlyReadService.getLong("select count(id) from org_channel_tb where id=? and state=? ",
 							new Object[]{user.get("chanid"), 0});
 					if(chancount == 0){
-						request.setAttribute("errormessage", "ÇşµÀ²»´æÔÚ!");
+						request.setAttribute("errormessage", "æ¸ é“ä¸å­˜åœ¨!");
 						target="fail";
 					}else{
-						Map<String, Object> map = daService.getMap("select * from logo_tb where type=? and orgid=? ", 
+						Map<String, Object> map = daService.getMap("select * from logo_tb where type=? and orgid=? ",
 								new Object[]{0, user.get("chanid")});
 						if(map != null&& map.get("url_fir") != null){
 							logourl = "cloudlogo.do?action=downloadlogo&type=0&orgid="+user.get("chanid")+"&number=0&r="+Math.random();
 						}
 					}
-				}else if(orgname.contains("¼¯ÍÅ")){
-					request.getSession().setAttribute("isadmin", 1);//ÊÇ·ñÊÇ¹ÜÀíÔ± 0·ñ1ÊÇ
-					request.setAttribute("cloudname", "ÖÇ»ÛÍ£³µÔÆ-¼¯ÍÅÔÆ");
+				}else if(orgname.contains("é›†å›¢")){
+					request.getSession().setAttribute("isadmin", 1);//æ˜¯å¦æ˜¯ç®¡ç†å‘˜ 0å¦1æ˜¯
+					request.setAttribute("cloudname", "æ™ºæ…§åŸå¸‚äº‘ ");
 					request.getSession().setAttribute("comid",0L);
 					request.getSession().setAttribute("groupid",user.get("groupid"));
-					Long groupcount = pgOnlyReadService.getLong("select count(id) from org_group_tb where id=? and state=? ", 
+					Long groupcount = pgOnlyReadService.getLong("select count(id) from org_group_tb where id=? and state=? ",
 							new Object[]{user.get("groupid"), 0});
+					logger.error(">>>>>>>>>>>>>"+groupcount);
 					if(groupcount == 0){
-						request.setAttribute("errormessage", "¼¯ÍÅ²»´æÔÚ!");
+						request.setAttribute("errormessage", "é›†å›¢ä¸å­˜åœ¨!");
 						target="fail";
 					}
-				}else if(orgname.contains("³ÇÊĞ")){
-					request.getSession().setAttribute("isadmin", 1);//ÊÇ·ñÊÇ¹ÜÀíÔ± 0·ñ1ÊÇ
-					request.setAttribute("cloudname", "ÖÇ»ÛÍ£³µÔÆ-³ÇÊĞÔÆ");
+				}else if(orgname.contains("åŸå¸‚")){
+					request.getSession().setAttribute("isadmin", 1);//æ˜¯å¦æ˜¯ç®¡ç†å‘˜ 0å¦1æ˜¯
+					request.setAttribute("cloudname", "æ™ºæ…§åœè½¦äº‘-åŸå¸‚äº‘ ");
 					request.getSession().setAttribute("comid",0L);
 					request.getSession().setAttribute("cityid",user.get("cityid"));
-					Long groupcount = pgOnlyReadService.getLong("select count(id) from org_city_merchants where id=? and state=? ", 
+					Long groupcount = pgOnlyReadService.getLong("select count(id) from org_city_merchants where id=? and state=? ",
 							new Object[]{user.get("cityid"), 0});
 					if(groupcount == 0){
-						request.setAttribute("errormessage", "³ÇÊĞ²»´æÔÚ!");
+						request.setAttribute("errormessage", "åŸå¸‚ä¸å­˜åœ¨!");
 						target="fail";
 					}
 				}
 			}
 			List<Map<String, Object>> authList = null;
-			if(roleId == 0){//×Ü¹ÜÀíÔ±ÓµÓĞËùÓĞÈ¨ÏŞ
-				authList = daService.getAll("select actions,id auth_id,nname,pid,url,sort,sub_auth childauths from auth_tb where oid=? and state=? ", 
+			if(roleId == 0){//æ€»ç®¡ç†å‘˜æ‹¥æœ‰æ‰€æœ‰æƒé™
+				authList = daService.getAll("select actions,id auth_id,nname,pid,url,sort,sub_auth childauths from auth_tb where oid=? and state=? ",
 						new Object[]{roleMap.get("oid"), 0});
 				if(authList != null){
 					for(Map<String, Object> map : authList){
@@ -186,47 +190,49 @@ public class LoginAction extends Action{
 					}
 				}
 			}else{
-				//¶ÁÈ¡È¨ÏŞ
+				//è¯»å–æƒé™
 				authList = daService.getAll("select a.actions,auth_id,ar.sub_auth,nname,a.pid,a.url,a.sort " +
 						"from auth_role_tb ar left join" +
 						" auth_tb a on ar.auth_id=a.id " +
 						" where role_id=? order by  a.sort " , new Object[]{roleId});
 			}
-			
+
 			request.getSession().setAttribute("ishdorder", user.get("order_hid"));
 			request.getSession().setAttribute("authlist", authList);
 			request.getSession().setAttribute("menuauthlist", StringUtils.createJson(authList));
-			//¸Ã×éÖ¯ÏÂµÄËùÓĞ¹¦ÄÜÁĞ±í
-			List<Map<String, Object>> allAuthList = daService.getAll("select * from auth_tb where oid=? and state=? ", 
+			//è¯¥ç»„ç»‡ä¸‹çš„æ‰€æœ‰åŠŸèƒ½åˆ—è¡¨
+			List<Map<String, Object>> allAuthList = daService.getAll("select * from auth_tb where oid=? and state=? ",
 					new Object[]{roleMap.get("oid"), 0});
 			request.getSession().setAttribute("allauth", allAuthList);
 		}else {
-			//role: 0×Ü¹ÜÀíÔ±£¬1Í£³µ³¡ºóÌ¨¹ÜÀíÔ± £¬2³µ³¡ÊÕ·ÑÔ±£¬3²ÆÎñ£¬4³µÖ÷  5ÊĞ³¡×¨Ô± 6Â¼ÈëÔ±
-			if(role.intValue()==ZLDType.ZLD_COLLECTOR_ROLE||role.intValue()==ZLDType.ZLD_CAROWER_ROLE||role.intValue() == ZLDType.ZLD_KEYMEN){//³µ³¡ÊÕ·ÑÔ±¼°³µÖ÷²»ÄÜµÇÂ¼ºóÌ¨
-				request.setAttribute("errormessage", "Ã»ÓĞ²éÑ¯ºóÌ¨Êı¾İÈ¨ÏŞ£¬ÇëÁªÏµ¹ÜÀíÔ±!");
+			//role: 0æ€»ç®¡ç†å‘˜ï¼Œ1åœè½¦åœºåå°ç®¡ç†å‘˜ ï¼Œ2è½¦åœºæ”¶è´¹å‘˜ï¼Œ3è´¢åŠ¡ï¼Œ4è½¦ä¸»  5å¸‚åœºä¸“å‘˜ 6å½•å…¥å‘˜
+			if(role.intValue()==ZLDType.ZLD_COLLECTOR_ROLE||role.intValue()==ZLDType.ZLD_CAROWER_ROLE||role.intValue() == ZLDType.ZLD_KEYMEN){//è½¦åœºæ”¶è´¹å‘˜åŠè½¦ä¸»ä¸èƒ½ç™»å½•åå°
+				request.setAttribute("errormessage", "æ²¡æœ‰æŸ¥è¯¢åå°æ•°æ®æƒé™ï¼Œè¯·è”ç³»ç®¡ç†å‘˜!");
 				target="fail";
 			}else if(role.intValue()==ZLDType.ZLD_PARKADMIN_ROLE){
 				target ="parkmanage";
-				request.setAttribute("cloudname", "ÖÇ»ÛÍ£³µÔÆ-³µ³¡ÔÆ");
+				request.setAttribute("cloudname", "æ™ºæ…§åœè½¦äº‘-è½¦åœºäº‘ ");
 				Long count = pgOnlyReadService.getLong(
 						"select count(id) from com_info_tb where state=? and id=? ",
 						new Object[] { 0, user.get("comid") });
 				if(count == 0){
-					request.setAttribute("errormessage", "³µ³¡²»´æÔÚ»òÕß³µ³¡Î´Í¨¹ıÉóºË!");
+					request.setAttribute("errormessage", "è½¦åœºä¸å­˜åœ¨æˆ–è€…è½¦åœºæœªé€šè¿‡å®¡æ ¸!");
 					target="fail";
 				}
 			}else if(role.intValue()==ZLDType.ZLD_ACCOUNTANT_ROLE){
 				target ="finance";
 			}else if(role.intValue()==ZLDType.ZLD_CARDOPERATOR){
 				target ="cardoperator";
-			}else if(role.intValue()==ZLDType.ZLD_MARKETER){//ÊĞ³¡×¨Ô± µÇÂ¼ºóÌ¨
+			}else if(role.intValue()==ZLDType.ZLD_MARKETER){//å¸‚åœºä¸“å‘˜ ç™»å½•åå°
 				request.getSession().setAttribute("marketerid",user.get("id"));
 				target ="marketer";
 			}else if(role.intValue()==ZLDType.ZLD_RECORDER||role.intValue()==ZLDType.ZLD_KEFU||role.intValue()==ZLDType.ZLD_QUERYKEFU){
 				target = "recorder";
-			}
-			if(role==0){//×Ü¹ÜÀíÔ±
+			}else 	if(role==0){//æ€»ç®¡ç†å‘˜
 				request.getSession().setAttribute("supperadmin",1);
+			}else{
+				request.setAttribute("errormessage", "æ²¡æœ‰ç™»å½•æƒé™!");
+				target="fail";
 			}
 		}
 		request.getSession().setAttribute("role",role );
@@ -241,7 +247,7 @@ public class LoginAction extends Action{
 		}
 		request.getSession().setAttribute("nickname", nickname);
 
-		String logContent = username+"µÇÂ¼£¬·µ»Ø:"+target;
+		String logContent = username+"ç™»å½•ï¼Œè¿”å›:"+target;
 		String ip = StringUtils.getIpAddr(request);
 		mongoDbUtils.saveLogs(request, 0, 0,logContent);
 //		List<Object[]> valuesList = ReadFile.praseFile();

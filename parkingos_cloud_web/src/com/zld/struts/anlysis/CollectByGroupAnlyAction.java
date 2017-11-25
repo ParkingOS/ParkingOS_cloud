@@ -1,19 +1,5 @@
 package com.zld.struts.anlysis;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.zld.AjaxUtil;
 import com.zld.facade.StatsAccountFacade;
 import com.zld.impl.CommonMethods;
@@ -21,11 +7,19 @@ import com.zld.pojo.StatsAccountClass;
 import com.zld.pojo.StatsFacadeResp;
 import com.zld.pojo.StatsReq;
 import com.zld.service.PgOnlyReadService;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
-import com.zld.utils.TimeTools;
+import com.zld.utils.*;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class CollectByGroupAnlyAction extends Action {
 	@Autowired
@@ -34,14 +28,14 @@ public class CollectByGroupAnlyAction extends Action {
 	private CommonMethods commonMethods;
 	@Autowired
 	private StatsAccountFacade accountFacade;
-	
+
 	private Logger logger = Logger.getLogger(CollectByGroupAnlyAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		request.setAttribute("authid", request.getParameter("authid"));
 		if(uin == null){
@@ -76,10 +70,11 @@ public class CollectByGroupAnlyAction extends Action {
 				sql += " and "+sqlInfo.getSql();
 				params.addAll(sqlInfo.getParams());
 			}
-			
+
 			Long count = pgOnlyReadService.getCount(countSql, params);
 			if(count > 0){
 				list = pgOnlyReadService.getAll(sql, params, pageNum, pageSize);
+				logger.error(list);
 				setList(list, b, e);
 			}
 			String json = JsonUtil.Map2Json(list, pageNum, count, fieldsstr, "id");
@@ -87,7 +82,7 @@ public class CollectByGroupAnlyAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void setList(List<Map<String, Object>> userList, Long startTime, Long endTime){
 		try {
 			if(userList != null && !userList.isEmpty()){
@@ -100,6 +95,7 @@ public class CollectByGroupAnlyAction extends Action {
 				req.setStartTime(startTime);
 				req.setEndTime(endTime);
 				StatsFacadeResp resp = accountFacade.statsGroupAccount(req);
+				logger.error(resp);
 				if(resp.getResult() == 1){
 					List<StatsAccountClass> classes = resp.getClasses();
 					for(StatsAccountClass accountClass : classes){
@@ -109,22 +105,22 @@ public class CollectByGroupAnlyAction extends Action {
 						double cashRefundFee = accountClass.getCashRefundFee();
 						double cashAddFee = accountClass.getCashAddFee();
 						double cashPursueFee = accountClass.getCashPursueFee();
-						
+
 						double ePayParkingFee = accountClass.getePayParkingFee();
 						double ePayPrepayFee = accountClass.getePayPrepayFee();
 						double ePayRefundFee = accountClass.getePayRefundFee();
 						double ePayAddFee = accountClass.getePayAddFee();
 						double ePayPursueFee = accountClass.getePayPursueFee();
-						
+
 						double cardParkingFee = accountClass.getCardParkingFee();
 						double cardPrepayFee = accountClass.getCardPrepayFee();
 						double cardRefundFee = accountClass.getCardRefundFee();
 						double cardAddFee = accountClass.getCardAddFee();
 						double cardPursueFee = accountClass.getCardPursueFee();
-						
+
 						double escapeFee = accountClass.getEscapeFee();
 						double sensorOrderFee = accountClass.getSensorOrderFee();
-						
+
 						double cashCustomFee = StringUtils.formatDouble(cashParkingFee + cashPrepayFee + cashAddFee - cashRefundFee);
 						double epayCustomFee = StringUtils.formatDouble(ePayParkingFee + ePayPrepayFee + ePayAddFee - ePayRefundFee);
 						double cardCustomFee = StringUtils.formatDouble(cardParkingFee + cardPrepayFee + cardAddFee - cardRefundFee);
@@ -134,8 +130,8 @@ public class CollectByGroupAnlyAction extends Action {
 						double totalFee = StringUtils.formatDouble(cashTotalFee + ePayTotalFee + cardTotalFee);
 						double allTotalFee = StringUtils.formatDouble(totalFee + escapeFee);
 						double totalPursueFee = StringUtils.formatDouble(cashPursueFee + ePayPursueFee + cardPursueFee);
-						
-						
+
+
 						for(Map<String, Object> infoMap : userList){
 							Long userId = (Long)infoMap.get("id");
 							if(id == userId.intValue()){

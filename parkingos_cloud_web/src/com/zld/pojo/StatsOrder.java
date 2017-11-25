@@ -3,12 +3,12 @@ package com.zld.pojo;
 import java.io.Serializable;
 
 public class StatsOrder implements Serializable {
-	//Í³¼Æ·ÖÀà
-	private long id = -1;//Í³¼Æ±àºÅ
-	//¶©µ¥Í³¼Æ
-	private double escapeFee = 0;//ÌÓµ¥Î´×·½É¶©µ¥½ğ¶î
-	private double sensorFee = 0;//³µ¼ìÆ÷¶©µ¥½ğ¶î
-	
+	//ç»Ÿè®¡åˆ†ç±»
+	private long id = -1;//ç»Ÿè®¡ç¼–å·
+	//è®¢å•ç»Ÿè®¡
+	private double escapeFee = 0;//é€ƒå•æœªè¿½ç¼´è®¢å•é‡‘é¢
+	private double sensorFee = 0;//è½¦æ£€å™¨è®¢å•é‡‘é¢
+
 	public long getId() {
 		return id;
 	}

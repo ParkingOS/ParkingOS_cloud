@@ -34,13 +34,13 @@ public class CityPeakAlertManageAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null || cityid == null){
@@ -114,7 +114,7 @@ public class CityPeakAlertManageAction extends Action {
 			}
 			List<Map<String, Object>> list  = pgOnlyReadService.getAll(sql +" order by create_time desc ",params, 0, 0);
 			if(list!=null&&!list.isEmpty()){
-				String heards[] = new String[]{"±àºÅ","±êÌâ","×´Ì¬","ÄÚÈİ","´¦ÀíÊ±¼ä","´¦ÀíÈË"};
+				String heards[] = new String[]{"ç¼–å·","æ ‡é¢˜","çŠ¶æ€","å†…å®¹","å¤„ç†æ—¶é—´","å¤„ç†äºº"};
 				List<List<String>> bodyList = new ArrayList<List<String>>();
 				for(Map<String, Object> map : list){
 					List<String> valueList = new ArrayList<String>();
@@ -123,14 +123,14 @@ public class CityPeakAlertManageAction extends Action {
 					Integer state = (Integer)map.get("state");
 					if(state!=null){
 						switch (state) {
-						case 0:
-							valueList.add("ĞÂ½¨");
-							break;
-						case 1:
-							valueList.add("ÒÑ´¦Àí");
-							break;
-						default:
-							break;
+							case 0:
+								valueList.add("æ–°å»º");
+								break;
+							case 1:
+								valueList.add("å·²å¤„ç†");
+								break;
+							default:
+								break;
 						}
 					}else {
 						valueList.add("");
@@ -145,7 +145,7 @@ public class CityPeakAlertManageAction extends Action {
 					valueList.add(map.get("handle_user")+"");
 					bodyList.add(valueList);
 				}
-				String fname = "¸ß·å¸æ¾¯ĞÅÏ¢" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
+				String fname = "é«˜å³°å‘Šè­¦ä¿¡æ¯" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
 				fname = StringUtils.encodingFileName(fname);
 				java.io.OutputStream os;
 				try {
@@ -153,7 +153,7 @@ public class CityPeakAlertManageAction extends Action {
 					response.reset();
 					response.setHeader("Content-disposition", "attachment; filename="
 							+ fname + ".xls");
-					ExportExcelUtil importExcel = new ExportExcelUtil("¸æ¾¯ĞÅÏ¢",
+					ExportExcelUtil importExcel = new ExportExcelUtil("å‘Šè­¦ä¿¡æ¯",
 							heards, bodyList);
 					importExcel.createExcelFile(os);
 				} catch (IOException e) {
@@ -165,7 +165,7 @@ public class CityPeakAlertManageAction extends Action {
 			String title = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "title"));
 			if(cityid > 0){
 				int r = daService.update("insert into city_peakalert_tb (title,state,create_time,content,cityid)" +
-						"values(?,?,?,?,?)", 
+								"values(?,?,?,?,?)",
 						new Object[]{title,0,System.currentTimeMillis()/1000,content,cityid});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -174,16 +174,16 @@ public class CityPeakAlertManageAction extends Action {
 		}else if(action.equals("send")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			Long deleteUid = (Long)request.getSession().getAttribute("loginuin");
-			int r = daService.update("update city_peakalert_tb set state=?,handle_user=?,handle_time=? where id=? ", 
+			int r = daService.update("update city_peakalert_tb set state=?,handle_user=?,handle_time=? where id=? ",
 					new Object[]{2,deleteUid,System.currentTimeMillis()/1000, id});
 			/**
-			 * ´¦Àí·¢²¼Âß¼­..........
+			 * å¤„ç†å‘å¸ƒé€»è¾‘..........
 			 */
 			AjaxUtil.ajaxOutput(response, r + "");
 		}
 		return null;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			for(Map<String, Object> map : list){

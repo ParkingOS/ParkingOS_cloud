@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class AccountResp extends BaseResp implements Serializable {
 	private List<Map<String, Object>> list;
-	private Long count = 0L;//ÊıÁ¿
+	private Long count = 0L;//æ•°é‡
 	public Long getCount() {
 		return count;
 	}

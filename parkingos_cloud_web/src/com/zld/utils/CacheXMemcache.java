@@ -9,21 +9,21 @@ import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.exception.MemcachedException;
 
 /**
- * XMemcached»º´æÀà
+ * XMemcachedç¼“å­˜ç±»
  */
 public class CacheXMemcache<T> {
-	
+
 	//private final Logger logger = Logger.getLogger(CacheXMemcache.class);
-	
+
 	private MemcachedClient memcachedClient;
 
 	/**
-	 * ¹¹Ôìº¯Êı
+	 * æ„é€ å‡½æ•°
 	 */
 	public CacheXMemcache() {
-		
+
 	}
-	
+
 	public <T> T get(String key, Class<T> type) {
 		try {
 			if(memcachedClient.get(key) != null){
@@ -38,7 +38,7 @@ public class CacheXMemcache<T> {
 		}
 		return null;
 	}
-	
+
 	public boolean delete(String key) {
 		try {
 			if(key == null || "".equals(key)){
@@ -56,17 +56,17 @@ public class CacheXMemcache<T> {
 	}
 
 	/**
-	 * set×¢Èë
+	 * setæ³¨å…¥
 	 */
 	public void setMemcachedClient(MemcachedClient memcachedClient) {
 		memcachedClient.setConnectTimeout(1000);
 		this.memcachedClient = memcachedClient;
 	}
-	
+
 	/**
-	 * Ö´ĞĞÒ»¸öÈÎÎñ£¬Èç¹ûÔÚ»º´æÖĞÓĞ¶ÔÓ¦µÄÖµ£¬ÄÇÃ´Ö±½Ó·µ»Ø£¬·ñÔòÖ´ĞĞÈÎÎñ²¢°ÑÊä³ö±£´æÈë»º´æ
-	 * @param task ÈÎÎñ
-	 * @return ÈÎÎñ·µ»ØÖµ
+	 * æ‰§è¡Œä¸€ä¸ªä»»åŠ¡ï¼Œå¦‚æœåœ¨ç¼“å­˜ä¸­æœ‰å¯¹åº”çš„å€¼ï¼Œé‚£ä¹ˆç›´æ¥è¿”å›ï¼Œå¦åˆ™æ‰§è¡Œä»»åŠ¡å¹¶æŠŠè¾“å‡ºä¿å­˜å…¥ç¼“å­˜
+	 * @param task ä»»åŠ¡
+	 * @return ä»»åŠ¡è¿”å›å€¼
 	 */
 	public T doCachedTask(CachedTask<T> task) {
 		String key = task.getKey();
@@ -74,10 +74,10 @@ public class CacheXMemcache<T> {
 		T value = null;
 		try {
 			value = getCached(key);
-			if (value == null) {//µÚÒ»´Î´´½¨
+			if (value == null) {//ç¬¬ä¸€æ¬¡åˆ›å»º
 				value = task.run();
 				setCached(key,value);
-			} else if (flag != null) {//¸üĞÂ
+			} else if (flag != null) {//æ›´æ–°
 				value = task.run();
 				putCachedXM(key, value);
 			}
@@ -89,7 +89,7 @@ public class CacheXMemcache<T> {
 	}
 
 	/**
-	 * CAS²Ù×÷ ÊµÏÖÔ­×Ó¸üĞÂ
+	 * CASæ“ä½œ å®ç°åŸå­æ›´æ–°
 	 */
 	public void putCachedXM(String key, final Object object) throws TimeoutException,
 			InterruptedException, MemcachedException {
@@ -105,10 +105,10 @@ public class CacheXMemcache<T> {
 	}
 
 	/**
-	 * µÃµ½»º´æ
-	 * @throws MemcachedException 
-	 * @throws InterruptedException 
-	 * @throws TimeoutException 
+	 * å¾—åˆ°ç¼“å­˜
+	 * @throws MemcachedException
+	 * @throws InterruptedException
+	 * @throws TimeoutException
 	 */
 	public T getCached(String key){
 		T t = null;
@@ -123,17 +123,17 @@ public class CacheXMemcache<T> {
 		}
 		return t;
 	}
-	
+
 	/**
-	 * ¸üĞÂ»º´æ
-	 * @throws MemcachedException 
-	 * @throws InterruptedException 
-	 * @throws TimeoutException 
+	 * æ›´æ–°ç¼“å­˜
+	 * @throws MemcachedException
+	 * @throws InterruptedException
+	 * @throws TimeoutException
 	 */
 	public boolean setCached(String key,Object object){
 		boolean isSuccuess = false;
 		try {
-			 isSuccuess = memcachedClient.set(key,0,object);
+			isSuccuess = memcachedClient.set(key,0,object);
 		} catch (TimeoutException e) {
 			//logger.error(e);
 		} catch (InterruptedException e) {
@@ -143,12 +143,12 @@ public class CacheXMemcache<T> {
 		}
 		return isSuccuess;
 	}
-	
+
 	/**
-	 * add·½·¨£¬³É¹¦·µ»Øtrue£¬µ±Êı¾İÒÑ¾­´æÔÚÊ±£¬·µ»Øfalse
+	 * addæ–¹æ³•ï¼ŒæˆåŠŸè¿”å›trueï¼Œå½“æ•°æ®å·²ç»å­˜åœ¨æ—¶ï¼Œè¿”å›false
 	 * @param key
 	 * @param object
-	 * @param exp ¹ıÆÚÊ±¼ä£¨Ãë£©
+	 * @param exp è¿‡æœŸæ—¶é—´ï¼ˆç§’ï¼‰
 	 * @return
 	 */
 	public boolean addCached(String key, Object object, int exp){
@@ -166,7 +166,7 @@ public class CacheXMemcache<T> {
 		}
 		return false;
 	}
-	
+
 	public boolean delCached(String key){
 		try {
 			return memcachedClient.delete(key);
@@ -183,17 +183,17 @@ public class CacheXMemcache<T> {
 		return false;
 	}
 	/**
-	 * ¼ÆÊıÆ÷
-	 * @throws MemcachedException 
-	 * @throws InterruptedException 
-	 * @throws TimeoutException 
+	 * è®¡æ•°å™¨
+	 * @throws MemcachedException
+	 * @throws InterruptedException
+	 * @throws TimeoutException
 	 */
 	public Counter getCounter(String key){
 		return memcachedClient.getCounter(key,0);
 	}
-	
+
 	/**
-	 * ¹Ø±ÕÁ¬½Ó
+	 * å…³é—­è¿æ¥
 	 */
 	public void shutdown() {
 		try {

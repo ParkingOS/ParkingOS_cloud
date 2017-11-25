@@ -3,15 +3,15 @@ package com.zld.pojo;
 import java.io.Serializable;
 
 public class CardChargeReq implements Serializable {
-	private Long cardId = -1L;//¿¨Æ¬±àºÅ
-	private Double money = 0d;//³äÖµ½ğ¶î
-	private Integer chargeType = 0;//³äÖµ·½Ê½£º0£ºÏÖ½ğ³äÖµ 1£ºÎ¢ĞÅ¹«ÖÚºÅ³äÖµ 2£ºÎ¢ĞÅ¿Í»§¶Ë³äÖµ 3£ºÖ§¸¶±¦³äÖµ 4£ºÔ¤Ö§¸¶ÍË¿î 5£º¶©µ¥ÍË¿î 
-	private Long cashierId = -1L;//ÊÕ·ÑÔ±±àºÅ
-	private Long orderId = -1L;//¶©µ¥±àºÅ
-	private Long groupId = -1L;//²Ù×÷ÈËËùÔÚÔËÓª¼¯ÍÅ
-	private Long curTime = System.currentTimeMillis()/1000;//µ±Ç°Ê±¼ä
-	
-	private String subOrderId;//µÚÈı·½Ö§¸¶µÄ¶©µ¥ºÅ
+	private Long cardId = -1L;//å¡ç‰‡ç¼–å·
+	private Double money = 0d;//å……å€¼é‡‘é¢
+	private Integer chargeType = 0;//å……å€¼æ–¹å¼ï¼š0ï¼šç°é‡‘å……å€¼ 1ï¼šå¾®ä¿¡å…¬ä¼—å·å……å€¼ 2ï¼šå¾®ä¿¡å®¢æˆ·ç«¯å……å€¼ 3ï¼šæ”¯ä»˜å®å……å€¼ 4ï¼šé¢„æ”¯ä»˜é€€æ¬¾ 5ï¼šè®¢å•é€€æ¬¾
+	private Long cashierId = -1L;//æ”¶è´¹å‘˜ç¼–å·
+	private Long orderId = -1L;//è®¢å•ç¼–å·
+	private Long groupId = -1L;//æ“ä½œäººæ‰€åœ¨è¿è¥é›†å›¢
+	private Long curTime = System.currentTimeMillis()/1000;//å½“å‰æ—¶é—´
+
+	private String subOrderId;//ç¬¬ä¸‰æ–¹æ”¯ä»˜çš„è®¢å•å·
 	public Long getCardId() {
 		return cardId;
 	}
@@ -51,7 +51,7 @@ public class CardChargeReq implements Serializable {
 	public void setChargeType(Integer chargeType) {
 		this.chargeType = chargeType;
 	}
-	
+
 	public Long getOrderId() {
 		return orderId;
 	}
@@ -73,5 +73,5 @@ public class CardChargeReq implements Serializable {
 				+ ", orderId=" + orderId + ", groupId=" + groupId
 				+ ", curTime=" + curTime + ", subOrderId=" + subOrderId + "]";
 	}
-	
+
 }

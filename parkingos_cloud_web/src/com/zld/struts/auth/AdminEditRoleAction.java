@@ -38,12 +38,12 @@ public class AdminEditRoleAction extends Action {
 	@SuppressWarnings("unchecked")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
-		Long oid = (Long)request.getSession().getAttribute("oid");//µÇÂ¼½ÇÉ«ËùÊô×éÖ¯ÀàĞÍ
-		Long loginroleid = (Long)request.getSession().getAttribute("loginroleid");//µÇÂ¼½ÇÉ«
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
+		Long oid = (Long)request.getSession().getAttribute("oid");//ç™»å½•è§’è‰²æ‰€å±ç»„ç»‡ç±»å‹
+		Long loginroleid = (Long)request.getSession().getAttribute("loginroleid");//ç™»å½•è§’è‰²
 		String target = null;
 		request.setAttribute("authid", request.getParameter("authid"));
 		if(action.equals("")){
@@ -70,23 +70,23 @@ public class AdminEditRoleAction extends Action {
 			int is_collector = 0;
 			int is_opencard = 0;
 			switch (func) {
-			case 1:
-				is_collector = 1;
-				break;
-			case 2:
-				is_inspect = 1;
-				break;
-			case 3:
-				is_opencard = 1;
-				break;
-			default:
-				break;
+				case 1:
+					is_collector = 1;
+					break;
+				case 2:
+					is_inspect = 1;
+					break;
+				case 3:
+					is_opencard = 1;
+					break;
+				default:
+					break;
 			}
 			int ret = daService.update("insert into user_role_tb(role_name,state,oid," +
-					"adminid,type,resume,is_inspect,is_collector,is_opencard) values(?,?,?,?,?,?,?,?,?)",
+							"adminid,type,resume,is_inspect,is_collector,is_opencard) values(?,?,?,?,?,?,?,?,?)",
 					new Object[] { name, state, oid, uin, 1, resume, is_inspect, is_collector, is_opencard });
 			if(ret == 1){
-				mongoDbUtils.saveLogs(request, 0, 2, "Ìí¼ÓÁË½ÇÉ«£º"+name);
+				mongoDbUtils.saveLogs(request, 0, 2, "æ·»åŠ äº†è§’è‰²ï¼š"+name);
 			}
 			AjaxUtil.ajaxOutput(response, ret + "");
 			return null;
@@ -96,31 +96,31 @@ public class AdminEditRoleAction extends Action {
 			Integer state = RequestUtil.getInteger(request, "state", 0);
 			Integer func = RequestUtil.getInteger(request, "func", -1);
 			String resume = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "resume"));
-			
+
 			List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
 			int auth_flag = -1;
 			int is_inspect = 0;
 			int is_collector = 0;
 			int is_opencard = 0;
 			switch (func) {
-			case 1:
-				auth_flag = 2;
-				is_collector = 1;
-				break;
-			case 2:
-				auth_flag = 16;
-				is_inspect = 1;
-				break;
-			case 3:
-				auth_flag = 17;
-				is_opencard = 1;
-				break;
-			default:
-				break;
+				case 1:
+					auth_flag = 2;
+					is_collector = 1;
+					break;
+				case 2:
+					auth_flag = 16;
+					is_inspect = 1;
+					break;
+				case 3:
+					auth_flag = 17;
+					is_opencard = 1;
+					break;
+				default:
+					break;
 			}
 			logger.error("id:"+id+",auth_flag:"+auth_flag+",is_inspect:"+is_inspect
 					+",is_collector:"+is_collector+",is_opencard:"+is_opencard);
-			//¸üĞÂÓÃ»§Óà¶î
+			//æ›´æ–°ç”¨æˆ·ä½™é¢
 			Map<String, Object> userRoleSqlMap = new HashMap<String, Object>();
 			userRoleSqlMap.put("sql", "update user_role_tb set state=?," +
 					"role_name=?,resume=?,is_inspect=?,is_collector=?,is_opencard=? where id =? ");
@@ -133,7 +133,7 @@ public class AdminEditRoleAction extends Action {
 			bathSql.add(userSqlMap);
 			boolean b = daService.bathUpdate2(bathSql);
 			if(b){
-				mongoDbUtils.saveLogs(request, 0, 3, "ĞŞ¸ÄÁË½ÇÉ«£º"+name);
+				mongoDbUtils.saveLogs(request, 0, 3, "ä¿®æ”¹äº†è§’è‰²ï¼š"+name);
 				AjaxUtil.ajaxOutput(response, "1");
 				return null;
 			}
@@ -142,16 +142,16 @@ public class AdminEditRoleAction extends Action {
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			if(id > 0){
-				Long count = daService.getLong("select count(id) from user_info_tb where role_id=? and state<>? ", 
+				Long count = daService.getLong("select count(id) from user_info_tb where role_id=? and state<>? ",
 						new Object[]{id, 1});
 				if(count > 0){
 					AjaxUtil.ajaxOutput(response, "-1");
 					return null;
 				}
-				int r = daService.update("update user_role_tb set state=? where id=? ", 
+				int r = daService.update("update user_role_tb set state=? where id=? ",
 						new Object[]{1, id});
 				if(r == 1){
-					mongoDbUtils.saveLogs(request, 0, 4, "É¾³ıÁË½ÇÉ«£º"+id);
+					mongoDbUtils.saveLogs(request, 0, 4, "åˆ é™¤äº†è§’è‰²ï¼š"+id);
 				}
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -160,16 +160,16 @@ public class AdminEditRoleAction extends Action {
 			return null;
 		}else if(action.equals("editrole")){
 			Long roleId = RequestUtil.getLong(request, "roleid", -1L);
-			//²éÑ¯ËùÈ¨ÏŞ
+			//æŸ¥è¯¢æ‰€æƒé™
 			List<Map<String, Object>> allAuthsList = daService.getAll("select id,pid,nname as name,sub_auth from auth_tb where state =? order by id ",new Object[]{0});
-			//²é¸¸È¨ÏŞ
+			//æŸ¥çˆ¶æƒé™
 			List<Map<String, Object>> parentAuthsList = daService.getAll("select auth_id,sub_auth from auth_role_tb where role_id =? ",new Object[]{loginroleid});
-			//²é×Ô¼ºÈ¨ÏŞ
+			//æŸ¥è‡ªå·±æƒé™
 			List<Map<String, Object>> ownAuthsList = daService.getAll("select auth_id,ar.sub_auth,pid from auth_role_tb ar" +
 					" left join auth_tb at on ar.auth_id= at.id where role_id =? ",new Object[]{roleId});
-			//²é½ÇÉ«Ãû³Æ
+			//æŸ¥è§’è‰²åç§°
 			Map userRoleMap = daService.getMap("select role_name from user_role_tb where id=? ", new Object[]{roleId});
-			
+
 			List<Map<String, Object>> subList = new ArrayList<Map<String,Object>>();
 			for(Map<String, Object> map : parentAuthsList){
 				Long autId = (Long)map.get("auth_id");
@@ -205,7 +205,7 @@ public class AdminEditRoleAction extends Action {
 			Collections.sort(subList,new Comparator<Map<String, Object>>() {
 				@Override
 				public int compare(Map<String, Object> o1,
-						Map<String, Object> o2) {
+								   Map<String, Object> o2) {
 					Long id1 = (Long)o1.get("id");
 					Long id2 = (Long)o2.get("id");
 					Long index = id1-id2;
@@ -218,14 +218,14 @@ public class AdminEditRoleAction extends Action {
 			request.setAttribute("allauths", StringUtils.createJson(subList));
 			request.setAttribute("roleid", roleId);
 			target = "editauthrole";
-		}else if(action.equals("precollectset")){//¶ÁÈ¡ÊÕ·ÑÔ±ÉèÖÃ
+		}else if(action.equals("precollectset")){//è¯»å–æ”¶è´¹å‘˜è®¾ç½®
 			Long roleid = RequestUtil.getLong(request, "roleid", -1L);
 			Map collectSetMap = daService.getMap("select * from collector_set_tb where " +
 					" role_id=? order by id desc limit ? ", new Object[]{roleid, 1});
 			request.setAttribute("data", StringUtils.createJson(collectSetMap));
 			request.setAttribute("roleid", roleid);
 			target = "collectset";
-		}else if(action.equals("collectset")){//±£´æÊÕ·ÑÔ±ÉèÖÃ
+		}else if(action.equals("collectset")){//ä¿å­˜æ”¶è´¹å‘˜è®¾ç½®
 			Long id = RequestUtil.getLong(request, "role_id", -1L);
 			Long roleId = RequestUtil.getLong(request, "roleid", -1L);
 			Integer photoset1 = RequestUtil.getInteger(request, "photoset1", 0);
@@ -263,7 +263,7 @@ public class AdminEditRoleAction extends Action {
 				prepayset3="0";
 			}
 			String prepayset="["+prepayset1+","+prepayset2+","+prepayset3+"]";
-			
+
 			if(print_sign1.equals("")){
 				print_sign1=" ";
 			}
@@ -277,26 +277,26 @@ public class AdminEditRoleAction extends Action {
 				print_sign4=" ";
 			}
 			String print_sign="[\""+print_sign1+"\",\""+print_sign2+"\",\""+print_sign3+"\",\""+print_sign4+"\"]";
-			if(id==-1){//ĞÂ½¨
+			if(id==-1){//æ–°å»º
 				ret = daService.update("insert into collector_set_tb(photoset,prepayset,print_sign,change_prepay," +
-						"view_plot,role_id,isprepay,hidedetail,is_sensortime,password,signout_password,signout_valid," +
-						"is_show_card,print_order_place2,is_duplicate_order,is_print_name) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", 
+								"view_plot,role_id,isprepay,hidedetail,is_sensortime,password,signout_password,signout_valid," +
+								"is_show_card,print_order_place2,is_duplicate_order,is_print_name) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 						new Object[]{photoset, prepayset, print_sign, changePrePay, view_plot, roleId, isprepay,
-						hidedetail, is_sensortime, collpwd, signpwd, signout_valid, is_show_card, print_order_place2,
-						is_duplicate_order,is_print_name});
-			}else {//¸üĞÂ
+								hidedetail, is_sensortime, collpwd, signpwd, signout_valid, is_show_card, print_order_place2,
+								is_duplicate_order,is_print_name});
+			}else {//æ›´æ–°
 				ret = daService.update("update collector_set_tb set photoset=?,prepayset=?,print_sign=?,change_prepay=?," +
-						"view_plot=?,isprepay=?,hidedetail=?,is_sensortime=?,password=?,signout_password=?,signout_valid=?," +
-						"is_show_card=?,print_order_place2=?,is_duplicate_order=?,is_print_name=? where role_id=?", 
-						new Object[]{photoset, prepayset, print_sign, changePrePay, view_plot, isprepay, hidedetail, 
-						is_sensortime, collpwd, signpwd, signout_valid, is_show_card, print_order_place2, is_duplicate_order,
-						is_print_name, roleId});
+								"view_plot=?,isprepay=?,hidedetail=?,is_sensortime=?,password=?,signout_password=?,signout_valid=?," +
+								"is_show_card=?,print_order_place2=?,is_duplicate_order=?,is_print_name=? where role_id=?",
+						new Object[]{photoset, prepayset, print_sign, changePrePay, view_plot, isprepay, hidedetail,
+								is_sensortime, collpwd, signpwd, signout_valid, is_show_card, print_order_place2, is_duplicate_order,
+								is_print_name, roleId});
 			}
-			AjaxUtil.ajaxOutput(response, "ÉèÖÃ³É¹¦£¬Çë¹Ø±Õµ±Ç°Ò³Ãæ");
+			AjaxUtil.ajaxOutput(response, "è®¾ç½®æˆåŠŸï¼Œè¯·å…³é—­å½“å‰é¡µé¢");
 		}
 		return mapping.findForward(target);
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		try {
 			if(list != null && !list.isEmpty()){
@@ -304,13 +304,13 @@ public class AdminEditRoleAction extends Action {
 					Integer is_inspect = (Integer)map.get("is_inspect");
 					Integer is_collector = (Integer)map.get("is_collector");
 					Integer is_opencard = (Integer)map.get("is_opencard");
-					
+
 					int func = -1;
-					if(is_collector == 1){//ÊÕ·Ñ¹¦ÄÜ
+					if(is_collector == 1){//æ”¶è´¹åŠŸèƒ½
 						func = 1;
-					}else if(is_inspect == 1){//Ñ²²é¹¦ÄÜ
+					}else if(is_inspect == 1){//å·¡æŸ¥åŠŸèƒ½
 						func = 2;
-					}else if(is_opencard == 1){//¿ª¿¨¹¦ÄÜ
+					}else if(is_opencard == 1){//å¼€å¡åŠŸèƒ½
 						func = 3;
 					}
 					map.put("func", func);

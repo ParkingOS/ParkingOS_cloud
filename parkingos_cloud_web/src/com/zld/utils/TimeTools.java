@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 public class TimeTools {
 
 	private static Logger logger = Logger.getLogger(TimeTools.class);
-	
+
 	private static GregorianCalendar gCalendar = null;
 
 	private static SimpleDateFormat dateFormat = null;
@@ -21,11 +21,11 @@ public class TimeTools {
 		return new SimpleDateFormat(pattern).parse(str);
 	}
 
-	// Ê±¼ä¸ñÊ½Êı×é
+	// æ—¶é—´æ ¼å¼æ•°ç»„
 	private static String[] formatArray = { "yyyy-MM-dd", "yyyy-MM-dd HH:mm",
 			"yyyy-MM-dd HH:mm:ss", "yy-MM-dd HH:mm", "yyyyMMdd HH:mm", "yyyy-MM-dd HH" };
 
-	// ¼ì²âÒ»¸öÊ±¼ä¸ñÊ½ÊÇ·ñÎªºÏ·¨¸ñÊ½
+	// æ£€æµ‹ä¸€ä¸ªæ—¶é—´æ ¼å¼æ˜¯å¦ä¸ºåˆæ³•æ ¼å¼
 	private static boolean isRightFormat(String formatStr) {
 		boolean isRight = false;
 		int j = formatArray.length;
@@ -52,7 +52,7 @@ public class TimeTools {
 
 	/**
 	 * @param strDate
-	 * @return ¸ù¾İ×Ö·û´®Ê±¼äµÃµ½ÏàÓ¦ºÁÃëÊı
+	 * @return æ ¹æ®å­—ç¬¦ä¸²æ—¶é—´å¾—åˆ°ç›¸åº”æ¯«ç§’æ•°
 	 */
 	public static Long getLongMilliSecondFrom_HHMMDD(String strDate) {
 		return getLongMilliSecondFromStrDate(strDate, "yyyy-MM-dd");
@@ -60,7 +60,7 @@ public class TimeTools {
 
 	/**
 	 * @param strDate
-	 * @return ¸ù¾İ×Ö·û´®Ê±¼äµÃµ½ÏàÓ¦ÃëÊı
+	 * @return æ ¹æ®å­—ç¬¦ä¸²æ—¶é—´å¾—åˆ°ç›¸åº”ç§’æ•°
 	 */
 	public static Long getLongMilliSecondFrom_HHMMDDHHmmss(String strDate) {
 		return getLongMilliSecondFromStrDate(strDate, "yyyy-MM-dd HH:mm:ss") / 1000;
@@ -79,7 +79,7 @@ public class TimeTools {
 			Integer yInteger = Integer.parseInt(year);
 			// if(year.equals("2012")||year.equals("2016")||year.equals("2020")||
 			// year.equals("2024")||year.equals("2028")||year.equals("2008"))
-			if ((yInteger % 4 == 0 && yInteger % 100 != 0) || yInteger % 400 == 0)// ÈóÄêÅĞ¶Ï
+			if ((yInteger % 4 == 0 && yInteger % 100 != 0) || yInteger % 400 == 0)// æ¶¦å¹´åˆ¤æ–­
 				return "-29";
 			else
 				return "-28";
@@ -88,14 +88,14 @@ public class TimeTools {
 	}
 
 	/**
-	 * @return µÃµ½µ±Ç°Ê±¼äµÄÃëÊı(longĞÍ)
+	 * @return å¾—åˆ°å½“å‰æ—¶é—´çš„ç§’æ•°(longå‹)
 	 */
 	public static long getlongMilliSeconds() {
 		return new java.util.Date().getTime();
 	}
 
 	/**
-	 * @return µÃµ½µ±Ç°Ê±¼äµÄºÁÃëÊı(LongĞÍ)
+	 * @return å¾—åˆ°å½“å‰æ—¶é—´çš„æ¯«ç§’æ•°(Longå‹)
 	 */
 	public static Long getLongMilliSeconds() {
 		long d = new java.util.Date().getTime();
@@ -109,8 +109,8 @@ public class TimeTools {
 
 	/**
 	 * @param milliSeconds
-	 *            ºÁÃëÊı
-	 * @return ¸ñÊ½»¯ºóµÄÊ±¼ä×Ö·û´® yyyy-MM-dd HH:mm:ss
+	 *            æ¯«ç§’æ•°
+	 * @return æ ¼å¼åŒ–åçš„æ—¶é—´å­—ç¬¦ä¸² yyyy-MM-dd HH:mm:ss
 	 */
 	public static String getTime_yyyyMMdd_HHmmss(Long milliSeconds) {
 
@@ -118,8 +118,8 @@ public class TimeTools {
 	}
 	/**
 	 * @param milliSeconds
-	 *            ºÁÃëÊı
-	 * @return ¸ñÊ½»¯ºóµÄÊ±¼ä×Ö·û´® yyyy-MM-dd HH:mm:ss
+	 *            æ¯«ç§’æ•°
+	 * @return æ ¼å¼åŒ–åçš„æ—¶é—´å­—ç¬¦ä¸² yyyy-MM-dd HH:mm:ss
 	 */
 	public static String getTime_MMdd_HHmm(Long milliSeconds) {
 
@@ -128,8 +128,8 @@ public class TimeTools {
 
 	/**
 	 * @param milliSeconds
-	 *            ºÁÃëÊı
-	 * @return ¸ñÊ½»¯ºóµÄÊ±¼ä×Ö·û´® yyyy-MM-dd HH:mm:ss
+	 *            æ¯«ç§’æ•°
+	 * @return æ ¼å¼åŒ–åçš„æ—¶é—´å­—ç¬¦ä¸² yyyy-MM-dd HH:mm:ss
 	 */
 	public static String getTime_yyyyMMdd_HHmm(Long milliSeconds) {
 		if(milliSeconds==null) return "";
@@ -138,22 +138,22 @@ public class TimeTools {
 
 	/**
 	 * @param milliSeconds
-	 *            ºÁÃëÊı
-	 * @return ¸ñÊ½»¯ºóµÄÊ±¼ä×Ö·û´® yy-MM-dd HH:mm
+	 *            æ¯«ç§’æ•°
+	 * @return æ ¼å¼åŒ–åçš„æ—¶é—´å­—ç¬¦ä¸² yy-MM-dd HH:mm
 	 */
 	public static String getTime_yyMMdd_HHmm(Long milliSeconds) {
 
 		return secondsToDateStr(milliSeconds, "yy-MM-dd HH:mm");
 	}
-	
+
 	public static String getTime_yyyyMMdd_HH(Long milliSeconds) {
 		return secondsToDateStr(milliSeconds, "yyyy-MM-dd HH");
 	}
-	
+
 	/**
 	 * @param milliSeconds
-	 *            ºÁÃëÊı
-	 * @return ¸ñÊ½»¯ºóµÄÊ±¼ä×Ö·û´® yyyy-MM-dd
+	 *            æ¯«ç§’æ•°
+	 * @return æ ¼å¼åŒ–åçš„æ—¶é—´å­—ç¬¦ä¸² yyyy-MM-dd
 	 */
 	public static String getTimeStr_yyyy_MM_dd(Long milliSeconds) {
 
@@ -161,7 +161,7 @@ public class TimeTools {
 	}
 
 	/**
-	 * @return µ±Ç°ÈÕÆÚµÄ×Ö·û´® yyyy-MM-dd ¸ñÊ½
+	 * @return å½“å‰æ—¥æœŸçš„å­—ç¬¦ä¸² yyyy-MM-dd æ ¼å¼
 	 */
 	public static String getDate_YY_MM_DD() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -170,7 +170,7 @@ public class TimeTools {
 	}
 
 	/**
-	 * @return µ±Ç°ÈÕÆÚµÄ×Ö·û´® yyyy/M/d ¸ñÊ½
+	 * @return å½“å‰æ—¥æœŸçš„å­—ç¬¦ä¸² yyyy/M/d æ ¼å¼
 	 */
 	public static String getDate_YY_M_D() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/M/d");
@@ -190,7 +190,7 @@ public class TimeTools {
 	}
 
 	/**
-	 * @todo ½«ÊıÖµÊ±¼ä¸ñÊ½»¯Îª×Ö·û´®
+	 * @todo å°†æ•°å€¼æ—¶é—´æ ¼å¼åŒ–ä¸ºå­—ç¬¦ä¸²
 	 * @param milliSeconds
 	 * @param formatStr
 	 * @return
@@ -217,8 +217,8 @@ public class TimeTools {
 		}
 
 	}
- 
-	// µÃµ½Ã÷ÌìÊ±¼ä
+
+	// å¾—åˆ°æ˜å¤©æ—¶é—´
 	public static String getTomorrowday() {
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.DAY_OF_MONTH, +1);
@@ -313,7 +313,7 @@ public class TimeTools {
 		return new Long(millSeconds);
 	}
 
-	// ×ª»»
+	// è½¬æ¢
 	public static String secondsToDateStr(Long seconds) {
 
 		String second = "1";
@@ -378,25 +378,25 @@ public class TimeTools {
 		today = today.substring(0, 10) + " 00:00:00";
 		return getStrDateToSecond(today);
 	}
-	
+
 	/*
-	 * »ñµÃ´«ÈëÈÕÆÚµÄÁãµãÃëÖµ
-	 * milisecondsºÁÃëÊı
+	 * è·å¾—ä¼ å…¥æ—¥æœŸçš„é›¶ç‚¹ç§’å€¼
+	 * milisecondsæ¯«ç§’æ•°
 	 */
-    public static Long getBeginTime(Long miliseconds){
-    	Date date=new Date(miliseconds);
+	public static Long getBeginTime(Long miliseconds){
+		Date date=new Date(miliseconds);
 		SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String time=formatter.format(date);
-    	String day = time.substring(0,10)+ " 00:00:00";
-    	return getStrDateToSecond(day);
-    }
+		String day = time.substring(0,10)+ " 00:00:00";
+		return getStrDateToSecond(day);
+	}
 
 	/**
-	 * ¼ÆËãÊ±³¤
-	 * 
+	 * è®¡ç®—æ—¶é•¿
+	 *
 	 * @param seconds
-	 *            £¨Ãë£©
-	 * @return HH:mm:ss exp£º"00:00:00"
+	 *            ï¼ˆç§’ï¼‰
+	 * @return HH:mm:ss expï¼š"00:00:00"
 	 */
 	public static String getShiChangString(Long seconds) {
 		StringBuffer shichang = null;
@@ -440,7 +440,7 @@ public class TimeTools {
 	}
 
 	/*
-	 * ·µ»ØÂ¼ÒôÏÂÔØµÄÊ±¼ä¸ñÊ½£º2013-03-13_145012
+	 * è¿”å›å½•éŸ³ä¸‹è½½çš„æ—¶é—´æ ¼å¼ï¼š2013-03-13_145012
 	 */
 	public static String getRecordTime(long time) {
 		String datestr = secondsToDateStr(time);
@@ -450,7 +450,7 @@ public class TimeTools {
 
 	private static String dtime = "";
 
-	public static String getdate1()// »ñµÃ¾«È·µ½ÈÕµÄµ±Ç°ÈÕÆÚ
+	public static String getdate1()// è·å¾—ç²¾ç¡®åˆ°æ—¥çš„å½“å‰æ—¥æœŸ
 	{
 		dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		gCalendar = new GregorianCalendar();
@@ -458,7 +458,7 @@ public class TimeTools {
 		return dtime;
 	}
 
-	public static String gettime1()// »ñµÃ¾«È·µ½ÃëµÄµ±Ç°ÈÕÆÚ
+	public static String gettime1()// è·å¾—ç²¾ç¡®åˆ°ç§’çš„å½“å‰æ—¥æœŸ
 	{
 		dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		gCalendar = new GregorianCalendar();
@@ -466,7 +466,7 @@ public class TimeTools {
 		return dtime;
 	}
 
-	public static long getlongtime()// »ñµÃµ±Ç°Ê±¼äµÄºÁÃëÊı
+	public static long getlongtime()// è·å¾—å½“å‰æ—¶é—´çš„æ¯«ç§’æ•°
 	{
 		java.util.Date nows = new java.util.Date();
 		long d = 0;
@@ -478,7 +478,7 @@ public class TimeTools {
 		return new Long((new GregorianCalendar().getTimeInMillis()) / 1000);
 	}
 
-	public static String getdate()// »ñµÃ¾«È·µ½ÈÕµÄµ±Ç°ÈÕÆÚ ÓÃÓÚoracle
+	public static String getdate()// è·å¾—ç²¾ç¡®åˆ°æ—¥çš„å½“å‰æ—¥æœŸ ç”¨äºoracle
 	{
 		dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		gCalendar = new GregorianCalendar();
@@ -486,7 +486,7 @@ public class TimeTools {
 		return dtime;
 	}
 
-	public static String gettime()// »ñµÃ¾«È·µ½ÃëµÄµ±Ç°ÈÕÆÚ ÓÃÓÚoracle
+	public static String gettime()// è·å¾—ç²¾ç¡®åˆ°ç§’çš„å½“å‰æ—¥æœŸ ç”¨äºoracle
 	{
 		try {
 			dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -512,7 +512,7 @@ public class TimeTools {
 
 	/**
 	 * @author : yangzi
-	 * @function :µÃµ½¾«È·µ½·ÖÖÓµÄÊ±¼ä
+	 * @function :å¾—åˆ°ç²¾ç¡®åˆ°åˆ†é’Ÿçš„æ—¶é—´
 	 * @param myDate
 	 * @return
 	 * @date: 2006-9-22
@@ -534,39 +534,39 @@ public class TimeTools {
 	}
 
 	/**
-	 * ¹¦ÄÜ£ºÖ¸¶¨ÈÕÆÚµÄ»ù´¡ÉÏÔö¼õÈÕÆÚ£¨Äê¡¢ÔÂ¡¢ÈÕ¡¢Ê±¡¢·Ö¡¢Ãë£©
-	 * 
+	 * åŠŸèƒ½ï¼šæŒ‡å®šæ—¥æœŸçš„åŸºç¡€ä¸Šå¢å‡æ—¥æœŸï¼ˆå¹´ã€æœˆã€æ—¥ã€æ—¶ã€åˆ†ã€ç§’ï¼‰
+	 *
 	 * @param millis
-	 *            //Ö¸¶¨ÈÕÆÚ
+	 *            //æŒ‡å®šæ—¥æœŸ
 	 * @param amount
-	 *            //ÔöÁ¿£¨ÕıÊı»ò¸ºÊı£©
+	 *            //å¢é‡ï¼ˆæ­£æ•°æˆ–è´Ÿæ•°ï¼‰
 	 * @param field
-	 *            //Äê¡¢ÔÂ¡¢ÈÕ¡¢Ê±¡¢·Ö¡¢Ãë
-	 * @return long //·µ»ØºÁÃë¼¶
+	 *            //å¹´ã€æœˆã€æ—¥ã€æ—¶ã€åˆ†ã€ç§’
+	 * @return long //è¿”å›æ¯«ç§’çº§
 	 */
 	public static long getMillis(long millis, int amount, int field) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(millis);
 		switch (field) {
-		case 10:// ¼ÓÄê
-			cal.add(Calendar.YEAR, amount);
-			break;
-		case 20:// ¼ÓÔÂ
-			cal.add(Calendar.MONTH, amount);
-			break;
-		case 30:// ¼ÓÈÕ
-			cal.add(Calendar.DATE, amount);
-			break;
-		case 40:// ¼ÓÊ±
-			cal.add(Calendar.HOUR, amount);
-			break;
-		case 50:// ¼Ó·Ö
-			cal.add(Calendar.MINUTE, amount);
-			break;
-		case 60:// ¼ÓÃë
-			cal.add(Calendar.SECOND, amount);
-		default:// Ä¬ÈÏ¼ÓÌì
-			cal.add(Calendar.DATE, amount);
+			case 10:// åŠ å¹´
+				cal.add(Calendar.YEAR, amount);
+				break;
+			case 20:// åŠ æœˆ
+				cal.add(Calendar.MONTH, amount);
+				break;
+			case 30:// åŠ æ—¥
+				cal.add(Calendar.DATE, amount);
+				break;
+			case 40:// åŠ æ—¶
+				cal.add(Calendar.HOUR, amount);
+				break;
+			case 50:// åŠ åˆ†
+				cal.add(Calendar.MINUTE, amount);
+				break;
+			case 60:// åŠ ç§’
+				cal.add(Calendar.SECOND, amount);
+			default:// é»˜è®¤åŠ å¤©
+				cal.add(Calendar.DATE, amount);
 		}
 		return cal.getTime().getTime();
 	}
@@ -592,15 +592,15 @@ public class TimeTools {
 			e.printStackTrace();
 		}
 		if (dateA.before(dateB)) {
-			// begindateStr Ğ¡ÓÚ enddateStr ·µ»Øfalse
+			// begindateStr å°äº enddateStr è¿”å›false
 			return false;
 		} else {
-			// begindateStr ´óÓÚ enddateStr ·µ»Øtrue
+			// begindateStr å¤§äº enddateStr è¿”å›true
 			return true;
 		}
 	}
 
-	public static String formatMs(long ms, int flag) {// ½«ºÁÃëÊı»»Ëã³ÉxÌìxÊ±x·ÖxÃëxºÁÃë
+	public static String formatMs(long ms, int flag) {// å°†æ¯«ç§’æ•°æ¢ç®—æˆxå¤©xæ—¶xåˆ†xç§’xæ¯«ç§’
 		int ss = 1000;
 		int mi = ss * 60;
 		int hh = mi * 60;
@@ -612,47 +612,47 @@ public class TimeTools {
 		long minute2 = 0;
 		long second = 0;
 		switch (flag) {
-		case 0:// ½«ºÁÃë×ªÎªÃë
-			minute1 = (ms / ss) / 60;
-			minute2 = (ms / ss) % 60;
-			return minute1 + "·Ö" + minute2 + "Ãë";
-		default:
-			break;
+			case 0:// å°†æ¯«ç§’è½¬ä¸ºç§’
+				minute1 = (ms / ss) / 60;
+				minute2 = (ms / ss) % 60;
+				return minute1 + "åˆ†" + minute2 + "ç§’";
+			default:
+				break;
 		}
 
 		return "";
 	}
 
 	public static String getDateStrC(Date date) {
-		SimpleDateFormat format = new SimpleDateFormat("yyyyÄêMMÔÂddÈÕ");
+		SimpleDateFormat format = new SimpleDateFormat("yyyyå¹´MMæœˆddæ—¥");
 		return format.format(date);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	public static long dateFormat(String isFlag) {
 		dateFormat = new SimpleDateFormat("yyMMddHHmm");
@@ -664,83 +664,83 @@ public class TimeTools {
 	// ***************************************************************************
 
 	/**
-	* @author yangzi
-	* @version 2007-5-26 ÏÂÎç04:00:27
-	* @todo ½«×Ö·û´®Ê±¼ä×ªÈÕÆÚ£¨date£©
-	* @param strDate
-	* @return  
-	*/
+	 * @author yangzi
+	 * @version 2007-5-26 ä¸‹åˆ04:00:27
+	 * @todo å°†å­—ç¬¦ä¸²æ—¶é—´è½¬æ—¥æœŸï¼ˆdateï¼‰
+	 * @param strDate
+	 * @return
+	 */
 	public static Date getDateFromStr(String strDate){
-		  SimpleDateFormat   sdf   =   new   SimpleDateFormat("yyyy-MM-dd");   
-		    
-		 // Calendar   calendar   =   new   GregorianCalendar();  
-		  Date   date = null;
-		  try{
-			  date   =   sdf.parse(strDate);   
-		  }catch(Exception e){
-			  
-		  }
-		  
-		  return date;
-	}
-	
-	
-	/**
-	* @author yangzi
-	* @version 2007-5-28 ÉÏÎç11:57:41
-	* @todo ¸ù¾İ×Ö·û´®Ê±¼ä·µ»ØÃëÊı
-	* @param strDate
-	* @param format
-	* @return  
-	*/
-	public static Long getStrDateToSecond(String strDate,String format){ 
-		  SimpleDateFormat   sdf   =   new   SimpleDateFormat(format); 
-		 
-		  long millSeconds = new GregorianCalendar().getTimeInMillis();
-		  try{			  
-			  millSeconds =sdf.parse(strDate).getTime();
-		  }catch(Exception e){
-			  logger.error("---------get seconds error:"+e.getMessage());
-		  }		  
-		  return new Long(millSeconds/1000);
-	}
-	
-	
-	/**
-	* @author yangzi
-	* @version 2007-5-26 ÏÂÎç04:04:35
-	* @todo ·µ»ØÓĞ×Ö·û´®Ê±¼ä¶ÔÓ¦µÄÃëÊı
-	* @param strDate
-	* @return  
-	*/
-	public static Long getSecondsFromStrDate(String strDate){
-		
-		Long seconds =null;
+		SimpleDateFormat   sdf   =   new   SimpleDateFormat("yyyy-MM-dd");
+
+		// Calendar   calendar   =   new   GregorianCalendar();
+		Date   date = null;
 		try{
-			Date   date =getDateFromStr( strDate);
-			
-			 seconds = new Long(date.getTime()/1000);
+			date   =   sdf.parse(strDate);
 		}catch(Exception e){
-			
+
 		}
 
-		return seconds ;
-		
+		return date;
 	}
-	
-	
-	
+
 
 	/**
 	 * @author yangzi
-	 * @version 2007-5-20 ÏÂÎç02:55:48
-	 * @todo ·µ»Øµ±Ìì Ä³Ê±¿ÌµÄÃëÊı
+	 * @version 2007-5-28 ä¸Šåˆ11:57:41
+	 * @todo æ ¹æ®å­—ç¬¦ä¸²æ—¶é—´è¿”å›ç§’æ•°
+	 * @param strDate
+	 * @param format
+	 * @return
+	 */
+	public static Long getStrDateToSecond(String strDate,String format){
+		SimpleDateFormat   sdf   =   new   SimpleDateFormat(format);
+
+		long millSeconds = new GregorianCalendar().getTimeInMillis();
+		try{
+			millSeconds =sdf.parse(strDate).getTime();
+		}catch(Exception e){
+			logger.error("---------get seconds error:"+e.getMessage());
+		}
+		return new Long(millSeconds/1000);
+	}
+
+
+	/**
+	 * @author yangzi
+	 * @version 2007-5-26 ä¸‹åˆ04:04:35
+	 * @todo è¿”å›æœ‰å­—ç¬¦ä¸²æ—¶é—´å¯¹åº”çš„ç§’æ•°
+	 * @param strDate
+	 * @return
+	 */
+	public static Long getSecondsFromStrDate(String strDate){
+
+		Long seconds =null;
+		try{
+			Date   date =getDateFromStr( strDate);
+
+			seconds = new Long(date.getTime()/1000);
+		}catch(Exception e){
+
+		}
+
+		return seconds ;
+
+	}
+
+
+
+
+	/**
+	 * @author yangzi
+	 * @version 2007-5-20 ä¸‹åˆ02:55:48
+	 * @todo è¿”å›å½“å¤© æŸæ—¶åˆ»çš„ç§’æ•°
 	 * @param hh
-	 *            Ğ¡Ê±
+	 *            å°æ—¶
 	 * @param mm
-	 *            ·ÖÖÓ
+	 *            åˆ†é’Ÿ
 	 * @param ss
-	 *            Ãë
+	 *            ç§’
 	 * @return
 	 */
 	@SuppressWarnings("deprecation")
@@ -758,10 +758,10 @@ public class TimeTools {
 	}
 
 	/**
-	 * @todo ·µ»Øµ±Ç°Ê±¼ä yyyy-MM-dd HH:mm:ss
+	 * @todo è¿”å›å½“å‰æ—¶é—´ yyyy-MM-dd HH:mm:ss
 	 * @return 2007-4-12
 	 */
-	// public static Date getRightDate()//»ñµÃ¾«È·µ½ÃëµÄµ±Ç°ÈÕÆÚ
+	// public static Date getRightDate()//è·å¾—ç²¾ç¡®åˆ°ç§’çš„å½“å‰æ—¥æœŸ
 	// {
 	// // dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	// // gCalendar=new GregorianCalendar();
@@ -772,7 +772,7 @@ public class TimeTools {
 
 
 	/**
-	 * @return ±¾Äê¿ªÊ¼Ò»ÌìµÄÃëÊı 2007-4-12
+	 * @return æœ¬å¹´å¼€å§‹ä¸€å¤©çš„ç§’æ•° 2007-4-12
 	 */
 	@SuppressWarnings("deprecation")
 	public static long getYearStartSeconds() {
@@ -788,7 +788,7 @@ public class TimeTools {
 	}
 
 	/**
-	 * @·µ»Øµ±Ç°ÔÂµÚÒ»Ìì¾İ1970-01-01 00:00:00 µÄÃëÊı 2007-4-12
+	 * @è¿”å›å½“å‰æœˆç¬¬ä¸€å¤©æ®1970-01-01 00:00:00 çš„ç§’æ•° 2007-4-12
 	 */
 	@SuppressWarnings("deprecation")
 	public static long getMonthStartSeconds() {
@@ -803,7 +803,7 @@ public class TimeTools {
 		return rightNow.getTime() / 1000;
 	}
 	/**
-	 * @·µ»Øµ±ÉÏÔÂµÚÒ»Ìì¾İ1970-01-01 00:00:00 µÄÃëÊı 2007-4-12
+	 * @è¿”å›å½“ä¸Šæœˆç¬¬ä¸€å¤©æ®1970-01-01 00:00:00 çš„ç§’æ•° 2007-4-12
 	 */
 	@SuppressWarnings("deprecation")
 	public static long getLastMonthStartSeconds() {
@@ -813,7 +813,7 @@ public class TimeTools {
 		return rightNow.getTimeInMillis()/1000;
 	}
 	/**
-	 * @return ±¾ÖÜÒ»µÄÃëÊı 2007-4-12
+	 * @return æœ¬å‘¨ä¸€çš„ç§’æ•° 2007-4-12
 	 */
 	@SuppressWarnings("deprecation")
 	public static long getWeekStartSeconds() {
@@ -841,14 +841,14 @@ public class TimeTools {
 		return s;
 	}
 	/**
-	 * ·µ»Ø¶©µ¥Èë³¡¼°Àë³¡Ê±¼ä,¾«È·µ½·ÖÖÓ
-	 * @param btime Èë³¡Ê±¼ä
+	 * è¿”å›è®¢å•å…¥åœºåŠç¦»åœºæ—¶é—´,ç²¾ç¡®åˆ°åˆ†é’Ÿ
+	 * @param btime å…¥åœºæ—¶é—´
 	 * @return
 	 */
 	public static Long getOrderTime(Long btime){
 		//Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 		Long ntime = System.currentTimeMillis()/1000;
-		/*if(btime!=null){//Àë³¡Ê±£¬Èç¹û½áÊøÊ±¼äÓëÈë³¡Ê±¼äĞ¡ÓÚ60Ãë£¬²»¼ÆÊ±¼ä£¬·ñÔòÅĞ¶ÏÃëÊÇ·ñ´óÓÚ30Ãë£¬ÊÇ¾Í¼ÓÒ»·ÖÖÓ
+		/*if(btime!=null){//ç¦»åœºæ—¶ï¼Œå¦‚æœç»“æŸæ—¶é—´ä¸å…¥åœºæ—¶é—´å°äº60ç§’ï¼Œä¸è®¡æ—¶é—´ï¼Œå¦åˆ™åˆ¤æ–­ç§’æ˜¯å¦å¤§äº30ç§’ï¼Œæ˜¯å°±åŠ ä¸€åˆ†é’Ÿ
 			if(ntime-btime<100){
 				return btime;
 			}else {
@@ -857,7 +857,7 @@ public class TimeTools {
 					calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE)+1);
 				calendar.set(Calendar.SECOND, 0);
 			}
-		}else {//Èë³¡Ê±£¬µ±Ãë>30Ê±ÑÓÊ±1·ÖÖÓ
+		}else {//å…¥åœºæ—¶ï¼Œå½“ç§’>30æ—¶å»¶æ—¶1åˆ†é’Ÿ
 //			if(calendar.get(Calendar.SECOND)>30)
 			calendar.setTimeInMillis(ntime*1000);
 //			if(calendar.get(Calendar.SECOND)>30)
@@ -867,6 +867,6 @@ public class TimeTools {
 		ntime = calendar.getTimeInMillis()/1000;*/
 		return ntime;
 	}
-	
+
 
 }

@@ -34,15 +34,15 @@ public class CitySensorOrderAction extends Action {
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
-	private CommonMethods commonMethods; 
-	
+	private CommonMethods commonMethods;
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µ«¬ºµƒ”√ªßid
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ÁôªÂΩïÁöÑÁî®Êà∑id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -55,7 +55,7 @@ public class CitySensorOrderAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		ExecutorService pool = ExecutorsUtil.getExecutorService();//ªÒ»°œﬂ≥Ã≥ÿ
+		ExecutorService pool = ExecutorsUtil.getExecutorService();//Ëé∑ÂèñÁ∫øÁ®ãÊ±†
 		if(action.equals("")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Long today = TimeTools.getToDayBeginTime();
@@ -104,7 +104,7 @@ public class CitySensorOrderAction extends Action {
 				sql += " and comid in ("+preParams+") ";
 				countSql += " and comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -149,10 +149,10 @@ public class CitySensorOrderAction extends Action {
 			String json = JsonUtil.Map2Json(list, pageNum, count, fieldsstr, "id");
 			AjaxUtil.ajaxOutput(response, json);
 		}
-		
+
 		return null;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		Long berthsec_id = RequestUtil.getLong(request, "berthsec_id_start", -1L);
 		SqlInfo sqlInfo1 = null;
@@ -162,7 +162,7 @@ public class CitySensorOrderAction extends Action {
 		}
 		return sqlInfo1;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo1(HttpServletRequest request){
 		String cid = RequestUtil.processParams(request, "cid");
 		SqlInfo sqlInfo1 = null;
@@ -172,7 +172,7 @@ public class CitySensorOrderAction extends Action {
 		}
 		return sqlInfo1;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo2(HttpServletRequest request){
 		String car_number = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "car_number"));
 		SqlInfo sqlInfo1 = null;
@@ -182,7 +182,7 @@ public class CitySensorOrderAction extends Action {
 		}
 		return sqlInfo1;
 	}
-	
+
 	private void getPosOrderInfo(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> idList = new ArrayList<Object>();
@@ -194,7 +194,7 @@ public class CitySensorOrderAction extends Action {
 				else
 					preParams += ",?";
 			}
-			
+
 			List<Map<String, Object>> rList = pgOnlyReadService.getAllMap("select id,create_time," +
 					"end_time,car_number from order_tb where id in (" + preParams + ")", idList);
 			if(rList != null && !rList.isEmpty()){
@@ -213,7 +213,7 @@ public class CitySensorOrderAction extends Action {
 			}
 		}
 	}
-	
+
 	private void getDuration(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			for(Map<String, Object> order : list){
@@ -225,7 +225,7 @@ public class CitySensorOrderAction extends Action {
 			}
 		}
 	}
-	
+
 	private void getCollector(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> idList = new ArrayList<Object>();
@@ -238,7 +238,7 @@ public class CitySensorOrderAction extends Action {
 					else
 						preParams += ",?";
 				}
-				
+
 				if(!idList.contains(order.get("out_uid"))){
 					idList.add(order.get("out_uid"));
 					if(preParams.equals(""))
@@ -247,7 +247,7 @@ public class CitySensorOrderAction extends Action {
 						preParams += ",?";
 				}
 			}
-			
+
 			List<Map<String, Object>> rList = pgOnlyReadService.getAllMap("select id,nickname " +
 					" from user_info_tb where id in (" + preParams + ")", idList);
 			if(rList != null && !rList.isEmpty()){
@@ -272,7 +272,7 @@ public class CitySensorOrderAction extends Action {
 			}
 		}
 	}
-	
+
 	private void getBerth(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> idList = new ArrayList<Object>();
@@ -286,7 +286,7 @@ public class CitySensorOrderAction extends Action {
 						preParams += ",?";
 				}
 			}
-			
+
 			List<Map<String, Object>> rList = pgOnlyReadService.getAllMap("select id,cid,berthsec_id " +
 					" from com_park_tb where id in (" + preParams + ")", idList);
 			if(rList != null && !rList.isEmpty()){

@@ -34,14 +34,14 @@ public class CityParkManageAction extends Action {
 	private CommonMethods commonMethods;
 	@Autowired
 	private PublicMethods publicMethods;
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -54,8 +54,8 @@ public class CityParkManageAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
-		if(cityid > 0){//³ÇÊĞÉÌ»§µÇÂ¼
+
+		if(cityid > 0){//åŸå¸‚å•†æˆ·ç™»å½•
 			groupid = RequestUtil.getLong(request, "groupid", -1L);
 		}
 		if(action.equals("")){
@@ -95,7 +95,7 @@ public class CityParkManageAction extends Action {
 				sql += " and id in ("+preParams+") ";
 				countSql += " and id in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				count = pgOnlyReadService.getCount(countSql,params);
 				if(count>0){
 					list = pgOnlyReadService.getAll(sql +" order by id desc ",params, pageNum, pageSize);
@@ -112,7 +112,7 @@ public class CityParkManageAction extends Action {
 			AjaxUtil.ajaxOutput(response, r + "");
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "selids", -1L);
-			int r = daService.update("update com_info_tb set state=? where id=? ", 
+			int r = daService.update("update com_info_tb set state=? where id=? ",
 					new Object[]{1, id});
 			AjaxUtil.ajaxOutput(response, r + "");
 		}else if(action.equals("set")){
@@ -123,9 +123,9 @@ public class CityParkManageAction extends Action {
 			Integer parking_type = 0;
 			String info="";
 			if(parkMap!=null){
-				info ="Ãû³Æ£º"+parkMap.get("company_name")+"£¬µØÖ·£º"+parkMap.get("address")+"<br/>´´½¨Ê±¼ä£º"
-						+TimeTools.getTime_yyyyMMdd_HHmm((Long)parkMap.get("create_time")*1000)+"£¬³µÎ»×ÜÊı£º"+parkMap.get("parking_total")
-						+"£¬·ÖÏí³µÎ»£º"+parkMap.get("share_number")+"£¬¾­Î³¶È£º("+parkMap.get("longitude")+","+parkMap.get("latitude")+")";
+				info ="åç§°ï¼š"+parkMap.get("company_name")+"ï¼Œåœ°å€ï¼š"+parkMap.get("address")+"<br/>åˆ›å»ºæ—¶é—´ï¼š"
+						+TimeTools.getTime_yyyyMMdd_HHmm((Long)parkMap.get("create_time")*1000)+"ï¼Œè½¦ä½æ€»æ•°ï¼š"+parkMap.get("parking_total")
+						+"ï¼Œåˆ†äº«è½¦ä½ï¼š"+parkMap.get("share_number")+"ï¼Œç»çº¬åº¦ï¼š("+parkMap.get("longitude")+","+parkMap.get("latitude")+")";
 				parking_type = (Integer)parkMap.get("parking_type");
 			}
 			request.setAttribute("parking_type", parking_type);
@@ -143,7 +143,7 @@ public class CityParkManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private int editPark(HttpServletRequest request){
 		Long comid = RequestUtil.getLong(request, "id", -1L);
 		Long time = System.currentTimeMillis()/1000;
@@ -172,8 +172,8 @@ public class CityParkManageAction extends Action {
 		int r = daService.update(sql, new Object[]{company, address, phone, mcompany, parking_total, time, state, etc, parking_type, city, mobile, longitude, latitude, comid});
 		return r;
 	}
-	
-	//×¢²áÍ£³µ³¡
+
+	//æ³¨å†Œåœè½¦åœº
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Integer createPark(HttpServletRequest request, Long cityid, Long groupid){
 		Long areaid = RequestUtil.getLong(request, "areaid", -1L);
@@ -204,7 +204,7 @@ public class CityParkManageAction extends Action {
 			return -1;
 		}
 		Long comId = daService.getLong("SELECT nextval('seq_com_info_tb'::REGCLASS) AS newid",null);
-		//Ìí¼Ó×Ô¶¯Éú³É³µ³¡16Î»ÃØÔ¿µÄÂß¼­
+		//æ·»åŠ è‡ªåŠ¨ç”Ÿæˆè½¦åœº16ä½ç§˜é’¥çš„é€»è¾‘
 		String ukey = StringUtils.createRandomCharData(16);
 		String comsql = "insert into com_info_tb(id,company_name,address,phone,create_time,mcompany,parking_total,update_time,groupid,state,areaid,etc,cityid,parking_type,city,mobile,longitude,latitude,ukey)" +
 				" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";

@@ -7,37 +7,37 @@ import com.zld.pojo.ReturnCardReq;
 import com.zld.pojo.UnbindCardReq;
 
 public interface CardService {
-	
+
 	/**
-	 * °ó¶¨»áÔ±(ÊÖ»úºÅ)
+	 * ç»‘å®šä¼šå‘˜(æ‰‹æœºå·)
 	 * @param req
 	 * @return
 	 */
 	public BaseResp bindUserCard(BindCardReq req);
-	
+
 	/**
-	 * °ó¶¨³µÅÆ(Ö»ÓĞ³µÅÆ)
+	 * ç»‘å®šè½¦ç‰Œ(åªæœ‰è½¦ç‰Œ)
 	 * @param req
 	 * @return
 	 */
 	public BaseResp bindPlateCard(BindCardReq req);
-	
+
 	/**
-	 * ½â°ó
+	 * è§£ç»‘
 	 * @param req
 	 * @return
 	 */
 	public BaseResp unBindCard(UnbindCardReq req);
-	
+
 	/**
-	 * ¿¨Æ¬³äÖµ
+	 * å¡ç‰‡å……å€¼
 	 * @param cardChargeReq
 	 * @return
 	 */
 	public BaseResp cardCharge(CardChargeReq cardChargeReq);
-	
+
 	/**
-	 * ×¢Ïú¿¨Æ¬
+	 * æ³¨é”€å¡ç‰‡
 	 * @return
 	 */
 	public BaseResp returnCard(ReturnCardReq req);

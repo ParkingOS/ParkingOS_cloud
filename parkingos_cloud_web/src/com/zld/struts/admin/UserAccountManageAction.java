@@ -28,7 +28,7 @@ import com.zld.utils.TimeTools;
 
 
 /**
- * ÓÃ»§ÕÊ»§
+ * ç”¨æˆ·å¸æˆ·
  * @author Administrator
  *
  */
@@ -41,10 +41,10 @@ public class UserAccountManageAction extends Action{
 	@Autowired
 	private PublicMethods publicMethods;
 	private Logger logger = Logger.getLogger(UserAccountManageAction.class);
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
@@ -61,17 +61,17 @@ public class UserAccountManageAction extends Action{
 			Long uid =RequestUtil.getLong(request, "uid",-1L);
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			String from = RequestUtil.getString(request, "from");
-			
+
 			//System.out.println(sqlInfo);
 			List list = null;//daService.getAll(sql+" order by id desc",new Object[]{comid,1});
 			int count =0;
 			String json ="{}";
-			if(from.equals("")){//ºóÌ¨²éÑ¯
+			if(from.equals("")){//åå°æŸ¥è¯¢
 				list = daService.getAll(sql+" order by id desc",new Object[]{comid,1});
 				if(list!=null)
 					count = list.size();
 				json = JsonUtil.Map2Json(list,1,count, fieldsstr,"id");
-			}else if(uid!=-1){//¿Í»§¶Ë
+			}else if(uid!=-1){//å®¢æˆ·ç«¯
 				list = daService.getAll(sql+" and uin=? order by id desc",new Object[]{comid,1,uid});
 				if(list!=null&&!list.isEmpty()){
 					Map map = (Map)list.get(0);
@@ -86,12 +86,12 @@ public class UserAccountManageAction extends Action{
 			}
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
-		}else if(action.equals("create")){//Ìí¼ÓÕÊºÅ
+		}else if(action.equals("create")){//æ·»åŠ å¸å·
 			//http://192.168.199.240//useraccount.do?action=create
 			//&comid=&uid=&card_number=&user_id=&name=&bank_name=
-			//¹«Ë¾±àºÅ ÓÃ»§µÇÂ¼ÕË»§ ÒøĞĞ¿¨ºÅ Éí·İÖ¤ºÅ ĞÕÃû ¿ª»§ÒøĞĞ 
+			//å…¬å¸ç¼–å· ç”¨æˆ·ç™»å½•è´¦æˆ· é“¶è¡Œå¡å· èº«ä»½è¯å· å§“å å¼€æˆ·é“¶è¡Œ
 			String from = RequestUtil.getString(request, "from");
-			
+
 			String name =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
 			Long uid =RequestUtil.getLong(request, "uid",-1L);
 			String card_number =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "card_number"));
@@ -113,37 +113,37 @@ public class UserAccountManageAction extends Action{
 			}
 			if(uid!=-1&&!card_number.equals("")&&!user_id.equals("")&&!bank_name.equals("")){
 				Long count = daService.getLong("select count(id) from com_account_tb where uin=? and type=? ",new Object[]{uid,1});
-				if(count>0){//¸üĞÂ
+				if(count>0){//æ›´æ–°
 					result = daService.update("update  com_account_tb set card_number=?,bank_name=?," +
-							"user_id=?,name=?,area=?,bank_pint=?,mobile=? where uin=? and type=?",
+									"user_id=?,name=?,area=?,bank_pint=?,mobile=? where uin=? and type=?",
 							new Object[]{card_number,bank_name,user_id,name,area,bank_pint,mobile,uid,1});
 				}else {
 					result = daService.update("insert into com_account_tb " +
-							"(comid,uin,name,card_number,bank_name,atype,type,state,user_id,area,bank_pint,mobile)" +
-							" values(?,?,?,?,?,?,?,?,?,?,?,?)",
+									"(comid,uin,name,card_number,bank_name,atype,type,state,user_id,area,bank_pint,mobile)" +
+									" values(?,?,?,?,?,?,?,?,?,?,?,?)",
 							new Object[]{comid,uid,name,card_number,bank_name,0,1,0,user_id,area,bank_pint,mobile});
 				}
-				if(result==1&&from.equals("kefuset")){//À´Ô´ÓÚºóÌ¨¿Í·şÉóºËÌí¼ÓÊÕ·ÑÔ±ÕË»§£¬ĞèÒª´¦ÀíÓÃ»§Ãû¼°¸üĞÂ×´Ì¬
-					Long pid = RequestUtil.getLong(request, "pid", -1L);//¼ÇÂ¼±àºÅ
+				if(result==1&&from.equals("kefuset")){//æ¥æºäºåå°å®¢æœå®¡æ ¸æ·»åŠ æ”¶è´¹å‘˜è´¦æˆ·ï¼Œéœ€è¦å¤„ç†ç”¨æˆ·ååŠæ›´æ–°çŠ¶æ€
+					Long pid = RequestUtil.getLong(request, "pid", -1L);//è®°å½•ç¼–å·
 					Long loguid = (Long)request.getSession().getAttribute("loginuin");
-					int ret = daService.update("update collector_account_pic_tb set utime=?,state=?,auditor=? where id=? ", 
+					int ret = daService.update("update collector_account_pic_tb set utime=?,state=?,auditor=? where id=? ",
 							new Object[]{System.currentTimeMillis()/1000,1,loguid,pid});
-					logger.error("¸üĞÂÕË»§ÉÏ´«¼ÇÂ¼,pid="+pid+",result:"+ret);
+					logger.error("æ›´æ–°è´¦æˆ·ä¸Šä¼ è®°å½•,pid="+pid+",result:"+ret);
 					if(mobile!=null&&Check.checkMobile(mobile)){
-						SendMessage.sendMultiMessage(mobile, "¹§Ï²£¬ÄãµÄÒøĞĞ¿¨ÕËºÅÒÑ¾­°ó¶¨Íê³É£¬¿ÉÒÔÌáÏÖÁË¡£ÈçÓĞÒÉÎÊ£¬ÁªÏµÍ£³µ±¦ 010-56450585 ¡¾Í£³µ±¦¡¿");
+						SendMessage.sendMultiMessage(mobile, "æ­å–œï¼Œä½ çš„é“¶è¡Œå¡è´¦å·å·²ç»ç»‘å®šå®Œæˆï¼Œå¯ä»¥æç°äº†ã€‚å¦‚æœ‰ç–‘é—®ï¼Œè”ç³»åœè½¦å® 010-56450585 ã€åœè½¦å®ã€‘");
 					}
 					if(ret==1){
 						ret = daService.update("update user_info_tb set nickname=? where id=? ", new Object[]{name,uid});
-						logger.error("¸üĞÂ¿Í»§ĞÅÏ¢uid="+uid+",result:"+ret);
+						logger.error("æ›´æ–°å®¢æˆ·ä¿¡æ¯uid="+uid+",result:"+ret);
 					}
 				}
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("editacc")){
 			//http://192.168.199.240//useraccount.do?action=editacc&&uid=&card_number=&user_id=&name=&bank_name=
-			
+
 			String from = RequestUtil.getString(request, "from");
-			if(from.equals("")){//²»ÊÇºóÌ¨£¨´Ó¿Í»§¶Ë£©¹ıÀ´µÄ²»ÈÃĞŞ¸Ä£¬¿ÉÒÔÉêÇë¸ü¸ÄÕËºÅ£¬ÓÉ¿Í·ş´òµç»°È·ÈÏ²¢´¦Àí£¬
+			if(from.equals("")){//ä¸æ˜¯åå°ï¼ˆä»å®¢æˆ·ç«¯ï¼‰è¿‡æ¥çš„ä¸è®©ä¿®æ”¹ï¼Œå¯ä»¥ç”³è¯·æ›´æ”¹è´¦å·ï¼Œç”±å®¢æœæ‰“ç”µè¯ç¡®è®¤å¹¶å¤„ç†ï¼Œ
 				AjaxUtil.ajaxOutput(response,"-1");
 				return null;
 			}
@@ -165,7 +165,7 @@ public class UserAccountManageAction extends Action{
 			int result = 0;
 			if(!card_number.equals("")&&!user_id.equals("")&&!bank_name.equals("")){
 				result = daService.update("update  com_account_tb set card_number=?,bank_name=?," +
-						"user_id=?,name=?,area=?,bank_pint=?,mobile=?,note=? where uin=? and type=?",
+								"user_id=?,name=?,area=?,bank_pint=?,mobile=?,note=? where uin=? and type=?",
 						new Object[]{card_number,bank_name,user_id,uname,area,bank_pint,mobile,note,uid,1});
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
@@ -178,7 +178,7 @@ public class UserAccountManageAction extends Action{
 			if(id!=-1)
 				result = daService.update("update com_account_tb set state =? where id=?", new Object[]{state,id});
 //			if(result==1&&state==0){
-//				
+//
 //			}
 			AjaxUtil.ajaxOutput(response, ""+result);
 		}else if(action.equals("getaccount")){
@@ -193,13 +193,13 @@ public class UserAccountManageAction extends Action{
 			else
 				AjaxUtil.ajaxOutput(response, StringUtils.formatDouble(balance)+"");
 			//http://192.168.199.240/zld/useraccount.do?action=getaccount&uid=11340
-		}else if(action.equals("withdraw")){//ÊÕ·ÑÔ±ÌáÏÖÇëÇó
+		}else if(action.equals("withdraw")){//æ”¶è´¹å‘˜æç°è¯·æ±‚
 			//http://192.168.199.240/zld/useraccount.do?action=withdraw&uid=10343&comid=858&money=20
 			Double money = RequestUtil.getDouble(request, "money", 0d);
 			Long uid =RequestUtil.getLong(request, "uid",-1L);
-			Long count = daService.getLong("select count(*) from parkuser_account_tb where uin= ? and create_time>? and type=?  ", 
+			Long count = daService.getLong("select count(*) from parkuser_account_tb where uin= ? and create_time>? and type=?  ",
 					new Object[]{uid,TimeTools.getToDayBeginTime(),1}) ;
-			if(count>2){//Ã¿ÌìÖ»ÄÜÈı´Î
+			if(count>2){//æ¯å¤©åªèƒ½ä¸‰æ¬¡
 				AjaxUtil.ajaxOutput(response, "{\"result\":-2,\"times\":"+count+"}");
 				return null;
 			}
@@ -207,23 +207,23 @@ public class UserAccountManageAction extends Action{
 					new Object[]{uid,1});
 			Long accId = null;
 			Integer target = 0;
-			if(accMap!=null&&!accMap.isEmpty()){//´æÔÚ¸öÈËÕË»§ÒøĞĞ¿¨
+			if(accMap!=null&&!accMap.isEmpty()){//å­˜åœ¨ä¸ªäººè´¦æˆ·é“¶è¡Œå¡
 				accId=(Long)accMap.get("id");
 				target = (Integer)accMap.get("atype");
 			}else {
-				//Ã»ÓĞÉèÖÃÒøĞĞÕË»§
+				//æ²¡æœ‰è®¾ç½®é“¶è¡Œè´¦æˆ·
 				AjaxUtil.ajaxOutput(response, "{\"result\":-1,\"times\":0}");
 				return null;
 			}
-			//ÌáÏÖ²Ù×÷
+			//æç°æ“ä½œ
 			boolean result =false;
 			if(money>0){
 				Map userMap = daService.getMap("select balance,comid from user_info_Tb where id=? ", new Object[]{uid});
-				//ÓÃ»§Óà¶î
+				//ç”¨æˆ·ä½™é¢
 				Double balance = Double.valueOf(userMap.get("balance")+"");
 				//String name = (String)userMap.get("nickname");
-				if(money<=balance){//ÌáÏÖ½ğ¶î²»´óÓÚÓà¶î
-					//¿Û³ıÕÊºÅÓà¶î//Ğ´ÌáÏÖÉêÇë±í
+				if(money<=balance){//æç°é‡‘é¢ä¸å¤§äºä½™é¢
+					//æ‰£é™¤å¸å·ä½™é¢//å†™æç°ç”³è¯·è¡¨
 					List<Map<String, Object>> sqlList = new ArrayList<Map<String,Object>>();
 					Map<String, Object> userSqlMap = new HashMap<String, Object>();
 					userSqlMap.put("sql", "update user_info_Tb set balance = balance-? where id= ?");
@@ -233,7 +233,7 @@ public class UserAccountManageAction extends Action{
 					withdrawSqlMap.put("values", new Object[]{userMap.get("comid"),money,System.currentTimeMillis()/1000,accId,uid,1});
 					Map<String, Object> moneySqlMap = new HashMap<String, Object>();
 					moneySqlMap.put("sql", "insert into parkuser_account_tb (uin,amount,create_time,type,remark,target) values(?,?,?,?,?,?)");
-					moneySqlMap.put("values", new Object[]{uid,money,System.currentTimeMillis()/1000,1,"ÌáÏÖ",target});
+					moneySqlMap.put("values", new Object[]{uid,money,System.currentTimeMillis()/1000,1,"æç°",target});
 					sqlList.add(userSqlMap);
 					sqlList.add(withdrawSqlMap);
 					sqlList.add(moneySqlMap);
@@ -252,37 +252,37 @@ public class UserAccountManageAction extends Action{
 			if(page!=null){
 				Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 				Integer pageSize = RequestUtil.getInteger(request, "size", 20);
-				Long stype=RequestUtil.getLong(request, "stype", -1L);//0:ÊÕÈë£¬1ÌáÏÖ
+				Long stype=RequestUtil.getLong(request, "stype", -1L);//0:æ”¶å…¥ï¼Œ1æç°
 				String sql = "select amount money,type mtype,create_time," +
 						"remark note,target from parkuser_account_tb where uin = ?  ";
 				String countSql = "select count(id) from parkuser_account_tb where uin = ?  ";
 				List<Object> params = new ArrayList<Object>();
 				params.add(uid);
-				
+
 				if(stype>-1){
 					sql +=" and type=? ";
 					countSql +=" and type=? ";
 					params.add(stype);
 				}
-				
+
 				Long count= pgOnlyReadService.getCount(countSql, params);
 				List list = null;//daService.getPage(sql, null, 1, 20);
 				if(count>0){
 					list = pgOnlyReadService.getAll(sql+" order by id desc ", params, pageNum, pageSize);
 				}
 				//List<Map<String, Object>> accMap = daService.getAll(, new Object[]{uid});
-				//target Ä¿±ê(À´Ô´»òÈ¥´¦)£º0£ºÒøĞĞ¿¨£¬1£ºÖ§¸¶±¦£¬2:Î¢ĞÅ£¬3£ºÍ£³µ±¦£¬4£º³µÖ÷
+				//target ç›®æ ‡(æ¥æºæˆ–å»å¤„)ï¼š0ï¼šé“¶è¡Œå¡ï¼Œ1ï¼šæ”¯ä»˜å®ï¼Œ2:å¾®ä¿¡ï¼Œ3ï¼šåœè½¦å®ï¼Œ4ï¼šè½¦ä¸»
 				setAccountList(list);
 				String reslut =  "{\"count\":"+count+",\"info\":"+StringUtils.createJson(list)+"}";
 				AjaxUtil.ajaxOutput(response, reslut);
 			}else {
 //				Long uid =RequestUtil.getLong(request, "uid",-1L);
 				List<Map<String, Object>> accMap = daService.getAll("select amount money,type mtype,create_time,remark note,target from parkuser_account_tb where uin = ? order by id desc ", new Object[]{uid});
-				//target Ä¿±ê(À´Ô´»òÈ¥´¦)£º0£ºÒøĞĞ¿¨£¬1£ºÖ§¸¶±¦£¬2:Î¢ĞÅ£¬3£ºÍ£³µ±¦£¬4£º³µÖ÷
+				//target ç›®æ ‡(æ¥æºæˆ–å»å¤„)ï¼š0ï¼šé“¶è¡Œå¡ï¼Œ1ï¼šæ”¯ä»˜å®ï¼Œ2:å¾®ä¿¡ï¼Œ3ï¼šåœè½¦å®ï¼Œ4ï¼šè½¦ä¸»
 				setAccountList(accMap);
 				AjaxUtil.ajaxOutput(response, StringUtils.createJson(accMap));
 			}
-		}else if(action.equals("uploadpic")){//³µÖ÷ÉÏ´«ÕË»§Í¼Æ¬£¬ÓÃÓÚ¿Í·ş¸ù¾İÍ¼Æ¬ÉèÖÃÊÕ·ÑÔ±ÕË»§ĞÅÏ¢
+		}else if(action.equals("uploadpic")){//è½¦ä¸»ä¸Šä¼ è´¦æˆ·å›¾ç‰‡ï¼Œç”¨äºå®¢æœæ ¹æ®å›¾ç‰‡è®¾ç½®æ”¶è´¹å‘˜è´¦æˆ·ä¿¡æ¯
 			Long uid = RequestUtil.getLong(request, "uin", -1L);
 			//String picurl = uploadParkuserAccountPics2Mongodb(request,uid);
 			String picurl = publicMethods.uploadPicToMongodb(request, uid, "parkuser_account_pics");
@@ -297,50 +297,50 @@ public class UserAccountManageAction extends Action{
 				AjaxUtil.ajaxOutput(response, picurl);
 				return null;
 			}
-			Map<String,Object>	pucpMap = daService.getMap("select * from collector_account_pic_tb where uin = ? ", 
+			Map<String,Object>	pucpMap = daService.getMap("select * from collector_account_pic_tb where uin = ? ",
 					new Object[]{uid});
 			int ret = 0;
 			if(pucpMap!=null){
-				ret = daService.update("update collector_account_pic_tb set pic_name =?,ctime=?,state=?,utime=?,auditor=?  where uin=? ", 
+				ret = daService.update("update collector_account_pic_tb set pic_name =?,ctime=?,state=?,utime=?,auditor=?  where uin=? ",
 						new Object[]{picurl,System.currentTimeMillis()/1000,0,0L,-1L,uid});
 			}else {
-				ret = daService.update("insert into collector_account_pic_tb(uin,pic_name,ctime,state,comid) values(?,?,?,?,?) ", 
+				ret = daService.update("insert into collector_account_pic_tb(uin,pic_name,ctime,state,comid) values(?,?,?,?,?) ",
 						new Object[]{uid,picurl,System.currentTimeMillis()/1000,0,comid});
 			}
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}
 		return null;
 	}
-	
+
 	private void setAccountList (List<Map<String, Object>> list){
 		if(list!=null&&!list.isEmpty()){
 			for(Map<String, Object> map :list){
 				Integer target = (Integer)map.get("target");
 				if(target!=null){
 					switch (target) {
-					case 0:
-						map.put("target", "ÒøĞĞ¿¨");
-						break;
-					case 1:
-						map.put("target", "Ö§¸¶±¦");					
-						break;
-					case 2:
-						map.put("target", "Î¢ĞÅ");
-						break;
-					case 3:
-						map.put("target", "Í£³µ±¦");
-						break;
-					case 4:
-						String note = (String)map.get("note");
-						String [] notes  = note.split("_");
-						map.put("note",notes[0]);
-						if(notes.length==2)
-							map.put("target", notes[1]);
-						else
-							map.put("target","");
-						break;
-					default:
-						break;
+						case 0:
+							map.put("target", "é“¶è¡Œå¡");
+							break;
+						case 1:
+							map.put("target", "æ”¯ä»˜å®");
+							break;
+						case 2:
+							map.put("target", "å¾®ä¿¡");
+							break;
+						case 3:
+							map.put("target", "åœè½¦å®");
+							break;
+						case 4:
+							String note = (String)map.get("note");
+							String [] notes  = note.split("_");
+							map.put("note",notes[0]);
+							if(notes.length==2)
+								map.put("target", notes[1]);
+							else
+								map.put("target","");
+							break;
+						default:
+							break;
 					}
 				}
 			}
@@ -354,11 +354,11 @@ public class UserAccountManageAction extends Action{
 	    extMap.put(".jpeg", "image/jpeg");
 	    extMap.put(".png", "image/png");
 	    extMap.put(".gif", "image/gif");
-		request.setCharacterEncoding("UTF-8"); // ÉèÖÃ´¦ÀíÇëÇó²ÎÊıµÄ±àÂë¸ñÊ½
-		DiskFileItemFactory  factory = new DiskFileItemFactory(); // ½¨Á¢FileItemFactory¶ÔÏó
+		request.setCharacterEncoding("UTF-8"); // è®¾ç½®å¤„ç†è¯·æ±‚å‚æ•°çš„ç¼–ç æ ¼å¼
+		DiskFileItemFactory  factory = new DiskFileItemFactory(); // å»ºç«‹FileItemFactoryå¯¹è±¡
 		factory.setSizeThreshold(16*4096*1024);
 		ServletFileUpload upload = new ServletFileUpload(factory);
-		// ·ÖÎöÇëÇó£¬²¢µÃµ½ÉÏ´«ÎÄ¼şµÄFileItem¶ÔÏó
+		// åˆ†æè¯·æ±‚ï¼Œå¹¶å¾—åˆ°ä¸Šä¼ æ–‡ä»¶çš„FileItemå¯¹è±¡
 		upload.setSizeMax(16*4096*1024);
 		List<FileItem> items = null;
 		try {
@@ -367,56 +367,56 @@ public class UserAccountManageAction extends Action{
 			e.printStackTrace();
 			return "-1";
 		}
-		String filename = ""; // ÉÏ´«ÎÄ¼ş±£´æµ½·şÎñÆ÷µÄÎÄ¼şÃû
-		InputStream is = null; // µ±Ç°ÉÏ´«ÎÄ¼şµÄInputStream¶ÔÏó
-		// Ñ­»·´¦ÀíÉÏ´«ÎÄ¼ş
+		String filename = ""; // ä¸Šä¼ æ–‡ä»¶ä¿å­˜åˆ°æœåŠ¡å™¨çš„æ–‡ä»¶å
+		InputStream is = null; // å½“å‰ä¸Šä¼ æ–‡ä»¶çš„InputStreamå¯¹è±¡
+		// å¾ªç¯å¤„ç†ä¸Šä¼ æ–‡ä»¶
 		for (FileItem item : items){
-			// ´¦ÀíÆÕÍ¨µÄ±íµ¥Óò
+			// å¤„ç†æ™®é€šçš„è¡¨å•åŸŸ
 			if (item.isFormField()){
 				if(item.getFieldName().equals("comid")){
 					if(!item.getString().equals(""))
 						comId = item.getString("UTF-8");
 				}
-				
-			}else if (item.getName() != null && !item.getName().equals("")){// ´¦ÀíÉÏ´«ÎÄ¼ş
-				// ´Ó¿Í»§¶Ë·¢ËÍ¹ıÀ´µÄÉÏ´«ÎÄ¼şÂ·¾¶ÖĞ½ØÈ¡ÎÄ¼şÃû
+
+			}else if (item.getName() != null && !item.getName().equals("")){// å¤„ç†ä¸Šä¼ æ–‡ä»¶
+				// ä»å®¢æˆ·ç«¯å‘é€è¿‡æ¥çš„ä¸Šä¼ æ–‡ä»¶è·¯å¾„ä¸­æˆªå–æ–‡ä»¶å
 				logger.error(item.getName());
 				filename = item.getName().substring(item.getName().lastIndexOf("\\")+1);
-				is = item.getInputStream(); // µÃµ½ÉÏ´«ÎÄ¼şµÄInputStream¶ÔÏó
-				
+				is = item.getInputStream(); // å¾—åˆ°ä¸Šä¼ æ–‡ä»¶çš„InputStreamå¯¹è±¡
+
 			}
 		}
-		String file_ext =filename.substring(filename.lastIndexOf(".")).toLowerCase();// À©Õ¹Ãû
+		String file_ext =filename.substring(filename.lastIndexOf(".")).toLowerCase();// æ‰©å±•å
 		String picurl = uin+"_"+System.currentTimeMillis()+file_ext;
-		BufferedInputStream in = null;  
+		BufferedInputStream in = null;
 		ByteArrayOutputStream byteout =null;
 	    try {
-	    	in = new BufferedInputStream(is);   
-	    	byteout = new ByteArrayOutputStream(1024);        	       
-		      
-	 	    byte[] temp = new byte[1024];        
-	 	    int bytesize = 0;        
-	 	    while ((bytesize = in.read(temp)) != -1) {        
-	 	          byteout.write(temp, 0, bytesize);        
-	 	    }        
-	 	      
-	 	    byte[] content = byteout.toByteArray(); 
+	    	in = new BufferedInputStream(is);
+	    	byteout = new ByteArrayOutputStream(1024);
+
+	 	    byte[] temp = new byte[1024];
+	 	    int bytesize = 0;
+	 	    while ((bytesize = in.read(temp)) != -1) {
+	 	          byteout.write(temp, 0, bytesize);
+	 	    }
+
+	 	    byte[] content = byteout.toByteArray();
 	 	    DB mydb = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
 		    mydb.requestStart();
-			  
+
 		    DBCollection collection = mydb.getCollection("parkuser_account_pics");
 		  //  DBCollection collection = mydb.getCollection("records_test");
-			  
+
 			BasicDBObject document = new BasicDBObject();
 			document.put("uin",  uin);
 			document.put("ctime",  System.currentTimeMillis()/1000);
 			document.put("type", extMap.get(file_ext));
 			document.put("content", content);
 			document.put("filename", picurl);
-			  //¿ªÊ¼ÊÂÎñ
+			  //å¼€å§‹äº‹åŠ¡
 			mydb.requestStart();
 			collection.insert(document);
-			  //½áÊøÊÂÎñ
+			  //ç»“æŸäº‹åŠ¡
 			mydb.requestDone();
 			in.close();        
 		    is.close();

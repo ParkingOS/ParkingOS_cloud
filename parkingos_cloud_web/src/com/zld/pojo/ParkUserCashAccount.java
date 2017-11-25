@@ -4,19 +4,19 @@ import java.io.Serializable;
 
 public class ParkUserCashAccount implements Serializable {
 	private Long id = -1L;
-	private Long uin = -1L;//ÊÕ·ÑÔ±ÕËºÅ
-	private Double amount = 0d;//ÏÖ½ğ½ğ¶î
-	private Long orderid = -1L;//¶©µ¥±àºÅ
-	private Integer type = 0;//0:¸ÚÍ¤ÊÕ·Ñ 1£ºÖĞÑëÔ¤Ö§¸¶ÊÕ·Ñ 2£º¿¨Æ¬²Ù×÷
+	private Long uin = -1L;//æ”¶è´¹å‘˜è´¦å·
+	private Double amount = 0d;//ç°é‡‘é‡‘é¢
+	private Long orderid = -1L;//è®¢å•ç¼–å·
+	private Integer type = 0;//0:å²—äº­æ”¶è´¹ 1ï¼šä¸­å¤®é¢„æ”¯ä»˜æ”¶è´¹ 2ï¼šå¡ç‰‡æ“ä½œ
 	private Long create_time;//
-	private Integer ctype = 0;//0£ºÊÕÈë£¬1£ºÖ§³ö
-	private Integer target = 0;//£¨¸Ã×Ö¶Î²»ÊÊÓÃtype=1£©0£ºÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©£¬1£ºÔ¤¸¶Í£³µ·Ñ£¬2£ºÔ¤¸¶ÍË¿î£¨Ô¤¸¶³¬¶î£©£¬3£ºÔ¤¸¶²¹½É£¨Ô¤¸¶²»×ã£©£¬4£º×·½ÉÍ£³µ·Ñ 5£º¿¨Æ¬³äÖµ 6£º¿¨Æ¬×¢Ïú
-	private Long card_account_id = -1L;//¿¨Æ¬³äÖµÁ÷Ë®±àºÅ
-	private Long comid = -1L;//³µ³¡±àºÅ
-	private Long berthseg_id = -1L;//²úÉúÕâ±ÊÁ÷Ë®ËùÔÚµÄ²´Î»¶Î±àºÅ(Ë÷Òı)
-	private Long berth_id = -1L;//²úÉúÕâ±ÊÁ÷Ë®ËùÔÚµÄ²´Î»±àºÅ(Ë÷Òı)
-	private Long groupid = -1L;//ÔËÓª¼¯ÍÅÕËºÅ(Ë÷Òı)
-	private Integer is_delete = 0;//ÕËÄ¿Á÷Ë®×´Ì¬ 0£ºÕı³£ 1£ºÉ¾³ı
+	private Integer ctype = 0;//0ï¼šæ”¶å…¥ï¼Œ1ï¼šæ”¯å‡º
+	private Integer target = 0;//ï¼ˆè¯¥å­—æ®µä¸é€‚ç”¨type=1ï¼‰0ï¼šåœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰ï¼Œ1ï¼šé¢„ä»˜åœè½¦è´¹ï¼Œ2ï¼šé¢„ä»˜é€€æ¬¾ï¼ˆé¢„ä»˜è¶…é¢ï¼‰ï¼Œ3ï¼šé¢„ä»˜è¡¥ç¼´ï¼ˆé¢„ä»˜ä¸è¶³ï¼‰ï¼Œ4ï¼šè¿½ç¼´åœè½¦è´¹ 5ï¼šå¡ç‰‡å……å€¼ 6ï¼šå¡ç‰‡æ³¨é”€
+	private Long card_account_id = -1L;//å¡ç‰‡å……å€¼æµæ°´ç¼–å·
+	private Long comid = -1L;//è½¦åœºç¼–å·
+	private Long berthseg_id = -1L;//äº§ç”Ÿè¿™ç¬”æµæ°´æ‰€åœ¨çš„æ³Šä½æ®µç¼–å·(ç´¢å¼•)
+	private Long berth_id = -1L;//äº§ç”Ÿè¿™ç¬”æµæ°´æ‰€åœ¨çš„æ³Šä½ç¼–å·(ç´¢å¼•)
+	private Long groupid = -1L;//è¿è¥é›†å›¢è´¦å·(ç´¢å¼•)
+	private Integer is_delete = 0;//è´¦ç›®æµæ°´çŠ¶æ€ 0ï¼šæ­£å¸¸ 1ï¼šåˆ é™¤
 	public Long getId() {
 		return id;
 	}
@@ -117,6 +117,6 @@ public class ParkUserCashAccount implements Serializable {
 	public void setIs_delete(Integer is_delete) {
 		this.is_delete = is_delete;
 	}
-	
-	
+
+
 }

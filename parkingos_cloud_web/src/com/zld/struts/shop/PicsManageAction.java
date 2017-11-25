@@ -40,25 +40,25 @@ public class PicsManageAction extends Action {
 	private DataBaseService daService;
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
-	
+
 	private Logger logger = Logger.getLogger(PicsManageAction.class);
 
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		String token =RequestUtil.processParams(request, "token");
 		Map<String,Object> infoMap  = new HashMap<String, Object>();
 		if(token==null||"null".equals(token)||"".equals(token)){
 			infoMap.put("result", "fail");
-			infoMap.put("message", "tokenÎŞĞ§!");
+			infoMap.put("message", "tokenæ— æ•ˆ!");
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(infoMap));
 			return null;
 		}
 		Long uid = validToken(token);
 		if(uid == null){
 			infoMap.put("result", "fail");
-			infoMap.put("message", "tokenÎŞĞ§!");
+			infoMap.put("message", "tokenæ— æ•ˆ!");
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(infoMap));
 			return null;
 		}else if(action.equals("downloadshoppics")){
@@ -73,21 +73,21 @@ public class PicsManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * ÑéÖ¤tokenÊÇ·ñÓĞĞ§
+	 * éªŒè¯tokenæ˜¯å¦æœ‰æ•ˆ
 	 * @param token
 	 * @return uin
 	 */
 	private Long validToken(String token) {
 		Map tokenMap = pgOnlyReadService.getMap("select * from user_session_tb where token=?", new Object[]{token});
- 		Long uin = null;
+		Long uin = null;
 		if(tokenMap!=null&&tokenMap.get("uin")!=null){
 			uin = (Long) tokenMap.get("uin");
 		}
 		return uin;
 	}
-	
+
 	private void downloadParkPics (Long comid,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		logger.error("download parkPics from mongodb....");
 		System.err.println("downloadParkPics from mongodb file:comid="+comid);
@@ -97,7 +97,7 @@ public class PicsManageAction extends Action {
 			BasicDBObject document = new BasicDBObject();
 			BasicDBObject condation = new BasicDBObject();
 			document.put("comid", comid);
-			//°´Éú³ÉÊ±¼ä²é×î½üµÄÊı¾İ
+			//æŒ‰ç”Ÿæˆæ—¶é—´æŸ¥æœ€è¿‘çš„æ•°æ®
 			condation.put("ctime", -1);
 			DBCursor objs = collection.find(document).sort(condation).limit(1);
 			DBObject obj = null;
@@ -117,18 +117,18 @@ public class PicsManageAction extends Action {
 			response.setHeader("Last-Modified", c.getTime().toString());
 			response.setContentLength(content.length);
 			response.setContentType("image/jpeg");
-		    OutputStream o = response.getOutputStream();
-		    o.write(content);
-		    o.flush();
-		    o.close();
-		    response.flushBuffer();
-		    //response.reset();
-		    System.out.println("mongdb over.....");
+			OutputStream o = response.getOutputStream();
+			o.write(content);
+			o.flush();
+			o.close();
+			response.flushBuffer();
+			//response.reset();
+			System.out.println("mongdb over.....");
 		}else {
 			AjaxUtil.ajaxOutput(response, "-1");
 		}
 	}
-	
+
 	private void downloadVisitPics (Long shop_id,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		logger.error("download shopPics from mongodb....");
 		System.err.println("downloadVisitPics from mongodb file:shop_id="+shop_id);
@@ -138,7 +138,7 @@ public class PicsManageAction extends Action {
 			BasicDBObject document = new BasicDBObject();
 			BasicDBObject condation = new BasicDBObject();
 			document.put("shop_id", shop_id);
-			//°´Éú³ÉÊ±¼ä²é×î½üµÄÊı¾İ
+			//æŒ‰ç”Ÿæˆæ—¶é—´æŸ¥æœ€è¿‘çš„æ•°æ®
 			condation.put("ctime", -1);
 			DBCursor objs = collection.find(document).sort(condation).limit(1);
 			DBObject obj = null;
@@ -158,33 +158,33 @@ public class PicsManageAction extends Action {
 			response.setHeader("Last-Modified", c.getTime().toString());
 			response.setContentLength(content.length);
 			response.setContentType("image/jpeg");
-		    OutputStream o = response.getOutputStream();
-		    o.write(content);
-		    o.flush();
-		    o.close();
-		    response.flushBuffer();
-		    //response.reset();
-		    System.out.println("mongdb over.....");
+			OutputStream o = response.getOutputStream();
+			o.write(content);
+			o.flush();
+			o.close();
+			response.flushBuffer();
+			//response.reset();
+			System.out.println("mongdb over.....");
 		}else {
 			AjaxUtil.ajaxOutput(response, "-1");
 		}
 	}
-	
+
 	/*
-	 * ÉÏ´«°İ·ÃÍ¼Æ¬
+	 * ä¸Šä¼ æ‹œè®¿å›¾ç‰‡
 	 */
 	private String uploadVisitPic2Mongodb (HttpServletRequest request,HttpServletResponse response,Long shop_id) throws Exception{
 		logger.error("begin upload shop picture....");
 		Map<String, String> extMap = new HashMap<String, String>();
-	    extMap.put(".jpg", "image/jpeg");
-	    extMap.put(".jpeg", "image/jpeg");
-	    extMap.put(".png", "image/png");
-	    extMap.put(".gif", "image/gif");
-		request.setCharacterEncoding("UTF-8"); // ÉèÖÃ´¦ÀíÇëÇó²ÎÊıµÄ±àÂë¸ñÊ½
-		DiskFileItemFactory  factory = new DiskFileItemFactory(); // ½¨Á¢FileItemFactory¶ÔÏó
+		extMap.put(".jpg", "image/jpeg");
+		extMap.put(".jpeg", "image/jpeg");
+		extMap.put(".png", "image/png");
+		extMap.put(".gif", "image/gif");
+		request.setCharacterEncoding("UTF-8"); // è®¾ç½®å¤„ç†è¯·æ±‚å‚æ•°çš„ç¼–ç æ ¼å¼
+		DiskFileItemFactory  factory = new DiskFileItemFactory(); // å»ºç«‹FileItemFactoryå¯¹è±¡
 		factory.setSizeThreshold(16*4096*1024);
 		ServletFileUpload upload = new ServletFileUpload(factory);
-		// ·ÖÎöÇëÇó£¬²¢µÃµ½ÉÏ´«ÎÄ¼şµÄFileItem¶ÔÏó
+		// åˆ†æè¯·æ±‚ï¼Œå¹¶å¾—åˆ°ä¸Šä¼ æ–‡ä»¶çš„FileItemå¯¹è±¡
 		upload.setSizeMax(16*4096*1024);
 		List<FileItem> items = null;
 		try {
@@ -193,54 +193,54 @@ public class PicsManageAction extends Action {
 			e.printStackTrace();
 			return "-1";
 		}
-		String filename = ""; // ÉÏ´«ÎÄ¼ş±£´æµ½·şÎñÆ÷µÄÎÄ¼şÃû
-		InputStream is = null; // µ±Ç°ÉÏ´«ÎÄ¼şµÄInputStream¶ÔÏó
-		// Ñ­»·´¦ÀíÉÏ´«ÎÄ¼ş
+		String filename = ""; // ä¸Šä¼ æ–‡ä»¶ä¿å­˜åˆ°æœåŠ¡å™¨çš„æ–‡ä»¶å
+		InputStream is = null; // å½“å‰ä¸Šä¼ æ–‡ä»¶çš„InputStreamå¯¹è±¡
+		// å¾ªç¯å¤„ç†ä¸Šä¼ æ–‡ä»¶
 		for (FileItem item : items){
 			if (!item.isFormField()){
-				if (item.getName() != null && !item.getName().equals("")){// ´¦ÀíÉÏ´«ÎÄ¼ş
-					// ´Ó¿Í»§¶Ë·¢ËÍ¹ıÀ´µÄÉÏ´«ÎÄ¼şÂ·¾¶ÖĞ½ØÈ¡ÎÄ¼şÃû
+				if (item.getName() != null && !item.getName().equals("")){// å¤„ç†ä¸Šä¼ æ–‡ä»¶
+					// ä»å®¢æˆ·ç«¯å‘é€è¿‡æ¥çš„ä¸Šä¼ æ–‡ä»¶è·¯å¾„ä¸­æˆªå–æ–‡ä»¶å
 					logger.error(item.getName());
 					filename = item.getName().substring(
 							item.getName().lastIndexOf("\\")+1);
-					is = item.getInputStream(); // µÃµ½ÉÏ´«ÎÄ¼şµÄInputStream¶ÔÏó
-					}
+					is = item.getInputStream(); // å¾—åˆ°ä¸Šä¼ æ–‡ä»¶çš„InputStreamå¯¹è±¡
 				}
+			}
 		}
-		String file_ext =filename.substring(filename.lastIndexOf(".")).toLowerCase();// À©Õ¹Ãû
+		String file_ext =filename.substring(filename.lastIndexOf(".")).toLowerCase();// æ‰©å±•å
 		String picurl = shop_id + "_" + System.currentTimeMillis()/1000 + file_ext;
-		BufferedInputStream in = null;  
+		BufferedInputStream in = null;
 		ByteArrayOutputStream byteout =null;
-	    try {
-	    	in = new BufferedInputStream(is);   
-	    	byteout = new ByteArrayOutputStream(1024);        	       
-		      
-	 	    byte[] temp = new byte[1024];        
-	 	    int bytesize = 0;        
-	 	    while ((bytesize = in.read(temp)) != -1) {        
-	 	          byteout.write(temp, 0, bytesize);        
-	 	    }        
-	 	      
-	 	    byte[] content = byteout.toByteArray(); 
-	 	    DB mydb = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
-		    mydb.requestStart();
-			  
-		    DBCollection collection = mydb.getCollection("shop_pics");
-		  //  DBCollection collection = mydb.getCollection("records_test");
-			  
+		try {
+			in = new BufferedInputStream(is);
+			byteout = new ByteArrayOutputStream(1024);
+
+			byte[] temp = new byte[1024];
+			int bytesize = 0;
+			while ((bytesize = in.read(temp)) != -1) {
+				byteout.write(temp, 0, bytesize);
+			}
+
+			byte[] content = byteout.toByteArray();
+			DB mydb = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
+			mydb.requestStart();
+
+			DBCollection collection = mydb.getCollection("shop_pics");
+			//  DBCollection collection = mydb.getCollection("records_test");
+
 			BasicDBObject document = new BasicDBObject();
 			document.put("shop_id",  shop_id);
 			document.put("ctime",  System.currentTimeMillis()/1000);
 			document.put("content", content);
 			document.put("filename", picurl);
-			  //¿ªÊ¼ÊÂÎñ
+			//å¼€å§‹äº‹åŠ¡
 			mydb.requestStart();
 			collection.insert(document);
-			  //½áÊøÊÂÎñ
+			//ç»“æŸäº‹åŠ¡
 			mydb.requestDone();
-			in.close();        
-		    is.close();
-		    byteout.close();
+			in.close();
+			is.close();
+			byteout.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "-1";
@@ -252,7 +252,7 @@ public class PicsManageAction extends Action {
 			if(is!=null)
 				is.close();
 		}
-	  
+
 		return "1";
 	}
 }

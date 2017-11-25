@@ -20,21 +20,21 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 /**
- * ²´³µµã¹ÜÀí£¬ÔÚ×Ü¹ÜÀíÔ±ºóÌ¨
+ * æ³Šè½¦ç‚¹ç®¡ç†ï¼Œåœ¨æ€»ç®¡ç†å‘˜åå°
  * @author Administrator
  *
  */
 public class AttendantManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
 	private PublicMethods publicMethods;
-	
+
 	private Logger logger = Logger.getLogger(AttendantManageAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -75,14 +75,14 @@ public class AttendantManageAction extends Action{
 			Long count = daService.getLong("select count(ID) from user_pic_tb where uin =? ", new Object[]{id});
 			int ret =0;
 			if(count==0){
-				ret = daService.update("insert into user_pic_tb (ctime,uin,state,driver_year,utime,resume) values(?,?,?,?,?,?)", 
+				ret = daService.update("insert into user_pic_tb (ctime,uin,state,driver_year,utime,resume) values(?,?,?,?,?,?)",
 						new Object[]{System.currentTimeMillis()/1000,id,0,driverYear,System.currentTimeMillis()/1000,resume});
 			}else {
-				ret = daService.update("update user_pic_tb  set state=?,ctime=?,driver_year=?,resume=? where uin =?", 
+				ret = daService.update("update user_pic_tb  set state=?,ctime=?,driver_year=?,resume=? where uin =?",
 						new Object[]{state,System.currentTimeMillis()/1000,driverYear,resume,id});
 			}
 			AjaxUtil.ajaxOutput(response, ret+"");
-			
+
 		}else if(action.equals("create")){
 			int ret =0;
 			AjaxUtil.ajaxOutput(response, ret+"");
@@ -98,26 +98,26 @@ public class AttendantManageAction extends Action{
 				String picurl = publicMethods.uploadPicToMongodb(request, id, table);
 				int ret = 0;
 				if(picurl!=null&&!"".equals(picurl)){
-					if(type==0){//ÉÏ´«Í·Ïñ
+					if(type==0){//ä¸Šä¼ å¤´åƒ
 						ret = daService.update("update user_pic_tb set pic_url=? where uin = ? ", new Object[]{picurl,id});
 						if(ret==-1){
-							daService.update("insert into user_pic_tb (uin,pic_url,state,ctime) values(?,?,?,?) ", 
+							daService.update("insert into user_pic_tb (uin,pic_url,state,ctime) values(?,?,?,?) ",
 									new Object[]{id,picurl,0,System.currentTimeMillis()/1000});
 						}
-					}else if(type==1){//ÉÏ´«Ö¤¼şÕÕ
+					}else if(type==1){//ä¸Šä¼ è¯ä»¶ç…§
 						ret = daService.update("update user_pic_tb set driver_pic=? where uin = ? ", new Object[]{picurl,id});
 						if(ret==-1){
-							daService.update("insert into user_pic_tb (uin,driver_pic,state,ctime) values(?,?,?,?) ", 
+							daService.update("insert into user_pic_tb (uin,driver_pic,state,ctime) values(?,?,?,?) ",
 									new Object[]{id,picurl,0,System.currentTimeMillis()/1000});
 						}
 					}
 				}
 				if(ret==1)
-					request.setAttribute("result", "ÉÏ´«³É¹¦£¬Çë¹Ø±Õµ±Ç°´°¿Ú!");
-				else 
-					request.setAttribute("result", "ÉÏ´«Ê§°Ü!");
+					request.setAttribute("result", "ä¸Šä¼ æˆåŠŸï¼Œè¯·å…³é—­å½“å‰çª—å£!");
+				else
+					request.setAttribute("result", "ä¸Šä¼ å¤±è´¥!");
 			}else {
-				request.setAttribute("result", "ÉÏ´«Ê§°Ü!");
+				request.setAttribute("result", "ä¸Šä¼ å¤±è´¥!");
 			}
 			return mapping.findForward("uploadret");
 		}

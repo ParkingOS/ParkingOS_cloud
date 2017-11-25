@@ -23,19 +23,19 @@ import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
 /**
- * ²´³µµã¹ÜÀí£¬ÔÚ×Ü¹ÜÀíÔ±ºóÌ¨
+ * æ³Šè½¦ç‚¹ç®¡ç†ï¼Œåœ¨æ€»ç®¡ç†å‘˜åå°
  * @author Administrator
  *
  */
 public class QRManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(QRManageAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -85,16 +85,16 @@ public class QRManageAction extends Action{
 			List<Object[]> values=null;
 			int ret = 0;
 			int []arrTypes = null;
-			if(ids!=null&&ids.length>0&&type==0){//¼ÓNFC¶şÎ¬Âë
+			if(ids!=null&&ids.length>0&&type==0){//åŠ NFCäºŒç»´ç 
 				sql = "insert into qr_code_tb(id,ctime,type,code) values(?,?,?,?)";
 				values = new ArrayList<Object[]>();
 				for(int i=0;i<codes.length;i++){
 					Object []v = new Object[]{ids[i],ntime,type,codes[i]};
 					values.add(v);
 				}
-				
+
 				arrTypes = new int[]{4,4,4,12};
-			}else if(ids!=null&&ids.length>0&&type==2){//³µÎ»¶şÎ¬Âë
+			}else if(ids!=null&&ids.length>0&&type==2){//è½¦ä½äºŒç»´ç 
 				Long wid = RequestUtil.getLong(request, "wid", -1L);
 				Long _comid = RequestUtil.getLong(request, "comid", -1L);
 				sql = "insert into qr_code_tb(id,ctime,type,code,wid,comid) values(?,?,?,?,?,?)";
@@ -104,7 +104,7 @@ public class QRManageAction extends Action{
 					values.add(v);
 				}
 				arrTypes = new int[]{4,4,4,12,4,4};
-			}else if(ids!=null&&ids.length>0&&type==3){//²´³µÔ±¶şÎ¬Âë
+			}else if(ids!=null&&ids.length>0&&type==3){//æ³Šè½¦å‘˜äºŒç»´ç 
 				sql = "insert into qr_code_tb(id,ctime,type,code,uid) values(?,?,?,?,?)";
 				Long uid = RequestUtil.getLong(request, "uid", -1L);
 				ret = daService.update(sql, new Object[]{ids[0],ntime,type,codes[0],uid});
@@ -113,15 +113,15 @@ public class QRManageAction extends Action{
 				Long _comid = RequestUtil.getLong(request, "comid", -1L);
 				ret = daService.update(sql, new Object[]{ids[0], ntime, type, codes[0], _comid});
 			}
-			
+
 			if(values!=null&&values.size()>0){
 				ret = daService.bathInsert(sql, values, arrTypes);
 			}
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}else if(action.equals("excle")){
-			String [] heards = new String[]{"¶şÎ¬Âë","ÀàĞÍ"};
+			String [] heards = new String[]{"äºŒç»´ç ","ç±»å‹"};
 			List<List<String>> bodyList = new ArrayList<List<String>>();
-			
+
 			Integer type  =RequestUtil.getInteger(request, "type_start", -1);
 			List<Map<String, Object>> list = daService.getAll("select type,comid,code from qr_code_tb where state = ? and type=? " +
 					"and isuse=? ", new Object[]{0,type,0});
@@ -129,7 +129,7 @@ public class QRManageAction extends Action{
 				//setComName(list);
 				String [] f = new String[]{"code","type"};
 				if(type==2){
-					heards = new String[]{"¶şÎ¬Âë","ÀàĞÍ","³µ³¡±àºÅ "};
+					heards = new String[]{"äºŒç»´ç ","ç±»å‹","è½¦åœºç¼–å· "};
 					f = new String[]{"code","type","comid"};
 				}
 				for(Map<String, Object> map : list){
@@ -140,15 +140,15 @@ public class QRManageAction extends Action{
 						else if(field.equals("type")){
 							Integer t = (Integer)map.get(field);
 							if(t==0)
-								values.add("NFC¶şÎ¬Âë");
+								values.add("NFCäºŒç»´ç ");
 							else if(t==2){
-								values.add("³µÎ»¶şÎ¬Âë");
+								values.add("è½¦ä½äºŒç»´ç ");
 							}else if(t==3){
-								values.add("²´³µÔ±");
+								values.add("æ³Šè½¦å‘˜");
 							}else {
-								values.add("ÊÕ·ÑÔ±");
+								values.add("æ”¶è´¹å‘˜");
 							}
-								
+
 						}else {
 							values.add(map.get(field)+"");
 						}
@@ -156,7 +156,7 @@ public class QRManageAction extends Action{
 					bodyList.add(values);
 				}
 			}
-			String fname = "¶şÎ¬Âë" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
+			String fname = "äºŒç»´ç " + com.zld.utils.TimeTools.getDate_YY_MM_DD();
 			fname = StringUtils.encodingFileName(fname);
 			java.io.OutputStream os;
 			try {
@@ -164,7 +164,7 @@ public class QRManageAction extends Action{
 				response.reset();
 				response.setHeader("Content-disposition", "attachment; filename="
 						+ fname + ".xls");
-				ExportExcelUtil importExcel = new ExportExcelUtil("ÌáÏÖÉêÇë",
+				ExportExcelUtil importExcel = new ExportExcelUtil("æç°ç”³è¯·",
 						heards, bodyList);
 				importExcel.createExcelFile(os);
 			} catch (IOException e) {
@@ -182,5 +182,5 @@ public class QRManageAction extends Action{
 		}
 		return null;
 	}
-	
+
 }

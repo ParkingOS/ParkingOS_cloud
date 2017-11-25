@@ -30,10 +30,10 @@ public class AccountManageAction extends Action{
 	private MemcacheUtils memcacheUtils;
 	@Autowired
 	private LogService logService;
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -48,7 +48,7 @@ public class AccountManageAction extends Action{
 			if(key!=null&&key.equals("1"))
 				request.setAttribute("hbonus", "1");
 			String cmesg = memcacheUtils.doStringCache("collectormesg_swith", null, null);
-			//System.err.println(">>>>>ÊÕ·ÑÔ±ÏûÏ¢¿ªÍ·:"+cmesg);
+			//System.err.println(">>>>>æ”¶è´¹å‘˜æ¶ˆæ¯å¼€å¤´:"+cmesg);
 			if(cmesg!=null&&cmesg.equals("1"))
 				request.setAttribute("cmesg", "1");
 			else {
@@ -133,7 +133,7 @@ public class AccountManageAction extends Action{
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
-		}else if(action.equals("hbonous")){//Ğ´Èë½ÚÈÕºì°ü¿ª¹Ø
+		}else if(action.equals("hbonous")){//å†™å…¥èŠ‚æ—¥çº¢åŒ…å¼€å…³
 			String hbonus = RequestUtil.getString(request, "hbonus");
 			if(hbonus.equals("1")){
 				memcacheUtils.doStringCache("hbonus_swith", "0", "update");
@@ -141,7 +141,7 @@ public class AccountManageAction extends Action{
 				memcacheUtils.doStringCache("hbonus_swith", "1", "update");
 			}
 			AjaxUtil.ajaxOutput(response, "1");
-		}else if(action.equals("cmessage")){//ÊÕ·ÑÔ±ÏûÏ¢¿ª¹Ø
+		}else if(action.equals("cmessage")){//æ”¶è´¹å‘˜æ¶ˆæ¯å¼€å…³
 			String cmesg = RequestUtil.getString(request, "cmesg");
 			if(cmesg.equals("1")){
 				memcacheUtils.doStringCache("collectormesg_swith", "0", "update");
@@ -153,11 +153,11 @@ public class AccountManageAction extends Action{
 		}
 		return null;
 	}
-	
+
 	private void notice(){
 		List<Map<String, Object>> parkerList = daService.getAll("select id from user_info_tb where (auth_flag=? or auth_flag=?) and state=? ",
-						new Object[] { 1, 2, 0 });
-		
+				new Object[] { 1, 2, 0 });
+
 		Map<String, Object> infoMap = new HashMap<String, Object>();
 		if(parkerList != null){
 			List<Object> uinList = new ArrayList<Object>();
@@ -168,7 +168,7 @@ public class AccountManageAction extends Action{
 			logService.insertParkUserMesg(6, infoMap);
 		}
 	}
-	
+
 	private void setCompany(List<Map> list){
 		for(Map m: list){
 			Integer type = (Integer) m.get("type");
@@ -183,7 +183,7 @@ public class AccountManageAction extends Action{
 				Map comMap = daService.getMap("select company_name from com_info_tb where id=?",
 						new Object[]{comId});
 				if(comMap!=null)
-				m.put("company_name",comMap.get("company_name"));
+					m.put("company_name",comMap.get("company_name"));
 			}
 			if(m.get("uin")!=null){
 				Map userMap = daService.getMap("select u.mobile from user_info_tb u where u.id=? ",new Object[]{m.get("uin")});
@@ -193,9 +193,9 @@ public class AccountManageAction extends Action{
 				}
 				if(carNumberMap!=null)
 					m.put("car_number", carNumberMap.get("car_number"));
-					
+
 			}
 		}
 	}
-	
+
 }

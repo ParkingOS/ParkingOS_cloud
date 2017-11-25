@@ -1,5 +1,8 @@
 package com.zld.struts.parkadmin;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +28,12 @@ import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
 /**
- * Í£³µ³¡ºóÌ¨¹ÜÀíÔ±µÇÂ¼ºó£¬¹ÜÀíÊÕ·Ñ¼Û¸ñ
+ * åœè½¦åœºåå°ç®¡ç†å‘˜ç™»å½•åï¼Œç®¡ç†æ”¶è´¹ä»·æ ¼
  * @author Administrator
  *
  */
 public class PriceManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -39,12 +42,12 @@ public class PriceManageAction extends Action{
 	private CommonMethods commonMethods;
 	@Autowired
 	private MongoDbUtils mongoDbUtils;
-	
+
 	private Logger logger = Logger.getLogger(PriceManageAction.class);
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -81,17 +84,17 @@ public class PriceManageAction extends Action{
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			List<Object> params = new ArrayList<Object>();
 			params.add(comid);
-			//Ìí¼ÓÉ¾³ı±êÖ¾
+			//æ·»åŠ åˆ é™¤æ ‡å¿—
 			params.add(0);
 			if(count>0){
 				try{
 					list = daService.getAll(sql+ " and is_delete=? order by id desc ",params, pageNum, pageSize);
 				}catch(Exception e){
-					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>²éÑ¯¼Û¸ñÁĞ±íÒì³£"+"sql:"+sql+ " and is_delete=? order by id desc "+"params:"+params);
+					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>æŸ¥è¯¢ä»·æ ¼åˆ—è¡¨å¼‚å¸¸"+"sql:"+sql+ " and is_delete=? order by id desc "+"params:"+params);
 				}
-				
+
 			}
-			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
+			String json = JsonUtil.Map2JsonSingleIgnore(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
 		}else if(action.equals("query")){
@@ -117,16 +120,16 @@ public class PriceManageAction extends Action{
 			//System.out.println(sqlInfo);
 			Long count= daService.getLong(countSql, values);
 			List list = null;//daService.getPage(sql, null, 1, 20);
-			//Ìí¼ÓÉ¾³ı±êÖ¾
+			//æ·»åŠ åˆ é™¤æ ‡å¿—
 			params.add(0);
 			if(count>0){
 				try{
 					list = daService.getAll(sql + " and is_delete=? order by id desc", params, pageNum, pageSize);
 				}catch(Exception e){
-					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>²éÑ¯¼Û¸ñÁĞ±íÒì³£"+"sql:"+sql+ " and is_delete=? order by id desc "+"params:"+params);
+					logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>æŸ¥è¯¢ä»·æ ¼åˆ—è¡¨å¼‚å¸¸"+"sql:"+sql+ " and is_delete=? order by id desc "+"params:"+params);
 				}
 			}
-			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
+			String json = JsonUtil.Map2JsonSingleIgnore(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
 		}else if(action.equals("create")){
@@ -145,19 +148,19 @@ public class PriceManageAction extends Action{
 							"SELECT nextval('seq_price_assist_tb'::REGCLASS) AS newid", null);
 					result = daService.update("insert into  price_assist_tb(id,comid,type,assist_unit,assist_price) values (?,?,?,?,?)", new Object[]{nextid,comid,0,assistunit,assistprice});
 					if(result==1){
-						ret = "³É¹¦Ìí¼Ó¸¨Öú¼Û¸ñ1Ìõ,"+assistunit+","+assistprice;
+						ret = "æˆåŠŸæ·»åŠ è¾…åŠ©ä»·æ ¼1æ¡,"+assistunit+","+assistprice;
 						if(publicMethods.isEtcPark(comid)){
 							int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"price_assist_tb",nextid,System.currentTimeMillis()/1000,0});
 							logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" assist price ,add sync ret:"+re);
 						}else{
 							logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" price");
 						}
-						mongoDbUtils.saveLogs(request, 0, 2, "Ìí¼ÓÁË³µ³¡("+comid+")¸¨Öú¼Û¸ñ:"+nextid);
+						mongoDbUtils.saveLogs(request, 0, 2, "æ·»åŠ äº†è½¦åœº("+comid+")è¾…åŠ©ä»·æ ¼:"+nextid);
 					}
 				}else{
 					result = daService.update("update price_assist_tb set assist_unit=?, assist_price=? where comid = ?", new Object[]{assistunit,assistprice,comid});
 					if(result==1){
-						ret = "³É¹¦ĞŞ¸Ä¸¨Öú¼Û¸ñ,"+assistunit+","+assistprice;
+						ret = "æˆåŠŸä¿®æ”¹è¾…åŠ©ä»·æ ¼,"+assistunit+","+assistprice;
 						if(publicMethods.isEtcPark(comid)){
 							if(assistid==-1){
 								assistid = daService.getLong("select id from price_assist_tb where comid = ?", new Object[]{comid});
@@ -169,7 +172,7 @@ public class PriceManageAction extends Action{
 						}else{
 							logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" assist price");
 						}
-						mongoDbUtils.saveLogs(request, 0,3, "ĞŞ¸ÄÁË³µ³¡("+comid+")¸¨Öú¼Û¸ñ:"+assistid);
+						mongoDbUtils.saveLogs(request, 0,3, "ä¿®æ”¹äº†è½¦åœº("+comid+")è¾…åŠ©ä»·æ ¼:"+assistid);
 					}
 				}
 			}else if(assistunit==0&&assistprice==0){
@@ -182,61 +185,43 @@ public class PriceManageAction extends Action{
 					}else{
 						logger.error("parkadmin or admin:"+operater+" delete comid:"+comid+" assist price");
 					}
-					ret = "³É¹¦É¾³ı¸¨Öú¼Û¸ñ1Ìõ£¡,0,0";
-					mongoDbUtils.saveLogs(request, 0,4, "É¾³ıÁË³µ³¡("+comid+")¸¨Öú¼Û¸ñ:"+tempMap);
+					ret = "æˆåŠŸåˆ é™¤è¾…åŠ©ä»·æ ¼1æ¡ï¼,0,0";
+					mongoDbUtils.saveLogs(request, 0,4, "åˆ é™¤äº†è½¦åœº("+comid+")è¾…åŠ©ä»·æ ¼:"+tempMap);
 				}else{
-					ret = "Ã»ÓĞÉèÖÃ¸¨Öú¼Û¸ñ£¡,0,0";
+					ret = "æ²¡æœ‰è®¾ç½®è¾…åŠ©ä»·æ ¼ï¼,0,0";
 				}
 			}else{
-				ret = "ÉèÖÃ´íÎó£¨²»ÄÜÉèÖÃ0£©£¡,0,0";
+				ret = "è®¾ç½®é”™è¯¯ï¼ˆä¸èƒ½è®¾ç½®0ï¼‰ï¼,0,0";
 			}
 			AjaxUtil.ajaxOutput(response, ret);
 		}else if(action.equals("edit")){
-			Integer b_time =RequestUtil.getInteger(request, "b_time", 0);
-			Integer e_time =RequestUtil.getInteger(request, "e_time", 0);
-			Integer b_minute =RequestUtil.getInteger(request, "b_minute", 0);
-			Integer e_minute =RequestUtil.getInteger(request, "e_minute", 0);
-			Integer pay_type =RequestUtil.getInteger(request, "pay_type", 0);
-			Integer unit =RequestUtil.getInteger(request, "unit", 0);
-			Integer state =RequestUtil.getInteger(request, "state", 0);
-			Double price =RequestUtil.getDouble(request, "price", 0d);
-			Integer isSale =RequestUtil.getInteger(request, "is_sale", 0);
-			Integer first_times =RequestUtil.getInteger(request, "first_times", 0);
-			Double fprice =RequestUtil.getDouble(request, "fprice", 0d);
-			Double total24 =RequestUtil.getDouble(request, "total24", -1d);
-			Integer countless =RequestUtil.getInteger(request, "countless", 0);
-			Integer isEdit =RequestUtil.getInteger(request, "isedit", 0);//ÊÇ·ñ¿É±à¼­¼Û¸ñ£¬Ä¿Ç°Ö»¶ÔÈÕ¼ä°´Ê±¼Û¸ñÉúĞ§,0·ñ£¬1ÊÇ£¬Ä¬ÈÏ0
-			Integer free_time = RequestUtil.getInteger(request, "free_time", 0);//Ãâ·ÑÊ±³¤£¬µ¥Î»:·ÖÖÓ
-			Integer fpay_type = RequestUtil.getInteger(request, "fpay_type", 0);//³¬Ãâ·ÑÊ±³¤¼Æ·Ñ·½Ê½£¬1:Ãâ·Ñ £¬0:ÊÕ·Ñ
-			Integer car_type = RequestUtil.getInteger(request, "car_type", 0);//³µÀàĞÍ£¬0£ºÍ¨ÓÃ£¬1£ºĞ¡³µ£¬2;´ó³µ
-			Integer isFullDayTime = RequestUtil.getInteger(request, "is_fulldaytime", 0);//³µÀàĞÍ£¬0£ºÍ¨ÓÃ£¬1£ºĞ¡³µ£¬2;´ó³µ
+			//è½¦è¾†ç±»å‹
+			Long updateTime = System.currentTimeMillis()/1000;
+			String carType = URLDecoder.decode(RequestUtil.getString(request, "car_type_zh"),"UTF-8");
+			String describe = URLDecoder.decode(request.getParameter("describe"),"UTF-8");
 			Long id =RequestUtil.getLong(request, "id", -1l);
-			String sql = "update price_tb set b_time=?,e_time=?,b_minute=?,e_minute=?,pay_type=?,unit=?,state=?,price=?," +
-					"is_sale=?,first_times=?,fprice=?,countless=?,free_time=?,fpay_type=? ,isedit=?,car_type=?,is_fulldaytime=?,total24=? where id=?";
-			Object [] values = new Object[]{b_time,e_time,b_minute,e_minute,pay_type,unit,state,price,isSale,first_times,fprice,countless,free_time,fpay_type,isEdit,car_type,isFullDayTime,total24,id};
+			String sql = "update price_tb set car_type_zh=?,update_time=?,describe=? where id=?";
+			Object [] values = new Object[]{carType,updateTime,describe,id};
 			int result = daService.update(sql, values);
 			if(result==1){
 				if(comid==0)
 					comid = daService.getLong("select comid from price_tb where id = ?", new Object[]{id});
-				int r = daService.update("update price_tb set total24=? where comid = ? and car_type=? ", new Object[]{total24,comid,car_type});
-				logger.error("update comid :"+comid+" total24="+total24+" result :"+r);
 				if(publicMethods.isEtcPark(comid)){
 					int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"price_tb",id,System.currentTimeMillis()/1000,1});
 					logger.error("parkadmin or admin:"+operater+" edit comid:"+comid+" price ,add sync ret:"+re);
 				}else{
 					logger.error("parkadmin or admin:"+operater+" edit comid:"+comid+" price ");
 				}
-				mongoDbUtils.saveLogs(request, 0, 3, "ĞŞ¸ÄÁË³µ³¡("+comid+")¼Û¸ñ:"+id);
+				mongoDbUtils.saveLogs(request, 0, 3, "ä¿®æ”¹äº†è½¦åœº("+comid+")ä»·æ ¼:"+id);
 			}
-			//SystemMemcachee.PriceMap.remove(comid);
-			logger.error(comid+"´Ó»º´æÖĞÇå³ı¼Û¸ñ....");
+			logger.error(comid+"ä»ç¼“å­˜ä¸­æ¸…é™¤ä»·æ ¼....");
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("delete")){
 			String id =RequestUtil.processParams(request, "selids");
 			Map priceMap = daService.getMap("select * from price_tb where id =?", new Object[]{Long.valueOf(id)});
 //			String sql = "delete from price_tb where id =?";
 //			Object [] values = new Object[]{Long.valueOf(id)};
-			//Ìí¼ÓÉ¾³ı²Ù×÷
+			//æ·»åŠ åˆ é™¤æ“ä½œ
 			String sql = "update price_tb set is_delete=? where id =?";
 			Object [] values = new Object[]{1,Long.valueOf(id)};
 			int result = daService.update(sql, values);
@@ -249,14 +234,14 @@ public class PriceManageAction extends Action{
 				}else{
 					logger.error("parkadmin or admin:"+operater+" delete comid:"+comid+" price");
 				}
-				mongoDbUtils.saveLogs(request, 0, 4, "É¾³ıÁË³µ³¡¼Û¸ñ:"+priceMap);
+				mongoDbUtils.saveLogs(request, 0, 4, "åˆ é™¤äº†è½¦åœºä»·æ ¼:"+priceMap);
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("getcartypes")){
 			List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
 			List<Map<String, Object>> retList = commonMethods.getCarType(comid);
 			HashMap<String, Object> hashMap = new HashMap<String, Object>();
-			hashMap.put("value_name","È«²¿");
+			hashMap.put("value_name","å…¨éƒ¨");
 			hashMap.put("value_no", -1);
 			resultList.add(hashMap);
 			resultList.addAll(retList);
@@ -265,52 +250,31 @@ public class PriceManageAction extends Action{
 		}
 		return null;
 	}
-	
-	private String createPrice(HttpServletRequest request){
-		Long time = System.currentTimeMillis()/1000;
-		Long comid = (Long)request.getSession().getAttribute("comid");
-		if(comid == null || comid==0)
-			comid = RequestUtil.getLong(request, "comid", 0L);
-		Integer b_time =RequestUtil.getInteger(request, "b_time", 0);
-		Integer e_time =RequestUtil.getInteger(request, "e_time", 0);
-		Integer b_minute =RequestUtil.getInteger(request, "b_minute", 0);
-		Integer e_minute =RequestUtil.getInteger(request, "e_minute", 0);
-		Integer pay_type =RequestUtil.getInteger(request, "pay_type", 0);
-		Integer unit =RequestUtil.getInteger(request, "unit", 0);
-		Integer state =RequestUtil.getInteger(request, "state", 0);
-		Integer isSale =RequestUtil.getInteger(request, "is_sale", 0);
-		String price =RequestUtil.processParams(request, "price");
-		Integer first_times =RequestUtil.getInteger(request, "first_times", 0);
-		Double fprice =RequestUtil.getDouble(request, "fprice", 0d);
-		Double total24 =RequestUtil.getDouble(request, "total24", -1d);
-		Integer countless =RequestUtil.getInteger(request, "countless", 0);
-		Integer isEdit =RequestUtil.getInteger(request, "isedit", 0);//ÊÇ·ñ¿É±à¼­¼Û¸ñ£¬Ä¿Ç°Ö»¶ÔÈÕ¼ä°´Ê±¼Û¸ñÉúĞ§,0·ñ£¬1ÊÇ£¬Ä¬ÈÏ0
-		Integer free_time = RequestUtil.getInteger(request, "free_time", 0);//Ãâ·ÑÊ±³¤£¬µ¥Î»:·ÖÖÓ
-		Integer fpay_type = RequestUtil.getInteger(request, "fpay_type", 0);//³¬Ãâ·ÑÊ±³¤¼Æ·Ñ·½Ê½£¬1:Ãâ·Ñ £¬0:ÊÕ·Ñ
-		Integer car_type = RequestUtil.getInteger(request, "car_type", 0);//³µÀàĞÍ£¬0£ºÍ¨ÓÃ£¬1£ºĞ¡³µ£¬2;´ó³µ
-		Integer isFullDayTime = RequestUtil.getInteger(request, "is_fulldaytime", 0);//³µÀàĞÍ£¬0£ºÍ¨ÓÃ£¬1£ºĞ¡³µ£¬2;´ó³µ
 
-		String message = "";
-		if(pay_type==0){
-			if(b_time==0&&e_time==0){
-				message="±ØĞëÉèÖÃÆğÊ¼ºÍ½áÊøÊ±¼ä";
-			}
-			if(unit==0)
-				unit = 60;
+	/**
+	 * åˆ›å»ºä»·æ ¼
+	 * @param request
+	 * @return
+	 */
+	private String createPrice(HttpServletRequest request){
+		Long createTime = System.currentTimeMillis()/1000;
+		String describe = "";
+		String carType = "";
+		try {
+			describe = URLDecoder.decode(request.getParameter("describe"),"UTF-8");
+			carType = URLDecoder.decode(request.getParameter("car_type_zh"),"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		if(!message.equals(""))
-			return message;
+		Long comid = Long.valueOf(request.getParameter("comid"));
 		Long nextid = daService.getLong(
 				"SELECT nextval('seq_price_tb'::REGCLASS) AS newid", null);
-		String sql = "insert into  price_tb (id,b_time,e_time,b_minute,e_minute,create_time,price,pay_type," +
-				" comid,unit,state,is_sale,first_times,fprice,free_time,fpay_type,countless,isedit,car_type,is_fulldaytime,total24) values" +
-				"(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-		Object [] values = new Object[]{nextid,b_time,e_time,b_minute,e_minute,time,Double.valueOf(price),pay_type,
-				comid,unit,state,isSale,first_times,fprice,free_time,fpay_type,countless,isEdit,car_type,isFullDayTime,total24};
+		String sql = "insert into  price_tb (id,create_time,comid,car_type_zh,describe,price_id) values" +
+				"(?,?,?,?,?,?)";
+		Object [] values = new Object[]{nextid,createTime,comid,carType,describe,String.valueOf(nextid)};
 		int result = daService.update(sql, values);
 		if(result == 1){
-			int r = daService.update("update price_tb set total24=? where comid = ?", new Object[]{total24,comid});
-			logger.error("update comid :"+comid+" total24="+total24+" result :"+r);
 			String operater = request.getSession().getAttribute("loginuin")+"";
 			if(publicMethods.isEtcPark(comid)){
 				int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"price_tb",nextid,System.currentTimeMillis()/1000,0});
@@ -318,10 +282,10 @@ public class PriceManageAction extends Action{
 			}else{
 				logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" price");
 			}
-			mongoDbUtils.saveLogs(request, 0, 2, "Ìí¼ÓÁË³µ³¡("+comid+")¼Û¸ñ:"+nextid);
+			mongoDbUtils.saveLogs(request, 0, 2, "æ·»åŠ äº†è½¦åœº("+comid+")ä»·æ ¼:"+nextid);
 		}
 		return result+"";
 	}
-	
+
 
 }

@@ -6,24 +6,24 @@ import com.zld.pojo.StatsAccountResp;
 import com.zld.pojo.StatsReq;
 
 /**
- * ÕËÄ¿Í³¼Æ
+ * è´¦ç›®ç»Ÿè®¡
  * @author whx
  *
  */
 public interface StatsAccountService {
-	
+
 	/**
-	 * Í³¼ÆÁ÷Ë®ÕËÄ¿
+	 * ç»Ÿè®¡æµæ°´è´¦ç›®
 	 * @param req
 	 * @return
 	 */
 	public StatsAccountResp statsAccount(StatsReq req);
-	
+
 	/**
-	 * ²éÁ÷Ë®ÕËÄ¿Ã÷Ï¸
+	 * æŸ¥æµæ°´è´¦ç›®æ˜ç»†
 	 * @param req
 	 * @return
 	 */
 	public AccountResp account(AccountReq req);
-	
+
 }

@@ -34,12 +34,12 @@ import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
 import com.zld.utils.ZLDType;
 /**
- * Í£³µ³¡ºóÌ¨¹ÜÀíÔ±µÇÂ¼ºó£¬²é¿´¶©µ¥£¬²»ÄÜĞŞ¸ÄºÍÉ¾³ı
+ * åœè½¦åœºåå°ç®¡ç†å‘˜ç™»å½•åï¼ŒæŸ¥çœ‹è®¢å•ï¼Œä¸èƒ½ä¿®æ”¹å’Œåˆ é™¤
  * @author Administrator
  *
  */
 public class OrderManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -52,7 +52,7 @@ public class OrderManageAction extends Action{
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -72,7 +72,7 @@ public class OrderManageAction extends Action{
 		if(groupid != null && groupid > 0){
 			request.setAttribute("groupid", groupid);
 			if(comid == null || comid <= 0){
-				Map map = pgOnlyReadService.getMap("select id,company_name from com_info_tb where groupid=? order by id limit ? ", 
+				Map map = pgOnlyReadService.getMap("select id,company_name from com_info_tb where groupid=? order by id limit ? ",
 						new Object[]{groupid, 1});
 				if(map != null){
 					comid = (Long)map.get("id");
@@ -94,12 +94,12 @@ public class OrderManageAction extends Action{
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
-			
+
 		}else if(action.equals("exportExcel")){
 			Map uin = (Map)request.getSession().getAttribute("userinfo");
 			if(uin!=null&&uin.get("auth_flag")!=null){
 				if(Integer.valueOf(uin.get("auth_flag")+"")==ZLDType.ZLD_ACCOUNTANT_ROLE||Integer.valueOf(uin.get("auth_flag")+"")==ZLDType.ZLD_CARDOPERATOR){
-					String ret = "Ã»ÓĞÈ¨ÏŞµ¼³ö¶©µ¥Êı¾İ";
+					String ret = "æ²¡æœ‰æƒé™å¯¼å‡ºè®¢å•æ•°æ®";
 					logger.error(">>>>"+ret);
 					AjaxUtil.ajaxOutput(response,ret);
 					return null;
@@ -110,19 +110,19 @@ public class OrderManageAction extends Action{
 			List<List<String>> bodyList = new ArrayList<List<String>>();
 			String [] heards = null;
 			if(list!=null&&list.size()>0){
-				mongoDbUtils.saveLogs( request,0, 5, "µ¼³ö¶©µ¥ÊıÁ¿£º"+list.size()+"Ìõ");
+				mongoDbUtils.saveLogs( request,0, 5, "å¯¼å‡ºè®¢å•æ•°é‡:"+list.size()+"æ¡ ");
 				//setComName(list);
-				String [] f = new String[]{"id","c_type","car_number","create_time","end_time","duration","pay_type","total","uid","state","isclick","in_passid","out_passid"};
-				heards = new String[]{"±àºÅ","½ø³¡·½Ê½","³µÅÆºÅ","½ø³¡Ê±¼ä","³ö³¡Ê±¼ä","Ê±³¤","Ö§¸¶·½Ê½","½ğ¶î","ÊÕ¿îÈË","×´Ì¬","½áËã·½Ê½","½ø³¡Í¨µÀ","³ö³¡Í¨µÀ"};
+				String [] f = new String[]{"id","c_type","car_number","create_time","end_time","duration","pay_type","amount_receivable","total","electronic_prepay","cash_prepay","electronic_pay","cash_pay","reduce_amount","freereasons","uid","out_uid","state","in_passid","out_passid"};
+				heards = new String[]{"ç¼–å·","è¿›åœºæ–¹å¼","è½¦ç‰Œå·","è¿›åœºæ—¶é—´","å‡ºåœºæ—¶é—´","æ—¶é•¿","æ”¯ä»˜æ–¹å¼","åº”æ”¶é‡‘é¢","å®æ”¶é‡‘é¢","ç”µå­é¢„ä»˜é‡‘é¢","ç°é‡‘é¢„ä»˜é‡‘é¢","ç”µå­ç»“ç®—é‡‘é¢","ç°é‡‘ç»“ç®—é‡‘é¢","å‡å…é‡‘é¢","ä¼˜æƒ åŸå› ","å…¥åœºæ”¶è´¹å‘˜","æ”¶æ¬¾äºº","çŠ¶æ€ ","è¿›åœºé€šé“ ","å‡ºåœºé€šé“ "};
 				Map<Long, String> uinNameMap = new HashMap<Long, String>();
 				Map<Integer, String> passNameMap = new HashMap<Integer, String>();
 				for(Map<String, Object> map : list){
 					List<String> values = new ArrayList<String>();
 					for(String field : f){
-						Object v =map.get(field); 
+						Object v =map.get(field);
 						if(v==null)
 							v="";
-						if("uid".equals(field)){
+						if("uid".equals(field)||"out_uid".equals(field)){
 							Long uid = -1L;
 							if(Check.isLong(v+""))
 								uid = Long.valueOf(v+"");
@@ -134,14 +134,18 @@ public class OrderManageAction extends Action{
 								uinNameMap.put(uid, name);
 							}
 						}else if("c_type".equals(field)){
-							switch(Integer.valueOf(v+"")){//0:NFC,1:IBeacon,2:ÕÕÅÆ   3Í¨µÀÕÕÅÆ 4Ö±¸¶ 5ÔÂ¿¨ÓÃ»§
-							case 0:values.add("NFCË¢¿¨");break;
-							case 1:values.add("Ibeacon");break;
-							case 2:values.add("ÊÖ»úÉ¨ÅÆ");break;
-							case 3:values.add("Í¨µÀÉ¨ÅÆ");break;
-							case 4:values.add("Ö±¸¶");break;
-							case 5:values.add("ÔÂ¿¨");break;
-							default:values.add("");
+							if(Check.isLong(v+"")){
+								switch(Integer.valueOf(v+"")){//0:NFC,1:IBeacon,2:ç…§ç‰Œ   3é€šé“ç…§ç‰Œ 4ç›´ä»˜ 5æœˆå¡ç”¨æˆ·
+									case 0:values.add("NFCåˆ·å¡");break;
+									case 1:values.add("Ibeacon");break;
+									case 2:values.add("æ‰‹æœºæ‰«ç‰Œ");break;
+									case 3:values.add("é€šé“æ‰«ç‰Œ");break;
+									case 4:values.add("ç›´ä»˜");break;
+									case 5:values.add("æœˆå¡");break;
+									default:values.add("");
+								}
+							}else {
+								values.add(v+"");
 							}
 						}else if("duration".equals(field)){
 							Long start = (Long)map.get("create_time");
@@ -152,29 +156,29 @@ public class OrderManageAction extends Action{
 								values.add("");
 							}
 						}else if("pay_type".equals(field)){
-							switch(Integer.valueOf(v+"")){//0:NFC,1:IBeacon,2:ÕÕÅÆ   3Í¨µÀÕÕÅÆ 4Ö±¸¶ 5ÔÂ¿¨ÓÃ»§
-							case 0:values.add("ÕË»§Ö§¸¶");break;
-							case 1:values.add("ÏÖ½ğÖ§¸¶");break;
-							case 2:values.add("ÊÖ»úÖ§¸¶");break;
-							case 3:values.add("°üÔÂ");break;
-							case 4:values.add("ÖĞÑëÔ¤Ö§¸¶ÏÖ½ğ");break;
-							case 5:values.add("ÖĞÑëÔ¤Ö§¸¶ÒøÁª¿¨");break;
-							case 6:values.add("ÖĞÑëÔ¤Ö§¸¶ÉÌ¼Ò¿¨");break;
-							case 8:values.add("Ãâ·Ñ");break;
-							default:values.add("");
+							switch(Integer.valueOf(v+"")){//0:NFC,1:IBeacon,2:ç…§ç‰Œ   3é€šé“ç…§ç‰Œ 4ç›´ä»˜ 5æœˆå¡ç”¨æˆ·
+								case 0:values.add("è´¦æˆ·æ”¯ä»˜");break;
+								case 1:values.add("ç°é‡‘æ”¯ä»˜");break;
+								case 2:values.add("æ‰‹æœºæ”¯ä»˜");break;
+								case 3:values.add("åŒ…æœˆ");break;
+								case 4:values.add("ä¸­å¤®é¢„æ”¯ä»˜ç°é‡‘ ");break;
+								case 5:values.add("ä¸­å¤®é¢„æ”¯ä»˜é“¶è”å¡ ");break;
+								case 6:values.add("ä¸­å¤®é¢„æ”¯ä»˜å•†å®¶å¡");break;
+								case 8:values.add("å…è´¹");break;
+								default:values.add("");
 							}
 						}else if("state".equals(field)){
-							switch(Integer.valueOf(v+"")){//0:NFC,1:IBeacon,2:ÕÕÅÆ   3Í¨µÀÕÕÅÆ 4Ö±¸¶ 5ÔÂ¿¨ÓÃ»§
-							case 0:values.add("Î´Ö§¸¶");break;
-							case 1:values.add("ÒÑÖ§¸¶");break;
-							case 2:values.add("ÌÓµ¥");break;
-							default:values.add("");
+							switch(Integer.valueOf(v+"")){//0:NFC,1:IBeacon,2:ç…§ç‰Œ   3é€šé“ç…§ç‰Œ 4ç›´ä»˜ 5æœˆå¡ç”¨æˆ·
+								case 0:values.add("æœªæ”¯ä»˜ ");break;
+								case 1:values.add("å·²æ”¯ä»˜ ");break;
+								case 2:values.add("é€ƒå• ");break;
+								default:values.add("");
 							}
 						}else if("isclick".equals(field)){
-							switch(Integer.valueOf(map.get(field)+"")){//0:NFC,1:IBeacon,2:ÕÕÅÆ   3Í¨µÀÕÕÅÆ 4Ö±¸¶ 5ÔÂ¿¨ÓÃ»§
-							case 0:values.add("ÏµÍ³½áËã");break;
-							case 1:values.add("ÊÖ¶¯½áËã");break;
-							default:values.add("");
+							switch(Integer.valueOf(map.get(field)+"")){//0:NFC,1:IBeacon,2:ç…§ç‰Œ   3é€šé“ç…§ç‰Œ 4ç›´ä»˜ 5æœˆå¡ç”¨æˆ·
+								case 0:values.add("ç³»ç»Ÿç»“ç®—");break;
+								case 1:values.add("æ‰‹åŠ¨ç»“ç®—");break;
+								default:values.add("");
 							}
 						}else if("in_passid".equals(field)||"out_passid".equals(field)){
 							if(!"".equals(v.toString())&&Check.isNumber(v.toString())){
@@ -187,7 +191,7 @@ public class OrderManageAction extends Action{
 									passNameMap.put(passId, passName);
 								}
 							}else{
-								values.add("");
+								values.add(v+"");
 							}
 						}else{
 							if("create_time".equals(field)||"end_time".equals(field)){
@@ -204,7 +208,7 @@ public class OrderManageAction extends Action{
 					bodyList.add(values);
 				}
 			}
-			String fname = "¶©µ¥Êı¾İ" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
+			String fname = "è®¢å•æ•°æ®" + com.zld.utils.TimeTools.getDate_YY_MM_DD();
 			fname = StringUtils.encodingFileName(fname);
 			java.io.OutputStream os;
 			try {
@@ -213,7 +217,7 @@ public class OrderManageAction extends Action{
 						+ fname + ".xls");
 				response.setContentType("application/x-download");
 				os = response.getOutputStream();
-				ExportExcelUtil importExcel = new ExportExcelUtil("¶©µ¥Êı¾İ",
+				ExportExcelUtil importExcel = new ExportExcelUtil("è®¢å•æ•°æ®",
 						heards, bodyList);
 				importExcel.createExcelFile(os);
 			} catch (IOException e) {
@@ -224,6 +228,7 @@ public class OrderManageAction extends Action{
 			return null;
 		}else if(action.equals("completezeroorder")){
 			String ids =RequestUtil.processParams(request, "ids");
+			String uid = (String) request.getSession().getAttribute("userid");
 			int ret = 0;
 			if(StringUtils.isNotNull(ids)){
 				String[] idsarr = ids.split(",");
@@ -232,35 +237,59 @@ public class OrderManageAction extends Action{
 					long id = Long.valueOf(idsarr[i]);
 					if(PublicMethods.isEtcPark(comid)){
 						etime+=1;
-						//·ÇÔÂ¿¨
-						ret=daService.update("update order_tb set total=?,pay_type=?,end_time=?,state=?,need_sync=? where id=? and state=? and c_type<>?", new Object[]{0.0,1,etime,1,4,id,0,5});
+						//éæœˆå¡
+						ret=daService.update("update order_tb set total=?,amount_receivable=?,electronic_prepay=?,electronic_pay=?,cash_prepay=?,cash_pay=?,reduce_amount=?," +
+										"pay_type=?,end_time=?,state=?,need_sync=?,out_uid=? where id=? and state=? and c_type<>?",
+								new Object[]{0.00,0.00,0.00,0.00,0.00,0.00,0.00,1,etime,1,4,Long.valueOf(uid),id,0,String.valueOf(5)});
 						if(ret>0){
-							mongoDbUtils.saveLogs( request,0, 6, "´ø±¾µØ·şÎñÆ÷µÄºóÌ¨0Ôª½áËã·ÇÔÂ¿¨¶©µ¥£º"+id );
-							logger.error("´ø±¾µØ·şÎñÆ÷µÄºóÌ¨0Ôª½áËã·ÇÔÂ¿¨¶©µ¥£º"+id +",½áËã·½Ê½pay_type£º1");
+							mongoDbUtils.saveLogs( request,0, 6, "å¸¦æœ¬åœ°æœåŠ¡å™¨çš„åå°0å…ƒç»“ç®—éæœˆå¡è®¢å•:"+id );
+							logger.error("å¸¦æœ¬åœ°æœåŠ¡å™¨çš„åå°0å…ƒç»“ç®—éæœˆå¡è®¢å•:"+id +",ç»“ç®—æ–¹å¼pay_typeï¼š1");
 						}else {
-							//ÔÂ¿¨
-							ret=daService.update("update order_tb set total=?,pay_type=?,end_time=?,state=?,need_sync=? where id=? and state=? and c_type=?", new Object[]{0.0,3,etime,1,4,id,0,5});
+							//æœˆå¡
+							ret=daService.update("update order_tb set total=?,amount_receivable=?,electronic_prepay=?,electronic_pay=?,cash_prepay=?,cash_pay=?,reduce_amount=?," +
+											"pay_type=?,end_time=?,state=?,need_sync=?,out_uid=? where id=? and state=? and c_type=?",
+									new Object[]{0.00,0.00,0.00,0.00,0.00,0.00,0.00,3,etime,1,4,Long.valueOf(uid),id,0,String.valueOf(5)});
 							if(ret>0){
-								mongoDbUtils.saveLogs( request,0, 6, "´ø±¾µØ·şÎñÆ÷µÄºóÌ¨0Ôª½áËãÔÂ¿¨¶©µ¥£º"+id);
-								logger.error("´ø±¾µØ·şÎñÆ÷µÄºóÌ¨ºóÌ¨0Ôª½áËãÔÂ¿¨¶©µ¥£º"+id +",½áËã·½Ê½pay_type£º3");
+								mongoDbUtils.saveLogs( request,0, 6, "å¸¦æœ¬åœ°æœåŠ¡å™¨çš„åå°0å…ƒç»“ç®—æœˆå¡è®¢å•ï¼š"+id);
+								logger.error("å¸¦æœ¬åœ°æœåŠ¡å™¨çš„åå°åå°0å…ƒç»“ç®—æœˆå¡è®¢å•ï¼š"+id +",ç»“ç®—æ–¹å¼pay_typeï¼š3");
+							}
+						}
+						//é›¶å…ƒç»“ç®—çš„è®¢å•éœ€è¦ä¸‹ä¼ åˆ°æ”¶è´¹ç³»ç»Ÿ
+						if(ret > 0){
+							Long syncId = daService.getkey("seq_sync_info_pool_tb");
+							int result = daService.update("insert into sync_info_pool_tb(id,comid,table_name,table_id,create_time,operate,state)values(?,?,?,?,?,?,?)", new Object[]{syncId,comid,"order_tb",id,etime,0,0});
+							if(result == 1){
+								logger.error(">>>>>>>>>>>é›¶å…ƒç»“ç®—è®°å½•å®Œæˆ"+id);
 							}
 						}
 					}else{
-						//·ÇÔÂ¿¨
-						ret=daService.update("update order_tb set total=?,pay_type=?,end_time=?,state=? where id=? and state=? and c_type<>?", new Object[]{0.0,1,etime,1,id,0,5});
+						//éæœˆå¡
+						ret=daService.update("update order_tb set total=?,amount_receivable=?,electronic_prepay=?,electronic_pay=?,cash_prepay=?,cash_pay=?,reduce_amount=?," +
+										"pay_type=?,end_time=?,state=?,out_uid=? where id=? and state=? and c_type<>?",
+								new Object[]{0.00,0.00,0.00,0.00,0.00,0.00,0.00,1,etime,1,Long.valueOf(uid),id,0,String.valueOf(5)});
 						if(ret>0){
-							mongoDbUtils.saveLogs( request,0, 6, "ºóÌ¨0Ôª½áËã·ÇÔÂ¿¨¶©µ¥£º"+id );
-							logger.error("ºóÌ¨0Ôª½áËã·ÇÔÂ¿¨¶©µ¥£º"+id +",½áËã·½Ê½pay_type£º1");
+							mongoDbUtils.saveLogs( request,0, 6, "åå°0å…ƒç»“ç®—éæœˆå¡è®¢å•:"+id );
+							logger.error("åå°0å…ƒç»“ç®—éæœˆå¡è®¢å•:"+id +",ç»“ç®—æ–¹å¼pay_type:1");
 						}else {
-							//ÔÂ¿¨
-							ret=daService.update("update order_tb set total=?,pay_type=?,end_time=?,state=? where id=? and state=? and c_type=?", new Object[]{0.0,3,etime,1,id,0,5});
+							//æœˆå¡
+							ret=daService.update("update order_tb set total=?,,amount_receivable=?,electronic_prepay=?,electronic_pay=?,cash_prepay=?,cash_pay=?,reduce_amount=?," +
+											"pay_type=?,end_time=?,state=?,out_uid=? where id=? and state=? and c_type=?",
+									new Object[]{0.00,0.00,0.00,0.00,0.00,0.00,0.00,3,etime,1,Long.valueOf(uid),id,0,String.valueOf(5)});
 							if(ret>0){
-								mongoDbUtils.saveLogs( request,0, 6, "ºóÌ¨0Ôª½áËãÔÂ¿¨¶©µ¥£º"+id);
-								logger.error("ºóÌ¨0Ôª½áËãÔÂ¿¨¶©µ¥£º"+id +",½áËã·½Ê½pay_type£º3");
+								mongoDbUtils.saveLogs( request,0, 6, "åå°0å…ƒç»“ç®—æœˆå¡è®¢å•ï¼š"+id);
+								logger.error("åå°0å…ƒç»“ç®—æœˆå¡è®¢å•:"+id +",ç»“ç®—æ–¹å¼pay_typeï¼š3");
+							}
+						}
+						//é›¶å…ƒç»“ç®—çš„è®¢å•éœ€è¦ä¸‹ä¼ åˆ°æ”¶è´¹ç³»ç»Ÿ
+						if(ret > 0){
+							Long syncId = daService.getkey("seq_sync_info_pool_tb");
+							int result = daService.update("insert into sync_info_pool_tb(id,comid,table_name,table_id,create_time,operate,state)values(?,?,?,?,?,?,?)", new Object[]{syncId,comid,"order_tb",id,etime,0,0});
+							if(result == 1){
+								logger.error(">>>>>>>>>>>é›¶å…ƒç»“ç®—è®°å½•å®Œæˆ"+id);
 							}
 						}
 					}
-					
+
 				}
 			}
 			AjaxUtil.ajaxOutput(response, ret+"");
@@ -296,12 +325,12 @@ public class OrderManageAction extends Action{
 //			int outsize = objsout.size();
 //			objsout.close();
 			Long outsize =collection.count(document);
-			if(insize==0&&outsize==0){//²é²»µ½Ê±²éÁíÍâÒ»ÕÅ±í
+			if(insize==0&&outsize==0){//æŸ¥ä¸åˆ°æ—¶æŸ¥å¦å¤–ä¸€å¼ è¡¨
 				collection = db.getCollection("car_hd_pics");
 				outsize =collection.count(document);
 				document.put("gate", 0);
 				insize  = collection.count(document);
-				logger.error("mongodb>>>>>>>>>>>car_inout_pics±íÖĞÃ»ÓĞ£¬´Ócar_hd_pics±íÖĞ²éÑ¯"+insize+","+outsize);
+				logger.error("mongodb>>>>>>>>>>>car_inout_picsè¡¨ä¸­æ²¡æœ‰ï¼Œä»car_hd_picsè¡¨ä¸­æŸ¥è¯¢"+insize+","+outsize);
 			}
 			String inhtml = "<img src='carpicsup.do?action=downloadpic&comid=0&type=0&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";
 			String outhtml = "<img src='carpicsup.do?action=downloadpic&comid=0&type=1&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";
@@ -319,7 +348,7 @@ public class OrderManageAction extends Action{
 				}
 				outhtml = sb.toString();
 			}
-		
+
 			request.setAttribute("inhtml", inhtml);
 			request.setAttribute("outhtml", outhtml);
 //			request.setAttribute("orderid", orderid);
@@ -334,23 +363,23 @@ public class OrderManageAction extends Action{
 //			DBCursor objsin = collection.find(document);
 //			int insize = objsin.size();
 //			objsin.close();
-			
+
 			Long insize  = collection.count(document);
 			document.put("gate", 2);
-			
+
 //			DBCursor objseesc = collection.find(document);
 //			int escsize = objseesc.size();
 //			objseesc.close();
-			
+
 			Long escsize  = collection.count(document);
-			if(insize==0&&escsize==0){//²é²»µ½Ê±²éÁíÍâÒ»ÕÅ±í
+			if(insize==0&&escsize==0){//æŸ¥ä¸åˆ°æ—¶æŸ¥å¦å¤–ä¸€å¼ è¡¨
 				collection = db.getCollection("car_hd_pics");
 				escsize =collection.count(document);
 				document.put("gate", 0);
 				insize  = collection.count(document);
-				logger.error("mongodb>>>>>>>>>>>car_inout_pics±íÖĞÃ»ÓĞ£¬´Ócar_hd_pics±íÖĞ²éÑ¯"+insize+","+escsize);
+				logger.error("mongodb>>>>>>>>>>>car_inout_picsè¡¨ä¸­æ²¡æœ‰ï¼Œä»car_hd_picsè¡¨ä¸­æŸ¥è¯¢"+insize+","+escsize);
 			}
-			
+
 			String inhtml = "<img src='carpicsup.do?action=downloadpic&comid=0&type=0&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";
 			String eschtml = "<img src='carpicsup.do?action=downloadpic&comid=0&type=2&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";
 			if(insize>1){
@@ -360,7 +389,7 @@ public class OrderManageAction extends Action{
 				}
 				inhtml = sb.toString();
 			}
-			
+
 			if(escsize>1){
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i <escsize ; i++) {
@@ -375,9 +404,13 @@ public class OrderManageAction extends Action{
 		}else if(action.equals("getalluser")){
 			List<Map<String, Object>> tradsList = pgOnlyReadService.getAll("select id,nickname from user_info_tb where (comid=? or groupid=?) and state=? and auth_flag in(?,?)",
 					new Object[]{comid,groupid,0,1,2});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"È«²¿\"}";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"å…¨éƒ¨\"}";
 			if(tradsList!=null&&tradsList.size()>0){
 				for(Map map : tradsList){
+					String nickname = (String)map.get("nickname");
+					if(StringUtils.isEmpty(nickname) || "null".equals(nickname)){
+						nickname = "æ— ";
+					}
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("nickname")+"\"}";
 				}
 			}
@@ -395,9 +428,9 @@ public class OrderManageAction extends Action{
 			result+="]";
 			AjaxUtil.ajaxOutput(response, result);
 		}else if(action.equals("carpicsnew")){
-			//ĞŞ¸Ä²é¿´Í¼Æ¬½Ó¿Ú,ÖØĞÂ´ÓmongodbÖĞ»ñÈ¡Í¼Æ¬£¬²¢ÊµÏÖÍ¼Æ¬µÄÕı³£Õ¹Ê¾
+			//ä¿®æ”¹æŸ¥çœ‹å›¾ç‰‡æ¥å£,é‡æ–°ä»mongodbä¸­è·å–å›¾ç‰‡ï¼Œå¹¶å®ç°å›¾ç‰‡çš„æ­£å¸¸å±•ç¤º
 			/*String orderid = RequestUtil.getString(request, "orderid");
-			logger.error(">>>>>>>>>>>>>>>>>>>>>>¶©µ¥ĞÅÏ¢ÏÔÊ¾²éÑ¯Í¼Æ¬½Ó¿Ú£ºcarpicsnew");
+			logger.error(">>>>>>>>>>>>>>>>>>>>>>è®¢å•ä¿¡æ¯æ˜¾ç¤ºæŸ¥è¯¢å›¾ç‰‡æ¥å£ï¼šcarpicsnew");
 			String inhtml = "<img src='carpicsup.do?action=getpicture&comid="+comid+"&typeNew=in&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";
 			String outhtml = "<img src='carpicsup.do?action=getpicture&comid="+comid+"&typeNew=out&orderid="+orderid+"' id='p1' width='600px' height='600px'></img>";
 			request.setAttribute("inhtml", inhtml);
@@ -405,7 +438,7 @@ public class OrderManageAction extends Action{
 			return mapping.findForward("carpics");*/
 			String orderid = RequestUtil.getString(request, "orderid");
 			DB db = MongoClientFactory.getInstance().getMongoDBBuilder("zld");
-			//¸ù¾İ¶©µ¥±àºÅ²éÑ¯³ömongodbÖĞ´æÈëµÄ¶ÔÓ¦¸ö±íÃû
+			//æ ¹æ®è®¢å•ç¼–å·æŸ¥è¯¢å‡ºmongodbä¸­å­˜å…¥çš„å¯¹åº”ä¸ªè¡¨å
 			Map map = daService.getMap("select * from order_tb where order_id_local=? and comid=?", new Object[]{orderid,comid});
 			String collectionName = "";
 			if(map !=null && !map.isEmpty()){
@@ -435,39 +468,39 @@ public class OrderManageAction extends Action{
 				}
 				outhtml = sb.toString();
 			}
-		
+
 			request.setAttribute("inhtml", inhtml);
 			request.setAttribute("outhtml", outhtml);
 			return mapping.findForward("carpics");
 		}
-		
+
 		return null;
 	}
-	
+
 	private void initQuery(HttpServletRequest request,Long comid,Integer isHd){
 		int total = 0;
-		int month = 0;
+//		int month = 0;
 		int parktotal = 0;
 		int blank = 0;
 		String allSql = "select count(*)total from order_tb where comid = ? and state=?";
 		Object [] allparm =  new Object[]{comid,0};
-		String monthSql = "select count(*)total from order_tb where comid = ? and state=?  ";
-		Object [] monthparm =  new Object[]{comid,0};
+//		String monthSql = "select count(*)total from order_tb where comid = ? and state=?  ";
+//		Object [] monthparm =  new Object[]{comid,0};
 		Map allmap = pgOnlyReadService.getMap(allSql,allparm);
-		Map monthmap = pgOnlyReadService.getMap(monthSql,monthparm);
+//		Map monthmap = pgOnlyReadService.getMap(monthSql,monthparm);
 		Map cominfo = pgOnlyReadService.getMap("select share_number,parking_total from com_info_tb where id = ? ", new Object[]{comid});
 		if(allmap!=null&&allmap.get("total")!=null)
 			total = Integer.valueOf(allmap.get("total")+"");
-		if(monthmap!=null&&monthmap.get("total")!=null)
-			month = Integer.valueOf(monthmap.get("total")+"");
+//		if(monthmap!=null&&monthmap.get("total")!=null)
+//			month = Integer.valueOf(monthmap.get("total")+"");
 		if(cominfo!=null){
 			Integer parking_total = 0;
 			if(cominfo.get("parking_total") != null){
-				parking_total=(Integer)cominfo.get("parking_total");//³µ³¡³µÎ»Êı
+				parking_total=(Integer)cominfo.get("parking_total");//è½¦åœºè½¦ä½æ•°
 			}
 			Integer shareNumber = 0;
 			if(cominfo.get("share_number") != null){
-				shareNumber=(Integer)cominfo.get("share_number");//³µ³¡³µÎ»·ÖÏíÊı
+				shareNumber=(Integer)cominfo.get("share_number");//è½¦åœºè½¦ä½åˆ†äº«æ•°
 			}
 			if(shareNumber > 0){
 				parktotal = shareNumber;
@@ -478,10 +511,12 @@ public class OrderManageAction extends Action{
 		blank = parktotal-total;
 		if(blank<=0)
 			blank=0;
-		request.setAttribute("parkinfo",  AjaxUtil.decodeUTF8("³µÎ»Í³¼Æ:³¡ÄÚÍ£³µ"+total+"Á¾,ÆäÖĞÔÂ¿¨³µ"+month+"Á¾,ÁÙÍ£³µ"+(total-month)+"Á¾,¿Õ³µÎ»"+blank+"Á¾"));
-		
+		//int coo = total-month;
+		String mesg = "è½¦ä½ç»Ÿè®¡:åœºå†…åœè½¦"+total+"è¾†,ä¸´åœè½¦"+total+"è¾†,ç©ºè½¦ä½:"+blank+"è¾†";
+		request.setAttribute("parkinfo",  AjaxUtil.decodeUTF8(mesg));
+
 	}
-	
+
 	private String getUinName(Long uin) {
 		Map list = pgOnlyReadService.getPojo("select * from user_info_tb where id =?  ",new Object[]{uin});
 		String uinName = "";
@@ -490,7 +525,7 @@ public class OrderManageAction extends Action{
 		}
 		return uinName;
 	}
-	
+
 	private String getPassName(Long comId,Integer passId) {
 		String sql = "select passname from com_pass_tb where comid=? and id = ?";
 		Map m = pgOnlyReadService.getPojo(sql, new Object[]{comId,passId});
@@ -499,7 +534,7 @@ public class OrderManageAction extends Action{
 		}
 		return "";
 	}
-	
+
 	private List query(HttpServletRequest request,long comid,Integer isHd,Integer otype){
 		ArrayList arrayList = new ArrayList();
 		String orderfield = RequestUtil.processParams(request, "orderfield");
@@ -520,7 +555,7 @@ public class OrderManageAction extends Action{
 		Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 		String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 		SqlInfo base = new SqlInfo("1=1", new Object[]{comid});
-		
+
 		if(isHd==1){
 			if(otype>-1){
 				countSql +=" and ishd=? and state=? and isclick=? ";
@@ -538,12 +573,12 @@ public class OrderManageAction extends Action{
 				base = new SqlInfo("1=1", new Object[]{comid,1,otype});
 			}
 		}
-		
+
 		SqlInfo sqlInfo = RequestUtil.customSearch(request,"order_tb");
 		List<Object> params =new ArrayList<Object>();
-		
+
 		boolean isSelectCreateTime = false;
-		
+
 		if(sqlInfo!=null){
 			sqlInfo = SqlInfo.joinSqlInfo(base,sqlInfo, 2);
 			countSql+=" and "+ sqlInfo.getSql();
@@ -555,17 +590,19 @@ public class OrderManageAction extends Action{
 		}else {
 			params= base.getParams();
 		}
-		
+
 		if(!isSelectCreateTime){
 			countSql +=" and create_time > ? ";
 			sql +=" and create_time > ? ";
 			params.add(System.currentTimeMillis()/1000-30*86400);
 		}
-		
+
 		sql += " order by " + orderfield + " " + orderby+" ,id desc";
 		//System.out.println(sqlInfo);
 		Long count= pgOnlyReadService.getCount(countSql, params);
-		List<Map<String, Object>> list = null;//daService.getPage(sql, null, 1, 20);
+		logger.error(countSql);
+		logger.error(params);
+		List<Map<String, Object>> list = null; //daService.getPage(sql, null, 1, 20);
 		if(count>0){
 			list = pgOnlyReadService.getAll(sql, params, pageNum, pageSize);
 			List<Object> orderidList = new ArrayList<Object>();
@@ -582,7 +619,7 @@ public class OrderManageAction extends Action{
 			if(shopTicketList != null && !shopTicketList.isEmpty()){
 				for(Map<String, Object> map : list){
 					Long id = (Long)map.get("id");
-					
+
 					Double total = 0d;
 					if(map.get("total") != null){
 						total = Double.valueOf(map.get("total") + "");
@@ -607,7 +644,7 @@ public class OrderManageAction extends Action{
 		arrayList.add(fieldsstr);
 		return arrayList;
 	}
-	
+
 	private List<Map<String, Object>> queryShopTicket(List<Object> orderidList){
 		if(orderidList != null && !orderidList.isEmpty()){
 			String preParams  ="";
@@ -617,11 +654,11 @@ public class OrderManageAction extends Action{
 				else
 					preParams += ",?";
 			}
-			
+
 			List<Map<String, Object>> list = pgOnlyReadService.getAllMap("select orderid,sum(umoney) shopmon from ticket_tb where orderid in ("
-							+ preParams + ") group by orderid ", orderidList);
+					+ preParams + ") group by orderid ", orderidList);
 			return list;
-			
+
 		}
 		return null;
 	}

@@ -24,10 +24,10 @@ public class RoleManageAction extends Action {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		if(uin == null){
 			response.sendRedirect("login.do");
 			return null;
@@ -61,12 +61,12 @@ public class RoleManageAction extends Action {
 			String role_name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "role_name"));
 			String resume = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "resume"));
 			if(id > -1){
-				Long count = daService.getLong("select count(*) from user_role_tb where id=? and type=? ", 
+				Long count = daService.getLong("select count(*) from user_role_tb where id=? and type=? ",
 						new Object[]{id, 0});
 				if(count > 0){
 					AjaxUtil.ajaxOutput(response, "-2");
 				}else{
-					int r = daService.update("update user_role_tb set role_name=?,resume=?, update_time=? where id=? ", 
+					int r = daService.update("update user_role_tb set role_name=?,resume=?, update_time=? where id=? ",
 							new Object[]{role_name, resume, System.currentTimeMillis()/1000, id});
 					AjaxUtil.ajaxOutput(response, r + "");
 				}
@@ -76,19 +76,19 @@ public class RoleManageAction extends Action {
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			if(id > -1){
-				Long count = daService.getLong("select count(*) from user_role_tb where id=? and type=? ", 
+				Long count = daService.getLong("select count(*) from user_role_tb where id=? and type=? ",
 						new Object[]{id, 0});
 				if(count > 0){
 					AjaxUtil.ajaxOutput(response, "-2");
 					return null;
 				}
-				count = daService.getLong("select count(id) from user_info_tb where role_id=? and state<>? ", 
+				count = daService.getLong("select count(id) from user_info_tb where role_id=? and state<>? ",
 						new Object[]{id, 1});
 				if(count > 0){
 					AjaxUtil.ajaxOutput(response, "-3");
 					return null;
 				}
-				int r = daService.update("update user_role_tb set state=? where id=? ", 
+				int r = daService.update("update user_role_tb set state=? where id=? ",
 						new Object[]{1, id});
 				AjaxUtil.ajaxOutput(response, "" + r);
 				return null;

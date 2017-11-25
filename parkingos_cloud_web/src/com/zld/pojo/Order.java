@@ -4,35 +4,35 @@ import java.io.Serializable;
 
 public class Order implements Serializable {
 	private Long id;
-	private Long comid = -1L;//Í£³µ³¡±àºÅ
-	private Long uin = -1L;//³µÖ÷±àºÅ
-	private Double total = 0d;//½áËã½ğ¶î
-	private Integer state = 0;//-- 0Î´Ö§¸¶ 1ÒÑÖ§¸¶ 2:ÌÓµ¥
-	private Long create_time;//¶©µ¥Éú³ÉÊ±¼ä
-	private Long end_time;//¶©µ¥½áËãÊ±¼ä
-	private Integer auto_pay = 0;//-- 0:Õı³£½áËã£¬1£º½ø³¡Òì³£½áËãµÄ¶©µ¥£¬2£º¸üÕı¹ı³µÅÆµÄ¶©µ¥£¬3:²¹Â¼À´³µÉú³ÉµÄ¶©µ¥
-	private Integer pay_type = 0;//-- 0:ÕÊ»§Ö§¸¶,1:ÏÖ½ğÖ§¸¶,2:ÊÖ»úÖ§¸¶ 3:°üÔÂ 4:ÏÖ½ğÔ¤Ö§¸¶ 5£ºÒøÁª¿¨ 6£ºÉÌ¼Ò¿¨8:Ãâ·Ñ·ÅĞĞ
-	private String nfc_uuid;//NFC¿¨ÄÚÖÃµÄÎ¨Ò»±àºÅ
-	private Integer c_type = 1;//-- 0:NFC,1:IBeacon,2:ÕÕÅÆ,3:Í¨µÀÉ¨ÅÆ 4Ö±¸¶ 5ÔÂ¿¨ÓÃ»§6:³µÎ»¶şÎ¬Âë 7£ºÔÂ¿¨ÓÃ»§µÚ2..3Á¾³µÈë³¡ 8£º·Ö¶ÎÔÂ¿¨
-	private Long uid = -1L;// -- Èë³¡ÊÕ·ÑÔ±ÕÊºÅ
-	private String car_number;//³µÅÆºÅ
-	private String imei;//ÊÖ»ú´®ºÅ
-	private Integer pid = -1;//-- ¼Æ·Ñ·½Ê½£º0°´Ê±(0.5/15·ÖÖÓ)£¬1°´´Î£¨12Ğ¡Ê±ÄÚ10Ôª,Ç°1/30min£¬ºóÃ¿Ğ¡Ê±1Ôª£©
-	private Integer car_type = 0;//-- 0£ºÍ¨ÓÃ£¬1£ºĞ¡³µ£¬2£º´ó³µ
-	private Long in_passid = -1L;//-- ½ø¿ÚÍ¨µÀid
-	private Long out_passid = -1L;//-- ³ö¿ÚÍ¨µÀid
-	private Integer pre_state = 0;//-- 0:Ä¬ÈÏ×´Ì¬ 1£º³µÖ÷Ô¤Ö§¸¶ÖĞ 2£º³µÖ÷Ô¤Ö§¸¶ÖĞ²¢ÇÒÊÕ·ÑÔ±Ë¢¿¨ 3£ºÔ¤Ö§¸¶Íê³É
-	private Integer type = 0;//-- ÀàĞÍ£º0ÆÕÍ¨¶©µ¥£¬1¼«ËÙÍ¨£¬3±¾µØ»¯¶©µ¥ 4±¾µØ·şÎñÆ÷¶©µ¥ 5±¾µØÉú³ÉÏßÉÏ½áËã¶©µ¥
-	private Integer need_sync = 0;//-- Ô¤Ö§¸¶¶©µ¥ĞèÒªÍ¬²½µ½ÏßÏÂ  0:²»ĞèÒª  1:ĞèÒª  2Í¬²½Íê³É   3±¾µØÇĞ»»µ½ÏßÉÏÏßÉÏÉú³ÉµÄĞèÒª  4:ÏßÉÏ½áËãµÄ¶¼ĞèÒªÍ¬²½ÏÂÈ¥
-	private Integer ishd = 0;// -- 0·ñ 1ÊÇ²»ÏÔÊ¾
-	private Long freereasons = -1L;//-- Ãâ·ÑÔ­Òò   Ä¬ÈÏ-1 ²»Ãâ·Ñ
-	private Integer isclick = 0;// -- 0ÏµÍ³½áËã£¬1ÊÖ¶¯½áËã
-	private Double prepaid = 0d;//Ô¤¸¶½ğ¶î
-	private Long prepaid_pay_time;//Ô¤¸¶Ê±¼ä
-	private Long berthnumber = -1L;//-- ²´Î»±àºÅ
-	private Long berthsec_id = -1L;//-- ²´Î»¶Î±àºÅ
-	private Long groupid = -1L;//-- ËùÊô¼¯ÍÅ±àºÅ
-	private Long out_uid = -1L;//-- ³ö³¡ÊÕ·ÑÔ±
+	private Long comid = -1L;//åœè½¦åœºç¼–å·
+	private Long uin = -1L;//è½¦ä¸»ç¼–å·
+	private Double total = 0d;//ç»“ç®—é‡‘é¢
+	private Integer state = 0;//-- 0æœªæ”¯ä»˜ 1å·²æ”¯ä»˜ 2:é€ƒå•
+	private Long create_time;//è®¢å•ç”Ÿæˆæ—¶é—´
+	private Long end_time;//è®¢å•ç»“ç®—æ—¶é—´
+	private Integer auto_pay = 0;//-- 0:æ­£å¸¸ç»“ç®—ï¼Œ1ï¼šè¿›åœºå¼‚å¸¸ç»“ç®—çš„è®¢å•ï¼Œ2ï¼šæ›´æ­£è¿‡è½¦ç‰Œçš„è®¢å•ï¼Œ3:è¡¥å½•æ¥è½¦ç”Ÿæˆçš„è®¢å•
+	private Integer pay_type = 0;//-- 0:å¸æˆ·æ”¯ä»˜,1:ç°é‡‘æ”¯ä»˜,2:æ‰‹æœºæ”¯ä»˜ 3:åŒ…æœˆ 4:ç°é‡‘é¢„æ”¯ä»˜ 5ï¼šé“¶è”å¡ 6ï¼šå•†å®¶å¡8:å…è´¹æ”¾è¡Œ
+	private String nfc_uuid;//NFCå¡å†…ç½®çš„å”¯ä¸€ç¼–å·
+	private Integer c_type = 1;//-- 0:NFC,1:IBeacon,2:ç…§ç‰Œ,3:é€šé“æ‰«ç‰Œ 4ç›´ä»˜ 5æœˆå¡ç”¨æˆ·6:è½¦ä½äºŒç»´ç  7ï¼šæœˆå¡ç”¨æˆ·ç¬¬2..3è¾†è½¦å…¥åœº 8ï¼šåˆ†æ®µæœˆå¡
+	private Long uid = -1L;// -- å…¥åœºæ”¶è´¹å‘˜å¸å·
+	private String car_number;//è½¦ç‰Œå·
+	private String imei;//æ‰‹æœºä¸²å·
+	private Integer pid = -1;//-- è®¡è´¹æ–¹å¼ï¼š0æŒ‰æ—¶(0.5/15åˆ†é’Ÿ)ï¼Œ1æŒ‰æ¬¡ï¼ˆ12å°æ—¶å†…10å…ƒ,å‰1/30minï¼Œåæ¯å°æ—¶1å…ƒï¼‰
+	private Integer car_type = 0;//-- 0ï¼šé€šç”¨ï¼Œ1ï¼šå°è½¦ï¼Œ2ï¼šå¤§è½¦
+	private Long in_passid = -1L;//-- è¿›å£é€šé“id
+	private Long out_passid = -1L;//-- å‡ºå£é€šé“id
+	private Integer pre_state = 0;//-- 0:é»˜è®¤çŠ¶æ€ 1ï¼šè½¦ä¸»é¢„æ”¯ä»˜ä¸­ 2ï¼šè½¦ä¸»é¢„æ”¯ä»˜ä¸­å¹¶ä¸”æ”¶è´¹å‘˜åˆ·å¡ 3ï¼šé¢„æ”¯ä»˜å®Œæˆ
+	private Integer type = 0;//-- ç±»å‹ï¼š0æ™®é€šè®¢å•ï¼Œ1æé€Ÿé€šï¼Œ3æœ¬åœ°åŒ–è®¢å• 4æœ¬åœ°æœåŠ¡å™¨è®¢å• 5æœ¬åœ°ç”Ÿæˆçº¿ä¸Šç»“ç®—è®¢å•
+	private Integer need_sync = 0;//-- é¢„æ”¯ä»˜è®¢å•éœ€è¦åŒæ­¥åˆ°çº¿ä¸‹  0:ä¸éœ€è¦  1:éœ€è¦  2åŒæ­¥å®Œæˆ   3æœ¬åœ°åˆ‡æ¢åˆ°çº¿ä¸Šçº¿ä¸Šç”Ÿæˆçš„éœ€è¦  4:çº¿ä¸Šç»“ç®—çš„éƒ½éœ€è¦åŒæ­¥ä¸‹å»
+	private Integer ishd = 0;// -- 0å¦ 1æ˜¯ä¸æ˜¾ç¤º
+	private Long freereasons = -1L;//-- å…è´¹åŸå›    é»˜è®¤-1 ä¸å…è´¹
+	private Integer isclick = 0;// -- 0ç³»ç»Ÿç»“ç®—ï¼Œ1æ‰‹åŠ¨ç»“ç®—
+	private Double prepaid = 0d;//é¢„ä»˜é‡‘é¢
+	private Long prepaid_pay_time;//é¢„ä»˜æ—¶é—´
+	private Long berthnumber = -1L;//-- æ³Šä½ç¼–å·
+	private Long berthsec_id = -1L;//-- æ³Šä½æ®µç¼–å·
+	private Long groupid = -1L;//-- æ‰€å±é›†å›¢ç¼–å·
+	private Long out_uid = -1L;//-- å‡ºåœºæ”¶è´¹å‘˜
 	public Long getId() {
 		return id;
 	}
@@ -276,5 +276,5 @@ public class Order implements Serializable {
 				+ ", berthsec_id=" + berthsec_id + ", groupid=" + groupid
 				+ ", out_uid=" + out_uid + "]";
 	}
-	
+
 }

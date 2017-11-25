@@ -22,7 +22,7 @@ import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 
 public class CityVideoManageAction extends Action {
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -30,10 +30,10 @@ public class CityVideoManageAction extends Action {
 	@Autowired
 	private CommonMethods commonMethods;
 
-	
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
 		Long uin = (Long)request.getSession().getAttribute("loginuin");//
@@ -62,7 +62,7 @@ public class CityVideoManageAction extends Action {
 				list = daService.getAll(sql +" order by create_time desc ",params, pageNum, pageSize);
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
-		
+
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("query")){
 			String sql = "select * from city_video_tb where cityid=? and state<>? " ;
@@ -87,7 +87,7 @@ public class CityVideoManageAction extends Action {
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
-		
+
 		}
 		else if(action.equals("create")){
 			int r = createVideo(request, cityid);
@@ -101,7 +101,7 @@ public class CityVideoManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private int createVideo(HttpServletRequest request, Long cityid){
 		String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "video_name"));
 		String ip = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "ip"));
@@ -114,16 +114,16 @@ public class CityVideoManageAction extends Action {
 		String longitude = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "longitude"));
 		String manufacture = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "manufacture"));
 		String address = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
-		Integer state = RequestUtil.getInteger(request, "state", 1);//0£º¹ÊÕÏ 1£ºÕı³£ 2£ºÉ¾³ı
-		Integer type = RequestUtil.getInteger(request, "type", 1);//¼à¿ØÀàĞÍ 0£ºÂ·²à¼à¿Ø 1:·â±ÕÍ£³µ³¡¼à¿Ø
+		Integer state = RequestUtil.getInteger(request, "state", 1);//0ï¼šæ•…éšœ 1ï¼šæ­£å¸¸ 2ï¼šåˆ é™¤
+		Integer type = RequestUtil.getInteger(request, "type", 1);//ç›‘æ§ç±»å‹ 0ï¼šè·¯ä¾§ç›‘æ§ 1:å°é—­åœè½¦åœºç›‘æ§
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		Long ntime  =System.currentTimeMillis()/1000;
 		int r = daService.update("insert into city_video_tb(video_name, ip, port, cusername, cpassword, manufacture, state, type, cityid, latitude, longitude, create_time, deviceid, channelid, address, comid) " +
-				"values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", 
+						"values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				new Object[]{name,ip,port,cusername,cpassword,manufacture,state,type, cityid,latitude,longitude,ntime,deviceid, channelid, address,comid});
 		return r;
 	}
-	
+
 	private int editVideo(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "video_name"));
@@ -137,18 +137,18 @@ public class CityVideoManageAction extends Action {
 		String longitude = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "longitude"));
 		String manufacture = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "manufacture"));
 		String address = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
-		Integer state = RequestUtil.getInteger(request, "state", 1);//0£º¹ÊÕÏ 1£ºÕı³£ 2£ºÉ¾³ı
-		Integer type = RequestUtil.getInteger(request, "type", 1);//¼à¿ØÀàĞÍ 0£ºÂ·²à¼à¿Ø 1:·â±ÕÍ£³µ³¡¼à¿Ø
+		Integer state = RequestUtil.getInteger(request, "state", 1);//0ï¼šæ•…éšœ 1ï¼šæ­£å¸¸ 2ï¼šåˆ é™¤
+		Integer type = RequestUtil.getInteger(request, "type", 1);//ç›‘æ§ç±»å‹ 0ï¼šè·¯ä¾§ç›‘æ§ 1:å°é—­åœè½¦åœºç›‘æ§
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		Long ntime  =System.currentTimeMillis()/1000;
-		int r = daService.update("update city_video_tb set video_name=?, ip=?, port=?,deviceid=?,channelid=?, cusername=?, cpassword=?, manufacture=?, state=?, latitude=?, longitude=?, update_time=?, comid=?, address=?,type=? where id=? ", 
+		int r = daService.update("update city_video_tb set video_name=?, ip=?, port=?,deviceid=?,channelid=?, cusername=?, cpassword=?, manufacture=?, state=?, latitude=?, longitude=?, update_time=?, comid=?, address=?,type=? where id=? ",
 				new Object[]{name,ip,port,deviceid,channelid,cusername,cpassword,manufacture,state,latitude,longitude,ntime,comid,address,type,id});
 		return r;
 	}
-	
+
 	private int deleteVideo(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
-		int r = daService.update("update city_video_tb set state=? where id=? ", 
+		int r = daService.update("update city_video_tb set state=? where id=? ",
 				new Object[]{2,id});
 		return r;
 	}

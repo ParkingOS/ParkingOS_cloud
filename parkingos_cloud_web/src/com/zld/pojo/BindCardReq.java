@@ -4,17 +4,17 @@ import java.io.Serializable;
 
 public class BindCardReq implements Serializable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private Long cardId = -1L;//卡片编号
-	private String nfc_uuid;//nfc卡内置唯一编号
-	private String mobile;//要绑定的会员的手机号
-	private String carNumber;//要绑定的会员的车牌号
-	private Long binder;//绑定操作人的账号
-	private Long groupId = -1L;//绑定人所在的运营集团
+	private Long cardId = -1L;//鍗＄墖缂栧彿
+	private String nfc_uuid;//nfc鍗″唴缃敮涓�缂栧彿
+	private String mobile;//瑕佺粦瀹氱殑浼氬憳鐨勬墜鏈哄彿
+	private String carNumber;//瑕佺粦瀹氱殑浼氬憳鐨勮溅鐗屽彿
+	private Long binder;//缁戝畾鎿嶄綔浜虹殑璐﹀彿
+	private Long groupId = -1L;//缁戝畾浜烘墍鍦ㄧ殑杩愯惀闆嗗洟
 	private Long curTime = System.currentTimeMillis()/1000;
-	
+
 	public Long getCurTime() {
 		return curTime;
 	}
@@ -65,5 +65,5 @@ public class BindCardReq implements Serializable {
 				+ ", binder=" + binder + ", groupId=" + groupId + ", curTime="
 				+ curTime + "]";
 	}
-	
+
 }

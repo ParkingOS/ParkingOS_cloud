@@ -29,19 +29,19 @@ public class ParkManageAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		Long chanid = (Long)request.getSession().getAttribute("chanid");
-		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//ÊÇ·ñÊÇ³¬¼¶¹ÜÀíÔ±
+		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");//æ˜¯å¦æ˜¯è¶…çº§ç®¡ç†å‘˜
 		if(uin == null){
 			response.sendRedirect("login.do");
 			return null;
@@ -49,7 +49,7 @@ public class ParkManageAction extends Action {
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
 		if(chanid == null) chanid = -1L;
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("quickquery")){
@@ -62,8 +62,8 @@ public class ParkManageAction extends Action {
 			List<Object> params = new ArrayList<Object>();
 			params.add(1);
 			List<Object> groups = new ArrayList<Object>();
-			if(cityid != null && cityid > 0){//µ±³ÇÊĞ½ÇÉ«µÇÂ¼µÄÊ±ºò
-				groups = commonMethods.getGroups(cityid);//²éÑ¯¸Ã³ÇÊĞËùÏ½µÄÔËÓª¼¯ÍÅ
+			if(cityid != null && cityid > 0){//å½“åŸå¸‚è§’è‰²ç™»å½•çš„æ—¶å€™
+				groups = commonMethods.getGroups(cityid);//æŸ¥è¯¢è¯¥åŸå¸‚æ‰€è¾–çš„è¿è¥é›†å›¢
 				if(groups != null && !groups.isEmpty()){
 					String preParams  ="";
 					for(Object grouid : groups){
@@ -75,8 +75,8 @@ public class ParkManageAction extends Action {
 					sql += " and ( groupid in ("+preParams+") ";
 					countSql += " and ( groupid in ("+preParams+") ";
 					params.addAll(groups);
-					
-					List<Object> areas = commonMethods.getAreas(groups);//²éÑ¯³ÇÊĞÖ±Ï½µÄÇøÓòºÍ³ÇÊĞËùÏ½µÄÔËÓª¼¯ÍÅËùÏ½µÄÇøÓò
+
+					List<Object> areas = commonMethods.getAreas(groups);//æŸ¥è¯¢åŸå¸‚ç›´è¾–çš„åŒºåŸŸå’ŒåŸå¸‚æ‰€è¾–çš„è¿è¥é›†å›¢æ‰€è¾–çš„åŒºåŸŸ
 					if(areas != null && !areas.isEmpty()){
 						preParams = "";
 						for(Object area : areas){
@@ -89,13 +89,13 @@ public class ParkManageAction extends Action {
 						countSql += " or areaid in ("+preParams+") ";
 						params.addAll(areas);
 					}
-					
+
 					sql += " )";
 					countSql += " )";
 				}
 			}
-			
-			if(groupid != null && groupid > 0){//µ±ÔËÓª¼¯ÍÅ½ÇÉ«µÇÂ¼µÄÊ±ºò
+
+			if(groupid != null && groupid > 0){//å½“è¿è¥é›†å›¢è§’è‰²ç™»å½•çš„æ—¶å€™
 				groups.add(groupid);
 				if(groups != null && !groups.isEmpty()){
 					String preParams  ="";
@@ -108,8 +108,8 @@ public class ParkManageAction extends Action {
 					sql += " and ( groupid in ("+preParams+") ";
 					countSql += " and ( groupid in ("+preParams+") ";
 					params.addAll(groups);
-					
-					List<Object> areas = commonMethods.getAreas(groups);//²éÑ¯³ÇÊĞÖ±Ï½µÄÇøÓòºÍ³ÇÊĞËùÏ½µÄÔËÓª¼¯ÍÅËùÏ½µÄÇøÓò
+
+					List<Object> areas = commonMethods.getAreas(groups);//æŸ¥è¯¢åŸå¸‚ç›´è¾–çš„åŒºåŸŸå’ŒåŸå¸‚æ‰€è¾–çš„è¿è¥é›†å›¢æ‰€è¾–çš„åŒºåŸŸ
 					if(areas != null && !areas.isEmpty()){
 						preParams = "";
 						for(Object area : areas){
@@ -122,7 +122,7 @@ public class ParkManageAction extends Action {
 						countSql += " or areaid in ("+preParams+") ";
 						params.addAll(areas);
 					}
-					
+
 					sql += " )";
 					countSql += " )";
 				}
@@ -134,7 +134,7 @@ public class ParkManageAction extends Action {
 					list = daService.getAll(sql +" order by id desc ",params, pageNum, pageSize);
 				}
 			}
-			
+
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
@@ -153,10 +153,10 @@ public class ParkManageAction extends Action {
 				sql +=" and "+sqlInfo.getSql();
 				params.addAll(sqlInfo.getParams());
 			}
-			
+
 			List<Object> groups = new ArrayList<Object>();
-			if(cityid != null && cityid > 0){//µ±³ÇÊĞ½ÇÉ«µÇÂ¼µÄÊ±ºò
-				groups = commonMethods.getGroups(cityid);//²éÑ¯¸Ã³ÇÊĞËùÏ½µÄÔËÓª¼¯ÍÅ
+			if(cityid != null && cityid > 0){//å½“åŸå¸‚è§’è‰²ç™»å½•çš„æ—¶å€™
+				groups = commonMethods.getGroups(cityid);//æŸ¥è¯¢è¯¥åŸå¸‚æ‰€è¾–çš„è¿è¥é›†å›¢
 				if(groups != null && !groups.isEmpty()){
 					String preParams  ="";
 					for(Object grouid : groups){
@@ -168,8 +168,8 @@ public class ParkManageAction extends Action {
 					sql += " and ( groupid in ("+preParams+") ";
 					countSql += " and ( groupid in ("+preParams+") ";
 					params.addAll(groups);
-					
-					List<Object> areas = commonMethods.getAreas(groups);//²éÑ¯³ÇÊĞÖ±Ï½µÄÇøÓòºÍ³ÇÊĞËùÏ½µÄÔËÓª¼¯ÍÅËùÏ½µÄÇøÓò
+
+					List<Object> areas = commonMethods.getAreas(groups);//æŸ¥è¯¢åŸå¸‚ç›´è¾–çš„åŒºåŸŸå’ŒåŸå¸‚æ‰€è¾–çš„è¿è¥é›†å›¢æ‰€è¾–çš„åŒºåŸŸ
 					if(areas != null && !areas.isEmpty()){
 						preParams = "";
 						for(Object area : areas){
@@ -182,13 +182,13 @@ public class ParkManageAction extends Action {
 						countSql += " or areaid in ("+preParams+") ";
 						params.addAll(areas);
 					}
-					
+
 					sql += " )";
 					countSql += " )";
 				}
 			}
-			
-			if(groupid != null && groupid > 0){//µ±ÔËÓª¼¯ÍÅ½ÇÉ«µÇÂ¼µÄÊ±ºò
+
+			if(groupid != null && groupid > 0){//å½“è¿è¥é›†å›¢è§’è‰²ç™»å½•çš„æ—¶å€™
 				groups.add(groupid);
 				if(groups != null && !groups.isEmpty()){
 					String preParams  ="";
@@ -201,8 +201,8 @@ public class ParkManageAction extends Action {
 					sql += " and ( groupid in ("+preParams+") ";
 					countSql += " and ( groupid in ("+preParams+") ";
 					params.addAll(groups);
-					
-					List<Object> areas = commonMethods.getAreas(groups);//²éÑ¯³ÇÊĞÖ±Ï½µÄÇøÓòºÍ³ÇÊĞËùÏ½µÄÔËÓª¼¯ÍÅËùÏ½µÄÇøÓò
+
+					List<Object> areas = commonMethods.getAreas(groups);//æŸ¥è¯¢åŸå¸‚ç›´è¾–çš„åŒºåŸŸå’ŒåŸå¸‚æ‰€è¾–çš„è¿è¥é›†å›¢æ‰€è¾–çš„åŒºåŸŸ
 					if(areas != null && !areas.isEmpty()){
 						preParams = "";
 						for(Object area : areas){
@@ -215,7 +215,7 @@ public class ParkManageAction extends Action {
 						countSql += " or areaid in ("+preParams+") ";
 						params.addAll(areas);
 					}
-					
+
 					sql += " )";
 					countSql += " )";
 				}
@@ -231,7 +231,7 @@ public class ParkManageAction extends Action {
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("create")){
 			Long areaid = -1L;
-			if(cityid > 0 || chanid > 0){//Èç¹ûÊÇ³ÇÊĞµÇÂ¼»òÕßÇşµÀµÇÂ¼£¬»ñÈ¡´«ÈëµÄÔËÓª¼¯ÍÅ±àºÅ
+			if(cityid > 0 || chanid > 0){//å¦‚æœæ˜¯åŸå¸‚ç™»å½•æˆ–è€…æ¸ é“ç™»å½•ï¼Œè·å–ä¼ å…¥çš„è¿è¥é›†å›¢ç¼–å·
 				groupid = RequestUtil.getLong(request, "groupid", -1L);
 			}
 			if(cityid > 0 || chanid > 0 || groupid > 0){
@@ -241,7 +241,7 @@ public class ParkManageAction extends Action {
 			AjaxUtil.ajaxOutput(response, r + "");
 		}else if(action.equals("edit")){
 			Long areaid = -1L;
-			if(cityid > 0 || chanid > 0){//Èç¹ûÊÇ³ÇÊĞµÇÂ¼»òÕßÇşµÀµÇÂ¼£¬»ñÈ¡´«ÈëµÄÔËÓª¼¯ÍÅ±àºÅ
+			if(cityid > 0 || chanid > 0){//å¦‚æœæ˜¯åŸå¸‚ç™»å½•æˆ–è€…æ¸ é“ç™»å½•ï¼Œè·å–ä¼ å…¥çš„è¿è¥é›†å›¢ç¼–å·
 				groupid = RequestUtil.getLong(request, "groupid", -1L);
 			}
 			if(cityid > 0 || chanid > 0 || groupid > 0){
@@ -251,13 +251,13 @@ public class ParkManageAction extends Action {
 			AjaxUtil.ajaxOutput(response, r + "");
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
-			int r = daService.update("update com_info_tb set state=? where id=? ", 
+			int r = daService.update("update com_info_tb set state=? where id=? ",
 					new Object[]{1, id});
 			AjaxUtil.ajaxOutput(response, r + "");
 		}
 		return null;
 	}
-	
+
 	private int editPark(HttpServletRequest request, Long groupid, Long areaid){
 		Long comid = RequestUtil.getLong(request, "id", -1L);
 		Long time = System.currentTimeMillis()/1000;
@@ -274,8 +274,8 @@ public class ParkManageAction extends Action {
 		int r = daService.update(sql, new Object[]{company, address, phone, mcompany, parking_total, time, state, etc, areaid, groupid, comid});
 		return r;
 	}
-	
-	//×¢²áÍ£³µ³¡
+
+	//æ³¨å†Œåœè½¦åœº
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Integer createPark(HttpServletRequest request, Long groupid, Long cityid, Long areaid, Long chanid){
 		Long time = System.currentTimeMillis()/1000;
@@ -296,9 +296,9 @@ public class ParkManageAction extends Action {
 		Object[] comvalues = new Object[]{comId,company,address,phone,time,mcompany,parking_total,time,groupid,state,chanid,cityid,chanid,areaid,etc};
 		comMap.put("sql", comsql);
 		comMap.put("values", comvalues);
-		
+
 		sqlsList.add(comMap);
-		
+
 		boolean r =  daService.bathUpdate(sqlsList);
 		if(r){
 			if(etc == 2){

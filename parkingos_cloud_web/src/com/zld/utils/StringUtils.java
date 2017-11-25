@@ -27,14 +27,14 @@ import org.apache.poi.ss.formula.eval.StringValueEval;
 
 public class StringUtils {
 
-	
+
 	public static boolean isNotNull(String value){
 		if(value==null||value.equals(""))
 			return false;
 		return true;
 	}
-	
-	public static boolean isNumber(String value){ 
+
+	public static boolean isNumber(String value){
 		if(value==null||value.equals(""))
 			return false;
 		try {
@@ -44,7 +44,7 @@ public class StringUtils {
 		}
 		return true;
 	}
-	
+
 	public static boolean isDouble(String value){
 		if(value==null||value.equals(""))
 			return false;
@@ -55,13 +55,13 @@ public class StringUtils {
 		}
 		return true;
 	}
-	
+
 	public static String _2null(String value){
 		if("".equals(value))
 			return null;
 		return value;
 	}
-	
+
 	public static Double getDoubleValue(String value){
 		Double double1 = null;
 		try {
@@ -71,23 +71,23 @@ public class StringUtils {
 		}
 		return double1;
 	}
-	
-	public static double mul(double d1,double d2){ 
-        BigDecimal bd1 = new BigDecimal(Double.toString(d1)); 
-        BigDecimal bd2 = new BigDecimal(Double.toString(d2)); 
-        return bd1.multiply(bd2).doubleValue(); 
-	} 
-	
+
+	public static double mul(double d1,double d2){
+		BigDecimal bd1 = new BigDecimal(Double.toString(d1));
+		BigDecimal bd2 = new BigDecimal(Double.toString(d2));
+		return bd1.multiply(bd2).doubleValue();
+	}
+
 	public static Double formatDouble(Object value){
 		if(Check.isDouble(value+"")){
-			DecimalFormat df=new DecimalFormat("#.00"); 
+			DecimalFormat df=new DecimalFormat("#.00");
 			String dv = df.format(Double.valueOf(value+""));
 			if(Check.isDouble(dv))
 				return Double.valueOf(dv);
 		}
 		return 0.0d;
 	}
-	
+
 	public static Long getLongMilliSecondFromStrDate(String strDate, String format) {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 
@@ -99,7 +99,7 @@ public class StringUtils {
 		}
 		return new Long(millSeconds);
 	}
-	
+
 	public static String getPre (String value){
 		for(int i= 0;i<value.length();i++){
 			char a = value.charAt(i);
@@ -108,7 +108,7 @@ public class StringUtils {
 		}
 		return "";
 	}
-	
+
 	public static Long getHour(Long start,Long end){
 		if(end!=null&&start!=null){
 			Long hours = (end-start)/3600;
@@ -120,9 +120,9 @@ public class StringUtils {
 	}
 	
 /*	*//**
-	 * Éú³É xmlÎÄ¼şÁ÷
+	 * ç”Ÿæˆ xmlæ–‡ä»¶æµ
 	 *//*
-	public static String createXML(Map<String, String > info) {// »ñÈ¡×î´ó·Ã¿ÍÊıXML
+	public static String createXML(Map<String, String > info) {// è·å–æœ€å¤§è®¿å®¢æ•°XML
 		StringBuffer xml = new StringBuffer();
 		xml.append("<?xml version=\"1.0\" encoding=\"gb2312\"?>");
 		xml.append("<content>");
@@ -134,9 +134,9 @@ public class StringUtils {
 	}
 	*/
 	/**
-	 * Éú³É xmlÎÄ¼şÁ÷
+	 * ç”Ÿæˆ xmlæ–‡ä»¶æµ
 	 */
-	public static String createXML(Map<String, Object > info) {// »ñÈ¡×î´ó·Ã¿ÍÊıXML
+	public static String createXML(Map<String, Object > info) {// è·å–æœ€å¤§è®¿å®¢æ•°XML
 		StringBuffer xml = new StringBuffer();
 		xml.append("<?xml version=\"1.0\" encoding=\"gb2312\"?>");
 		xml.append("<content>");
@@ -147,9 +147,9 @@ public class StringUtils {
 		return xml.toString();
 	}
 	/**
-	 * Éú³É xmlÎÄ¼şÁ÷
+	 * ç”Ÿæˆ xmlæ–‡ä»¶æµ
 	 */
-	public static String createXML(List<Map<String, Object >> info) {// »ñÈ¡×î´ó·Ã¿ÍÊıXML
+	public static String createXML(List<Map<String, Object >> info) {// è·å–æœ€å¤§è®¿å®¢æ•°XML
 		StringBuffer xml = new StringBuffer();
 		xml.append("<?xml version=\"1.0\" encoding=\"gb2312\"?>");
 		xml.append("<content>");
@@ -163,16 +163,16 @@ public class StringUtils {
 			}
 		}else {
 			xml.append("<info>");
-			xml.append("Ã»ÓĞÊı¾İ");
+			xml.append("æ²¡æœ‰æ•°æ®");
 			xml.append("</info>");
 		}
 		xml.append("</content>");
 		return xml.toString();
 	}
 	/**
-	 * Éú³É xmlÎÄ¼şÁ÷
+	 * ç”Ÿæˆ xmlæ–‡ä»¶æµ
 	 */
-	public static String createXML(List<Map<String, Object >> info,Long size) {// »ñÈ¡×î´ó·Ã¿ÍÊıXML
+	public static String createXML(List<Map<String, Object >> info,Long size) {// è·å–æœ€å¤§è®¿å®¢æ•°XML
 		StringBuffer xml = new StringBuffer();
 		xml.append("<?xml version=\"1.0\" encoding=\"gb2312\"?>");
 		xml.append("<content count=\""+size+"\">");
@@ -186,13 +186,13 @@ public class StringUtils {
 			}
 		}else {
 			xml.append("<info>");
-			xml.append("Ã»ÓĞÊı¾İ");
+			xml.append("æ²¡æœ‰æ•°æ®");
 			xml.append("</info>");
 		}
 		xml.append("</content>");
 		return xml.toString();
 	}
-	
+
 	public static String createJson(List<Map<String, Object >> info){
 		String json = "[";
 		int i=0;
@@ -219,12 +219,12 @@ public class StringUtils {
 				i++;
 				j=0;
 			}
-			
+
 		}
 		json +="]";
 		return json;
 	}
-	
+
 	public static String createJson2(List<Map<String, Object >> info){
 		String json = "[";
 		int i=0;
@@ -246,7 +246,7 @@ public class StringUtils {
 //					if(v instanceof Long||v instanceof Integer)
 //						json +="\""+key+"\":"+map.get(key);
 //					else {
-					
+
 					if(startsWith){
 						json +="\""+key+"\":"+v+"";
 					}else{
@@ -259,12 +259,12 @@ public class StringUtils {
 				i++;
 				j=0;
 			}
-			
+
 		}
 		json +="]";
 		return json;
 	}
-	
+
 	public static String getJson(List<Map<String, Object >> info){
 		String json = "[";
 		int i=0;
@@ -291,12 +291,12 @@ public class StringUtils {
 				i++;
 				j=0;
 			}
-			
+
 		}
 		json +="]";
 		return json;
 	}
-	
+
 	public static String createJson(Map<String, Object > info){
 		String json = "";
 		int j=0;
@@ -311,7 +311,36 @@ public class StringUtils {
 					json +="\""+key+"\":"+value;
 				else {
 					json +="\""+key+"\":\""+value+"\"";
-				}	
+				}
+				j++;
+			}
+			json+="}";
+		}else {
+			json="{}";
+		}
+		return json;
+	}
+
+	/**
+	 * å°†åŒå¼•å·çš„jsonå¤„ç†æˆå•å¼•å·çš„jsonæ•°æ®æ ¼å¼
+	 * @param info
+	 * @return
+	 */
+	public static String createJsonSingleQuotes(Map<String, Object > info){
+		String json = "";
+		int j=0;
+		if(info!=null&&info.size()>0){
+			json+="{";
+			for(String key : info.keySet()){
+				//System.out.println(key);
+				if(j!=0)
+					json +=",";
+				Object value = info.get(key);
+				if(value!=null&&(value.toString().startsWith("[")||value.toString().startsWith("{")))
+					json +="\'"+key+"\':"+value;
+				else {
+					json +="\'"+key+"\':\'"+value+"\'";
+				}
 				j++;
 			}
 			json+="}";
@@ -321,7 +350,7 @@ public class StringUtils {
 		return json;
 	}
 	/**
-	 * ¼ÆËãÍ£³µ·Ñ
+	 * è®¡ç®—åœè½¦è´¹
 	 * @param start
 	 * @param end
 	 * @param price
@@ -335,7 +364,7 @@ public class StringUtils {
 		return "";
 	}
 
-	
+
 	public static String getTimeString(Long start,Long end){
 		Long hour = (end-start)/3600;
 		Long minute = ((end-start)%3600)/60;
@@ -344,18 +373,18 @@ public class StringUtils {
 		String result = "";
 		int day = 0;
 		if(hour==0)
-			result =minute+"·ÖÖÓ";
-		else 
-			result =hour+"Ğ¡Ê±"+minute+"·ÖÖÓ";
+			result =minute+"åˆ†é’Ÿ";
+		else
+			result =hour+"å°æ—¶"+minute+"åˆ†é’Ÿ";
 		if(hour>24){
 			day = hour.intValue()/24;
 			hour = hour%24;
-			result = day+"Ìì "+hour+"Ğ¡Ê±"+minute+"·ÖÖÓ";
+			result = day+"å¤© "+hour+"å°æ—¶"+minute+"åˆ†é’Ÿ";
 		}
 		//System.out.println(">>>>>>>>>>>>b:"+start+",e:"+end+",duration:"+result);
 		return result;
 	}
-	
+
 	public static String getDayString(Long start,Long end){
 		Long hour = (end-start)/3600;
 		String result = "";
@@ -365,25 +394,25 @@ public class StringUtils {
 		//System.out.println(">>>>>>>>>>>>b:"+start+",e:"+end+",duration:"+result);
 		return result;
 	}
-	
+
 	public static String getTimeString(Long duartion){
 		Long hour = duartion/3600;
 		Long minute = (duartion%3600)/60;
 		String result = "";
 		int day = 0;
 		if(hour==0)
-			result =minute+"·ÖÖÓ";
-		else 
-			result =hour+"Ğ¡Ê±"+minute+"·ÖÖÓ";
+			result =minute+"åˆ†é’Ÿ";
+		else
+			result =hour+"å°æ—¶"+minute+"åˆ†é’Ÿ";
 		if(hour>24){
 			day = hour.intValue()/24;
 			hour = hour%24;
-			result = day+"Ìì "+hour+"Ğ¡Ê±"+minute+"·ÖÖÓ";
+			result = day+"å¤© "+hour+"å°æ—¶"+minute+"åˆ†é’Ÿ";
 		}
 		return result;
 	}
-	
-	
+
+
 	public static String objArry2String(Object[] values){
 		StringBuffer rBuffer = new StringBuffer();
 		if(values!=null&&values.length>0){
@@ -393,7 +422,7 @@ public class StringUtils {
 		}
 		return rBuffer.toString();
 	}
-	
+
 	public static String [] list2Array(List<String> list){
 		if(list!=null){
 			String [] arrays = new String[list.size()];
@@ -403,7 +432,7 @@ public class StringUtils {
 		}
 		return new String[0];
 	}
-	
+
 	public static List<String> array2List(String [] arrays){
 		if(arrays!=null){
 			List<String> list = new ArrayList<String>();
@@ -413,8 +442,8 @@ public class StringUtils {
 		}
 		return new ArrayList<String>();
 	}
-	
-//	public static void main(String[] args) {
+
+	//	public static void main(String[] args) {
 //		String s = null;
 //		try {
 //			s = MD5("laoyao11111140888993");
@@ -424,102 +453,102 @@ public class StringUtils {
 //		System.out.println(s);
 //	}
 	public static String getMondayOfThisWeek() {
-		  Calendar c = Calendar.getInstance();
-		  int day_of_week = c.get(Calendar.DAY_OF_WEEK) - 1;
-		  if (day_of_week == 0)
-		   day_of_week = 7;
-		  c.add(Calendar.DATE, -day_of_week + 1);
-		  SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
-		  return df2.format(c.getTime()); 
+		Calendar c = Calendar.getInstance();
+		int day_of_week = c.get(Calendar.DAY_OF_WEEK) - 1;
+		if (day_of_week == 0)
+			day_of_week = 7;
+		c.add(Calendar.DATE, -day_of_week + 1);
+		SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
+		return df2.format(c.getTime());
 	}
-	 public static String getFistdayOfMonth() {
-		 Date nowTime=new Date(System.currentTimeMillis());//È¡ÏµÍ³Ê±¼ä
-		 try{       
-			 SimpleDateFormat sformat=new SimpleDateFormat("yyyy-MM-01");
-			 return sformat.format(nowTime);  
-		 }catch(Exception   ex){    
-			 ex.printStackTrace();       
-		 }
-		 return null;
+	public static String getFistdayOfMonth() {
+		Date nowTime=new Date(System.currentTimeMillis());//å–ç³»ç»Ÿæ—¶é—´
+		try{
+			SimpleDateFormat sformat=new SimpleDateFormat("yyyy-MM-01");
+			return sformat.format(nowTime);
+		}catch(Exception   ex){
+			ex.printStackTrace();
+		}
+		return null;
 	}
-	 
-	 public static String getFistdayOfYear() {
-		 Date nowTime=new Date(System.currentTimeMillis());//È¡ÏµÍ³Ê±¼ä
-		 try{       
-			 SimpleDateFormat sformat=new SimpleDateFormat("yyyy-01-01");
-			 return sformat.format(nowTime);  
-		 }catch(Exception   ex){    
-			 ex.printStackTrace();       
-		 }
-		 return null;
+
+	public static String getFistdayOfYear() {
+		Date nowTime=new Date(System.currentTimeMillis());//å–ç³»ç»Ÿæ—¶é—´
+		try{
+			SimpleDateFormat sformat=new SimpleDateFormat("yyyy-01-01");
+			return sformat.format(nowTime);
+		}catch(Exception   ex){
+			ex.printStackTrace();
+		}
+		return null;
 	}
-	 
-	 public static String getLastFistdayOfMonth() {
-		 Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
-		 c.add(Calendar.MONTH, -1);
-		 Date nowTime=new Date(c.getTimeInMillis());//È¡ÏµÍ³Ê±¼ä
-		 try{       
-			 SimpleDateFormat sformat=new SimpleDateFormat("yyyy-MM-01");
-			 return sformat.format(nowTime);  
-		 }catch(Exception   ex){    
-			 ex.printStackTrace();       
-		 }
-		 return null;
+
+	public static String getLastFistdayOfMonth() {
+		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+		c.add(Calendar.MONTH, -1);
+		Date nowTime=new Date(c.getTimeInMillis());//å–ç³»ç»Ÿæ—¶é—´
+		try{
+			SimpleDateFormat sformat=new SimpleDateFormat("yyyy-MM-01");
+			return sformat.format(nowTime);
+		}catch(Exception   ex){
+			ex.printStackTrace();
+		}
+		return null;
 	}
-	 
-	 /**
-	  * ¼ÆËãÁ½µØµÄ¾àÀë£¬·µ»Øµ¥Î»£º¹«Àï
-	  * @param _Longitude1
-	  * @param _Latidute1
-	  * @param _Longitude2
-	  * @param _Latidute2
-	  * @return
-	  */
-	 public static double distanceByLnglat(double _Longitude1, double _Latidute1,
-				double _Longitude2, double _Latidute2) {
-	    	//0.09446
-			double radLat1 = _Latidute1 * Math.PI / 180;
-			double radLat2 = _Latidute2 * Math.PI / 180;
-			double a = radLat1 - radLat2;
-			double b = _Longitude1 * Math.PI / 180 - _Longitude2 * Math.PI / 180;
-			double s = 2 * Math.atan(Math.sqrt(Math.pow(Math.sin(a / 2), 2)
-					+ Math.cos(radLat1) * Math.cos(radLat2)
-					* Math.pow(Math.sin(b / 2), 2)));
-			s = s * 6378137.0;// È¡WGS84±ê×¼²Î¿¼ÍÖÇòÖĞµÄµØÇò³¤°ë¾¶(µ¥Î»:m)
-			s = Math.round(s * 10000) / 10000;
-			s = (s / 1000) * 0.621371192;
-			//int result = (int) Math.ceil(s);
+
+	/**
+	 * è®¡ç®—ä¸¤åœ°çš„è·ç¦»ï¼Œè¿”å›å•ä½ï¼šå…¬é‡Œ
+	 * @param _Longitude1
+	 * @param _Latidute1
+	 * @param _Longitude2
+	 * @param _Latidute2
+	 * @return
+	 */
+	public static double distanceByLnglat(double _Longitude1, double _Latidute1,
+										  double _Longitude2, double _Latidute2) {
+		//0.09446
+		double radLat1 = _Latidute1 * Math.PI / 180;
+		double radLat2 = _Latidute2 * Math.PI / 180;
+		double a = radLat1 - radLat2;
+		double b = _Longitude1 * Math.PI / 180 - _Longitude2 * Math.PI / 180;
+		double s = 2 * Math.atan(Math.sqrt(Math.pow(Math.sin(a / 2), 2)
+				+ Math.cos(radLat1) * Math.cos(radLat2)
+				* Math.pow(Math.sin(b / 2), 2)));
+		s = s * 6378137.0;// å–WGS84æ ‡å‡†å‚è€ƒæ¤­çƒä¸­çš„åœ°çƒé•¿åŠå¾„(å•ä½:m)
+		s = Math.round(s * 10000) / 10000;
+		s = (s / 1000) * 0.621371192;
+		//int result = (int) Math.ceil(s);
 //			 System.out.println(_Longitude1+","+_Latidute1+","+_Longitude2+","+_Latidute2);
 //			 System.out.println(s);
-			return s;
+		return s;
 	}
-	 /**
-		 * ¼ÆËãµØÇòÉÏÈÎÒâÁ½µã(¾­Î³¶È)¾àÀë		 * 
-		 * @param long1		 *            µÚÒ»µã¾­¶È
-		 * @param lat1		 *            µÚÒ»µãÎ³¶È
-		 * @param long2		 *            µÚ¶şµã¾­¶È
-		 * @param lat2		 *            µÚ¶şµãÎ³¶È
-		 * @return ·µ»Ø¾àÀë µ¥Î»£ºÃ×
-		 */
-		public static double distance(double long1, double lat1, double long2,
-				double lat2) {
-			double a, b, R;
-			R = 6378137; // µØÇò°ë¾¶
-			lat1 = lat1 * Math.PI / 180.0;
-			lat2 = lat2 * Math.PI / 180.0;
-			a = lat1 - lat2;
-			b = (long1 - long2) * Math.PI / 180.0;
-			double d;
-			double sa2, sb2;
-			sa2 = Math.sin(a / 2.0);
-			sb2 = Math.sin(b / 2.0);
-			d = 2* R* Math.asin(Math.sqrt(sa2 * sa2 + Math.cos(lat1)* Math.cos(lat2) * sb2 * sb2));
-			return d;
-		}
-	 
-	
 	/**
-	 * Éú³ÉMD5
+	 * è®¡ç®—åœ°çƒä¸Šä»»æ„ä¸¤ç‚¹(ç»çº¬åº¦)è·ç¦»		 *
+	 * @param long1		 *            ç¬¬ä¸€ç‚¹ç»åº¦
+	 * @param lat1		 *            ç¬¬ä¸€ç‚¹çº¬åº¦
+	 * @param long2		 *            ç¬¬äºŒç‚¹ç»åº¦
+	 * @param lat2		 *            ç¬¬äºŒç‚¹çº¬åº¦
+	 * @return è¿”å›è·ç¦» å•ä½ï¼šç±³
+	 */
+	public static double distance(double long1, double lat1, double long2,
+								  double lat2) {
+		double a, b, R;
+		R = 6378137; // åœ°çƒåŠå¾„
+		lat1 = lat1 * Math.PI / 180.0;
+		lat2 = lat2 * Math.PI / 180.0;
+		a = lat1 - lat2;
+		b = (long1 - long2) * Math.PI / 180.0;
+		double d;
+		double sa2, sb2;
+		sa2 = Math.sin(a / 2.0);
+		sb2 = Math.sin(b / 2.0);
+		d = 2* R* Math.asin(Math.sqrt(sa2 * sa2 + Math.cos(lat1)* Math.cos(lat2) * sb2 * sb2));
+		return d;
+	}
+
+
+	/**
+	 * ç”ŸæˆMD5
 	 */
 	public static String MD5(String s) {
 		//System.err.println(s);
@@ -548,9 +577,9 @@ public class StringUtils {
 		return new String(ac);
 	}
 	private static final char hexDigits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-		'a', 'b', 'c', 'd', 'e', 'f' };
-	
-	
+			'a', 'b', 'c', 'd', 'e', 'f' };
+
+
 	public static String encodingFileName(String fileName) {
 		String returnFileName = "";
 		try {
@@ -561,19 +590,19 @@ public class StringUtils {
 
 		return returnFileName;
 	}
-	
+
 	public static String replaceEnter(String str){
-        Pattern CRLF = Pattern.compile("(\r\n|\r|\n|\n\r)");  
-        Matcher m = CRLF.matcher(str);  
-        if (m.find()) {  
-        	str = m.replaceAll("<br>");  
-        }  
-        return str;  
-    }
-	
+		Pattern CRLF = Pattern.compile("(\r\n|\r|\n|\n\r)");
+		Matcher m = CRLF.matcher(str);
+		if (m.find()) {
+			str = m.replaceAll("<br>");
+		}
+		return str;
+	}
+
 	/**
-	 * ÑéÖ¤³µÅÆºÅ:×¢Òâ½«Ğ¡Ğ´×ªÎª´óĞ´ÔÙ×öÆ¥Åä
-	 * 
+	 * éªŒè¯è½¦ç‰Œå·:æ³¨æ„å°†å°å†™è½¬ä¸ºå¤§å†™å†åšåŒ¹é…
+	 *
 	 * @param plate
 	 * @return
 	 */
@@ -582,16 +611,16 @@ public class StringUtils {
 			return false;
 		}
 		plate = plate.toUpperCase();
-		if(plate.startsWith("WJËÕ")&&plate.length()==8)
+		if(plate.startsWith("WJè‹")&&plate.length()==8)
 			return true;
 		String province = String.valueOf(plate.charAt(0));
 
-		
-		String[] provinces = new String[] { "¾©", "»¦", "Õã", "ËÕ", "ÔÁ", "Â³",
-				"½ú", "¼½", "Ô¥", "´¨", "Óå", "ÁÉ", "¼ª", "ºÚ", "Íî", "¶õ", "Ïæ", "¸Ó",
-				"Ãö", "ÉÂ", "¸Ê", "Äş", "ÃÉ", "½ò", "¹ó", "ÔÆ", "¹ğ", "Çí", "Çà", "ĞÂ",
-				"²Ø", "¸Û", "°Ä", "Ê¹", "¾ü", "¿Õ", "º£", "±±", "Éò", "À¼","¼Ã", "ÄÏ", 
-				"¹ã", "³É", "WJ", "¾¯", "Ïû", "±ß","Ë®", "µç", "ÁÖ", "Í¨" };
+
+		String[] provinces = new String[] { "äº¬", "æ²ª", "æµ™", "è‹", "ç²¤", "é²",
+				"æ™‹", "å†€", "è±«", "å·", "æ¸", "è¾½", "å‰", "é»‘", "çš–", "é„‚", "æ¹˜", "èµ£",
+				"é—½", "é™•", "ç”˜", "å®", "è’™", "æ´¥", "è´µ", "äº‘", "æ¡‚", "ç¼", "é’", "æ–°",
+				"è—", "æ¸¯", "æ¾³", "ä½¿", "å†›", "ç©º", "æµ·", "åŒ—", "æ²ˆ", "å…°","æµ", "å—",
+				"å¹¿", "æˆ", "WJ", "è­¦", "æ¶ˆ", "è¾¹","æ°´", "ç”µ", "æ—", "é€š", "å°" };
 		for(int i = 0; i< provinces.length; i++){
 			if(province.equals(provinces[i])){
 				break;
@@ -600,18 +629,24 @@ public class StringUtils {
 				return false;
 			}
 		}
-		String //check = "^[A-Z]{1}[A-Z_0-9]{5}$";
-		//if(province.equals("Ê¹")){
-			check = "^[A-Z_0-9]{6}$";
+//		String //check = "^[A-Z]{1}[A-Z_0-9]{5}$";
+		//if(province.equals("ä½¿")){
+//			check = "^[A-Z_0-9]{7}$";
 		//}
+		String check = "";
 		plate = plate.substring(1);
+		if(plate.length() == 7){
+			check = "^[A-Z_0-9]{7}$";
+		}else if(plate.length() == 6){
+			check = "^[A-Z_0-9]{6}$";
+		}
 		Pattern p = Pattern.compile(check);
 		Matcher m = p.matcher(plate);
 		return m.matches();
 	}
-	
+
 	/**
-	 * Ğ£ÑéÊÖ»úºÅ
+	 * æ ¡éªŒæ‰‹æœºå·
 	 * @param mobile
 	 * @return
 	 */
@@ -620,7 +655,7 @@ public class StringUtils {
 		Matcher m = p.matcher(mobile);
 		return m.matches();
 	}
-	
+
 	static double generateRandomNumber() {
 		// generate random number based on normal distribution
 		double r = new Random().nextDouble();
@@ -654,20 +689,20 @@ public class StringUtils {
 		return sum;
 	}
 	public static List<Integer> getBonusIngteger(Integer total,int bum,int max){
-		//8,3  18,8 
-		//ÄÃµ½ËÄ¸öËæ»úÊı£¬¿ÉÒÔ×ö¸ö³ØÊ²Ã´µÄÃ¿´ÎÈ¡ËÄ¸öÀ´ÌáÉıĞ§ÂÊ
+		//8,3  18,8
+		//æ‹¿åˆ°å››ä¸ªéšæœºæ•°ï¼Œå¯ä»¥åšä¸ªæ± ä»€ä¹ˆçš„æ¯æ¬¡å–å››ä¸ªæ¥æå‡æ•ˆç‡
 		Double[] results = new Double[bum];
 		for (int i = 0; i < bum; i++) {
 			results[i] = generateRandomNumber();
 		}
-//		//ÅÅĞò
+//		//æ’åº
 //		r.sort(new Comparator<Double>() {
 //			@Override
 //			public int compare(Double o1, Double o2) {
 //				return o1 < o2 ? -1 : 1;
 //			}
 //		});
-		//ÓÃÕâËÄ¸öËæ»úÊıÀ´´ò¶ÏÒ»¸öÊı£¬À´È¡µÃÎå·İ·Ö½âÖ®ºóµÄÊı
+		//ç”¨è¿™å››ä¸ªéšæœºæ•°æ¥æ‰“æ–­ä¸€ä¸ªæ•°ï¼Œæ¥å–å¾—äº”ä»½åˆ†è§£ä¹‹åçš„æ•°
 		List<Integer> out = new ArrayList<Integer>();
 		double ratio = total / sum(results);
 		int _total = 0;
@@ -692,7 +727,7 @@ public class StringUtils {
 				}
 			}
 		}
-		
+
 		Integer lastTotal=0;
 		for(int i =0;i<out.size();i++){
 			Integer in = out.get(i);
@@ -734,27 +769,27 @@ public class StringUtils {
 		System.out.println(out+":"+stotal);
 		return out;
 	}
-	 public static void main(String[] args) {
-		 //getBonusIngteger(100,25,12);
-			//System.out.println(distance(116.306970,40.042474,116.316416,40.042474));
-			double d1 = 0.02346*2;
-			double d2 = 0.01792;
-			//double d1 = 0.009446*2*1.243;//0.023482756
-			//double d2 = 0.007232*2*1.243;//0.017978752
-			//System.out.println(distanceByLnglat(116.316416,40.042474,116.325862,40.042474));
-			//0.007232
-			//System.out.println(">>>"+distance(116.313572,40.041845,116.627951,39.933272));
-			double lon = 116.306970;
-			double lat = 40.042474;
-////			
-			System.out.println(distance(lon,lat,lon+d1,lat));
-			System.out.println(distance(lon,lat,lon,lat+d2));
-//			
+	public static void main(String[] args) {
+		//getBonusIngteger(100,25,12);
+		//System.out.println(distance(116.306970,40.042474,116.316416,40.042474));
+		double d1 = 0.02346*2;
+		double d2 = 0.01792;
+		//double d1 = 0.009446*2*1.243;//0.023482756
+		//double d2 = 0.007232*2*1.243;//0.017978752
+		//System.out.println(distanceByLnglat(116.316416,40.042474,116.325862,40.042474));
+		//0.007232
+		//System.out.println(">>>"+distance(116.313572,40.041845,116.627951,39.933272));
+		double lon = 116.306970;
+		double lat = 40.042474;
+////
+		System.out.println(distance(lon,lat,lon+d1,lat));
+		System.out.println(distance(lon,lat,lon,lat+d2));
+//
 //			lon = lon+1;
 //			lat = lat+10;
-			areNotEmpty("","","","");
+		areNotEmpty("","","","");
 //			System.out.println(distanceByLnglat(lon,lat,lon,lat+0.02892366));
-////			                        
+////
 //			System.out.println(distanceByLnglat(lon,lat,lon+0.03777455,lat));
 //		 System.out.println(formatDouble("0.06399"));
 		/*try {
@@ -766,72 +801,72 @@ public class StringUtils {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		}
-	 
-	 public static String getWeek(int week){
-			switch (week) {
-			case 2:
-				return "Ò»";
-			case 3:
-				return "¶ş";
-			case 4:
-				return "Èı";
-			case 5:
-				return "ËÄ";
-			case 6:
-				return "Îå";
-			case 7:
-				return "Áù";
-			case 1:
-				return "ÈÕ";
-			}
-			return "";
 	}
-	 
-	 public static String [] getGRCode(Long []ids){
-	    String[] ss = new String[ids.length]; 
-        for(int i=0;i<ids.length;i++){ 
-        	String vInteger = ids[i]+"";
-        	if(vInteger.length() < 6){
-        		for(int k=0;k<6 - vInteger.length();k++){
-        			vInteger = "0" + vInteger;
-        		}
-        	}
-        	String c = UUID.randomUUID().toString();
-        	
-            c = c.substring(c.lastIndexOf("-")+1); 
-            StringBuffer nc = new StringBuffer();
-        	Integer charIndex=RandomUtils.nextInt(2);
-        	String stuf = "zd";
-        	c = stuf.charAt(charIndex)+c;
-        	System.out.println(c);
-        	for(int j=0;j<c.length();j++){
-        		Character chara = c.charAt(j);
-        		if(j>1&&j<9)
-        			chara = chara.toUpperCase(chara);
-        		nc.append(chara);
-        		if(j==1)
-        			nc.append(vInteger.charAt(0));
-        		else if(j==3){
-        			nc.append(vInteger.charAt(1));
-        		}else if(j==5){
-        			nc.append(vInteger.charAt(2));
-        		}else if(j==6){
-        			nc.append(vInteger.charAt(3));
-        		}else if(j==9){
-        			nc.append(vInteger.charAt(4));
-        		}else if(j==11){
-        			nc.append(vInteger.charAt(5));
-        		}
-        	}
-        	String result = nc.toString();
-        	//System.out.println(result.charAt(2)+""+result.charAt(5)+result.charAt(8)+""+result.charAt(10)+""+result.charAt(14)+""+result.charAt(17));
-        	ss[i]=nc.toString();
-        } 
-	    return ss; 
-	 }
-	 //¶à²ã´úÀí»ñÈ¡¿Í»§¶ËÕæÊµIP
-	 public static String getIpAddr(HttpServletRequest request) {
+
+	public static String getWeek(int week){
+		switch (week) {
+			case 2:
+				return "ä¸€";
+			case 3:
+				return "äºŒ";
+			case 4:
+				return "ä¸‰";
+			case 5:
+				return "å››";
+			case 6:
+				return "äº”";
+			case 7:
+				return "å…­";
+			case 1:
+				return "æ—¥";
+		}
+		return "";
+	}
+
+	public static String [] getGRCode(Long []ids){
+		String[] ss = new String[ids.length];
+		for(int i=0;i<ids.length;i++){
+			String vInteger = ids[i]+"";
+			if(vInteger.length() < 6){
+				for(int k=0;k<6 - vInteger.length();k++){
+					vInteger = "0" + vInteger;
+				}
+			}
+			String c = UUID.randomUUID().toString();
+
+			c = c.substring(c.lastIndexOf("-")+1);
+			StringBuffer nc = new StringBuffer();
+			Integer charIndex=RandomUtils.nextInt(2);
+			String stuf = "zd";
+			c = stuf.charAt(charIndex)+c;
+			System.out.println(c);
+			for(int j=0;j<c.length();j++){
+				Character chara = c.charAt(j);
+				if(j>1&&j<9)
+					chara = chara.toUpperCase(chara);
+				nc.append(chara);
+				if(j==1)
+					nc.append(vInteger.charAt(0));
+				else if(j==3){
+					nc.append(vInteger.charAt(1));
+				}else if(j==5){
+					nc.append(vInteger.charAt(2));
+				}else if(j==6){
+					nc.append(vInteger.charAt(3));
+				}else if(j==9){
+					nc.append(vInteger.charAt(4));
+				}else if(j==11){
+					nc.append(vInteger.charAt(5));
+				}
+			}
+			String result = nc.toString();
+			//System.out.println(result.charAt(2)+""+result.charAt(5)+result.charAt(8)+""+result.charAt(10)+""+result.charAt(14)+""+result.charAt(17));
+			ss[i]=nc.toString();
+		}
+		return ss;
+	}
+	//å¤šå±‚ä»£ç†è·å–å®¢æˆ·ç«¯çœŸå®IP
+	public static String getIpAddr(HttpServletRequest request) {
 		String ip = request.getHeader("x-forwarded-for");
 		if(ip != null && !"".equals(ip)) {
 			if(ip.indexOf(",")>0) {
@@ -840,32 +875,32 @@ public class StringUtils {
 		}
 		//	        System.out.println("Redirecting com_ip 01 ==> " + ip);
 		if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-		    ip = request.getHeader("Proxy-Client-IP");
-		//	            System.out.println("Redirecting com_ip 02 ==> " + ip);
+			ip = request.getHeader("Proxy-Client-IP");
+			//	            System.out.println("Redirecting com_ip 02 ==> " + ip);
 		}
 		if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-		    ip = request.getHeader("WL-Proxy-Client-IP");
-		//	            System.out.println("Redirecting com_ip 03 ==> " + ip);
+			ip = request.getHeader("WL-Proxy-Client-IP");
+			//	            System.out.println("Redirecting com_ip 03 ==> " + ip);
 		}
 		if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-		   ip = request.getRemoteAddr();
-		//	           System.out.println("Redirecting com_ip 04 ==> " + ip);
+			ip = request.getRemoteAddr();
+			//	           System.out.println("Redirecting com_ip 04 ==> " + ip);
 		}
 		return ip;
-	 }
-	 
-	 /**
-     * ¼ì²éÖ¸¶¨µÄ×Ö·û´®ÊÇ·ñÎª¿Õ¡£
-     * <ul>
-     * <li>SysUtils.isEmpty(null) = true</li>
-     * <li>SysUtils.isEmpty("") = true</li>
-     * <li>SysUtils.isEmpty("   ") = true</li>
-     * <li>SysUtils.isEmpty("abc") = false</li>
-     * </ul>
-     * 
-     * @param value ´ı¼ì²éµÄ×Ö·û´®
-     * @return true/false
-     */
+	}
+
+	/**
+	 * æ£€æŸ¥æŒ‡å®šçš„å­—ç¬¦ä¸²æ˜¯å¦ä¸ºç©ºã€‚
+	 * <ul>
+	 * <li>SysUtils.isEmpty(null) = true</li>
+	 * <li>SysUtils.isEmpty("") = true</li>
+	 * <li>SysUtils.isEmpty("   ") = true</li>
+	 * <li>SysUtils.isEmpty("abc") = false</li>
+	 * </ul>
+	 *
+	 * @param value å¾…æ£€æŸ¥çš„å­—ç¬¦ä¸²
+	 * @return true/false
+	 */
 	public static boolean isEmpty(String value) {
 		int strLen;
 		if (value == null || (strLen = value.length()) == 0) {
@@ -879,9 +914,9 @@ public class StringUtils {
 		return true;
 	}
 
-    /**
-     * ¼ì²é¶ÔÏóÊÇ·ñÎªÊı×ÖĞÍ×Ö·û´®,°üº¬¸ºÊı¿ªÍ·µÄ¡£
-     */
+	/**
+	 * æ£€æŸ¥å¯¹è±¡æ˜¯å¦ä¸ºæ•°å­—å‹å­—ç¬¦ä¸²,åŒ…å«è´Ÿæ•°å¼€å¤´çš„ã€‚
+	 */
 	public static boolean isNumeric(Object obj) {
 		if (obj == null) {
 			return false;
@@ -890,11 +925,11 @@ public class StringUtils {
 		int length = chars.length;
 		if(length < 1)
 			return false;
-		
+
 		int i = 0;
 		if(length > 1 && chars[0] == '-')
 			i = 1;
-		
+
 		for (; i < length; i++) {
 			if (!Character.isDigit(chars[i])) {
 				return false;
@@ -903,9 +938,9 @@ public class StringUtils {
 		return true;
 	}
 
-    /**
-     * ¼ì²éÖ¸¶¨µÄ×Ö·û´®ÁĞ±íÊÇ·ñ²»Îª¿Õ¡£
-     */
+	/**
+	 * æ£€æŸ¥æŒ‡å®šçš„å­—ç¬¦ä¸²åˆ—è¡¨æ˜¯å¦ä¸ä¸ºç©ºã€‚
+	 */
 	public static boolean areNotEmpty(String... values) {
 		boolean result = true;
 		if (values == null || values.length == 0) {
@@ -917,11 +952,11 @@ public class StringUtils {
 		}
 		return result;
 	}
-	
 
-    /**
-     * °ÑÍ¨ÓÃ×Ö·û±àÂëµÄ×Ö·û´®×ª»¯Îªºº×Ö±àÂë¡£
-     */
+
+	/**
+	 * æŠŠé€šç”¨å­—ç¬¦ç¼–ç çš„å­—ç¬¦ä¸²è½¬åŒ–ä¸ºæ±‰å­—ç¼–ç ã€‚
+	 */
 	public static String unicodeToChinese(String unicode) {
 		StringBuilder out = new StringBuilder();
 		if (!isEmpty(unicode)) {
@@ -932,9 +967,9 @@ public class StringUtils {
 		return out.toString();
 	}
 
-    /**
-     * ¹ıÂË²»¿É¼û×Ö·û
-     */
+	/**
+	 * è¿‡æ»¤ä¸å¯è§å­—ç¬¦
+	 */
 	public static String stripNonValidXMLCharacters(String input) {
 		if (input == null || ("".equals(input)))
 			return "";
@@ -950,60 +985,60 @@ public class StringUtils {
 		}
 		return out.toString();
 	}
-	 
-	 public static String getParkUserPass(){
-		 String []passes = new String[]{"333666","999666","111222","333444","555666","454545","858585","989898","777333","222444","999111","000222","555000","525252","676767","919191","020202","353535","646464","828282","111444","666555","222555","666333","333777","999888","888555","666444","111999","222555","000222","135135","124124","258258","147147","369369","963963","321321","654654","987987","120120","320320","210210","258258","595959","535353","575757","545454","151515","525252","626262","202020","555222","626262","303030","989898","969696","939393","929292","949494","979797","848484","828282","838383","868686"};
-		 int rang = new Random().nextInt(passes.length);
-		 return passes[rang];
-	 }
-	 public static String createLinkString(Map<String, Object> params) {
-			List<String> keys = new ArrayList<String>(params.keySet());
-			Collections.sort(keys);
-			String prestr = "";
-			for (int i = 0; i < keys.size(); i++) {
-				String key = keys.get(i);
-				Object value = params.get(key);
-				if (value == null || value.toString().trim().equals(""))
-					continue;
-				prestr += key + "=" + value + "&";
-			}
-			if (prestr.endsWith("&"))
-				prestr = prestr.substring(0, prestr.length() - 1);
-			return prestr;
+
+	public static String getParkUserPass(){
+		String []passes = new String[]{"333666","999666","111222","333444","555666","454545","858585","989898","777333","222444","999111","000222","555000","525252","676767","919191","020202","353535","646464","828282","111444","666555","222555","666333","333777","999888","888555","666444","111999","222555","000222","135135","124124","258258","147147","369369","963963","321321","654654","987987","120120","320320","210210","258258","595959","535353","575757","545454","151515","525252","626262","202020","555222","626262","303030","989898","969696","939393","929292","949494","979797","848484","828282","838383","868686"};
+		int rang = new Random().nextInt(passes.length);
+		return passes[rang];
+	}
+	public static String createLinkString(Map<String, Object> params) {
+		List<String> keys = new ArrayList<String>(params.keySet());
+		Collections.sort(keys);
+		String prestr = "";
+		for (int i = 0; i < keys.size(); i++) {
+			String key = keys.get(i);
+			Object value = params.get(key);
+			if (value == null || value.toString().trim().equals(""))
+				continue;
+			prestr += key + "=" + value + "&";
 		}
-	 
-    /**
-     * Éú³É³µ³¡µÄËæ»úukey
-     * @param length
-     * @return
-     * 0~9µÄASCIIÎª48~57
-     * A~ZµÄASCIIÎª65~90
-     * a~zµÄASCIIÎª97~122
-     */
-    public static String createRandomCharData(int length){
-        StringBuilder sb=new StringBuilder();
-        Random rand=new Random();//Ëæ»úÓÃÒÔÏÂÈı¸öËæ»úÉú³ÉÆ÷
-        Random randdata=new Random();
-        int data=0;
-        for(int i=0;i<length;i++){
-            int index=rand.nextInt(3);
-            //Ä¿µÄÊÇËæ»úÑ¡ÔñÉú³ÉÊı×Ö£¬´óĞ¡Ğ´×ÖÄ¸
-            switch(index){
-            case 0:
-                 data=randdata.nextInt(10);//½ö½ö»áÉú³É0~9
-                 sb.append(data);
-                break;
-            case 1:
-                data=randdata.nextInt(26)+65;//±£Ö¤Ö»»á²úÉú65~90Ö®¼äµÄÕûÊı
-                sb.append(Character.toUpperCase((char)data));
-                break;
-            case 2:
-                data=randdata.nextInt(26)+97;//±£Ö¤Ö»»á²úÉú97~122Ö®¼äµÄÕûÊı
-                sb.append(Character.toUpperCase((char)data));
-                break;
-            }
-        }
-        String result=sb.toString();
-        return result;
-    }
+		if (prestr.endsWith("&"))
+			prestr = prestr.substring(0, prestr.length() - 1);
+		return prestr;
+	}
+
+	/**
+	 * ç”Ÿæˆè½¦åœºçš„éšæœºukey
+	 * @param length
+	 * @return
+	 * 0~9çš„ASCIIä¸º48~57
+	 * A~Zçš„ASCIIä¸º65~90
+	 * a~zçš„ASCIIä¸º97~122
+	 */
+	public static String createRandomCharData(int length){
+		StringBuilder sb=new StringBuilder();
+		Random rand=new Random();//éšæœºç”¨ä»¥ä¸‹ä¸‰ä¸ªéšæœºç”Ÿæˆå™¨
+		Random randdata=new Random();
+		int data=0;
+		for(int i=0;i<length;i++){
+			int index=rand.nextInt(3);
+			//ç›®çš„æ˜¯éšæœºé€‰æ‹©ç”Ÿæˆæ•°å­—ï¼Œå¤§å°å†™å­—æ¯
+			switch(index){
+				case 0:
+					data=randdata.nextInt(10);//ä»…ä»…ä¼šç”Ÿæˆ0~9
+					sb.append(data);
+					break;
+				case 1:
+					data=randdata.nextInt(26)+65;//ä¿è¯åªä¼šäº§ç”Ÿ65~90ä¹‹é—´çš„æ•´æ•°
+					sb.append(Character.toUpperCase((char)data));
+					break;
+				case 2:
+					data=randdata.nextInt(26)+97;//ä¿è¯åªä¼šäº§ç”Ÿ97~122ä¹‹é—´çš„æ•´æ•°
+					sb.append(Character.toUpperCase((char)data));
+					break;
+			}
+		}
+		String result=sb.toString();
+		return result;
+	}
 }

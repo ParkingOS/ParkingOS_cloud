@@ -22,7 +22,7 @@ import java.util.Map;
 
 
 /**
- * ³µÅÆ³µĞÍ¶ÔÓ¦Éè¶¨
+ * è½¦ç‰Œè½¦å‹å¯¹åº”è®¾å®š
  * @author Administrator
  *
  */
@@ -37,7 +37,7 @@ public class GroupCarNumberTypeAction extends Action{
 	private Logger logger = Logger.getLogger(GroupCarNumberTypeAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
@@ -94,15 +94,15 @@ public class GroupCarNumberTypeAction extends Action{
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
-		}else if(action.equals("create")){//Ìí¼Ó³µĞÍ
+		}else if(action.equals("create")){//æ·»åŠ è½¦å‹
 			String car_number = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number")).toUpperCase();
 			if(car_number.length()<6||car_number.length()>8){
-				AjaxUtil.ajaxOutput(response, "³µÅÆºÅ´íÎó");
+				AjaxUtil.ajaxOutput(response, "è½¦ç‰Œå·é”™è¯¯");
 				return null;
 			}
 			Long typeid = RequestUtil.getLong(request, "typeid", -1L);
 			if(typeid<0){
-				AjaxUtil.ajaxOutput(response, "ÇëÑ¡ÔñÕıÈ·³µĞÍ£¨²»ÄÜÊÇ¡±È«²¿¡°£©");
+				AjaxUtil.ajaxOutput(response, "è¯·é€‰æ‹©æ­£ç¡®è½¦å‹ï¼ˆä¸èƒ½æ˜¯â€å…¨éƒ¨â€œï¼‰");
 				return null;
 			}
 			if(comid<=0){
@@ -113,7 +113,7 @@ public class GroupCarNumberTypeAction extends Action{
 				long currTime = System.currentTimeMillis()/1000;
 				Map carNumbertType = daService.getMap("select * from car_number_type_tb where car_number = ? and comid = ? ", new Object[]{car_number,comid});
 				if(carNumbertType!=null&&carNumbertType.get("id")!=null){
-					AjaxUtil.ajaxOutput(response, "¸Ã³µÅÆÒÑ°ó¶¨³µĞÍ");
+					AjaxUtil.ajaxOutput(response, "è¯¥è½¦ç‰Œå·²ç»‘å®šè½¦å‹");
 					return null;
 //					long id =  Long.parseLong(carNumbertType.get("id") + "");
 //					result = daService.update("update car_number_type_tb set typeid=?,update_time=? where id = ? ", new Object[]{typeid, currTime, id});
@@ -131,7 +131,7 @@ public class GroupCarNumberTypeAction extends Action{
 							daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid, "car_number_type_tb", nextid, currTime, 0});
 						}
 						if (result == 1)
-							mongoDbUtils.saveLogs(request, 0, 2, "Ìí¼ÓÁË³µÅÆ(" + car_number + ")¶ÔÓ¦³µĞÍ(" + typeid + ")(³µ³¡±àºÅ:" + comid + ")");
+							mongoDbUtils.saveLogs(request, 0, 2, "æ·»åŠ äº†è½¦ç‰Œ(" + car_number + ")å¯¹åº”è½¦å‹(" + typeid + ")(è½¦åœºç¼–å·:" + comid + ")");
 					} catch (Exception e) {
 						if (e.getMessage().indexOf("car_type_tb_comid_mtype_key") != -1)
 							result = -2;
@@ -144,12 +144,12 @@ public class GroupCarNumberTypeAction extends Action{
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			String car_number = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "car_number")).toUpperCase();
 			if(car_number.length()<6||car_number.length()>8){
-				AjaxUtil.ajaxOutput(response, "³µÅÆºÅ´íÎó");
+				AjaxUtil.ajaxOutput(response, "è½¦ç‰Œå·é”™è¯¯");
 				return null;
 			}
 			Long typeid = RequestUtil.getLong(request, "typeid", -1L);
 			if(typeid<0){
-				AjaxUtil.ajaxOutput(response, "ÇëÑ¡Ôñ³µĞÍ");
+				AjaxUtil.ajaxOutput(response, "è¯·é€‰æ‹©è½¦å‹");
 				return null;
 			}
 			if(comid<=0){
@@ -157,7 +157,7 @@ public class GroupCarNumberTypeAction extends Action{
 			}
 			Map carNumbertType = daService.getMap("select * from car_number_type_tb where car_number = ? and comid=? and id<>? ", new Object[]{car_number,comid,id});
 			if(carNumbertType!=null&&carNumbertType.size()>0){
-				AjaxUtil.ajaxOutput(response, "¸Ã³µÅÆÒÑ°ó¶¨³µĞÍ");
+				AjaxUtil.ajaxOutput(response, "è¯¥è½¦ç‰Œå·²ç»‘å®šè½¦å‹");
 				return null;
 			}
 			long currTime = System.currentTimeMillis()/1000;
@@ -167,7 +167,7 @@ public class GroupCarNumberTypeAction extends Action{
 				daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"car_number_type_tb",id,currTime,1});
 			}
 			if(result==1)
-				mongoDbUtils.saveLogs(request, 0, 3, "(±àºÅ:"+id+")ĞŞ¸Ä³É:³µÅÆºÅ"+car_number+",typeid:"+typeid);
+				mongoDbUtils.saveLogs(request, 0, 3, "(ç¼–å·:"+id+")ä¿®æ”¹æˆ:è½¦ç‰Œå·"+car_number+",typeid:"+typeid);
 			AjaxUtil.ajaxOutput(response, ""+result);
 		}else if(action.equals("delete")){
 			Long id = RequestUtil.getLong(request, "id", -1L);
@@ -178,10 +178,10 @@ public class GroupCarNumberTypeAction extends Action{
 				daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"car_number_type_tb",id,System.currentTimeMillis()/1000,2});
 			}
 			if(result==1)
-				mongoDbUtils.saveLogs(request, 0, 4, "É¾³ıÁË³µÅÆ¶ÔÓ¦³µĞÍ(±àºÅ:"+id+")£º"+carMap);
+				mongoDbUtils.saveLogs(request, 0, 4, "åˆ é™¤äº†è½¦ç‰Œå¯¹åº”è½¦å‹(ç¼–å·:"+id+")ï¼š"+carMap);
 			AjaxUtil.ajaxOutput(response, ""+result);
 		}
 		return null;
 	}
-	
+
 }

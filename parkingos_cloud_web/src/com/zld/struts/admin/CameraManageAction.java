@@ -23,10 +23,10 @@ import com.zld.utils.RequestUtil;
 public class CameraManageAction extends Action {
 	@Autowired
 	private DataBaseService daService;
-	
+
 	private Logger logger = Logger.getLogger(CameraManageAction.class);
 	/*
-	 * Í¨µÀÉèÖÃ
+	 * é€šé“è®¾ç½®
 	 */
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
@@ -59,7 +59,7 @@ public class CameraManageAction extends Action {
 		}else if(action.equals("getworksites")){
 			String sql = "select * from com_worksite_tb where comid=?";
 			List<Map> list = daService.getAll(sql, new Object[]{comid});
-			String result = "[{\"value_no\":\"-1\",\"value_name\":\"ÇëÑ¡Ôñ\"},";
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"è¯·é€‰æ‹©\"},";
 			if(!list.isEmpty()){
 				for(Map map : list){
 					result+="{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("worksite_name")+"\"},";
@@ -85,7 +85,7 @@ public class CameraManageAction extends Action {
 				AjaxUtil.ajaxOutput(response, "-1");
 				return null;
 			}
-			//Ìí¼Ó
+			//æ·»åŠ 
 			String sql = "insert into com_camera_tb(passid,camera_name,ip,port,cusername,manufacturer) values(?,?,?,?,?,?)";
 			int re = daService.update(sql, new Object[]{passid,camera_name,ip,port,cusername,manufacturer});
 			if(re == 1){
@@ -105,7 +105,7 @@ public class CameraManageAction extends Action {
 				AjaxUtil.ajaxOutput(response, "-1");
 				return null;
 			}
-			//±à¼­
+			//ç¼–è¾‘
 			String sql = "update com_camera_tb set camera_name=?,ip=?,port=?,cusername=?,manufacturer=?,passid=? where id=?";
 			int re = daService.update(sql, new Object[]{camera_name,ip,port,cusername,manufacturer,passid,cameraid});
 			if(re == 1){

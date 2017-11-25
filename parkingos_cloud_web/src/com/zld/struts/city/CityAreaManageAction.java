@@ -28,14 +28,14 @@ public class CityAreaManageAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -48,7 +48,7 @@ public class CityAreaManageAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(cityid > 0){
 			groupid = RequestUtil.getLong(request, "groupid", -1L);
 		}
@@ -66,9 +66,9 @@ public class CityAreaManageAction extends Action {
 			List<Object> params = new ArrayList<Object>();
 			params.add(0);
 			List<Object> groups = new ArrayList<Object>();
-			if(cityid > 0){//城市商户登录
+			if(cityid > 0){//鍩庡競鍟嗘埛鐧诲綍
 				groups = commonMethods.getGroups(cityid);
-			}else if(groupid > 0){//运营集团登录
+			}else if(groupid > 0){//杩愯惀闆嗗洟鐧诲綍
 				groups.add(groupid);
 			}
 			if(groups != null && !groups.isEmpty()){
@@ -82,13 +82,13 @@ public class CityAreaManageAction extends Action {
 				sql += " and groupid in ("+preParams+") ";
 				countSql += " and groupid in ("+preParams+") ";
 				params.addAll(groups);
-				
+
 				count = pgOnlyReadService.getCount(countSql,params);
 				if(count>0){
 					list = pgOnlyReadService.getAll(sql +" order by create_time desc ",params, pageNum, pageSize);
 				}
 			}
-			
+
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("create")){
@@ -103,30 +103,30 @@ public class CityAreaManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private int deleteArea(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
-		int r = daService.update("update org_area_tb set state=? where id=? ", 
+		int r = daService.update("update org_area_tb set state=? where id=? ",
 				new Object[]{1, id});
 		return r;
 	}
-	
+
 	private int createArea(HttpServletRequest request, Long groupid){
 		String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
 		Integer state = RequestUtil.getInteger(request, "state", 0);
 		if(groupid == -1){
 			return -1;
 		}
-		int r = daService.update("insert into org_area_tb(name,state,groupid,create_time) values(?,?,?,?)", 
+		int r = daService.update("insert into org_area_tb(name,state,groupid,create_time) values(?,?,?,?)",
 				new Object[]{name, state, groupid, System.currentTimeMillis()/1000});
 		return r;
 	}
-	
+
 	private int editArea(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
 		Integer state = RequestUtil.getInteger(request, "state", 0);
-		int r = daService.update("update org_area_tb set name=?,state=? where id=? ", 
+		int r = daService.update("update org_area_tb set name=?,state=? where id=? ",
 				new Object[]{name, state, id});
 		return r;
 	}

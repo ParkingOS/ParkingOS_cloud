@@ -29,15 +29,15 @@ public class CityCarownerManageAction extends Action {
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
-	private CommonMethods commonMethods; 
-	
+	private CommonMethods commonMethods;
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null){
@@ -48,7 +48,7 @@ public class CityCarownerManageAction extends Action {
 			return null;
 		}
 		if(cityid == null) cityid = -1L;
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("query")){
@@ -68,7 +68,7 @@ public class CityCarownerManageAction extends Action {
 				sql +=" and "+sqlInfo.getSql();
 				params.addAll(sqlInfo.getParams());
 			}
-			
+
 			count = pgOnlyReadService.getCount(countSql,params);
 			if(count>0){
 				list = pgOnlyReadService.getAll(sql +" order by reg_time desc ",params, pageNum, pageSize);
@@ -77,10 +77,10 @@ public class CityCarownerManageAction extends Action {
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
 		}
-		
+
 		return null;
 	}
-	
+
 	private void setList(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			for(Map<String, Object> map : list){

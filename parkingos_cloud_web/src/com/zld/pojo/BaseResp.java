@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class BaseResp implements Serializable {
 	private Integer result;
-	private String errmsg;//ÏûÏ¢
+	private String errmsg;//æ¶ˆæ¯
 
 	public Integer getResult() {
 		return result;
@@ -26,5 +26,5 @@ public class BaseResp implements Serializable {
 	public String toString() {
 		return "BaseResp [result=" + result + ", errmsg=" + errmsg + "]";
 	}
-	
+
 }

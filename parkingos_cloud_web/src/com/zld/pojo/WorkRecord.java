@@ -4,15 +4,15 @@ import java.io.Serializable;
 
 public class WorkRecord implements Serializable {
 	private Long id;
-	private Long start_time;//ÉÏ°à¿ªÊ¼Ê±¼ä
-	private Long end_time;//ÏÂ°àÊ±¼ä
-	private Long worksite_id = -1L;//¹¤×÷Õ¾±àºÅ
-	private Long uid = -1L;//ÊÕ·ÑÔ±±àºÅ
-	private Long berthsec_id = -1L;//²´Î»¶Î±àºÅ
-	private String device_code;//Éè±¸ºÅ
-	private Integer state = 0;//0ÒÑÇ©µ½  1ÒÑÇ©ÍË
-	private Double history_money = 0d;//ÉÏ¸ÚÊ±£¬²´Î»¶ÎÉÏµÄÒÑÔ¤ÊÕ½ğ¶î
-	private String out_log;//Ç©ÍËĞ¡Æ±ÄÚÈİ
+	private Long start_time;//ä¸Šç­å¼€å§‹æ—¶é—´
+	private Long end_time;//ä¸‹ç­æ—¶é—´
+	private Long worksite_id = -1L;//å·¥ä½œç«™ç¼–å·
+	private Long uid = -1L;//æ”¶è´¹å‘˜ç¼–å·
+	private Long berthsec_id = -1L;//æ³Šä½æ®µç¼–å·
+	private String device_code;//è®¾å¤‡å·
+	private Integer state = 0;//0å·²ç­¾åˆ°  1å·²ç­¾é€€
+	private Double history_money = 0d;//ä¸Šå²—æ—¶ï¼Œæ³Šä½æ®µä¸Šçš„å·²é¢„æ”¶é‡‘é¢
+	private String out_log;//ç­¾é€€å°ç¥¨å†…å®¹
 	public Long getId() {
 		return id;
 	}
@@ -83,5 +83,5 @@ public class WorkRecord implements Serializable {
 	public void setOut_log(String out_log) {
 		this.out_log = out_log;
 	}
-	
+
 }

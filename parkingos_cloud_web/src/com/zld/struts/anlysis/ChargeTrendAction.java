@@ -33,7 +33,7 @@ public class ChargeTrendAction extends Action {
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -121,11 +121,11 @@ public class ChargeTrendAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private void export(HttpServletResponse response, List<Map<String, Object>> list, String btime, String etime){
 		try {
 			if(list != null && !list.isEmpty()){
-				String heards[] = new String[]{"ÈÕÆÚ","ÏÖ½ğÊÕ·Ñ","µç×ÓÊÕ·Ñ","Ë¢¿¨ÊÕ·Ñ","×ÜÊÕ·Ñ"};
+				String heards[] = new String[]{"æ—¥æœŸ","ç°é‡‘æ”¶è´¹","ç”µå­æ”¶è´¹","åˆ·å¡æ”¶è´¹","æ€»æ”¶è´¹"};
 				List<List<String>> bodyList = new ArrayList<List<String>>();
 				for(Map<String, Object> map : list){
 					List<String> valueList = new ArrayList<String>();
@@ -136,12 +136,12 @@ public class ChargeTrendAction extends Action {
 					valueList.add(map.get("totalFee") + "");
 					bodyList.add(valueList);
 				}
-				String fname = "Í£³µ·Ñ±¨±í" + btime + "ÖÁ" + etime;
+				String fname = "åœè½¦è´¹æŠ¥è¡¨" + btime + "è‡³" + etime;
 				java.io.OutputStream os = response.getOutputStream();
 				response.reset();
 				response.setHeader("Content-disposition", "attachment; filename="
 						+ StringUtils.encodingFileName(fname) + ".xls");
-				ExportExcelUtil importExcel = new ExportExcelUtil("Í£³µ·Ñ±¨±í",
+				ExportExcelUtil importExcel = new ExportExcelUtil("åœè½¦è´¹æŠ¥è¡¨",
 						heards, bodyList);
 				Map<String, String> headInfoMap=new HashMap<String, String>();
 				headInfoMap.put("length", heards.length - 1 + "");
@@ -153,7 +153,7 @@ public class ChargeTrendAction extends Action {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private List<Map<String, Object>> setList(List<Object> collectors, Long startTime, Long endTime){
 		try {
 			if(collectors != null && !collectors.isEmpty()){
@@ -162,28 +162,28 @@ public class ChargeTrendAction extends Action {
 				if(list != null && !list.isEmpty()){
 					for(Map<String, Object> infoMap : list){
 						Long create_time = (Long)infoMap.get("create_time");
-						Double cashPrepayFee = 0d;//ÏÖ½ğÔ¤Ö§¸¶
-						Double cashAddFee = 0d;//ÏÖ½ğ²¹½É
-						Double cashRefundFee = 0d;//ÏÖ½ğÍË¿î
-						Double cashPursueFee = 0d;//ÏÖ½ğ×·½É
-						Double cashParkingFee = 0d;//ÏÖ½ğÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
-						Double ePayPrepayFee = 0d;//µç×ÓÔ¤Ö§¸¶
-						Double ePayAddFee = 0d;//µç×Ó²¹½É
-						Double ePayRefundFee = 0d;//µç×ÓÍË¿î
-						Double ePayPursueFee = 0d;//µç×Ó×·½É
-						Double ePayParkingFee = 0d;//µç×ÓÍ£³µ·Ñ£¨·ÇÔ¤¸¶£©
-						Double escapeFee = 0d;//ÌÓµ¥Î´×·½ÉµÄÍ£³µ·Ñ
-						Double cardPrepayFee = 0d;//Ë¢¿¨Ô¤Ö§¸¶
-						Double cardAddFee = 0d;//Ë¢¿¨²¹½É
-						Double cardRefundFee = 0d;//Ë¢¿¨ÍË¿î
-						Double cardPursueFee = 0d;//Ë¢¿¨×·½É
-						Double cardParkingFee = 0d;//Ë¢¿¨Í£³µ·Ñ£¨·ÇÔ¤¸¶£©
+						Double cashPrepayFee = 0d;//ç°é‡‘é¢„æ”¯ä»˜
+						Double cashAddFee = 0d;//ç°é‡‘è¡¥ç¼´
+						Double cashRefundFee = 0d;//ç°é‡‘é€€æ¬¾
+						Double cashPursueFee = 0d;//ç°é‡‘è¿½ç¼´
+						Double cashParkingFee = 0d;//ç°é‡‘åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+						Double ePayPrepayFee = 0d;//ç”µå­é¢„æ”¯ä»˜
+						Double ePayAddFee = 0d;//ç”µå­è¡¥ç¼´
+						Double ePayRefundFee = 0d;//ç”µå­é€€æ¬¾
+						Double ePayPursueFee = 0d;//ç”µå­è¿½ç¼´
+						Double ePayParkingFee = 0d;//ç”µå­åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
+						Double escapeFee = 0d;//é€ƒå•æœªè¿½ç¼´çš„åœè½¦è´¹
+						Double cardPrepayFee = 0d;//åˆ·å¡é¢„æ”¯ä»˜
+						Double cardAddFee = 0d;//åˆ·å¡è¡¥ç¼´
+						Double cardRefundFee = 0d;//åˆ·å¡é€€æ¬¾
+						Double cardPursueFee = 0d;//åˆ·å¡è¿½ç¼´
+						Double cardParkingFee = 0d;//åˆ·å¡åœè½¦è´¹ï¼ˆéé¢„ä»˜ï¼‰
 						double cashTotalFee = 0;
 						double ePayTotalFee = 0;
 						double cardTotalFee = 0;
-						double chargeCardFee = 0;//¿¨Æ¬³äÖµ
-						double returnCardFee = 0;//ÍË¿¨½ğ¶î
-						double actCardFee = 0;//¼¤»îÃæÖµ
+						double chargeCardFee = 0;//å¡ç‰‡å……å€¼
+						double returnCardFee = 0;//é€€å¡é‡‘é¢
+						double actCardFee = 0;//æ¿€æ´»é¢å€¼
 						if(infoMap.get("prepay_cash") != null){
 							cashPrepayFee = Double.valueOf(infoMap.get("prepay_cash") + "");
 						}
@@ -238,14 +238,14 @@ public class ChargeTrendAction extends Action {
 						if(infoMap.get("act_card_fee") != null){
 							actCardFee = Double.valueOf(infoMap.get("act_card_fee") + "");
 						}
-						
-						cashTotalFee = StringUtils.formatDouble(cashParkingFee + cashPrepayFee + 
+
+						cashTotalFee = StringUtils.formatDouble(cashParkingFee + cashPrepayFee +
 								cashAddFee + cashPursueFee - cashRefundFee);
-						ePayTotalFee = StringUtils.formatDouble(ePayParkingFee + ePayPrepayFee + 
+						ePayTotalFee = StringUtils.formatDouble(ePayParkingFee + ePayPrepayFee +
 								ePayAddFee + ePayPursueFee - ePayRefundFee);
-						cardTotalFee = StringUtils.formatDouble(cardParkingFee + cardPrepayFee + 
+						cardTotalFee = StringUtils.formatDouble(cardParkingFee + cardPrepayFee +
 								cardAddFee + cardPursueFee - cardRefundFee);
-						
+
 						Map<String, Object> map = new HashMap<String, Object>();
 						map.put("create_time", create_time);
 						map.put("time", TimeTools.getTimeStr_yyyy_MM_dd(create_time * 1000 - 24*60*60));

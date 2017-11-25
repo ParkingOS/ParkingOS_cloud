@@ -35,10 +35,10 @@ public class GroupWithdrawManageAction extends Action {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µ«¬ºµƒ”√ªßid
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ÁôªÂΩïÁöÑÁî®Êà∑id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		if(uin == null){
@@ -46,7 +46,7 @@ public class GroupWithdrawManageAction extends Action {
 			return null;
 		}
 		if(action.equals("")){
-			Map<String, Object> groupMap = pgOnlyReadService.getMap("select balance from org_group_tb where id=? ", 
+			Map<String, Object> groupMap = pgOnlyReadService.getMap("select balance from org_group_tb where id=? ",
 					new Object[]{groupid});
 			Double balance = 0d;
 			if(groupMap != null){
@@ -79,14 +79,14 @@ public class GroupWithdrawManageAction extends Action {
 			int r = withdraw(request, groupid, uin);
 			AjaxUtil.ajaxOutput(response, r + "");
 		}
-		
+
 		return null;
 	}
-	
+
 	private int withdraw(HttpServletRequest request, Long groupid, Long oprator_id){
 		Double money = RequestUtil.getDouble(request, "money", 0d);
 		Long ntime = System.currentTimeMillis()/1000;
-		//ºÏ≤È’ ªß «∑Ò“—∞Û∂®
+		//Ê£ÄÊü•Â∏êÊà∑ÊòØÂê¶Â∑≤ÁªëÂÆö
 		List<Map<String, Object>> accList = pgOnlyReadService.getAll("select id,type from com_account_tb where groupid =? and type in(?,?) and state =? order by id desc",
 				new Object[]{groupid, 0, 2, 0});
 		Long accId = null;
@@ -95,7 +95,7 @@ public class GroupWithdrawManageAction extends Action {
 			for(Map<String, Object> m: accList){
 				type = (Integer)m.get("type");
 				if(type != null && type == 2){
-					accId =  (Long)m.get("id");	
+					accId =  (Long)m.get("id");
 					break;
 				}
 			}
@@ -105,30 +105,30 @@ public class GroupWithdrawManageAction extends Action {
 		if(accId !=null && accId > 0){
 			boolean result =false;
 			if(money > 0){
-				Map<String, Object> groupMap = daService.getMap("select balance,name from org_group_tb where id=? ", 
+				Map<String, Object> groupMap = daService.getMap("select balance,name from org_group_tb where id=? ",
 						new Object[]{groupid});
 				Double balance = Double.valueOf(groupMap.get("balance") + "");
 				String name = (String)groupMap.get("name");
-				if(money <= balance){//Ã·œ÷Ω∂Ó≤ª¥Û”⁄”‡∂Ó
-					//ø€≥˝’ ∫≈”‡∂Ó//–¥Ã·œ÷…Í«Î±Ì
+				if(money <= balance){//ÊèêÁé∞ÈáëÈ¢ù‰∏çÂ§ß‰∫é‰ΩôÈ¢ù
+					//Êâ£Èô§Â∏êÂè∑‰ΩôÈ¢ù//ÂÜôÊèêÁé∞Áî≥ËØ∑Ë°®
 					List<Map<String, Object>> sqlList = new ArrayList<Map<String,Object>>();
 					Map<String, Object> comSqlMap = new HashMap<String, Object>();
 					comSqlMap.put("sql", "update org_group_tb set balance = balance-? where id= ?");
 					comSqlMap.put("values", new Object[]{money, groupid});
-					
+
 					Long withdraw_id = daService.getkey("seq_withdrawer_tb");
 					Map<String, Object> withdrawSqlMap = new HashMap<String, Object>();
 					withdrawSqlMap.put("sql", "insert into withdrawer_tb  (id,groupid,amount,create_time,acc_id,uin,wtype) values(?,?,?,?,?,?,?)");
 					withdrawSqlMap.put("values", new Object[]{withdraw_id, groupid, money, ntime, accId, oprator_id, type});
-					
+
 					Map<String, Object> groupAccountSqlMap = new HashMap<String, Object>();
 					groupAccountSqlMap.put("sql", "insert into group_account_tb (groupid,amount,create_time,type,remark,withdraw_id,source) values(?,?,?,?,?,?,?)");
-					groupAccountSqlMap.put("values", new Object[]{groupid, money, ntime, 1, "Ã·œ÷…Í«Î", withdraw_id, 1});
-					
+					groupAccountSqlMap.put("values", new Object[]{groupid, money, ntime, 1, "ÊèêÁé∞Áî≥ËØ∑", withdraw_id, 1});
+
 					Map<String, Object> cityAccountSqlMap = new HashMap<String, Object>();
 					cityAccountSqlMap.put("sql", "insert into tingchebao_account_tb (amount,create_time,type,remark,withdraw_id,utype,uin) values(?,?,?,?,?,?,?)");
-					cityAccountSqlMap.put("values", new Object[]{money, ntime, 1, name+"Ã·œ÷…Í«Î", withdraw_id, 8, oprator_id});
-					
+					cityAccountSqlMap.put("values", new Object[]{money, ntime, 1, name+"ÊèêÁé∞Áî≥ËØ∑", withdraw_id, 8, oprator_id});
+
 					sqlList.add(comSqlMap);
 					sqlList.add(withdrawSqlMap);
 					sqlList.add(groupAccountSqlMap);
@@ -136,7 +136,7 @@ public class GroupWithdrawManageAction extends Action {
 					result = daService.bathUpdate(sqlList);
 				}
 				if(result){
-					mongoDbUtils.saveLogs(request, 0, 3, "Ã·œ÷£∫Ω∂Ó£∫"+money);
+					mongoDbUtils.saveLogs(request, 0, 3, "ÊèêÁé∞ÔºöÈáëÈ¢ùÔºö"+money);
 					return 1;
 				}
 			}

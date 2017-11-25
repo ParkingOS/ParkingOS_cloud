@@ -5,35 +5,35 @@ import com.zld.pojo.StatsReq;
 
 public interface StatsAccountFacade {
 	/**
-	 * Í³¼ÆÊÕ·ÑÔ±ÕËÄ¿
+	 * ç»Ÿè®¡æ”¶è´¹å‘˜è´¦ç›®
 	 * @param req
 	 * @return
 	 */
 	public StatsFacadeResp statsParkUserAccount(StatsReq req);
-	
+
 	/**
-	 * Í³¼Æ³µ³¡ÕËÄ¿
+	 * ç»Ÿè®¡è½¦åœºè´¦ç›®
 	 * @param req
 	 * @return
 	 */
 	public StatsFacadeResp statsParkAccount(StatsReq req);
-	
+
 	/**
-	 * Í³¼Æ²´Î»¶ÎÕËÄ¿
+	 * ç»Ÿè®¡æ³Šä½æ®µè´¦ç›®
 	 * @param req
 	 * @return
 	 */
 	public StatsFacadeResp statsBerthSegAccount(StatsReq req);
-	
+
 	/**
-	 * Í³¼Æ²´Î»ÕËÄ¿
+	 * ç»Ÿè®¡æ³Šä½è´¦ç›®
 	 * @param req
 	 * @return
 	 */
 	public StatsFacadeResp statsBerthAccount(StatsReq req);
-	
+
 	/**
-	 * Í³¼ÆÔËÓª¼¯ÍÅÕËÄ¿
+	 * ç»Ÿè®¡è¿è¥é›†å›¢è´¦ç›®
 	 * @param req
 	 * @return
 	 */

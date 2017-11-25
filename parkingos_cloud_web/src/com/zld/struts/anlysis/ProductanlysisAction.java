@@ -1,34 +1,30 @@
 package com.zld.struts.anlysis;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zld.AjaxUtil;
+import com.zld.impl.CommonMethods;
+import com.zld.service.DataBaseService;
+import com.zld.utils.*;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.zld.AjaxUtil;
-import com.zld.impl.CommonMethods;
-import com.zld.service.DataBaseService;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
-import com.zld.utils.TimeTools;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
- * NFC¿¨Ê¹ÓÃÍ³¼Æ
+ * NFCå¡ä½¿ç”¨ç»Ÿè®¡
  * @author Administrator
  *
  */
 public class ProductanlysisAction extends Action {
+	Logger logger = Logger.getLogger(ProductanlysisAction.class);
 
 	@Autowired
 	private DataBaseService daService;
@@ -36,11 +32,11 @@ public class ProductanlysisAction extends Action {
 	private CommonMethods commonMethods;
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
-		Long loginuin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long loginuin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
@@ -68,7 +64,7 @@ public class ProductanlysisAction extends Action {
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
 			String nowtime= df2.format(System.currentTimeMillis());
 			String type = RequestUtil.processParams(request, "type");
-			String sql = "select c.*,p.price,p.p_name from carower_product c ,product_package_tb p where c.pid =p.id and p.comid=?    ";
+			String sql = "select c.*,p.price,p.p_name from carower_product c  left join product_package_tb p on  c.pid =p.id where p.comid=?    ";
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			List list = null;//daService.getPage(sql, null, 1, 20);
 			String btime = RequestUtil.processParams(request, "btime");
@@ -83,31 +79,33 @@ public class ProductanlysisAction extends Action {
 			List<Object> params = null;
 			Long b = TimeTools.getToDayBeginTime();
 			Long e = System.currentTimeMillis()/1000;
-			 if(type.equals("tomonth")){
+			if(type.equals("tomonth")){
 				b=TimeTools.getMonthStartSeconds();
-				sqlInfo =new SqlInfo(" create_time between ? and ? ",
+				sqlInfo =new SqlInfo(" c.create_time between ? and ? ",
 						new Object[]{b,e});
 			}else if(!btime.equals("")&&!etime.equals("")){
 				b = TimeTools.getLongMilliSecondFrom_HHMMDD(btime)/1000;
 				e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime+" 23:59:59");
-				sqlInfo =new SqlInfo(" create_time between ? and ? ",
+				sqlInfo =new SqlInfo(" c.create_time between ? and ? ",
 						new Object[]{b,e});
 			}
 			sql +=" and "+sqlInfo.getSql();
 			params= sqlInfo.getParams();
 			params.add(0,comid);
-			
-			list = daService.getAllMap(sql +"  order by create_time desc ",params);
+			logger.error(sql);
+			logger.error(params);
+			list = daService.getAllMap(sql +"  order by c.create_time desc ",params);
 			int count = list!=null?list.size():0;
-			
+
 			//String tc = "0_0_0_0";
 			//if(list!=null)
-				// tc=setName(list,dstr);
-			Double tmoney=setList(list);
+			// tc=setName(list,dstr);
+			logger.error(list);
 			list=filterList(list,carnumber,mobile);
-			
+			Double tmoney=setList(list);
+
 			//Double all = Double.valueOf(tc.split("_")[0]);
-			String money = "×Ü½ğ¶î£º"+StringUtils.formatDouble(tmoney);//"×Ü¶©µ¥Êı£º"+tc.split("_")[1]+"£¬×Ü½áËã½ğ¶î£º"+StringUtils.formatDouble(all)+"Ôª£¬ÆäÖĞÏÖ½ğÖ§¸¶£º"+StringUtils.formatDouble(tmoney)+"Ôª£¬Í£³µ±¦Ö§¸¶ £º"+StringUtils.formatDouble((all-tmoney))+"Ôª";
+			String money = "æ€»é‡‘é¢ï¼š"+StringUtils.formatDouble(tmoney);//"æ€»è®¢å•æ•°ï¼š"+tc.split("_")[1]+"ï¼Œæ€»ç»“ç®—é‡‘é¢ï¼š"+StringUtils.formatDouble(all)+"å…ƒï¼Œå…¶ä¸­ç°é‡‘æ”¯ä»˜ï¼š"+StringUtils.formatDouble(tmoney)+"å…ƒï¼Œåœè½¦å®æ”¯ä»˜ ï¼š"+StringUtils.formatDouble((all-tmoney))+"å…ƒ";
 			String json = JsonUtil.anlysisMap2Json(list,1,count, fieldsstr,"uin",money);
 			System.out.println(json);
 			AjaxUtil.ajaxOutput(response, json);
@@ -115,7 +113,7 @@ public class ProductanlysisAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private List<Map> filterList(List<Map> list,String carNumber,String mobile){
 		List<Map> nlist = new ArrayList<Map>();
 		if(carNumber.equals("")&&mobile.equals(""))
@@ -124,9 +122,9 @@ public class ProductanlysisAction extends Action {
 			List<Map> list1 = new ArrayList<Map>();
 			boolean isFilterCarNo = false;
 			for(Map map : list){
-				if(!carNumber.equals("")){//¹ıÂË³µÅÆºÅ
+				if(!carNumber.equals("")){//è¿‡æ»¤è½¦ç‰Œå·
 					isFilterCarNo = true;
-					String carno = (String)map.get("carnumber");
+					String carno = (String)map.get("car_number");
 					if(carno!=null&&carno.indexOf(carNumber)!=-1)
 						list1.add(map);
 				}
@@ -135,7 +133,7 @@ public class ProductanlysisAction extends Action {
 				list1 = list;
 			if(!list1.isEmpty()&&!mobile.equals("")){
 				for(Map map2: list1){
-					if(!mobile.equals("")){//¹ıÂËÊÖ»úºÅ
+					if(!mobile.equals("")){//è¿‡æ»¤æ‰‹æœºå·
 						String _moblie = (String)map2.get("mobile");
 						if(_moblie!=null&&_moblie.indexOf(mobile)!=-1)
 							nlist.add(map2);
@@ -147,7 +145,7 @@ public class ProductanlysisAction extends Action {
 		}
 		return nlist;
 	}
-	
+
 	private Double setList(List list){
 		Double total =0d;
 		List<Object> uins = new ArrayList<Object>();
@@ -158,7 +156,7 @@ public class ProductanlysisAction extends Action {
 				total += Double.valueOf(map.get("total")+"");
 				Long btime =(Long) map.get("b_time");
 				Long etime =(Long) map.get("e_time");
-				map.put("exprise", TimeTools.getTimeStr_yyyy_MM_dd(btime*1000)+" ÖÁ   "+TimeTools.getTimeStr_yyyy_MM_dd(etime*1000));
+				map.put("exprise", TimeTools.getTimeStr_yyyy_MM_dd(btime*1000)+" è‡³   "+TimeTools.getTimeStr_yyyy_MM_dd(etime*1000));
 			}
 		}
 		if(!uins.isEmpty()){
@@ -177,7 +175,7 @@ public class ProductanlysisAction extends Action {
 					Map map1 = (Map)list.get(i);
 					for(Map<String,Object> map: resultList){
 						Long uin = (Long)map.get("id");
-						if(map1.get("uin").equals(uin)){
+						if(uin.equals(map1.get("uin"))){
 							map1.put("mobile", map.get("mobile"));
 							break;
 						}
@@ -192,18 +190,18 @@ public class ProductanlysisAction extends Action {
 					Map map1 = (Map)list.get(i);
 					for(Map<String,Object> map: resultList){
 						Long uin = (Long)map.get("uin");
-						if(map1.get("uin").equals(uin)){
+						if(uin.equals(map1.get("uin"))){
 							map1.put("carnumber", map.get("car_number"));
 							break;
 						}
 					}
 				}
 			}
-			
+
 		}
 		return total;
 	}
-	
+
 	private Long getComid(Long comid, Long cityid, Long groupid){
 		List<Object> parks = null;
 		if(groupid != null && groupid > 0){
@@ -221,7 +219,7 @@ public class ProductanlysisAction extends Action {
 				comid = -999L;
 			}
 		}
-		
+
 		return comid;
 	}
 }

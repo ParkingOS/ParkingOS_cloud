@@ -1,23 +1,7 @@
 package com.zld.struts.parkadmin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.zld.AjaxUtil;
+import com.zld.CustomDefind;
 import com.zld.impl.CommonMethods;
 import com.zld.impl.MongoDbUtils;
 import com.zld.impl.PublicMethods;
@@ -26,13 +10,27 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 /**
- * Í£³µ³¡ºóÌ¨¹ÜÀíÔ±µÇÂ¼ºó£¬¹ÜÀíÔ±¹¤£¬Ô±¹¤·ÖÎªÊÕ·ÑÔ±ºÍ²ÆÎñ
+ * åœè½¦åœºåå°ç®¡ç†å‘˜ç™»å½•åï¼Œç®¡ç†å‘˜å·¥ï¼Œå‘˜å·¥åˆ†ä¸ºæ”¶è´¹å‘˜å’Œè´¢åŠ¡
  * @author Administrator
  *
  */
 public class MemberManageAction extends Action{
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -46,20 +44,23 @@ public class MemberManageAction extends Action{
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
 		Long loginuin = (Long)request.getSession().getAttribute("loginuin");
 		request.setAttribute("authid", request.getParameter("authid"));
 		Integer isAdmin =(Integer)request.getSession().getAttribute("isadmin");
+		Long groupid = (Long)request.getSession().getAttribute("groupid");
+		Long  cityid=(Long)request.getSession().getAttribute("cityid");
 		//System.out.println("isadmin:"+isAdmin);
+		logger.error("cityid:"+cityid+",groupid:"+groupid);
 		Integer supperadmin = (Integer)request.getSession().getAttribute("supperadmin");
 		if(loginuin==null){
 			response.sendRedirect("login.do");
 			return null;
 		}
-		if(comid==0){//À´×Ô³µ³¡ÔÆºóÌ¨
+		if(comid==0){//æ¥è‡ªè½¦åœºäº‘åå°
 			comid = RequestUtil.getLong(request, "comid", 0L);
 		}
 		if(action.equals("")){
@@ -81,13 +82,13 @@ public class MemberManageAction extends Action{
 			params.add(comid);
 			params.add(0);
 			params.add(0);
-			
-			if(supperadmin!=1&&isAdmin!=null&&isAdmin==0){//²»ÊÇ³µ³¡¹ÜÀíÔ±µÇÂ¼£¬Òş²Ø³µ³¡¹ÜÀíÔ±
+
+			if(supperadmin!=1&&isAdmin!=null&&isAdmin==0){//ä¸æ˜¯è½¦åœºç®¡ç†å‘˜ç™»å½•ï¼Œéšè—è½¦åœºç®¡ç†å‘˜
 				sql +=" and role_id <>? ";
 				countSql +=" and role_id <>? ";
 				params.add(30);
 			}
-			
+
 			Long count = daService.getCount(countSql,params);
 			if(count>0){
 				list = daService.getAll(sql+ " order by id desc",params, pageNum, pageSize);
@@ -112,7 +113,7 @@ public class MemberManageAction extends Action{
 			}else {
 				params= base.getParams();
 			}
-			if(isAdmin!=null&&isAdmin==0){//²»ÊÇ³µ³¡¹ÜÀíÔ±µÇÂ¼£¬Òş²Ø³µ³¡¹ÜÀíÔ±
+			if(isAdmin!=null&&isAdmin==0){//ä¸æ˜¯è½¦åœºç®¡ç†å‘˜ç™»å½•ï¼Œéšè—è½¦åœºç®¡ç†å‘˜
 				sql +=" and role_id <>? ";
 				countSql +=" and role_id <>? ";
 				params.add(30);
@@ -127,7 +128,7 @@ public class MemberManageAction extends Action{
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
 		}else if(action.equals("create")){
-			int result = createMember(request);
+			int result = createMember(request,groupid,cityid);
 			if(result==1){
 				AjaxUtil.ajaxOutput(response, "1");
 			}else {
@@ -143,27 +144,37 @@ public class MemberManageAction extends Action{
 			}
 			Integer role_id = RequestUtil.getInteger(request, "role_id", -1);
 			Integer isview = RequestUtil.getInteger(request, "isview", -1);
-			
+			//ä¿®æ”¹æ—¶é—´
+			Long updateTimeLong = System.currentTimeMillis()/1000;
+
 			Long id =RequestUtil.getLong(request, "id", -1L);
 			//Long count = daService.getLong("select count(*) from user_info_tb where mobile=? and role_id=? and id<>? ", new Object[]{mobile,role_id,id});
 //			if(count > 0){
 //				AjaxUtil.ajaxOutput(response, "-1");
 //				return null;
 //			}
-			String sql = "update user_info_tb set nickname=?,strid=?,phone=?,mobile=?,role_id=?,isview=? where id=? ";
-			int result = daService.update(sql, new Object[]{nickname,strid,phone,mobile,role_id,isview,Long.valueOf(id)});
+			String sql = "update user_info_tb set nickname=?,strid=?,phone=?,mobile=?,role_id=?,isview=?,update_time=?  where id=? ";
+			int result = daService.update(sql, new Object[]{nickname,strid,phone,mobile,role_id,isview,updateTimeLong,Long.valueOf(id)});
 			if(result == 1){
-				if(publicMethods.isEtcPark(comid)){
+				//åˆ¤æ–­æ˜¯å¦æ”¯æŒETCPARKè½¦åœº
+				String isSupportETCPark = CustomDefind.ISSUPPORTETCPARK;
+				if(isSupportETCPark.equals("1")){
+					if(publicMethods.isEtcPark(comid)){
+						int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"user_info_tb",Long.valueOf(id),System.currentTimeMillis()/1000,1});
+						logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" parkuser ,add sync ret:"+r);
+					}else{
+						logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" parkuser ");
+					}
+				}else{
 					int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"user_info_tb",Long.valueOf(id),System.currentTimeMillis()/1000,1});
 					logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" parkuser ,add sync ret:"+r);
-				}else{
-					logger.error("parkadmin or admin:"+nickname+" add comid:"+comid+" parkuser ");
 				}
+
 //				Long total = daService.getLong("select count(*) from user_info_tb where auth_flag=? and comid=? ", new Object[]{1,comid});
-//				if(total > 1){//Ò»¸ö³µ³¡ÓĞ¶à¸ö¹ÜÀíÔ±£¬ÌáĞÑÒ»ÏÂ
+//				if(total > 1){//ä¸€ä¸ªè½¦åœºæœ‰å¤šä¸ªç®¡ç†å‘˜ï¼Œæé†’ä¸€ä¸‹
 //					result = 2;
 //				}
-				mongoDbUtils.saveLogs(request, 0, 3, "ĞŞ¸ÄÁËÔ±¹¤£º"+id+",nickname:"+nickname);
+				mongoDbUtils.saveLogs(request, 0, 3, "ä¿®æ”¹äº†å‘˜å·¥ï¼š"+id+",nickname:"+nickname);
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("adminedit")){
@@ -198,7 +209,7 @@ public class MemberManageAction extends Action{
 					logger.error("parkadmin or admin:"+loginuin+" edit comid:"+comid+" parkuser");
 				}
 				Long total = daService.getLong("select count(*) from user_info_tb where auth_flag=? and comid=? ", new Object[]{1,comid});
-				if(total > 1){//Ò»¸ö³µ³¡ÓĞ¶à¸ö¹ÜÀíÔ±£¬ÌáĞÑÒ»ÏÂ
+				if(total > 1){//ä¸€ä¸ªè½¦åœºæœ‰å¤šä¸ªç®¡ç†å‘˜ï¼Œæé†’ä¸€ä¸‹
 					result = 2;
 				}
 			}
@@ -217,22 +228,22 @@ public class MemberManageAction extends Action{
 				e.printStackTrace();
 			}
 			if(newPass.length()<6){
-				AjaxUtil.ajaxOutput(response, "ÃÜÂë³¤¶ÈĞ¡ÓÚ6Î»£¬ÇëÖØĞÂÊäÈë£¡");
+				AjaxUtil.ajaxOutput(response, "å¯†ç é•¿åº¦å°äº6ä½ï¼Œè¯·é‡æ–°è¾“å…¥ï¼");
 			}else if(newPass.equals(confirmPass)){
 				Object [] values = new Object[]{newPass,md5pass,Long.valueOf(uin)};
 				int result = daService.update(sql, values);
 				if(result==1){
 					if(publicMethods.isEtcPark(comid)){
 						int ret = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"user_info_tb",Long.valueOf(uin),System.currentTimeMillis()/1000,1});
-						logger.error("parkadmin or admin:"+loginuin+" edit parkuserpass:"+uin+",password:"+newPass+",ret:"+result+",add sync ret£º"+ret);
+						logger.error("parkadmin or admin:"+loginuin+" edit parkuserpass:"+uin+",password:"+newPass+",ret:"+result+",add sync retï¼š"+ret);
 					}else{
 						logger.error("parkadmin or admin:"+loginuin+" edit parkuserpass:"+uin+",password:"+newPass+",ret:"+result);
 					}
-					mongoDbUtils.saveLogs(request, 0, 3, "ÖØÖÃÁËÔ±¹¤£º"+uin+"µÄÃÜÂë");
+					mongoDbUtils.saveLogs(request, 0, 3, "é‡ç½®äº†å‘˜å·¥ï¼š"+uin+"çš„å¯†ç ");
 				}
 				AjaxUtil.ajaxOutput(response, result+"");
 			}else {
-				AjaxUtil.ajaxOutput(response, "Á½´ÎÃÜÂëÊäÈë²»Ò»ÖÂ£¬ÇëÖØĞÂÊäÈë£¡");
+				AjaxUtil.ajaxOutput(response, "ä¸¤æ¬¡å¯†ç è¾“å…¥ä¸ä¸€è‡´ï¼Œè¯·é‡æ–°è¾“å…¥ï¼");
 			}
 			return null;
 		}else if(action.equals("delete")){
@@ -242,13 +253,20 @@ public class MemberManageAction extends Action{
 			Object [] values = new Object[]{1,Long.valueOf(id)};
 			int result = daService.update(sql, values);
 			if(result==1){
-				if(publicMethods.isEtcPark(comid)){
-					int ret = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"user_info_tb",Long.valueOf(id),System.currentTimeMillis()/1000,1});
-					logger.error("parkadmin or admin:"+loginuin+" delete parkuserpass:"+id+",password:,ret:"+result+",add sync ret£º"+ret);
+				//åˆ¤æ–­æ˜¯å¦æ”¯æŒETCPARK
+				String isSupportEtcPark = CustomDefind.ISSUPPORTETCPARK;
+				if(isSupportEtcPark.equals("1")){
+					if(publicMethods.isEtcPark(comid)){
+						int ret = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"user_info_tb",Long.valueOf(id),System.currentTimeMillis()/1000,2});
+						logger.error("parkadmin or admin:"+loginuin+" delete parkuserpass:"+id+",password:,ret:"+result+",add sync retï¼š"+ret);
+					}else{
+						logger.error("parkadmin or admin:"+loginuin+" delete parkuserpass:"+id+",password:,ret:"+result);
+					}
 				}else{
-					logger.error("parkadmin or admin:"+loginuin+" delete parkuserpass:"+id+",password:,ret:"+result);
+					int ret = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"user_info_tb",Long.valueOf(id),System.currentTimeMillis()/1000,2});
+					logger.error("parkadmin or admin:"+loginuin+" delete parkuserpass:"+id+",password:,ret:"+result+",add sync retï¼š"+ret);
 				}
-				mongoDbUtils.saveLogs(request, 0, 4, "É¾³ıÁËÔ±¹¤£º"+userMap);
+				mongoDbUtils.saveLogs(request, 0, 4, "åˆ é™¤äº†å‘˜å·¥ï¼š"+userMap);
 			}
 			AjaxUtil.ajaxOutput(response, result+"");
 		}else if(action.equals("check")){
@@ -260,7 +278,7 @@ public class MemberManageAction extends Action{
 			else {
 				AjaxUtil.ajaxOutput(response, "0");
 			}
-		}else if(action.equals("isview")){//ÊÇ·ñ¿ÉÒÔÊÕ·Ñ
+		}else if(action.equals("isview")){//æ˜¯å¦å¯ä»¥æ”¶è´¹
 			Long id =RequestUtil.getLong(request, "id",-1L);
 			Integer isview =RequestUtil.getInteger(request, "isview",-1);
 			int ret = 0;
@@ -269,7 +287,7 @@ public class MemberManageAction extends Action{
 				if(ret==1){
 					if(publicMethods.isEtcPark(comid)){
 						int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"user_info_tb",id,System.currentTimeMillis()/1000,1});
-						logger.error("parkadmin or admin:"+loginuin+" edit parkuser isview:"+id+",add sync ret£º"+r);
+						logger.error("parkadmin or admin:"+loginuin+" edit parkuser isview:"+id+",add sync retï¼š"+r);
 					}else{
 						logger.error("parkadmin or admin:"+loginuin+" edit parkuser isview:"+id);
 					}
@@ -278,11 +296,11 @@ public class MemberManageAction extends Action{
 			AjaxUtil.ajaxOutput(response, ret+"");
 		}else if(action.equals("getrole")){
 			List list =null;
-			Map orgMap = daService.getMap("select r.id,r.role_name from user_role_tb r,zld_orgtype_tb o where r.oid=o.id and o.name like ? and r.adminid=? and r.type=? ", 
-					new Object[]{"%³µ³¡%", 0, 0});
+			Map orgMap = daService.getMap("select r.id,r.role_name from user_role_tb r,zld_orgtype_tb o where r.oid=o.id and o.name like ? and r.adminid=? and r.type=? ",
+					new Object[]{"%è½¦åœº%", 0, 0});
 			if(orgMap != null){
 				Long com_id = (Long)request.getSession().getAttribute("comid");
-				if(com_id > 0){//³µ³¡¹ÜÀíÔ±µÇÂ¼£¬ÏÔÊ¾¸Ã¹ÜÀíÔ±´´½¨µÄ½ÇÉ«
+				if(com_id > 0){//è½¦åœºç®¡ç†å‘˜ç™»å½•ï¼Œæ˜¾ç¤ºè¯¥ç®¡ç†å‘˜åˆ›å»ºçš„è§’è‰²
 					list=daService.getAll("select id as value_no,role_name as value_name from user_role_tb where adminid=? or id=?",
 							new Object[]{loginuin,orgMap.get("id")});
 				}else if(comid > 0){
@@ -315,10 +333,10 @@ public class MemberManageAction extends Action{
 	}
 
 
-	//×¢²áÍ£³µ³¡ÊÕ·ÑÔ±ÕÊºÅ
+	//æ³¨å†Œåœè½¦åœºæ”¶è´¹å‘˜å¸å·
 	@SuppressWarnings({ "rawtypes" })
-	private int createMember(HttpServletRequest request){
-		String strid =RequestUtil.processParams(request, "strid");
+	private int createMember(HttpServletRequest request,Long groupId,Long cityId){
+		String strid = "";
 		String nickname =AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "nickname"));
 		String phone =RequestUtil.processParams(request, "phone");
 		String mobile =RequestUtil.processParams(request, "mobile");
@@ -331,40 +349,57 @@ public class MemberManageAction extends Action{
 		if(mobile.equals("")) mobile=null;
 		Map adminMap = (Map) request.getSession().getAttribute("userinfo");
 		Long time = System.currentTimeMillis()/1000;
+		//ç”¨æˆ·è¡¨
+		Long nextid = daService.getLong(
+				"SELECT nextval('seq_user_info_tb'::REGCLASS) AS newid", null);
+		//å®šä¹‰ç™»å½•è´¦å·ä¸ºä¸»é”®id
+		strid = String.valueOf(nextid);
+		//å®šä¹‰user_id
+		String userId = strid;
 		if(!commonMethods.checkStrid(strid))
 			return 0;
 		Long comId = (Long)request.getSession().getAttribute("comid");
 		if(comId == null || comId==0)
 			comId = RequestUtil.getLong(request, "comid", 0L);
-		
-		if(auth_flag==1){//×ÜºóÌ¨ÉèÖÃµÄ¹ÜÀíÔ±£¬Ä¬ÈÏÎªºóÌ¨³µ³¡¹ÜÀíÔ±
+
+		if(groupId==null||groupId<0){
+			Map<String,Object> comMap = daService.getMap("select groupid from com_info_tb where id =? ",new Object[]{comId});
+			if(comMap!=null)
+				groupId = (Long)comMap.get("groupid");
+		}
+		logger.error("groupid:"+groupId);
+		if(auth_flag==1){//æ€»åå°è®¾ç½®çš„ç®¡ç†å‘˜ï¼Œé»˜è®¤ä¸ºåå°è½¦åœºç®¡ç†å‘˜
 			role_id=30L;
 		}else if(auth_flag==-1)
 			auth_flag=2L;
 		if(role_id == 30){
 			auth_flag = 1L;
 		}
-		//ÓÃ»§±í
-		Long nextid = daService.getLong(
-				"SELECT nextval('seq_user_info_tb'::REGCLASS) AS newid", null);
 		String sql="insert into user_info_tb (id,nickname,password,strid," +
-				"address,reg_time,mobile,phone,auth_flag,comid,role_id,isview) " +
-				"values (?,?,?,?,?,?,?,?,?,?,?,?)";
+				"address,reg_time,mobile,phone,auth_flag,comid,role_id,isview,user_id,cityid,groupid) " +
+				"values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		Object [] values= new Object[]{nextid,nickname,strid,strid,
-				adminMap.get("address"),time,mobile,phone,auth_flag,comId,role_id,isview};
+				adminMap.get("address"),time,mobile,phone,auth_flag,comId,role_id,isview,userId,cityId,groupId};
 		int r = daService.update(sql, values);
 		if(r==1){
-			if(publicMethods.isEtcPark(comId)){
+			//åˆ¤æ–­æ˜¯å¦æ”¯æŒéªŒè¯ETCPark
+			String isSupportEtcPark = CustomDefind.ISSUPPORTETCPARK;
+			if(isSupportEtcPark.equals("1")){
+				if(publicMethods.isEtcPark(comId)){
+					int ret = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comId,"user_info_tb",nextid,System.currentTimeMillis()/1000,0});
+					logger.error("parkadmin or admin:"+loginuin+" add uid:"+nextid+" parkuser ,add sync ret:"+ret);
+				}else{
+					logger.error("parkadmin or admin:"+loginuin+" add uid:"+nextid+" parkuser ");
+				}
+			}else{
 				int ret = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comId,"user_info_tb",nextid,System.currentTimeMillis()/1000,0});
 				logger.error("parkadmin or admin:"+loginuin+" add uid:"+nextid+" parkuser ,add sync ret:"+ret);
-			}else{
-				logger.error("parkadmin or admin:"+loginuin+" add uid:"+nextid+" parkuser ");
 			}
-			mongoDbUtils.saveLogs( request,0, 2, "Ìí¼ÓÁË³µ³¡³ÉÔ±£¬ÊÖ»úºÅ£º"+mobile);
+			mongoDbUtils.saveLogs( request,0, 2, "æ·»åŠ äº†è½¦åœºæˆå‘˜ï¼Œæ‰‹æœºå·ï¼š"+mobile);
 		}
 		return r;
 	}
-	/*//×¢²áÍ£³µ³¡ÊÕ·ÑÔ±ÕÊºÅ
+	/*//æ³¨å†Œåœè½¦åœºæ”¶è´¹å‘˜å¸å·
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private boolean createMember(HttpServletRequest request){
 		String strid =RequestUtil.processParams(request, "strid");
@@ -373,7 +408,7 @@ public class MemberManageAction extends Action{
 		String mobile =RequestUtil.processParams(request, "mobile");
 		String role =RequestUtil.processParams(request, "other_flag");
 		if(role.equals("")||role.equals("-1"))
-			role="2";//Ä¬ÈÏÎªÊÕ·ÑÔ±
+			role="2";//é»˜è®¤ä¸ºæ”¶è´¹å‘˜
 		if(nickname.equals("")) nickname=null;
 		if(phone.equals("")) phone=null;
 		if(mobile.equals("")) mobile=null;
@@ -385,23 +420,23 @@ public class MemberManageAction extends Action{
 		Long uin =  daService.getLong("SELECT nextval('seq_uin'::REGCLASS) AS newid", null);
 		Long comId = (Long)request.getSession().getAttribute("company_id");
 		List<Map> sqlsList = new ArrayList<Map>();
-		//ÓÃ»§±í
+		//ç”¨æˆ·è¡¨
 		Map userMap = new HashMap();
 		userMap.put("sql", "insert into user_info_tb (uin,nickname,password,strid,company,address,reg_time,department_id,mobile,phone,other_flag,company_id) " +
 				"values (?,?,?,?,?,?,?,?,?,?,?,?)");
 		userMap.put("values", new Object[]{uin,nickname,"666666",strid,adminMap.get("company"),adminMap.get("address"),time,departId,mobile,phone,Long.valueOf(role),comId});
-		//online±í
+		//onlineè¡¨
 		Map onlineMap = new HashMap();
-		
+
 		onlineMap.put("sql", "insert into user_online_tb (uin,strid,nickname,main_flag,stradmstrid)" +
 				"values(?,?,?,?,?)");
 		onlineMap.put("values", new Object[]{uin,strid,nickname,new Integer(11536276),adminMap.get("strid")});
-		//fuwu±í
+		//fuwuè¡¨
 		Map fuwuMap = new HashMap();
 		fuwuMap.put("sql", "insert into fuwu (uin,strid,xzmp,huihua,mail,sib,opendate,openyear,if_tryout,opentype,admopenusers,fftype) " +
 				"values(?,?,?,?,?,?,?,?,?,?,?,?)");
 		fuwuMap.put("values", new Object[]{uin,strid,1,1,1,1,new Timestamp(time*1000),0,100,0,0,0});
-		
+
 		sqlsList.add(userMap);
 		sqlsList.add(onlineMap);
 		sqlsList.add(fuwuMap);
@@ -409,11 +444,11 @@ public class MemberManageAction extends Action{
 		return r;
 	}*/
 	public static void main(String[] args) {
-		String a  = "{com_led_tb:{\"id\":\"16\",\"ledip\":\"192.68.11.2\",\"ledport\":\"8888\",\"leduid\":\"1\",\"movemode\":\"0\",\"movespeed\":\"1\",\"dwelltime\":\"1\",\"ledcolor\":\"0\",\"showcolor\":\"0\",\"typeface\":\"1\",\"typesize\":\"0\",\"matercont\":\"4\",\"passid\":\"3\",\"operate\":\"1\"},com_led_tb:{\"id\":\"17\",\"ledip\":\"192.158.1.1\",\"ledport\":\"8888\",\"leduid\":\"2\",\"movemode\":\"0\",\"movespeed\":\"0\",\"dwelltime\":\"0\",\"ledcolor\":\"0\",\"showcolor\":\"0\",\"typeface\":\"1\",\"typesize\":\"0\",\"matercont\":\"3\",\"passid\":\"27\",\"operate\":\"1\"},user_info_tb:{\"id\":\"21892\",\"nickname\":\"³µÖ÷\",\"password\":\"null\",\"strid\":\"carower_21892\",\"sex\":\"null\",\"email\":\"null\",\"phone\":\"null\",\"mobile\":\"11111111111\",\"address\":\"null\",\"resume\":\"null\",\"reg_time\":\"1442311127\",\"logon_time\":\"null\",\"logoff_time\":\"null\",\"online_flag\":\"null\",\"comid\":\"null\",\"auth_flag\":\"4\",\"balance\":\"0.00\",\"state\":\"0\",\"recom_code\":\"null\",\"md5pass\":\"null\",\"cid\":\"null\",\"department_id\":\"null\",\"media\":\"10\",\"isview\":\"1\",\"collector_pics\":\"0\",\"collector_auditor\":\"null\",\"imei\":\"null\",\"client_type\":\"0\",\"version\":\"null\",\"wxp_openid\":\"null\",\"wx_name\":\"null\",\"wx_imgurl\":\"null\",\"shop_id\":\"null\",\"firstorderquota\":\"8.00\",\"rewardquota\":\"2.00\",\"recommendquota\":\"5.00\",\"reward_score\":\"0\",\"is_auth\":\"0\",\"credit_limit\":\"null\",\"ticketquota\":\"-1.00\",\"operate\":\"0\"},carower_product:{\"id\":\"350\",\"pid\":\"54\",\"uin\":\"21892\",\"create_time\":\"\"442466288\",\"b_time\":\"1442419200\",\"e_time\":\"1445011200\",\"total\":\"457.00\",\"remark\":\"\",\"name\":\"\",\"address\":\"\",\"operate\":\"0\"}}";
+		String a  = "{com_led_tb:{\"id\":\"16\",\"ledip\":\"192.68.11.2\",\"ledport\":\"8888\",\"leduid\":\"1\",\"movemode\":\"0\",\"movespeed\":\"1\",\"dwelltime\":\"1\",\"ledcolor\":\"0\",\"showcolor\":\"0\",\"typeface\":\"1\",\"typesize\":\"0\",\"matercont\":\"4\",\"passid\":\"3\",\"operate\":\"1\"},com_led_tb:{\"id\":\"17\",\"ledip\":\"192.158.1.1\",\"ledport\":\"8888\",\"leduid\":\"2\",\"movemode\":\"0\",\"movespeed\":\"0\",\"dwelltime\":\"0\",\"ledcolor\":\"0\",\"showcolor\":\"0\",\"typeface\":\"1\",\"typesize\":\"0\",\"matercont\":\"3\",\"passid\":\"27\",\"operate\":\"1\"},user_info_tb:{\"id\":\"21892\",\"nickname\":\"è½¦ä¸»\",\"password\":\"null\",\"strid\":\"carower_21892\",\"sex\":\"null\",\"email\":\"null\",\"phone\":\"null\",\"mobile\":\"11111111111\",\"address\":\"null\",\"resume\":\"null\",\"reg_time\":\"1442311127\",\"logon_time\":\"null\",\"logoff_time\":\"null\",\"online_flag\":\"null\",\"comid\":\"null\",\"auth_flag\":\"4\",\"balance\":\"0.00\",\"state\":\"0\",\"recom_code\":\"null\",\"md5pass\":\"null\",\"cid\":\"null\",\"department_id\":\"null\",\"media\":\"10\",\"isview\":\"1\",\"collector_pics\":\"0\",\"collector_auditor\":\"null\",\"imei\":\"null\",\"client_type\":\"0\",\"version\":\"null\",\"wxp_openid\":\"null\",\"wx_name\":\"null\",\"wx_imgurl\":\"null\",\"shop_id\":\"null\",\"firstorderquota\":\"8.00\",\"rewardquota\":\"2.00\",\"recommendquota\":\"5.00\",\"reward_score\":\"0\",\"is_auth\":\"0\",\"credit_limit\":\"null\",\"ticketquota\":\"-1.00\",\"operate\":\"0\"},carower_product:{\"id\":\"350\",\"pid\":\"54\",\"uin\":\"21892\",\"create_time\":\"\"442466288\",\"b_time\":\"1442419200\",\"e_time\":\"1445011200\",\"total\":\"457.00\",\"remark\":\"\",\"name\":\"\",\"address\":\"\",\"operate\":\"0\"}}";
 //		JSONArray jo = JSONArray.fromObject(a);
 		JSONObject jo = JSONObject.fromObject(a);
 		jo.getJSONArray("com_led_tb");
 		boolean b = jo.containsKey("com_led_tb");
 		System.out.println();
-			}
+	}
 }

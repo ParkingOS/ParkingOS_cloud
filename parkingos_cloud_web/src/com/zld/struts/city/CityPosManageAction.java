@@ -27,14 +27,14 @@ public class CityPosManageAction extends Action {
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
 	private CommonMethods commonMethods;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -55,7 +55,7 @@ public class CityPosManageAction extends Action {
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			SqlInfo sqlInfo = RequestUtil.customSearch(request,"mobile_tb","m",new String[]{"device_auth"});
 			List<Object> params = new ArrayList<Object>();
-			
+
 			List<Object> parks = null;
 			if(cityid > 0){
 				parks = commonMethods.getparks(cityid);
@@ -93,7 +93,7 @@ public class CityPosManageAction extends Action {
 			if(groupid > 0){
 				Long ntime  =System.currentTimeMillis()/1000;
 				int r = daService.update("insert into mobile_tb(pda,state,uid,groupid,create_time,create_user,update_time,update_user,is_deleted) " +
-						"values(?,?,?,?,?,?,?,?,?)", 
+								"values(?,?,?,?,?,?,?,?,?)",
 						new Object[]{name,state,uid, groupid,ntime,createUid,ntime,createUid,0});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -107,7 +107,7 @@ public class CityPosManageAction extends Action {
 			Long updateUid = (Long)request.getSession().getAttribute("loginuin");
 
 			if(groupid > 0){
-				int r = daService.update("update mobile_tb set pda=?,state=?,groupid=?,uid=?,update_user=?,update_time=? where id=? ", 
+				int r = daService.update("update mobile_tb set pda=?,state=?,groupid=?,uid=?,update_user=?,update_time=? where id=? ",
 						new Object[]{pda, state, groupid, uid,updateUid,System.currentTimeMillis()/1000,id});
 				AjaxUtil.ajaxOutput(response, r + "");
 				return null;
@@ -117,7 +117,7 @@ public class CityPosManageAction extends Action {
 			Long id = RequestUtil.getLong(request, "id", -1L);
 			Long deleteUid = (Long)request.getSession().getAttribute("loginuin");
 
-			int r = daService.update("update mobile_tb set state=?,delete_user=?,delete_time=? where id=? ", 
+			int r = daService.update("update mobile_tb set state=?,delete_user=?,delete_time=? where id=? ",
 					new Object[]{1,deleteUid,System.currentTimeMillis()/1000, id});
 			AjaxUtil.ajaxOutput(response, r + "");
 		}else if(action.equals("deviceauth")){

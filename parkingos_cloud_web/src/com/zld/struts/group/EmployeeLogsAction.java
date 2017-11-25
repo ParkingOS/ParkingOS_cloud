@@ -32,7 +32,7 @@ public class EmployeeLogsAction extends Action {
 	@Override
 	public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µ«¬ºµƒ”√ªßid
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ÁôªÂΩïÁöÑÁî®Êà∑id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -42,10 +42,10 @@ public class EmployeeLogsAction extends Action {
 			response.sendRedirect("login.do");
 			return null;
 		}
-		
+
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			request.setAttribute("btime", df2.format(TimeTools.getToDayBeginTime()*1000));
@@ -62,11 +62,11 @@ public class EmployeeLogsAction extends Action {
 			SqlInfo sqlInfo = RequestUtil.customSearch(request, "parkuser_work_record_tb", "a", new String[]{"comid","nickname"});
 			SqlInfo sqlInfo2 = getSqlInfo1(request);
 			SqlInfo sqlInfo3 = getSqlInfo2(request);
-			
+
 			List<Map<String, Object>> list = null;
 			Long count = 0L;
 			List<Object> params = new ArrayList<Object>();
-			
+
 			List<Object> collectors = null;
 			if(cityid > 0){
 				collectors = commonMethods.getcollctors(cityid);
@@ -82,7 +82,7 @@ public class EmployeeLogsAction extends Action {
 						preParams += ",?";
 					}
 				}
-				
+
 				if(sqlInfo != null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -98,7 +98,7 @@ public class EmployeeLogsAction extends Action {
 					sql +=" and "+sqlInfo3.getSql();
 					params.addAll(sqlInfo3.getParams());
 				}
-				
+
 				sql += " and a.uid in ("+preParams+") order by a.start_time desc";
 				countSql += " and a.uid in ("+preParams+") ";
 				params.addAll(collectors);
@@ -108,7 +108,7 @@ public class EmployeeLogsAction extends Action {
 				}
 			}
 			String json = JsonUtil.Map2Json(list, pageNum, count, fieldsstr, "id");
-			
+
 			AjaxUtil.ajaxOutput(response, json);
 		}else if(action.equals("export")){
 			List<Object> collectors = null;
@@ -121,15 +121,15 @@ public class EmployeeLogsAction extends Action {
 				List<Map<String, Object>> list = getIncomeinfo(request, collectors);
 				export(response, list);
 			}
-			
+
 		}
 		return null;
 	}
-	
+
 	private void export(HttpServletResponse response, List<Map<String, Object>> list){
 		try {
 			if(list != null && !list.isEmpty()){
-				String heards[] = new String[]{" ’∑—‘±","’À∫≈","Õ£≥µ≥°","≤¥Œª∂Œ√˚≥∆","«©»Î»’∆⁄","«©≥ˆ»’∆⁄","…Ë±∏±‡∫≈"};
+				String heards[] = new String[]{"Êî∂Ë¥πÂëò","Ë¥¶Âè∑","ÂÅúËΩ¶Âú∫","Ê≥ä‰ΩçÊÆµÂêçÁß∞","Á≠æÂÖ•Êó•Êúü","Á≠æÂá∫Êó•Êúü","ËÆæÂ§áÁºñÂè∑"};
 				List<List<String>> bodyList = new ArrayList<List<String>>();
 				for(Map<String, Object> map : list){
 					List<String> valueList = new ArrayList<String>();
@@ -162,21 +162,21 @@ public class EmployeeLogsAction extends Action {
 					valueList.add(map.get("device_code") + "");
 					bodyList.add(valueList);
 				}
-				String fname = " ’∑—‘±…œ∞‡±®±Ì";
+				String fname = "Êî∂Ë¥πÂëò‰∏äÁè≠Êä•Ë°®";
 				java.io.OutputStream os = response.getOutputStream();
 				response.reset();
 				response.setHeader("Content-disposition", "attachment; filename="
 						+ StringUtils.encodingFileName(fname) + ".xls");
-				ExportExcelUtil importExcel = new ExportExcelUtil(" ’∑—‘±…œ∞‡±®±Ì",
+				ExportExcelUtil importExcel = new ExportExcelUtil("Êî∂Ë¥πÂëò‰∏äÁè≠Êä•Ë°®",
 						heards, bodyList);
-				
+
 				importExcel.createExcelFile(os);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private SqlInfo getSqlInfo1(HttpServletRequest request){
 		Long comid =RequestUtil.getLong(request, "comid_start", -1L);
 		SqlInfo sqlInfo = null;
@@ -185,7 +185,7 @@ public class EmployeeLogsAction extends Action {
 		}
 		return sqlInfo;
 	}
-	
+
 	private SqlInfo getSqlInfo2(HttpServletRequest request){
 		Long uid =RequestUtil.getLong(request, "nickname_start", -1L);
 		SqlInfo sqlInfo = null;
@@ -194,13 +194,13 @@ public class EmployeeLogsAction extends Action {
 		}
 		return sqlInfo;
 	}
-	
+
 
 	private List<Map<String, Object>> getIncomeinfo(HttpServletRequest request, List<Object> idList) {
 		try {
 			if(idList != null && !idList.isEmpty()){
 				SqlInfo sqlInfo = RequestUtil.customSearch(request, "parkuser_work_record_tb");
-				
+
 				String preParams = "";
 				for(Object o : idList){
 					if(preParams.equals("")){
@@ -262,9 +262,9 @@ public class EmployeeLogsAction extends Action {
 										}
 									}
 								}
-								
+
 							}
-							
+
 							for(Map<String, Object> map : workList){
 								Long berthsec_id = (Long)map.get("berthsec_id");
 								for(Map<String, Object> map2 : berthSegList){
@@ -277,9 +277,9 @@ public class EmployeeLogsAction extends Action {
 								}
 							}
 						}
-						
+
 					}
-					
+
 					List<Map<String, Object>> collectList = pgOnlyReadService.getAllMap("select id,nickname from user_info_tb where " +
 							" id in ("+preParams+")", idList);
 					if(collectList != null && !collectList.isEmpty()){
@@ -303,5 +303,5 @@ public class EmployeeLogsAction extends Action {
 		return null;
 	}
 
-	
+
 }

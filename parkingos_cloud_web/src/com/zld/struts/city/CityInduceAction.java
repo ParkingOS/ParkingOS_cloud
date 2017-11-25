@@ -24,7 +24,7 @@ import com.zld.utils.SqlInfo;
 import com.zld.utils.StringUtils;
 
 public class CityInduceAction extends Action {
-	
+
 	@Autowired
 	private DataBaseService daService;
 	@Autowired
@@ -35,10 +35,10 @@ public class CityInduceAction extends Action {
 	Logger logger = Logger.getLogger(CityInduceAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//鐧诲綍鐨勭敤鎴穒d
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		if(uin == null || cityid== null){
@@ -115,19 +115,19 @@ public class CityInduceAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private SqlInfo getSuperSqlInfo(HttpServletRequest request){
 		Integer site_state = RequestUtil.getInteger(request, "induce_state_start", -1);
 		SqlInfo sqlInfo1 = null;
 		Long ntime = System.currentTimeMillis()/1000;
-		if(site_state == 1){//�����豸
+		if(site_state == 1){//故障设备
 			sqlInfo1 = new SqlInfo(" ?-heartbeat_time>=? ", new Object[]{ntime, 30 * 60});
-		}else if(site_state == 0){//�����豸
+		}else if(site_state == 0){//正常设备
 			sqlInfo1 = new SqlInfo(" ?-heartbeat_time<? ", new Object[]{ntime, 30 * 60});
 		}
 		return sqlInfo1;
 	}
-	
+
 	private void setDetailList(List<Map<String, Object>> list){
 		try {
 			if(list != null && !list.isEmpty()){
@@ -163,7 +163,7 @@ public class CityInduceAction extends Action {
 				}
 				List<Map<String, Object>> list2 = pgOnlyReadService.getAllMap(
 						"select count(id) fcount,induce_id from device_fault_tb " +
-						"where induce_id in ("+preParams+") group by induce_id ", idList);
+								"where induce_id in ("+preParams+") group by induce_id ", idList);
 				if(list2 != null && !list2.isEmpty()){
 					for(Map<String, Object> map : list){
 						Long id = (Long)map.get("id");
@@ -181,7 +181,7 @@ public class CityInduceAction extends Action {
 			logger.error(e);
 		}
 	}
-	
+
 	private int editInduce(HttpServletRequest request){
 		Long id = RequestUtil.getLong(request, "id", -1L);
 		String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
@@ -191,13 +191,13 @@ public class CityInduceAction extends Action {
 		Double latitude = RequestUtil.getDouble(request, "latitude", 0d);
 		if(did.equals("")) did = null;
 		if(did != null && !did.equals("")){
-			Long count = pgOnlyReadService.getLong("select count(id) from induce_tb where is_delete=? and did=? and id<>? ", 
+			Long count = pgOnlyReadService.getLong("select count(id) from induce_tb where is_delete=? and did=? and id<>? ",
 					new Object[]{0, did, id});
 			if(count > 0){
 				return -2;
 			}
 		}
-		int r = daService.update("update induce_tb set address=?,name=?,longitude=?,latitude=?,did=? where id=? ", 
+		int r = daService.update("update induce_tb set address=?,name=?,longitude=?,latitude=?,did=? where id=? ",
 				new Object[]{address,name,longitude,latitude,did,id});
 		return r;
 	}

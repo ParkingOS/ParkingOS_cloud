@@ -16,11 +16,11 @@ import com.zld.service.DataBaseService;
 import com.zld.utils.RequestUtil;
 
 public class TranferUrlAction extends HttpServlet {
-	
+
 	DataBaseService dataBaseService =null;
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 2049754133208266760L;
 
@@ -28,7 +28,7 @@ public class TranferUrlAction extends HttpServlet {
 	 * The doGet method of the servlet. <br>
 	 *
 	 * This method is called when a form has its tag value method equals to get.
-	 * 
+	 *
 	 * @param request the request send by the client to the server
 	 * @param response the response send by the server to the client
 	 * @throws ServletException if an error occurred
@@ -44,7 +44,7 @@ public class TranferUrlAction extends HttpServlet {
 	 * The doPost method of the servlet. <br>
 	 *
 	 * This method is called when a form has its tag value method equals to post.
-	 * 
+	 *
 	 * @param request the request send by the client to the server
 	 * @param response the response send by the server to the client
 	 * @throws ServletException if an error occurred
@@ -68,13 +68,13 @@ public class TranferUrlAction extends HttpServlet {
 		}
 		AjaxUtil.ajaxOutput(response, "-1");
 	}
-	
+
 	@Override
 	public void init() throws ServletException {
 		ApplicationContext ctx = WebApplicationContextUtils
 				.getWebApplicationContext(getServletContext());
 		dataBaseService= (DataBaseService) ctx.getBean("dataBaseService");
-		//启动定时任务
+		//鍚姩瀹氭椂浠诲姟
 		//System.err.println(">>>>>init:database:"+dataBaseService);
 	}
 

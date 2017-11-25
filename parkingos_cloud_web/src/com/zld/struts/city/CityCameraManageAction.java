@@ -31,21 +31,21 @@ public class CityCameraManageAction extends Action {
 	@Autowired
 	private PgOnlyReadService pgOnlyReadService;
 	@Autowired
-	private CommonMethods commonMethods; 
+	private CommonMethods commonMethods;
 	@Autowired
 	private MemcacheUtils memcacheUtils;
 	@Autowired
 	private PublicMethods publicMethods;
 	@Autowired
 	private MongoDbUtils mongoDbUtils;
-	
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.getString(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//µÇÂ¼µÄÓÃ»§id
+		Long uin = (Long)request.getSession().getAttribute("loginuin");//ç™»å½•çš„ç”¨æˆ·id
 		request.setAttribute("authid", request.getParameter("authid"));
 		Long cityid = (Long)request.getSession().getAttribute("cityid");
 		Long groupid = (Long)request.getSession().getAttribute("groupid");
@@ -58,7 +58,7 @@ public class CityCameraManageAction extends Action {
 		}
 		if(cityid == null) cityid = -1L;
 		if(groupid == null) groupid = -1L;
-		
+
 		if(action.equals("")){
 			return mapping.findForward("list");
 		}else if(action.equals("quickquery")){
@@ -87,7 +87,7 @@ public class CityCameraManageAction extends Action {
 				sql += " comid in ("+preParams+") ";
 				countSql += " comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				count = pgOnlyReadService.getCount(countSql,params);
 				if(count>0){
 					list = pgOnlyReadService.getAll(sql +" order by id desc ",params, pageNum, pageSize);
@@ -123,7 +123,7 @@ public class CityCameraManageAction extends Action {
 				sql += " comid in ("+preParams+") ";
 				countSql += " comid in ("+preParams+") ";
 				params.addAll(parks);
-				
+
 				if(sqlInfo!=null){
 					countSql+=" and "+ sqlInfo.getSql();
 					sql +=" and "+sqlInfo.getSql();
@@ -152,7 +152,7 @@ public class CityCameraManageAction extends Action {
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private int editpass(HttpServletRequest request){
 		Long cameraid = RequestUtil.getLong(request, "id", -1L);
@@ -161,7 +161,7 @@ public class CityCameraManageAction extends Action {
 		if(!newpass.equals(confirmpass) || cameraid == -1){
 			return -1;
 		}
-		Map<String, Object> camMap = daService.getMap("select * from com_camera_tb where id =? ", 
+		Map<String, Object> camMap = daService.getMap("select * from com_camera_tb where id =? ",
 				new Object[]{cameraid});
 		Long comid = -1L;
 		if(camMap != null && camMap.get("comid") !=null){
@@ -173,11 +173,11 @@ public class CityCameraManageAction extends Action {
 			if(publicMethods.isEtcPark(comid)){
 				int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_camera_tb",cameraid,System.currentTimeMillis()/1000,1});
 			}
-			mongoDbUtils.saveLogs( request,0, 3, "ÖØÖÃÁËÉãÏñÍ·ÃÜÂë£¬±àºÅ"+cameraid+"£¬ĞÂÃÜÂë"+newpass);
+			mongoDbUtils.saveLogs( request,0, 3, "é‡ç½®äº†æ‘„åƒå¤´å¯†ç ï¼Œç¼–å·"+cameraid+"ï¼Œæ–°å¯†ç "+newpass);
 		}
 		return result;
 	}
-	
+
 	private void setWorksite(List<Map<String, Object>> list){
 		if(list != null && !list.isEmpty()){
 			List<Object> passList = new ArrayList<Object>();
@@ -190,8 +190,8 @@ public class CityCameraManageAction extends Action {
 					preParams += ",?";
 			}
 			List<Map<String, Object>> list2 = pgOnlyReadService.getAllMap("select worksite_id,id from com_pass_tb where id in ("+preParams+")", passList);
-			
-			
+
+
 			if(list != null && !list.isEmpty()){
 				for(Map<String, Object> map : list){
 					Long id = (Long)map.get("passid");
@@ -206,12 +206,12 @@ public class CityCameraManageAction extends Action {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private int deleteCamera(HttpServletRequest request){
 		Long cameraid = RequestUtil.getLong(request, "selids", -1L);
 		String sql = "delete from com_camera_tb where id=?";
-		Map<String, Object> camMap = daService.getMap("select * from com_camera_tb where id =? ", 
+		Map<String, Object> camMap = daService.getMap("select * from com_camera_tb where id =? ",
 				new Object[]{cameraid});
 		Long comid = -1L;
 		if(camMap != null && camMap.get("comid") !=null){
@@ -222,11 +222,11 @@ public class CityCameraManageAction extends Action {
 			if(publicMethods.isEtcPark(comid)){
 				int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_camera_tb",cameraid,System.currentTimeMillis()/1000,2});
 			}
-			mongoDbUtils.saveLogs( request,0, 4, "É¾³ıÁËÉãÏñÍ·:"+camMap);
+			mongoDbUtils.saveLogs( request,0, 4, "åˆ é™¤äº†æ‘„åƒå¤´:"+camMap);
 		}
 		return result;
 	}
-	
+
 	private int editCamera(HttpServletRequest request){
 		Long cameraid = RequestUtil.getLong(request, "id", -1L);
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
@@ -242,20 +242,20 @@ public class CityCameraManageAction extends Action {
 		if(passid == -1){
 			return -2;
 		}
-		
-		//±à¼­
+
+		//ç¼–è¾‘
 		String sql = "update com_camera_tb set camera_name=?,ip=?,port=?,cusername=?,manufacturer=?,passid=?,comid=? where id=?";
 		int re = daService.update(sql, new Object[]{camera_name,ip,port,cusername,manufacturer,passid,comid,cameraid});
 		if(re == 1){
 			if(publicMethods.isEtcPark(comid)){
-				int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", 
+				int r = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)",
 						new Object[]{comid,"com_camera_tb",cameraid,System.currentTimeMillis()/1000,1});
 			}
-			mongoDbUtils.saveLogs( request,0, 3, "ĞŞ¸ÄÁËÉãÏñÍ·:"+camera_name);
+			mongoDbUtils.saveLogs( request,0, 3, "ä¿®æ”¹äº†æ‘„åƒå¤´:"+camera_name);
 		}
 		return re;
 	}
-	
+
 	private int createCamera(HttpServletRequest request){
 		Long comid = RequestUtil.getLong(request, "comid", -1L);
 		String camera_name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "camera_name"));

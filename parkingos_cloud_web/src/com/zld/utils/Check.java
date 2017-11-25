@@ -4,21 +4,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 
- * 
- * ÏîÄ¿Ãû³Æ£ºcallback ÀàÃû³Æ£ºCheck ÀàÃèÊö£º ¼ì²âÒ»¸öºÅÂëÊÇÊÖ»úºÅ»òÕßµç»°ºÅ,uinºÅµÈµÈ·½·¨ ´´½¨ÈË£ºshanyz ´´½¨Ê±¼ä£ºApr 3,
- * 2010 2:54:36 PM ĞŞ¸ÄÈË£ºshanyz ĞŞ¸ÄÊ±¼ä£ºApr 3, 2010 2:54:36 PM ĞŞ¸Ä±¸×¢£º
- * 
+ *
+ *
+ * é¡¹ç›®åç§°ï¼šcallback ç±»åç§°ï¼šCheck ç±»æè¿°ï¼š æ£€æµ‹ä¸€ä¸ªå·ç æ˜¯æ‰‹æœºå·æˆ–è€…ç”µè¯å·,uinå·ç­‰ç­‰æ–¹æ³• åˆ›å»ºäººï¼šshanyz åˆ›å»ºæ—¶é—´ï¼šApr 3,
+ * 2010 2:54:36 PM ä¿®æ”¹äººï¼šshanyz ä¿®æ”¹æ—¶é—´ï¼šApr 3, 2010 2:54:36 PM ä¿®æ”¹å¤‡æ³¨ï¼š
+ *
  * @version
- * 
+ *
  */
 public class Check {
 
 	public static boolean checkPhone(String phonenumber) {
 		if (phonenumber == null || phonenumber.equals(""))
 			return false;
-		String phone = "0\\d{2,3}\\d{7,8}";//´øÇøºÅ
-		String shortPhone="\\d{7,8}";//²»´øÇøºÅ
+		String phone = "0\\d{2,3}\\d{7,8}";//å¸¦åŒºå·
+		String shortPhone="\\d{7,8}";//ä¸å¸¦åŒºå·
 		Pattern p = Pattern.compile(phone);
 		Matcher m = p.matcher(phonenumber);
 		if(!m.matches()){
@@ -42,17 +42,17 @@ public class Check {
 			return false;
 		Pattern pattern = Pattern.compile("[0-9]*");
 		Matcher m = pattern.matcher(uin);
-		  return m.matches();
+		return m.matches();
 	}
 	/**
-	 * 
-	* checkMobileHead   
-	* TODO  ¼ì²â ÊÖ»úÊÇ·ñÒÔ0¿ªÍ·£¬Èç¹û¿ªÍ·ÔòÈ¥µô0
-	* @param   name   
-	* @param  @return    
-	* @return String     
-	* @Exception   
-	* @since  CodingExample¡¡Ver 1.1
+	 *
+	 * checkMobileHead
+	 * TODO  æ£€æµ‹ æ‰‹æœºæ˜¯å¦ä»¥0å¼€å¤´ï¼Œå¦‚æœå¼€å¤´åˆ™å»æ‰0
+	 * @param   name
+	 * @param  @return
+	 * @return String
+	 * @Exception
+	 * @since  CodingExampleã€€Ver 1.1
 	 */
 	public static String checkMobileHead(String mobilenumber) {
 		if (mobilenumber == null || mobilenumber.equals(""))
@@ -60,44 +60,44 @@ public class Check {
 		if(checkMobile(mobilenumber)&&mobilenumber.startsWith("0")) {
 			mobilenumber=mobilenumber.substring(1, mobilenumber.length());
 		}
-		  return mobilenumber;
+		return mobilenumber;
 	}
 	/**
-	 * 
-	* getKufuName   
-	* TODO  Í¨¹ı¹¤µ¥±í talk_content ÖĞ µÃµ½¿Í·şĞÕÃû
-	* @param   name   
-	* @param  @return    
-	* @return String     
-	* @Exception   
-	* @since  CodingExample¡¡Ver 1.1
+	 *
+	 * getKufuName
+	 * TODO  é€šè¿‡å·¥å•è¡¨ talk_content ä¸­ å¾—åˆ°å®¢æœå§“å
+	 * @param   name
+	 * @param  @return
+	 * @return String
+	 * @Exception
+	 * @since  CodingExampleã€€Ver 1.1
 	 */
 	public static String  getKufuName(String talk_content) {
 		if(talk_content==null){
 			return "";
 		}
-		String pString="<br>+[^<br>]+\\(\\d{4,8}\\)";//Æ¥Åä½á¹û:<br>ÍûĞ¡Òä(1086)
+		String pString="<br>+[^<br>]+\\(\\d{4,8}\\)";//åŒ¹é…ç»“æœ:<br>æœ›å°å¿†(1086)
 		String resultString="";
 		Pattern p = Pattern.compile(pString);
 		Matcher m = p.matcher(talk_content);
 		if(m.find()) {
 			resultString=m.group();
 			resultString=resultString.substring(resultString.indexOf("<br>")+4, resultString.indexOf("("));
-		}		
+		}
 		return resultString;
 	}
-/**
- * 
-* dealPhone   
-* TODO  	//01013911001412 È¥µôÊÖ»úÇ°µÄÇøºÅ,¹Ì¶¨µç»°²»×ö´¦Àí
-* @param   name   
-* @param  @return    
-* @return String     
-* @Exception   
-* @since  CodingExample¡¡Ver 1.1
- */
+	/**
+	 *
+	 * dealPhone
+	 * TODO  	//01013911001412 å»æ‰æ‰‹æœºå‰çš„åŒºå·,å›ºå®šç”µè¯ä¸åšå¤„ç†
+	 * @param   name
+	 * @param  @return
+	 * @return String
+	 * @Exception
+	 * @since  CodingExampleã€€Ver 1.1
+	 */
 	public static String dealPhone(String phone) {
-		if (phone.length() > 13) {//±íÃ÷ÎªÊÖ»ú¼ÓÇøºÅ
+		if (phone.length() > 13) {//è¡¨æ˜ä¸ºæ‰‹æœºåŠ åŒºå·
 			String[] quhaoStrings = { "010", "020", "021", "022", "023", "024",
 					"025", "027", "028", "029" };
 			String result = null;
@@ -115,91 +115,91 @@ public class Check {
 		}
 
 	}
-	/**ÑéÖ¤µç»° 
-	 * ÊÖ»úÊÇ1¿ªÍ·£¬µÚ¶şÎ»ÊÇ3¡¢4¡¢5¡¢8£¬³¤¶È11Î»Êı×Ö£¬»òÒÔ0¿ªÍ·£¬ÆäËüÓëÇ°ÃæÒ»Ñù£¬12Î»Êı×Ö
-	 * ÕıÈ·ÓĞ1340000011»ò013269710010(³¤Í¾)
-	 * ¹Ì¶¨µç»°ÊÇÔÚ2µ½9¿ªÍ·³¤¶ÈÊÇ7µ½8Î»Êı×Ö»òÒÔ0¿ªÍ·µÚ¶şÎ»ÊÇ1µ½9£¬³¤¶ÈÊÇ11µ½12Î»Êı×Ö£¬
-	 * ²»ÄÜÊÇ·ÇÊı×Ö£¬²»ÄÜ´ø·Ö»úºÅ£¬
-	 * Èç010-88998899»ò010-88998899-22»ò(010)88999933
-	 * Params:type:"m"ÊÖ»ú,"t"¹Ì¶¨µç»°
-	*/
-    public static boolean checkPhone(String phone,String type){  
-    	String teleReg ="^(0[1-9]{1}\\d{9,10})|([2-9]\\d{6,7})$";
+	/**éªŒè¯ç”µè¯
+	 * æ‰‹æœºæ˜¯1å¼€å¤´ï¼Œç¬¬äºŒä½æ˜¯3ã€4ã€5ã€8ï¼Œé•¿åº¦11ä½æ•°å­—ï¼Œæˆ–ä»¥0å¼€å¤´ï¼Œå…¶å®ƒä¸å‰é¢ä¸€æ ·ï¼Œ12ä½æ•°å­—
+	 * æ­£ç¡®æœ‰1340000011æˆ–013269710010(é•¿é€”)
+	 * å›ºå®šç”µè¯æ˜¯åœ¨2åˆ°9å¼€å¤´é•¿åº¦æ˜¯7åˆ°8ä½æ•°å­—æˆ–ä»¥0å¼€å¤´ç¬¬äºŒä½æ˜¯1åˆ°9ï¼Œé•¿åº¦æ˜¯11åˆ°12ä½æ•°å­—ï¼Œ
+	 * ä¸èƒ½æ˜¯éæ•°å­—ï¼Œä¸èƒ½å¸¦åˆ†æœºå·ï¼Œ
+	 * å¦‚010-88998899æˆ–010-88998899-22æˆ–(010)88999933
+	 * Params:type:"m"æ‰‹æœº,"t"å›ºå®šç”µè¯
+	 */
+	public static boolean checkPhone(String phone,String type){
+		String teleReg ="^(0[1-9]{1}\\d{9,10})|([2-9]\\d{6,7})$";
 		String mobilReg = "^(1[3-8]\\d{9})|(01[3-8]\\d{9})$";
 		if(type.equals("m"))
 			return phone.matches(mobilReg);
 		else if(type.equals("t"))
 			return phone.matches(teleReg);
 		return false;
-    } 
-    /**
-     * ÅĞ¶ÏÊÇ·ñÊÇÕûĞÍ
-     * @param value
-     * @return
-     */
-    public static boolean isNumber(String value){
-    	// int -2147483648£­£­2147483647
-    	if(value==null)
-    		return false;
-    	if(value.length()>9&&isLong(value)){
-    		Long  l = Long.parseLong(value);
-    		if(l<=Integer.MAX_VALUE)
-    			return true;
-    	}
-    	return value.matches("^\\d{1,9}");
-    }
-    /**
-     * ÅĞ¶ÏÊÇ·ñÊÇ³¤ÕûĞÍ
-     * @param value
-     * @return
-     */
-    public static boolean isLong(String value){
-    	if(value==null)
-    		return false;
-    	if( value.matches("^\\d+")){
-    		try {
+	}
+	/**
+	 * åˆ¤æ–­æ˜¯å¦æ˜¯æ•´å‹
+	 * @param value
+	 * @return
+	 */
+	public static boolean isNumber(String value){
+		// int -2147483648ï¼ï¼2147483647
+		if(value==null)
+			return false;
+		if(value.length()>9&&isLong(value)){
+			Long  l = Long.parseLong(value);
+			if(l<=Integer.MAX_VALUE)
+				return true;
+		}
+		return value.matches("^\\d{1,9}");
+	}
+	/**
+	 * åˆ¤æ–­æ˜¯å¦æ˜¯é•¿æ•´å‹
+	 * @param value
+	 * @return
+	 */
+	public static boolean isLong(String value){
+		if(value==null)
+			return false;
+		if( value.matches("^\\d+")){
+			try {
 				if (Long.parseLong(value) <= Long.MAX_VALUE)
 					return true;
 			} catch (Exception e) {
 				return false;
 			}
-    	}
-    	return false;
-    }
-    
-    public static boolean checkEmail(String value) {
-    	if(value == null) {
-    		return false;
-    	} 
-    	return value.matches("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");
-    }
-    
-    /**
-     * ÅĞ¶ÏÊÇ·ñÊÇ³¤ÕûĞÍ
-     * @param value
-     * @return
-     */
-    public static boolean isDouble(String value){
-    	if(value==null)
-    		return false;
+		}
+		return false;
+	}
+
+	public static boolean checkEmail(String value) {
+		if(value == null) {
+			return false;
+		}
+		return value.matches("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");
+	}
+
+	/**
+	 * åˆ¤æ–­æ˜¯å¦æ˜¯é•¿æ•´å‹
+	 * @param value
+	 * @return
+	 */
+	public static boolean isDouble(String value){
+		if(value==null)
+			return false;
 		try {
 			Double d = Double.valueOf(value);
 			return true;
 		} catch (Exception e) {
 			return false;
 		}
-    }
-    /**
-	 * ÅĞ¶Ï×Ö·û´®ÊÇ·ñÎª¿Õ
+	}
+	/**
+	 * åˆ¤æ–­å­—ç¬¦ä¸²æ˜¯å¦ä¸ºç©º
 	 * <ul>
 	 * <li>isEmpty(null) = true</li>
 	 * <li>isEmpty("") = true</li>
 	 * <li>isEmpty("   ") = true</li>
 	 * <li>isEmpty("abc") = false</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param value
-	 *            Ä¿±ê×Ö·û´®
+	 *            ç›®æ ‡å­—ç¬¦ä¸²
 	 * @return true/false
 	 */
 	public static boolean isEmpty(String value) {

@@ -30,7 +30,7 @@ public class AllowanceAnlysisAction extends Action {
 	private Logger logger = Logger.getLogger(AllowanceAnlysisAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long comid = (Long)request.getSession().getAttribute("comid");
@@ -58,10 +58,10 @@ public class AllowanceAnlysisAction extends Action {
 				etime = nowtime;
 			}
 			Long e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime+" 23:59:59");
-			//³µ³¡À­À­½±
+			//è½¦åœºæ‹‰æ‹‰å¥–
 			List<Object> params = new ArrayList<Object>();
 			params.add(0);
-			params.add("%Í£³µ±¦ÅÅĞĞ°ñÖÜ½±%");
+			params.add("%åœè½¦å®æ’è¡Œæ¦œå‘¨å¥–%");
 			params.add(b);
 			params.add(e);
 			params.add(city_b);
@@ -70,10 +70,10 @@ public class AllowanceAnlysisAction extends Action {
 					.getMap("select sum(amount) plala from park_account_tb where type=? and remark like ? and create_time between ? and ? and comid in (select id from com_info_tb where city between ? and ?) ",
 							params);
 			Double plala = StringUtils.formatDouble(map.get("plala"));
-			//ÊÕ·ÑÔ±À­À­½±
+			//æ”¶è´¹å‘˜æ‹‰æ‹‰å¥–
 			params.clear();
 			params.add(0);
-			params.add("%Í£³µ±¦ÅÅĞĞ°ñÖÜ½±%");
+			params.add("%åœè½¦å®æ’è¡Œæ¦œå‘¨å¥–%");
 			params.add(b);
 			params.add(e);
 			params.add(city_b);
@@ -82,23 +82,23 @@ public class AllowanceAnlysisAction extends Action {
 					.getMap("select sum(p.amount) ulala from parkuser_account_tb p,user_info_tb u where p.uin=u.id and p.type=? and p.remark like ? and p.create_time between ? and ? and u.comid in (select id from com_info_tb where city between ? and ?) ",
 							params);
 			Double ulala = StringUtils.formatDouble(map1.get("ulala"));
-			//À­À­½±¶î¶È
+			//æ‹‰æ‹‰å¥–é¢åº¦
 			Double lala = plala + ulala;
-			//ÊÖ»úÖ§¸¶Í£³µ·Ñ
+			//æ‰‹æœºæ”¯ä»˜åœè½¦è´¹
 			params.clear();
-			params.add(4);
+			params.add(0);
 			params.add(1);
 			params.add(1);
-			params.add(2);
+			//params.add(2);
 			params.add(b);
 			params.add(e);
 			params.add(city_b);
 			params.add(city_e);
 			Map<String, Object> map2 = pgOnlyReadService
-					.getMap("select sum(total) mtotal from order_tb where c_type!=? and total>=? and state=? and pay_type=? and end_time between ? and ? and comid in (select id from com_info_tb where city between ? and ?) ",
+					.getMap("select sum(total) mtotal from order_tb where  total>=? and state=? and pay_type=? and end_time between ? and ? and comid in (select id from com_info_tb where city between ? and ?) ",
 							params);
 			Double mtotal = StringUtils.formatDouble(map2.get("mtotal"));
-			//Ö±¸¶Í£³µ·Ñ
+			//ç›´ä»˜åœè½¦è´¹
 			params.clear();
 			params.add(0);
 			params.add(1);
@@ -109,11 +109,11 @@ public class AllowanceAnlysisAction extends Action {
 			Map<String, Object> map3 = pgOnlyReadService
 					.getMap("select sum(a.amount) ztotal from user_account_tb a,user_info_tb u where a.uid=u.id and a.uid>? and a.target=? and a.create_time between ? and ? and u.comid in (select id from com_info_tb where city between ? and ?) ",
 							params);
-			//Ö±¸¶Í£³µ·Ñ
+			//ç›´ä»˜åœè½¦è´¹
 			Double ztotal = StringUtils.formatDouble(map3.get("ztotal"));
-			//ÊµÊÕÍ£³µ·Ñ
+			//å®æ”¶åœè½¦è´¹
 			Double total = mtotal + ztotal;
-			//´ú½ğÈ¯
+			//ä»£é‡‘åˆ¸
 			params.clear();
 			params.add(0);
 			params.add(1);
@@ -123,12 +123,12 @@ public class AllowanceAnlysisAction extends Action {
 			params.add(city_e);
 			List<Map<String, Object>> ticketList = new ArrayList<Map<String,Object>>();
 			ticketList = pgOnlyReadService.getAllMap("select * from ticket_tb where orderid>? and state=? and utime between ? and ? and comid in (select id from com_info_tb where city between ? and ?) ", params);
-			
-			Double normalttotal = 0d;//ÆÕÍ¨È¯²¹Ìù¶î
-			Double specialttotal = 0d;//×¨ÓÃÈ¯²¹Ìù¶î
-			Double buyttotal = 0d;//¹ºÂòÈ¯²¹Ìù¶î
-			Double wx3ttotal = 0d;//ÈıÕÛÈ¯²¹Ìù¶î
-			Double wx5ttotal = 0d;//5ÕÛÈ¯²¹Ìù¶î
+
+			Double normalttotal = 0d;//æ™®é€šåˆ¸è¡¥è´´é¢
+			Double specialttotal = 0d;//ä¸“ç”¨åˆ¸è¡¥è´´é¢
+			Double buyttotal = 0d;//è´­ä¹°åˆ¸è¡¥è´´é¢
+			Double wx3ttotal = 0d;//ä¸‰æŠ˜åˆ¸è¡¥è´´é¢
+			Double wx5ttotal = 0d;//5æŠ˜åˆ¸è¡¥è´´é¢
 			if(ticketList != null && !ticketList.isEmpty()){
 				for(Map<String, Object> map4 : ticketList){
 					Integer type = (Integer)map4.get("type");
@@ -143,10 +143,10 @@ public class AllowanceAnlysisAction extends Action {
 						pmoney = Double.valueOf(map4.get("pmoney") + "");
 					}
 					if(type == 0){
-						if(resources == 0){//ÆÕÍ¨È¯
+						if(resources == 0){//æ™®é€šåˆ¸
 							normalttotal += umoney;
-						}else if(resources == 1){//¹ºÂòÈ¯
-							if(umoney > pmoney){//Êµ¼ÊµÖ¿Û½ğ¶î-×Ô¼º¹ºÂòÖ§¸¶µÄ½ğ¶î
+						}else if(resources == 1){//è´­ä¹°åˆ¸
+							if(umoney > pmoney){//å®é™…æŠµæ‰£é‡‘é¢-è‡ªå·±è´­ä¹°æ”¯ä»˜çš„é‡‘é¢
 								buyttotal += (umoney - pmoney);
 							}
 						}
@@ -161,7 +161,7 @@ public class AllowanceAnlysisAction extends Action {
 					}
 				}
 			}
-			Double rewardttotal = 0d;//´òÉÍ²¹Ìù¶î
+			Double rewardttotal = 0d;//æ‰“èµè¡¥è´´é¢
 			params.clear();
 			params.add(1);
 			params.add(b);
@@ -170,8 +170,8 @@ public class AllowanceAnlysisAction extends Action {
 			params.add(city_e);
 			List<Map<String, Object>> rewordticketList = new ArrayList<Map<String,Object>>();
 			rewordticketList = pgOnlyReadService
-			.getAllMap("select t.* from ticket_tb t,parkuser_reward_tb p where t.id = p.ticket_id and t.state=? and p.ctime between ? and ? and p.comid in (select id from com_info_tb where city between ? and ?) ",
-					params);
+					.getAllMap("select t.* from ticket_tb t,parkuser_reward_tb p where t.id = p.ticket_id and t.state=? and p.ctime between ? and ? and p.comid in (select id from com_info_tb where city between ? and ?) ",
+							params);
 			if(rewordticketList != null && !rewordticketList.isEmpty()){
 				for(Map<String, Object> map4 : rewordticketList){
 					Integer type = (Integer)map4.get("type");
@@ -195,7 +195,7 @@ public class AllowanceAnlysisAction extends Action {
 				}
 			}
 			Double  ttotal = wx3ttotal + wx5ttotal + normalttotal + specialttotal + buyttotal;
-			//³µ³¡²¹Ìù
+			//è½¦åœºè¡¥è´´
 			params.clear();
 			params.add(2);
 			params.add(b);
@@ -206,7 +206,7 @@ public class AllowanceAnlysisAction extends Action {
 					.getMap("select sum(amount) pb from park_account_tb where type=? and create_time between ? and ? and comid in (select id from com_info_tb where city between ? and ?) ",
 							params);
 			Double pb = StringUtils.formatDouble(map5.get("pb"));
-			//ÊÕ·ÑÔ±²¹Ìù
+			//æ”¶è´¹å‘˜è¡¥è´´
 			params.clear();
 			params.add(0);
 			params.add(3);
@@ -218,19 +218,19 @@ public class AllowanceAnlysisAction extends Action {
 					.getMap("select sum(p.amount) ub from parkuser_account_tb p,user_info_tb u where p.uin=u.id and p.type=? and p.target=? and p.create_time between ? and ? and u.comid in (select id from com_info_tb where city between ? and ?) ",
 							params);
 			Double ub = StringUtils.formatDouble(map6.get("ub"));
-			//³µ³¡²¹Ìù¶î
+			//è½¦åœºè¡¥è´´é¢
 			Double btotal = pb + ub;
-			//È«²¿½ğ¶î
+			//å…¨éƒ¨é‡‘é¢
 			Double alltotal = lala + total + btotal;
-			//À­À­½±µÄ°Ù·Ö±È
+			//æ‹‰æ‹‰å¥–çš„ç™¾åˆ†æ¯”
 			String lala_percent = String.format("%.2f", StringUtils.formatDouble(StringUtils.formatDouble(lala)/StringUtils.formatDouble(alltotal))*100)+"%";
-			//ÊµÊÕÍ£³µ·Ñ°Ù·Ö±È
+			//å®æ”¶åœè½¦è´¹ç™¾åˆ†æ¯”
 			String parking_percent = String.format("%.2f", StringUtils.formatDouble(StringUtils.formatDouble(total-ttotal)/StringUtils.formatDouble(alltotal))*100)+"%";
-			//Í£³µÈ¯²¹Ìù¶î°Ù·Ö±È
+			//åœè½¦åˆ¸è¡¥è´´é¢ç™¾åˆ†æ¯”
 			String ticket_percent = String.format("%.2f", StringUtils.formatDouble(StringUtils.formatDouble(ttotal)/StringUtils.formatDouble(alltotal))*100)+"%";
-			//³µ³¡²¹Ìù¶î°Ù·Ö±È
+			//è½¦åœºè¡¥è´´é¢ç™¾åˆ†æ¯”
 			String park_percent = String.format("%.2f", StringUtils.formatDouble(StringUtils.formatDouble(btotal)/StringUtils.formatDouble(alltotal))*100)+"%";
-			
+
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			Map<String, Object> newMap = new HashMap<String, Object>();
 			newMap.put("lala", StringUtils.formatDouble(lala));
@@ -246,7 +246,7 @@ public class AllowanceAnlysisAction extends Action {
 			newMap.put("buyttotal", StringUtils.formatDouble(buyttotal));
 			newMap.put("wx3ttotal", StringUtils.formatDouble(wx3ttotal));
 			newMap.put("wx5ttotal", StringUtils.formatDouble(wx5ttotal));
-			
+
 			newMap.put("rewardttotal", StringUtils.formatDouble(rewardttotal));
 			newMap.put("id", 0);
 			list.add(newMap);
@@ -270,35 +270,35 @@ public class AllowanceAnlysisAction extends Action {
 				etime = nowtime;
 			}
 			Long e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime+" 23:59:59");
-			//³µ³¡À­À­½±
+			//è½¦åœºæ‹‰æ‹‰å¥–
 			List<Object> params = new ArrayList<Object>();
 			params.add(0);
-			params.add("%Í£³µ±¦ÅÅĞĞ°ñÖÜ½±%");
+			params.add("%åœè½¦å®æ’è¡Œæ¦œå‘¨å¥–%");
 			params.add(b);
 			params.add(e);
 //			params.add(city_b);
 //			params.add(city_e);
-			logger.error("Í£³µ±¦ÅÅĞĞ°ñÖÜ½±");
+			logger.error("åœè½¦å®æ’è¡Œæ¦œå‘¨å¥–");
 			Map<String, Object> map = pgOnlyReadService
 					.getMap("select sum(amount) plala from park_account_tb where type=? and remark like ? and create_time between ? and ? ",//and comid in (select id from com_info_tb where city between ? and ?) ",
 							params);
 			Double plala = StringUtils.formatDouble(map.get("plala"));
-			//ÊÕ·ÑÔ±À­À­½±
+			//æ”¶è´¹å‘˜æ‹‰æ‹‰å¥–
 			params.clear();
 			params.add(0);
-			params.add("%Í£³µ±¦ÅÅĞĞ°ñÖÜ½±%");
+			params.add("%åœè½¦å®æ’è¡Œæ¦œå‘¨å¥–%");
 			params.add(b);
 			params.add(e);
 //			params.add(city_b);
 //			params.add(city_e);
-			logger.error("ÊÕ·ÑÔ±À­À­½±");
+			logger.error("æ”¶è´¹å‘˜æ‹‰æ‹‰å¥–");
 			Map<String, Object> map1 = pgOnlyReadService
 					.getMap("select sum(p.amount) ulala from parkuser_account_tb p,user_info_tb u where p.uin=u.id and p.type=? and p.remark like ? and p.create_time between ? and ? ",//and u.comid in (select id from com_info_tb where city between ? and ?) ",
 							params);
 			Double ulala = StringUtils.formatDouble(map1.get("ulala"));
-			//À­À­½±¶î¶È
+			//æ‹‰æ‹‰å¥–é¢åº¦
 			Double lala = plala + ulala;
-			//ÊÖ»úÖ§¸¶Í£³µ·Ñ
+			//æ‰‹æœºæ”¯ä»˜åœè½¦è´¹
 			params.clear();
 			params.add(4);
 			params.add(1);
@@ -308,12 +308,12 @@ public class AllowanceAnlysisAction extends Action {
 			params.add(e);
 //			params.add(city_b);
 //			params.add(city_e);
-			logger.error("ÊÖ»úÖ§¸¶Í£³µ·Ñ");
+			logger.error("æ‰‹æœºæ”¯ä»˜åœè½¦è´¹");
 			Map<String, Object> map2 = pgOnlyReadService
 					.getMap("select sum(total) mtotal from order_tb where c_type!=? and total>=? and state=? and pay_type=? and end_time between ? and ? ",//and comid in (select id from com_info_tb where city between ? and ?) ",
 							params);
 			Double mtotal = StringUtils.formatDouble(map2.get("mtotal"));
-			//Ö±¸¶Í£³µ·Ñ
+			//ç›´ä»˜åœè½¦è´¹
 			params.clear();
 			params.add(0);
 			params.add(1);
@@ -321,15 +321,15 @@ public class AllowanceAnlysisAction extends Action {
 			params.add(e);
 //			params.add(city_b);
 //			params.add(city_e);
-			logger.error("Ö±¸¶Í£³µ·Ñ");
+			logger.error("ç›´ä»˜åœè½¦è´¹");
 			Map<String, Object> map3 = pgOnlyReadService
 					.getMap("select sum(a.amount) ztotal from user_account_tb a,user_info_tb u where a.uid=u.id and a.uid>? and a.target=? and a.create_time between ? and ? ",//and u.comid in (select id from com_info_tb where city between ? and ?) ",
 							params);
-			//Ö±¸¶Í£³µ·Ñ
+			//ç›´ä»˜åœè½¦è´¹
 			Double ztotal = StringUtils.formatDouble(map3.get("ztotal"));
-			//ÊµÊÕÍ£³µ·Ñ
+			//å®æ”¶åœè½¦è´¹
 			Double total = mtotal + ztotal;
-			//´ú½ğÈ¯
+			//ä»£é‡‘åˆ¸
 			params.clear();
 			params.add(0);
 			params.add(1);
@@ -337,16 +337,16 @@ public class AllowanceAnlysisAction extends Action {
 			params.add(e);
 //			params.add(city_b);
 //			params.add(city_e);
-			logger.error("´ú½ğÈ¯");
+			logger.error("ä»£é‡‘åˆ¸");
 			List<Map<String, Object>> ticketList = new ArrayList<Map<String,Object>>();
 			ticketList = pgOnlyReadService.getAllMap("select * from ticket_tb where orderid>? and state=? and utime between ? and ? ",//and comid in (select id from com_info_tb where city between ? and ?) ",
 					params);
-			
-			Double normalttotal = 0d;//ÆÕÍ¨È¯²¹Ìù¶î
-			Double specialttotal = 0d;//×¨ÓÃÈ¯²¹Ìù¶î
-			Double buyttotal = 0d;//¹ºÂòÈ¯²¹Ìù¶î
-			Double wx3ttotal = 0d;//ÈıÕÛÈ¯²¹Ìù¶î
-			Double wx5ttotal = 0d;//5ÕÛÈ¯²¹Ìù¶î
+
+			Double normalttotal = 0d;//æ™®é€šåˆ¸è¡¥è´´é¢
+			Double specialttotal = 0d;//ä¸“ç”¨åˆ¸è¡¥è´´é¢
+			Double buyttotal = 0d;//è´­ä¹°åˆ¸è¡¥è´´é¢
+			Double wx3ttotal = 0d;//ä¸‰æŠ˜åˆ¸è¡¥è´´é¢
+			Double wx5ttotal = 0d;//5æŠ˜åˆ¸è¡¥è´´é¢
 			if(ticketList != null && !ticketList.isEmpty()){
 				for(Map<String, Object> map4 : ticketList){
 					Integer type = (Integer)map4.get("type");
@@ -361,10 +361,10 @@ public class AllowanceAnlysisAction extends Action {
 						pmoney = Double.valueOf(map4.get("pmoney") + "");
 					}
 					if(type == 0){
-						if(resources == 0){//ÆÕÍ¨È¯
+						if(resources == 0){//æ™®é€šåˆ¸
 							normalttotal += umoney;
-						}else if(resources == 1){//¹ºÂòÈ¯
-							if(umoney > pmoney){//Êµ¼ÊµÖ¿Û½ğ¶î-×Ô¼º¹ºÂòÖ§¸¶µÄ½ğ¶î
+						}else if(resources == 1){//è´­ä¹°åˆ¸
+							if(umoney > pmoney){//å®é™…æŠµæ‰£é‡‘é¢-è‡ªå·±è´­ä¹°æ”¯ä»˜çš„é‡‘é¢
 								buyttotal += (umoney - pmoney);
 							}
 						}
@@ -379,18 +379,18 @@ public class AllowanceAnlysisAction extends Action {
 					}
 				}
 			}
-			Double rewardttotal = 0d;//´òÉÍ²¹Ìù¶î
+			Double rewardttotal = 0d;//æ‰“èµè¡¥è´´é¢
 			params.clear();
 			params.add(1);
 			params.add(b);
 			params.add(e);
 //			params.add(city_b);
 //			params.add(city_e);
-			logger.error("´òÉÍ²¹Ìù¶î");
+			logger.error("æ‰“èµè¡¥è´´é¢");
 			List<Map<String, Object>> rewordticketList = new ArrayList<Map<String,Object>>();
 			rewordticketList = pgOnlyReadService
-			.getAllMap("select t.* from ticket_tb t,parkuser_reward_tb p where t.id = p.ticket_id and t.state=? and p.ctime between ? and ? ",//and p.comid in (select id from com_info_tb where city between ? and ?) ",
-					params);
+					.getAllMap("select t.* from ticket_tb t,parkuser_reward_tb p where t.id = p.ticket_id and t.state=? and p.ctime between ? and ? ",//and p.comid in (select id from com_info_tb where city between ? and ?) ",
+							params);
 			if(rewordticketList != null && !rewordticketList.isEmpty()){
 				for(Map<String, Object> map4 : rewordticketList){
 					Integer type = (Integer)map4.get("type");
@@ -414,19 +414,19 @@ public class AllowanceAnlysisAction extends Action {
 				}
 			}
 			Double  ttotal = wx3ttotal + wx5ttotal + normalttotal + specialttotal + buyttotal;
-			//³µ³¡²¹Ìù
+			//è½¦åœºè¡¥è´´
 			params.clear();
 			params.add(2);
 			params.add(b);
 			params.add(e);
 //			params.add(city_b);
 //			params.add(city_e);
-			logger.error("³µ³¡²¹Ìù");
+			logger.error("è½¦åœºè¡¥è´´");
 			Map<String, Object> map5 = pgOnlyReadService
 					.getMap("select sum(amount) pb from park_account_tb where type=? and create_time between ? and ? ",//and comid in (select id from com_info_tb where city between ? and ?) ",
 							params);
 			Double pb = StringUtils.formatDouble(map5.get("pb"));
-			//ÊÕ·ÑÔ±²¹Ìù
+			//æ”¶è´¹å‘˜è¡¥è´´
 			params.clear();
 			params.add(0);
 			params.add(3);
@@ -434,24 +434,24 @@ public class AllowanceAnlysisAction extends Action {
 			params.add(e);
 //			params.add(city_b);
 //			params.add(city_e);
-			logger.error("ÊÕ·ÑÔ±²¹Ìù");
+			logger.error("æ”¶è´¹å‘˜è¡¥è´´");
 			Map<String, Object> map6 = pgOnlyReadService
 					.getMap("select sum(p.amount) ub from parkuser_account_tb p,user_info_tb u where p.uin=u.id and p.type=? and p.target=? and p.create_time between ? and ? ",//and u.comid in (select id from com_info_tb where city between ? and ?) ",
 							params);
 			Double ub = StringUtils.formatDouble(map6.get("ub"));
-			//³µ³¡²¹Ìù¶î
+			//è½¦åœºè¡¥è´´é¢
 			Double btotal = pb + ub;
-			//È«²¿½ğ¶î
+			//å…¨éƒ¨é‡‘é¢
 			Double alltotal = lala + total + btotal;
-			//À­À­½±µÄ°Ù·Ö±È
+			//æ‹‰æ‹‰å¥–çš„ç™¾åˆ†æ¯”
 			String lala_percent = String.format("%.2f", StringUtils.formatDouble(StringUtils.formatDouble(lala)/StringUtils.formatDouble(alltotal))*100)+"%";
-			//ÊµÊÕÍ£³µ·Ñ°Ù·Ö±È
+			//å®æ”¶åœè½¦è´¹ç™¾åˆ†æ¯”
 			String parking_percent = String.format("%.2f", StringUtils.formatDouble(StringUtils.formatDouble(total-ttotal)/StringUtils.formatDouble(alltotal))*100)+"%";
-			//Í£³µÈ¯²¹Ìù¶î°Ù·Ö±È
+			//åœè½¦åˆ¸è¡¥è´´é¢ç™¾åˆ†æ¯”
 			String ticket_percent = String.format("%.2f", StringUtils.formatDouble(StringUtils.formatDouble(ttotal)/StringUtils.formatDouble(alltotal))*100)+"%";
-			//³µ³¡²¹Ìù¶î°Ù·Ö±È
+			//è½¦åœºè¡¥è´´é¢ç™¾åˆ†æ¯”
 			String park_percent = String.format("%.2f", StringUtils.formatDouble(StringUtils.formatDouble(btotal)/StringUtils.formatDouble(alltotal))*100)+"%";
-			
+
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			Map<String, Object> newMap = new HashMap<String, Object>();
 //			newMap.put("lala", StringUtils.formatDouble(lala));
@@ -467,18 +467,18 @@ public class AllowanceAnlysisAction extends Action {
 //			newMap.put("buyttotal", StringUtils.formatDouble(buyttotal));
 //			newMap.put("wx3ttotal", StringUtils.formatDouble(wx3ttotal));
 //			newMap.put("wx5ttotal", StringUtils.formatDouble(wx5ttotal));
-//			
+//
 //			newMap.put("rewardttotal", StringUtils.formatDouble(rewardttotal));
 //			newMap.put("id", 0);
-			
+
 			/*
-			 * Ã¿°ëÔÂ¶©µ¥×ÜÁ¿
+			 * æ¯åŠæœˆè®¢å•æ€»é‡
 			 * */
 			Long orderCount = pgOnlyReadService.getLong("select count(id) from order_tb where state=? and pay_type=? and  " +
 					"create_time between ? and ? ", new Object[]{1,2,b,e});
 			newMap.put("ordercount", orderCount);
-			newMap.put("rate", StringUtils.formatDouble(StringUtils.formatDouble(ttotal)+StringUtils.formatDouble(btotal))/orderCount+" Ôª/µ¥");
-			newMap.put("date", btime+"ÖÁ"+etime);
+			newMap.put("rate", StringUtils.formatDouble(StringUtils.formatDouble(ttotal)+StringUtils.formatDouble(btotal))/orderCount+" å…ƒ/å•");
+			newMap.put("date", btime+"è‡³"+etime);
 			list.add(newMap);
 			int count = list!=null?list.size():0;
 			//String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"id");
@@ -487,7 +487,7 @@ public class AllowanceAnlysisAction extends Action {
 		}
 		return null;
 	}
-	
+
 	private double getWxAllowance(List<Map<String, Object>> orderList){
 		double allowance = 0d;
 		DecimalFormat dFormat = new DecimalFormat("#.00");

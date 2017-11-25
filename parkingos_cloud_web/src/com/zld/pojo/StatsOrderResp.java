@@ -18,5 +18,5 @@ public class StatsOrderResp extends BaseResp implements Serializable {
 	public String toString() {
 		return "StatsOrderResp [orders=" + orders + "]";
 	}
-	
+
 }

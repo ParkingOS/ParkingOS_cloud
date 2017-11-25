@@ -12,9 +12,9 @@ import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 
 
-/**mongodb≈‰÷√**/
+/**mongodbÈÖçÁΩÆ**/
 public class MongoDBFactory {
-	
+
 	//private Logger logger = Logger.getLogger(MongoClientFactory.class);
 
 	private HashMap<String, DB> mongodbmap = new HashMap<String, DB>();
@@ -43,7 +43,7 @@ public class MongoDBFactory {
 			System.out.println("oldmongodb init over...");
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
-		} 
+		}
 	}
 
 	public DB getMongoDBBuilder(String dbName) {
