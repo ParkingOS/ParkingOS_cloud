@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.3
--- Dumped by pg_dump version 9.6.3
+-- Dumped from database version 9.6.2
+-- Dumped by pg_dump version 9.6.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1027,6 +1027,22 @@ $$;
 ALTER FUNCTION public.trigger_fct_com_worksite_tb_trigger() OWNER TO postgres;
 
 --
+-- Name: trigger_fct_confirm_order_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION trigger_fct_confirm_order_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$BEGIN
+  if new.id is NULL then
+New.id:=nextval('seq_confirm_order_tb');
+end if;
+Return NEW;
+  END;$$;
+
+
+ALTER FUNCTION public.trigger_fct_confirm_order_trigger() OWNER TO postgres;
+
+--
 -- Name: trigger_fct_consume_anlysis_tb_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -1547,6 +1563,22 @@ $$;
 
 
 ALTER FUNCTION public.trigger_fct_money_set_tb_trigger() OWNER TO postgres;
+
+--
+-- Name: trigger_fct_monitor_tb_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION trigger_fct_monitor_tb_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$BEGIN
+  if new.id is NULL then
+New.id:=nextval('seq_monitor_info_tb');
+end if;
+Return NEW;
+  END;$$;
+
+
+ALTER FUNCTION public.trigger_fct_monitor_tb_trigger() OWNER TO postgres;
 
 --
 -- Name: trigger_fct_no_payment_tb_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
@@ -2125,6 +2157,22 @@ $$;
 ALTER FUNCTION public.trigger_fct_peakalert_anlysis_tb_trigger() OWNER TO postgres;
 
 --
+-- Name: trigger_fct_phone_tb_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION trigger_fct_phone_tb_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$BEGIN
+  if new.id is NULL then
+New.id:=nextval('seq_phone_info_tb');
+end if;
+Return NEW;
+  END;$$;
+
+
+ALTER FUNCTION public.trigger_fct_phone_tb_trigger() OWNER TO postgres;
+
+--
 -- Name: trigger_fct_price_assist_tb_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -2553,6 +2601,22 @@ $$;
 
 
 ALTER FUNCTION public.trigger_fct_sync_info_pool_tb_trigger() OWNER TO postgres;
+
+--
+-- Name: trigger_fct_thirdpay_order_tb_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION trigger_fct_thirdpay_order_tb_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$BEGIN
+  if new.id is NULL then
+New.id:=nextval('seq_thirdpay_order_tb');
+end if;
+Return NEW;
+  END;$$;
+
+
+ALTER FUNCTION public.trigger_fct_thirdpay_order_tb_trigger() OWNER TO postgres;
 
 --
 -- Name: trigger_fct_ticket_tb_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
@@ -3812,7 +3876,8 @@ CREATE TABLE bolink_order_tb (
     pay_union_id bigint DEFAULT '-1'::integer,
     prepay numeric(10,2) DEFAULT 0,
     park_id character varying,
-    duration integer
+    duration integer,
+    prepay_time bigint
 );
 
 
@@ -4309,9 +4374,9 @@ CREATE TABLE car_type_tb (
     comid bigint,
     sort integer DEFAULT 0,
     cartype_id character varying,
+    is_delete integer DEFAULT 0,
     create_time bigint,
-    update_time bigint,
-    is_delete integer DEFAULT 0
+    update_time bigint
 );
 
 
@@ -4346,10 +4411,17 @@ COMMENT ON COLUMN car_type_tb.cartype_id IS '第三方车型编号';
 
 
 --
+-- Name: COLUMN car_type_tb.is_delete; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN car_type_tb.is_delete IS '是否删除 0否1是';
+
+
+--
 -- Name: COLUMN car_type_tb.create_time; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN car_type_tb.create_time IS ' 新建时间';
+COMMENT ON COLUMN car_type_tb.create_time IS '新建时间';
 
 
 --
@@ -4357,13 +4429,6 @@ COMMENT ON COLUMN car_type_tb.create_time IS ' 新建时间';
 --
 
 COMMENT ON COLUMN car_type_tb.update_time IS '更新时间';
-
-
---
--- Name: COLUMN car_type_tb.is_delete; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN car_type_tb.is_delete IS '是否删除 0否1是';
 
 
 --
@@ -4668,7 +4733,8 @@ CREATE TABLE card_renew_tb (
     buy_month integer,
     comid character varying,
     create_time integer,
-    update_time integer
+    update_time integer,
+    limit_time bigint
 );
 
 
@@ -4780,6 +4846,14 @@ COMMENT ON COLUMN card_renew_tb.update_time IS '月卡续费修改时间';
 
 
 --
+-- Name: COLUMN card_renew_tb.limit_time; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN card_renew_tb.limit_time IS '到期时间
+';
+
+
+--
 -- Name: carower_product; Type: TABLE; Schema: public; Owner: tracqdev
 --
 
@@ -4806,7 +4880,7 @@ CREATE TABLE carower_product (
     is_delete bigint DEFAULT 0,
     tel character varying,
     car_type_id bigint,
-    limit_day_type integer,
+    limit_day_type integer DEFAULT 0,
     price_info character varying
 );
 
@@ -4887,7 +4961,7 @@ COMMENT ON COLUMN carower_product.member_id IS '车主在收费系统编号';
 -- Name: COLUMN carower_product.car_number; Type: COMMENT; Schema: public; Owner: tracqdev
 --
 
-COMMENT ON COLUMN carower_product.car_number IS '车牌，多个车牌，用”|”英文分隔';
+COMMENT ON COLUMN carower_product.car_number IS '车牌，多个车牌，用”,”英文分隔';
 
 
 --
@@ -4908,7 +4982,7 @@ COMMENT ON COLUMN carower_product.mobile IS '手机号';
 -- Name: COLUMN carower_product.is_delete; Type: COMMENT; Schema: public; Owner: tracqdev
 --
 
-COMMENT ON COLUMN carower_product.is_delete IS '是否删除 0否 1是';
+COMMENT ON COLUMN carower_product.is_delete IS '记录云端月卡会员是否被删除';
 
 
 --
@@ -4971,7 +5045,9 @@ CREATE TABLE carpic_tb (
     liftrod_id character varying,
     park_order_type character varying,
     liftpic_table_name character varying,
-    carpic_table_name character varying
+    carpic_table_name character varying,
+    event_id character varying,
+    confirmpic_table_name character varying
 );
 
 
@@ -5065,14 +5141,28 @@ COMMENT ON COLUMN carpic_tb.park_order_type IS '车场订单图片对应的类�
 -- Name: COLUMN carpic_tb.liftpic_table_name; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN carpic_tb.liftpic_table_name IS '记录抬杆记录图片在mongodb中存储的表名';
+COMMENT ON COLUMN carpic_tb.liftpic_table_name IS '记录云端存储的抬杆图片表名位置';
 
 
 --
 -- Name: COLUMN carpic_tb.carpic_table_name; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN carpic_tb.carpic_table_name IS '记录订单上传时出入场图片存储在mongodb中对应的表名';
+COMMENT ON COLUMN carpic_tb.carpic_table_name IS '记录车辆出入场图片在云端存储的表名';
+
+
+--
+-- Name: COLUMN carpic_tb.event_id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN carpic_tb.event_id IS '手动匹配订单事件编号';
+
+
+--
+-- Name: COLUMN carpic_tb.confirmpic_table_name; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN carpic_tb.confirmpic_table_name IS '记录云端存储的人工确认订单车牌图片表名位置';
 
 
 --
@@ -7448,7 +7538,7 @@ COMMENT ON COLUMN com_parkstatus_tb.cityid IS '城市商户号';
 
 CREATE TABLE com_pass_tb (
     id bigint NOT NULL,
-    worksite_id bigint NOT NULL,
+    worksite_id bigint DEFAULT '-1'::integer NOT NULL,
     passname character varying(100),
     passtype character varying(20),
     description character varying(100),
@@ -7714,6 +7804,59 @@ COMMENT ON COLUMN com_worksite_tb.net_type IS '工作站网络环境，0：流�
 --
 
 COMMENT ON COLUMN com_worksite_tb.state IS '状态 0：正常 1：禁用';
+
+
+--
+-- Name: confirm_order_tb; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE confirm_order_tb (
+    id integer NOT NULL,
+    event_id character varying,
+    car_number character varying,
+    upload_time bigint,
+    channel_id character varying,
+    state integer DEFAULT 0,
+    comid character varying,
+    groupid character varying
+);
+
+
+ALTER TABLE confirm_order_tb OWNER TO postgres;
+
+--
+-- Name: COLUMN confirm_order_tb.event_id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN confirm_order_tb.event_id IS '事件编号(在收费系统事件编号唯一，不可重复)';
+
+
+--
+-- Name: COLUMN confirm_order_tb.car_number; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN confirm_order_tb.car_number IS '车牌号码';
+
+
+--
+-- Name: COLUMN confirm_order_tb.channel_id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN confirm_order_tb.channel_id IS '通道编号';
+
+
+--
+-- Name: COLUMN confirm_order_tb.state; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN confirm_order_tb.state IS '状态 0-待处理 1-已处理';
+
+
+--
+-- Name: COLUMN confirm_order_tb.comid; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN confirm_order_tb.comid IS '车场编号';
 
 
 --
@@ -8280,7 +8423,7 @@ CREATE TABLE order_tb (
     create_time bigint,
     comid bigint NOT NULL,
     uin bigint NOT NULL,
-    total numeric(30,2),
+    total numeric(30,2) DEFAULT 0.0,
     state integer DEFAULT 0,
     end_time bigint,
     auto_pay integer DEFAULT 0,
@@ -8311,12 +8454,12 @@ CREATE TABLE order_tb (
     lock_key character varying,
     in_passid character varying,
     out_passid character varying,
-    amount_receivable numeric(10,2),
-    electronic_prepay numeric(10,2),
-    electronic_pay numeric(10,2),
-    cash_prepay numeric(10,2),
-    cash_pay numeric(10,2),
-    reduce_amount numeric(10,2),
+    amount_receivable numeric(10,2) DEFAULT 0.0,
+    electronic_prepay numeric(10,2) DEFAULT 0.0,
+    electronic_pay numeric(10,2) DEFAULT 0.0,
+    cash_prepay numeric(10,2) DEFAULT 0.0,
+    cash_pay numeric(10,2) DEFAULT 0.0,
+    reduce_amount numeric(10,2) DEFAULT 0.0,
     c_type character varying,
     car_type character varying,
     freereasons character varying,
@@ -8610,7 +8753,7 @@ CREATE TABLE user_info_tb (
     nickname character varying(50),
     password character varying(100),
     strid character varying(64),
-    sex bigint,
+    sex bigint DEFAULT 1,
     email character varying(60),
     phone character varying(40),
     mobile character varying(20),
@@ -8909,13 +9052,6 @@ COMMENT ON COLUMN user_info_tb.operate_type IS '记录操作类型1：添加，2
 --
 
 COMMENT ON COLUMN user_info_tb.is_sync IS '是否已同步，0：未同步，1已同步';
-
-
---
--- Name: COLUMN user_info_tb.user_id; Type: COMMENT; Schema: public; Owner: tracqdev
---
-
-COMMENT ON COLUMN user_info_tb.user_id IS '收费员编号';
 
 
 --
@@ -10532,6 +10668,68 @@ COMMENT ON COLUMN money_set_tb.mtype IS ' 0:停车费,1:预订费,2:停车宝返
 --
 
 COMMENT ON COLUMN money_set_tb.giveto IS '0:公司账户，1：个人账户 ，2：运营集团账户';
+
+
+--
+-- Name: monitor_info_tb; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE monitor_info_tb (
+    id bigint NOT NULL,
+    net_status integer,
+    is_show integer DEFAULT 1,
+    show_order integer,
+    play_src character varying,
+    comid character varying,
+    groupid character varying,
+    channel_id bigint,
+    name character varying,
+    state integer DEFAULT 1
+);
+
+
+ALTER TABLE monitor_info_tb OWNER TO postgres;
+
+--
+-- Name: COLUMN monitor_info_tb.net_status; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN monitor_info_tb.net_status IS '网络状态 1 正常 0 异常';
+
+
+--
+-- Name: COLUMN monitor_info_tb.is_show; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN monitor_info_tb.is_show IS '是否显示 0-隐藏 1-显示';
+
+
+--
+-- Name: COLUMN monitor_info_tb.show_order; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN monitor_info_tb.show_order IS '显示顺序（排序）';
+
+
+--
+-- Name: COLUMN monitor_info_tb.play_src; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN monitor_info_tb.play_src IS '播放地址';
+
+
+--
+-- Name: COLUMN monitor_info_tb.comid; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN monitor_info_tb.comid IS '车场编号';
+
+
+--
+-- Name: COLUMN monitor_info_tb.state; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN monitor_info_tb.state IS '状态 1-正常 0-删除';
 
 
 --
@@ -12323,6 +12521,98 @@ COMMENT ON COLUMN peakalert_anlysis_tb.berths IS '车位总数';
 
 
 --
+-- Name: phone_info_tb; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE phone_info_tb (
+    id bigint NOT NULL,
+    name character varying,
+    tele_phone bigint,
+    comid character varying,
+    park_phone bigint,
+    group_phone bigint,
+    monitor_id bigint,
+    groupid character varying,
+    is_call integer,
+    call_time bigint,
+    main_phone_type integer,
+    state integer DEFAULT 1
+);
+
+
+ALTER TABLE phone_info_tb OWNER TO postgres;
+
+--
+-- Name: COLUMN phone_info_tb.name; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN phone_info_tb.name IS '名称';
+
+
+--
+-- Name: COLUMN phone_info_tb.tele_phone; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN phone_info_tb.tele_phone IS '分机号';
+
+
+--
+-- Name: COLUMN phone_info_tb.comid; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN phone_info_tb.comid IS '所属车场';
+
+
+--
+-- Name: COLUMN phone_info_tb.park_phone; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN phone_info_tb.park_phone IS '车场主机号';
+
+
+--
+-- Name: COLUMN phone_info_tb.group_phone; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN phone_info_tb.group_phone IS '集团主机号';
+
+
+--
+-- Name: COLUMN phone_info_tb.monitor_id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN phone_info_tb.monitor_id IS '监控id';
+
+
+--
+-- Name: COLUMN phone_info_tb.is_call; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN phone_info_tb.is_call IS '是否有分机呼叫进来 1-是(需要切换到当前视频) 0-否/处理完毕';
+
+
+--
+-- Name: COLUMN phone_info_tb.call_time; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN phone_info_tb.call_time IS '分机呼叫时间';
+
+
+--
+-- Name: COLUMN phone_info_tb.main_phone_type; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN phone_info_tb.main_phone_type IS '呼叫主机性质 1-集团 0-车场';
+
+
+--
+-- Name: COLUMN phone_info_tb.state; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN phone_info_tb.state IS '状态 1-正常 0-删除';
+
+
+--
 -- Name: price_assist_tb; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -12382,7 +12672,7 @@ CREATE TABLE price_tb (
     price_id character varying,
     car_type_zh character varying,
     describe character varying,
-    operate_type integer,
+    operate_type integer DEFAULT 0,
     is_sync integer DEFAULT 0 NOT NULL,
     is_delete bigint DEFAULT 0
 );
@@ -12575,8 +12865,8 @@ CREATE TABLE product_package_tb (
     operate_type integer,
     is_sync integer,
     is_delete bigint DEFAULT 0,
-    car_type_id bigint,
-    period character varying
+    period character varying,
+    car_type_id character varying
 );
 
 
@@ -12685,14 +12975,7 @@ COMMENT ON COLUMN product_package_tb.is_sync IS '记录月卡套餐信息是否�
 -- Name: COLUMN product_package_tb.is_delete; Type: COMMENT; Schema: public; Owner: tracqdev
 --
 
-COMMENT ON COLUMN product_package_tb.is_delete IS '记录月卡套餐是否被删除';
-
-
---
--- Name: COLUMN product_package_tb.car_type_id; Type: COMMENT; Schema: public; Owner: tracqdev
---
-
-COMMENT ON COLUMN product_package_tb.car_type_id IS ' car_type_tb 表ID';
+COMMENT ON COLUMN product_package_tb.is_delete IS '记录云端月卡套餐是否被删除';
 
 
 --
@@ -12700,6 +12983,13 @@ COMMENT ON COLUMN product_package_tb.car_type_id IS ' car_type_tb 表ID';
 --
 
 COMMENT ON COLUMN product_package_tb.period IS '缴费周期 月，季，半年，年';
+
+
+--
+-- Name: COLUMN product_package_tb.car_type_id; Type: COMMENT; Schema: public; Owner: tracqdev
+--
+
+COMMENT ON COLUMN product_package_tb.car_type_id IS '车型表ID';
 
 
 --
@@ -13958,6 +14248,20 @@ CREATE SEQUENCE seq_com_worksite_tb
 ALTER TABLE seq_com_worksite_tb OWNER TO postgres;
 
 --
+-- Name: seq_confirm_order_tb; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE seq_confirm_order_tb
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE seq_confirm_order_tb OWNER TO postgres;
+
+--
 -- Name: seq_consume_anlysis_tb; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -14362,6 +14666,20 @@ CREATE SEQUENCE seq_money_set_tb
 
 
 ALTER TABLE seq_money_set_tb OWNER TO postgres;
+
+--
+-- Name: seq_monitor_info_tb; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE seq_monitor_info_tb
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE seq_monitor_info_tb OWNER TO postgres;
 
 --
 -- Name: seq_no_payment_tb; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -14770,6 +15088,20 @@ CREATE SEQUENCE seq_peakalert_anlysis_tb
 ALTER TABLE seq_peakalert_anlysis_tb OWNER TO postgres;
 
 --
+-- Name: seq_phone_info_tb; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE seq_phone_info_tb
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE seq_phone_info_tb OWNER TO postgres;
+
+--
 -- Name: seq_price_assist_tb; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -14984,7 +15316,7 @@ ALTER TABLE seq_share_log_tb OWNER TO postgres;
 --
 
 CREATE SEQUENCE seq_shop_account_tb
-    START WITH 1
+    START WITH 188
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -15104,6 +15436,20 @@ CREATE SEQUENCE seq_sync_info_pool_tb
 
 
 ALTER TABLE seq_sync_info_pool_tb OWNER TO postgres;
+
+--
+-- Name: seq_thirdpay_order_tb; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE seq_thirdpay_order_tb
+    START WITH 4390
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE seq_thirdpay_order_tb OWNER TO postgres;
 
 --
 -- Name: seq_ticket_tb; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -15723,7 +16069,9 @@ CREATE TABLE shop_tb (
     default_limit character varying(255),
     discount_percent numeric(10,2),
     discount_money numeric(10,2),
-    validite_time integer DEFAULT 24
+    validite_time integer DEFAULT 24,
+    ticket_unit integer,
+    free_money numeric(10,2)
 );
 
 
@@ -15825,6 +16173,20 @@ COMMENT ON COLUMN shop_tb.discount_money IS '商户折扣每小时/元';
 --
 
 COMMENT ON COLUMN shop_tb.validite_time IS '有效期/小时';
+
+
+--
+-- Name: COLUMN shop_tb.ticket_unit; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN shop_tb.ticket_unit IS '减免劵单位 1-分钟 2-小时 3-天 4-元';
+
+
+--
+-- Name: COLUMN shop_tb.free_money; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN shop_tb.free_money IS '全免劵单价 每张/元';
 
 
 --
@@ -16245,6 +16607,19 @@ COMMENT ON COLUMN sync_info_pool_tb.operate IS '0添加 1修改2删除';
 
 COMMENT ON COLUMN sync_info_pool_tb.state IS '同步状态  0 未同步 1已同步';
 
+
+--
+-- Name: thirdpay_order_tb; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE thirdpay_order_tb (
+    out_trade_no character varying(100),
+    id integer NOT NULL,
+    order_id_local character varying(255)
+);
+
+
+ALTER TABLE thirdpay_order_tb OWNER TO postgres;
 
 --
 -- Name: ticket_tb; Type: TABLE; Schema: public; Owner: postgres
@@ -17858,7 +18233,7 @@ CREATE TABLE wxp_user_tb (
     create_time bigint,
     uin bigint,
     balance numeric(10,2) DEFAULT 0,
-    car_number character varying(10),
+    car_number character varying(50),
     union_state integer DEFAULT 0
 );
 
@@ -17917,7 +18292,7 @@ CREATE TABLE zld_black_tb (
     utime bigint,
     uin bigint,
     state integer,
-    remark character(200),
+    remark character varying,
     comid bigint DEFAULT '-1'::integer,
     car_number character varying,
     black_uuid character varying,
@@ -18187,10 +18562,6 @@ COMMENT ON COLUMN zld_protocol_tb.agree IS '是否同意 0不同意，1同意';
 --
 
 COPY advert_tb (id, aname, aurl, ctime, open, hits, appurl, tname) FROM stdin;
-4	车易拍	http://trac.imarvelous.cn/v1/tracking/ex?_e=&_u=666319&_a=666319&_k=28261926695&_r=http%3A%2F%2Fy.cheyipai.com%2Flanding%2Fpromise.html&_s=1&_d=mobile	1446480000	4845	133	http://trac.imarvelous.cn/v1/tracking/ex?_e=&_u=666319&_a=666319&_k=28261926695&_r=http%3A%2F%2Fy.cheyipai.com%2Flanding%2Fpromise.html&_s=1&_d=mobile	车易拍
-3	1818投资	http://mp.weixin.qq.com/s?__biz=MjM5MjgxOTY4OA==&mid=208360229&idx=1&sn=df9c59a4d36233c65f5fef2baf373141&scene=0#rd	1438876800	80235	2159	https://www.18link.com/personal/dspSource?platform=2&activities=19&dsp=8	投资礼券
-2	人人车	http://app.renrenche.com/channel/590	1438876800	79434	1120	http://m.renrenche.com/?fr=tingchebao	“神秘”
-1	优乐养车	http://api.youleyangche.com/v2/Cooperation/tingCheBao	1438876800	131684	1828	http://a.app.qq.com/o/simple.jsp?pkgname=com.youlemobi.customer	洗车礼券
 \.
 
 
@@ -18223,6 +18594,121 @@ COPY auth_role_tb (id, auth_id, role_id, sub_auth, creator_id) FROM stdin;
 7012	79	27	0,1,2,3,4	\N
 7013	74	27	0,1,2,3	\N
 7014	75	27	\N	\N
+31356	69	30	\N	\N
+31357	2	30	\N	\N
+31358	71	30	\N	\N
+31359	7	30	\N	\N
+31360	11	30	\N	\N
+31361	12	30	\N	\N
+31362	72	30	0,1,2,3	\N
+31363	17	30	0,1,2,3	\N
+31364	16	30	\N	\N
+31365	84	30	0,1	\N
+31366	259	30	0,1,2,3,4	\N
+31367	18	30	0,1,2,3,4	\N
+31368	21	30	\N	\N
+31369	80	30	0,1	\N
+30026	69	622	\N	\N
+30027	2	622	\N	\N
+30028	71	622	0,1,2,3,4	\N
+30029	7	622	\N	\N
+30030	8	622	\N	\N
+30031	10	622	0	\N
+30032	11	622	\N	\N
+30033	12	622	\N	\N
+30034	72	622	0,1,2,3	\N
+30035	17	622	0,1,2,3	\N
+30036	16	622	\N	\N
+30037	84	622	0,1	\N
+30038	259	622	0,1,2,3,4	\N
+30039	19	622	0,1,2,3,4	\N
+30040	18	622	0,1,2,3,4	\N
+30041	80	622	0,1	\N
+30042	20	622	0,1,2,3	\N
+30043	83	622	0,1,2	\N
+30044	260	622	0,1,2,3	\N
+30045	25	622	0,1,2	\N
+30046	24	622	\N	\N
+30047	27	622	0,1,2,3,4,5,6,259,260	\N
+30048	26	622	0,1	\N
+30049	29	622	0,1,2,3	\N
+30050	28	622	0,1,2,3,4	\N
+30051	297	622	0,1	\N
+30052	298	622	0,1	\N
+31370	83	30	0,1	\N
+31371	23	30	0,1,2,3,4,5	\N
+31372	22	30	0,1,2,3,4	\N
+31373	25	30	0,1,2	\N
+31374	24	30	\N	\N
+31375	27	30	0,1,2,3,4,259	\N
+31376	26	30	0,1	\N
+31377	29	30	0,1,2,3	\N
+31378	28	30	0,1,2,3,4	\N
+31379	306	30	0,1,2	\N
+31380	311	30	0	\N
+31381	310	30	0,1,2,3	\N
+31382	313	30	0,1,2,3,4	\N
+31383	312	30	0,1	\N
+31384	297	30	0,1	\N
+31385	298	30	0,1,2,3,4,5,6	\N
+31386	299	30	0,1,2,3,4,5	\N
+31387	300	30	0	\N
+31388	302	30	0	\N
+31634	139	29	0	\N
+31635	138	29	0,1	\N
+31636	140	29	0,1	\N
+30699	71	628	\N	\N
+30700	21	628	\N	\N
+30701	23	628	0,1,2,4,5	\N
+30702	299	628	0,1,2,3,4	\N
+30703	300	628	0	\N
+31637	129	29	130,131,132	\N
+31638	197	29	0,1,2,3	\N
+31639	128	29	133,134	\N
+31640	281	29	0	\N
+31641	131	29	0,1,2,3,4	\N
+31642	130	29	0,1	\N
+31643	198	29	0,1,2,3	\N
+31644	133	29	0,1,2,3,4	\N
+31645	132	29	0,1,2,3	\N
+31646	195	29	197,198	\N
+31647	135	29	0,1,2,3,4	\N
+31648	134	29	0,1,2,3,4	\N
+31649	257	29	0	\N
+31650	145	29	0	\N
+31651	147	29	0,1,2,3,4	\N
+31652	149	29	0,1	\N
+31653	171	29	180,257,281	\N
+31654	304	29	0,1	\N
+31655	173	29	304	\N
+31656	172	29	255,293	\N
+31657	119	29	\N	\N
+31658	255	29	0	\N
+31659	293	29	0	\N
+31660	294	29	295,296	\N
+31661	295	29	0	\N
+31662	296	29	0	\N
+31663	127	29	\N	\N
+31664	123	29	\N	\N
+31665	122	29	\N	\N
+31666	180	29	0	\N
+31667	120	29	\N	\N
+31668	303	29	0,1	\N
+31341	2	631	\N	\N
+31342	71	631	\N	\N
+31343	311	631	0	\N
+31344	11	631	\N	\N
+31345	12	631	\N	\N
+31346	84	631	0,1	\N
+31347	21	631	\N	\N
+31348	83	631	0,1	\N
+31349	23	631	0,1,2,3,4,5	\N
+31350	22	631	0,1,2,3,4	\N
+31351	25	631	0,1,2	\N
+31352	24	631	\N	\N
+31353	299	631	0,1,2,3,4,5	\N
+31354	300	631	0	\N
+31355	302	631	0	\N
 29517	69	621	\N	\N
 29518	2	621	\N	\N
 29519	70	621	\N	\N
@@ -18259,255 +18745,160 @@ COPY auth_role_tb (id, auth_id, role_id, sub_auth, creator_id) FROM stdin;
 29550	28	621	0,1,2,3,4	\N
 29551	297	621	0,1	\N
 29552	298	621	0,1	\N
-30659	137	29	0,1,2,3,4,5,6	\N
-30660	136	29	0,1,2,3,4,5	\N
-30661	139	29	0,1	\N
-30662	138	29	0,1	\N
-30663	141	29	0	\N
-30664	140	29	0,1	\N
-30665	129	29	130,131,132	\N
-30666	128	29	133,134	\N
-30667	281	29	0	\N
-30668	131	29	0,1,2,3,4	\N
-30669	130	29	0,1	\N
-30670	133	29	0,1,2,3,4	\N
-30671	132	29	0,1,2,3	\N
-30672	135	29	0,1,2,3,4	\N
-30673	134	29	0,1,2,3,4	\N
-30674	257	29	0	\N
-30675	155	29	0	\N
-30676	156	29	0	\N
-30677	157	29	0	\N
-30678	266	29	0	\N
-30679	145	29	0	\N
-30680	146	29	0,1	\N
-30681	265	29	0	\N
-30682	147	29	0,1,2,3,4	\N
-30683	270	29	0	\N
-30684	148	29	0,1	\N
-30685	149	29	0,1	\N
-30686	150	29	0,1	\N
-30687	151	29	155,156,157	\N
-30688	171	29	180,181,257,281	\N
-30689	170	29	179	\N
-30690	175	29	187	\N
-30691	173	29	183	\N
-30692	172	29	182,250,255,265,266,293	\N
-30193	71	622	\N	\N
-30194	299	622	5	\N
-30201	84	623	0,1	\N
-30202	2	623	\N	\N
-30203	83	623	0,1,2	\N
-30693	187	29	0	\N
-30694	289	29	0	\N
-30695	293	29	0	\N
-30696	294	29	295,296	\N
-30697	295	29	0	\N
-30698	296	29	0	\N
-30699	179	29	0,1	\N
-30700	176	29	177	\N
-30701	177	29	0	\N
-30702	182	29	0	\N
-30703	183	29	0	\N
-30704	180	29	0	\N
-30705	181	29	0	\N
-30706	205	29	0,1	\N
-30707	204	29	0,1,2,3,4	\N
-30708	206	29	0	\N
-30709	201	29	0,1,2,3	\N
-30710	200	29	0,1,2,3	\N
-30711	203	29	0,1,2,3	\N
-30712	202	29	0,1,2,3	\N
-30713	197	29	0,1,2,3	\N
-30714	196	29	0,1,2	\N
-30715	199	29	0,1,2,3,4	\N
-30716	198	29	0,1,2,3	\N
-30717	193	29	202,203	\N
-30718	195	29	196,197,198,199,200,201	\N
-30719	194	29	204,205,206,270,289	\N
-30720	119	29	\N	\N
-30721	255	29	0	\N
-30722	250	29	0	\N
-30270	1	0	0,1,2,3,4,5,6,7	\N
-30271	267	0	0,1,2,3	\N
-30272	31	0	0,1,2,3	\N
-30273	34	0	0,1,2	\N
-30274	35	0	0,1,2,3	\N
-30275	32	0	0,1,2	\N
-30276	33	0	0,1,2,3,4,5,6	\N
-30277	38	0	\N	\N
-30278	39	0	\N	\N
-30279	36	0	\N	\N
-30280	37	0	0,1	\N
-30281	42	0	\N	\N
-30282	43	0	\N	\N
-30283	40	0	\N	\N
-30284	41	0	\N	\N
-30285	46	0	\N	\N
-30286	47	0	\N	\N
-30287	44	0	\N	\N
-30288	45	0	\N	\N
-30289	51	0	\N	\N
-30290	50	0	\N	\N
-30291	49	0	\N	\N
-30292	48	0	\N	\N
-30293	54	0	0,1,2,3,4	\N
-30294	53	0	89,90,118	\N
-30295	52	0	0,1,2,3,4	\N
-30296	59	0	0,1,2,3,4	\N
-30297	58	0	\N	\N
-30298	57	0	0,1,2,3	\N
-30299	56	0	\N	\N
-30300	63	0	0,1,2	\N
-30301	61	0	0,1,2,3,4,5	\N
-30302	60	0	0,1,2,3	\N
-30303	64	0	0,1,2,3,4,5	\N
-30304	65	0	\N	\N
-30305	66	0	\N	\N
-30306	67	0	0,1,2	\N
-30307	93	0	0	\N
-30308	92	0	93,94,95,96	\N
-30309	95	0	0	\N
-30310	94	0	0	\N
-30311	89	0	0,1,2,3,4	\N
-30312	91	0	0,1,2,3,4	\N
-30313	90	0	0,1,2,3,4	\N
-30314	100	0	0,1	\N
-30315	101	0	0	\N
-30316	98	0	0,1	\N
-30317	99	0	0,1	\N
-30318	96	0	0	\N
-30319	97	0	98,99,100,101	\N
-30320	118	0	0,1,2,3,4	\N
-30321	117	0	\N	\N
-30322	1	624	0,1,2,3,4,5,6,7	\N
-30323	267	624	0,1,2,3	\N
-30324	31	624	0,1,2,3	\N
-30325	34	624	0,1,2	\N
-30326	35	624	0,1,2,3	\N
-30327	32	624	0,1,2	\N
-30328	33	624	0,1,2,3,4,5,6	\N
-30329	38	624	\N	\N
-30330	39	624	\N	\N
-30331	36	624	\N	\N
-30332	37	624	0,1	\N
-30333	42	624	\N	\N
-30334	43	624	\N	\N
-30335	40	624	\N	\N
-30336	41	624	\N	\N
-30337	46	624	\N	\N
-30338	47	624	\N	\N
-30339	44	624	\N	\N
-30340	45	624	\N	\N
-30341	51	624	\N	\N
-30342	50	624	\N	\N
-30343	49	624	\N	\N
-30344	48	624	\N	\N
-30345	54	624	0,1,2,3,4	\N
-30346	53	624	89,90,118	\N
-30347	52	624	0,1,2,3,4	\N
-30348	59	624	0,1,2,3,4	\N
-30349	58	624	\N	\N
-30350	57	624	0,1,2,3	\N
-30351	56	624	\N	\N
-30352	63	624	0,1,2	\N
-30353	61	624	0,1,2,3,4,5	\N
-30354	60	624	0,1,2,3	\N
-30355	64	624	0,1,2,3,4,5	\N
-30356	65	624	\N	\N
-30357	66	624	\N	\N
-30358	67	624	0,1,2	\N
-30359	93	624	0	\N
-30360	92	624	93,94,95,96	\N
-30361	95	624	0	\N
-30362	94	624	0	\N
-30363	89	624	0,1,2,3,4	\N
-30364	91	624	0,1,2,3,4	\N
-30365	90	624	0,1,2,3,4	\N
-30366	100	624	0,1	\N
-30367	101	624	0	\N
-30368	98	624	0,1	\N
-30369	99	624	0,1	\N
-30370	96	624	0	\N
-30371	97	624	98,99,100,101	\N
-30372	118	624	0,1,2,3,4	\N
-30373	117	624	\N	\N
-30723	127	29	\N	\N
-30724	126	29	\N	\N
-30725	125	29	\N	\N
-30726	123	29	\N	\N
-30727	122	29	\N	\N
-30408	69	30	\N	\N
-30409	2	30	\N	\N
-30410	71	30	\N	\N
-30411	7	30	\N	\N
-30412	8	30	\N	\N
-30413	9	30	0,1	\N
-30414	10	30	0	\N
-30415	11	30	\N	\N
-30416	72	30	0,1,2,3	\N
-30417	12	30	\N	\N
-30418	17	30	0,1,2,3	\N
-30419	16	30	\N	\N
-30420	84	30	0,1	\N
-30421	259	30	0,1,2,3,4	\N
-30422	19	30	0,1,2,3,4	\N
-30423	18	30	0,1,2,3,4	\N
-30424	21	30	\N	\N
-30425	80	30	0,1	\N
-30426	20	30	0,1,2,3	\N
-30427	260	30	0,1,2,3	\N
-30428	83	30	0,1,2	\N
-30429	23	30	0,1,2,3,4,5	\N
-30430	22	30	0,1,2,3,4	\N
-30431	25	30	0,1,2	\N
-30432	24	30	\N	\N
-30433	27	30	0,1,2,3,4,259,260	\N
-30434	26	30	0,1	\N
-30435	29	30	0,1,2,3	\N
-30436	28	30	0,1,2,3,4	\N
-30437	297	30	0,1	\N
-30438	298	30	0,1,2,3,4	\N
-30439	299	30	0,1,2,3,4,5	\N
-30440	300	30	0	\N
-30441	302	30	0,1,2,3,4	\N
-30442	303	30	0,1	\N
-30623	283	26	0	\N
-30624	282	26	0	\N
-30625	284	26	0,1	\N
-30626	220	26	225,258,282	\N
-30627	258	26	0	\N
-30628	256	26	0	\N
-30629	222	26	228,256,291	\N
-30630	223	26	224,290	\N
-30631	216	26	217,218	\N
-30632	217	26	0	\N
-30633	218	26	0	\N
-30634	219	26	\N	\N
-30635	212	26	\N	\N
-30636	214	26	0,1,2,3,4	\N
-30637	215	26	0,1	\N
-30638	208	26	0,1	\N
-30639	239	26	245,246	\N
-30640	233	26	0,1,2,3	\N
-30641	232	26	0,1,2,3	\N
-30642	229	26	232,233	\N
-30643	108	26	0,1	\N
-30644	228	26	0	\N
-30645	106	26	0,1	\N
-30646	107	26	\N	\N
-30647	104	26	0,1	\N
-30648	225	26	0	\N
-30649	224	26	0	\N
-30650	105	26	\N	\N
-30651	290	26	0	\N
-30652	291	26	0	\N
-30653	115	26	\N	\N
-30654	114	26	\N	\N
-30655	246	26	0,1,2,3,4	\N
-30656	244	26	0,1,283,284	\N
-30657	245	26	0,1,2,3,4	\N
-30658	243	26	0,1,2,3,4	\N
+17787	1	0	0,1,2,3,4,5,6,7	\N
+17788	267	0	0,1,2,3	\N
+17789	31	0	0,1,2,3	\N
+17790	34	0	0,1,2	\N
+17791	35	0	0,1,2,3	\N
+17792	32	0	0,1,2	\N
+17793	33	0	0,1,2,3,4,5,6	\N
+17794	38	0	\N	\N
+17795	39	0	\N	\N
+17796	36	0	\N	\N
+17797	37	0	0,1	\N
+17798	42	0	\N	\N
+17799	43	0	\N	\N
+17800	40	0	\N	\N
+17801	41	0	\N	\N
+17802	46	0	\N	\N
+17803	47	0	\N	\N
+17804	44	0	\N	\N
+17805	45	0	\N	\N
+17806	51	0	\N	\N
+17807	50	0	\N	\N
+17808	49	0	\N	\N
+17809	48	0	\N	\N
+17810	54	0	0,1,2,3,4	\N
+17811	53	0	89,90,118	\N
+17812	52	0	0,1,2,3,4	\N
+17813	59	0	0,1,2,3,4	\N
+17814	58	0	\N	\N
+17815	57	0	0,1,2,3	\N
+17816	56	0	\N	\N
+17817	63	0	0,1,2	\N
+17818	61	0	0,1,2,3,4,5	\N
+17819	60	0	0,1,2,3	\N
+17820	64	0	0,1,2,3,4,5	\N
+17821	65	0	\N	\N
+17822	66	0	\N	\N
+17823	67	0	0,1,2	\N
+17824	93	0	0	\N
+17825	92	0	93,94,95,96	\N
+17826	95	0	0	\N
+17827	94	0	0	\N
+17828	89	0	0,1,2,3,4	\N
+17829	91	0	0,1,2,3,4	\N
+17830	90	0	0,1,2,3,4	\N
+17831	100	0	0,1	\N
+17832	101	0	0	\N
+17833	98	0	0,1	\N
+17834	99	0	0,1	\N
+17835	96	0	0	\N
+17836	97	0	98,99,100,101	\N
+17837	118	0	0,1,2,3,4	\N
+17838	117	0	\N	\N
+30945	283	26	0	\N
+30946	282	26	0	\N
+30947	284	26	0,1	\N
+30948	220	26	225,258,282	\N
+30949	258	26	0	\N
+30950	223	26	305	\N
+30951	219	26	\N	\N
+30656	220	627	225	\N
+30657	219	627	\N	\N
+30658	208	627	0,1	\N
+30659	106	627	0,1	\N
+30660	209	627	0	\N
+30661	225	627	0	\N
+30662	104	627	0,1	\N
+30663	105	627	\N	\N
+30952	212	26	\N	\N
+30953	214	26	0,1,2,3,4	\N
+30954	215	26	0,1	\N
+30955	208	26	0	\N
+30956	305	26	0,1	\N
+30957	239	26	245,246	\N
+30958	238	26	\N	\N
+30959	309	26	0	\N
+30960	308	26	0,1,2,3	\N
+30961	233	26	0,1,2,3	\N
+30962	232	26	0,1,2,3	\N
+30963	229	26	232,233,308,309	\N
+30964	106	26	0,1	\N
+30965	104	26	0,1	\N
+30966	225	26	0	\N
+30967	105	26	\N	\N
+30968	115	26	\N	\N
+30969	114	26	\N	\N
+30970	248	26	0,1,2,3	\N
+30971	246	26	0,1,2,3,4	\N
+30972	247	26	0,1	\N
+30973	244	26	0,1,283,284	\N
+30974	245	26	0,1,2,3,4	\N
+30975	301	26	0	\N
+30976	243	26	0,1,2,3,4	\N
+30977	240	26	247,248	\N
+30610	69	626	\N	\N
+30611	2	626	\N	\N
+30612	71	626	\N	\N
+30613	7	626	\N	\N
+30614	11	626	\N	\N
+30615	72	626	0,1,2,3	\N
+30616	12	626	\N	\N
+30617	17	626	0,1,2,3	\N
+30618	16	626	\N	\N
+30619	84	626	0,1	\N
+30620	259	626	0,1,2,3,4	\N
+30621	19	626	0,1,2,3,4	\N
+30622	18	626	0,1,2,3,4	\N
+30623	21	626	\N	\N
+30624	80	626	0,1	\N
+30625	20	626	0,1,2,3	\N
+30626	83	626	0,1,2	\N
+30627	23	626	0,1,2,3,4,5	\N
+30628	260	626	0,1,2,3	\N
+30629	22	626	0,1,2,3,4	\N
+30630	25	626	0,1,2	\N
+30631	24	626	\N	\N
+30632	27	626	0,1,2,3,4,5,6,259,260	\N
+30633	26	626	0,1	\N
+30634	29	626	0,1,2,3	\N
+30635	28	626	0,1,2,3,4	\N
+30636	297	626	0,1	\N
+30637	298	626	0,1	\N
+30638	299	626	0,1,2,3,4,5	\N
+30639	300	626	0	\N
+31295	69	630	\N	\N
+31296	2	630	\N	\N
+31297	71	630	\N	\N
+31298	7	630	\N	\N
+31299	11	630	\N	\N
+31300	12	630	\N	\N
+31301	72	630	0,1,2,3	\N
+31302	17	630	0,1,2,3	\N
+31303	16	630	\N	\N
+31304	84	630	0,1	\N
+31305	259	630	0,1,2,3,4	\N
+31306	18	630	0,1,2,3,4	\N
+31307	80	630	0,1	\N
+31308	83	630	0,1	\N
+31309	260	630	0,1,2,3	\N
+31310	25	630	0,1,2	\N
+31311	24	630	\N	\N
+31312	27	630	0,1,2,3,4,5,6,259,260	\N
+31313	26	630	0,1	\N
+31314	29	630	0,1,2,3	\N
+31315	28	630	0,1,2,3,4	\N
+31316	306	630	0,1,2	\N
+31317	311	630	0	\N
+31318	310	630	0,1,2,3	\N
+31319	313	630	0,1,2,3,4	\N
+31320	312	630	0,1	\N
+31321	297	630	0,1	\N
+31322	298	630	0,1,2,3,4,5,6	\N
+31323	299	630	0,1,2,3,4,5	\N
+31324	300	630	0	\N
+31325	302	630	0	\N
 \.
 
 
@@ -18570,7 +18961,6 @@ COPY auth_tb (id, nname, state, isparent, nid, pid, sub_auth, url, oid, sort, ac
 15	车位管理	0	f	0	0	查看,添加,编辑,删除	compark.do	8	6	query,create,edit,delete	\N	\N	\N	\N	\N	0
 66	设备管理	0	f	0	0		devicemenu.do	5	9	\N	\N	\N	\N	\N	\N	0
 69	概况	0	f	0	0		survey.do	8	0	\N	\N	\N	\N	\N	\N	0
-83	订单记录	0	f	0	2	查看,导出,0元结算	order.do	8	20	query,exportExcel,completezeroorder	\N	\N	\N	\N	\N	0
 93	停车宝账户	0	f	0	92	查看	tcbaccountaly.do	5	900	query	\N	\N	\N	\N	\N	0
 79	员工管理	0	f	0	75	查看,注册,编辑,删除,修改密码	chanmember.do	3	0	query,create,edit,delete,editpass	\N	\N	\N	\N	\N	0
 102	服务器管理	0	f	0	77	查看,添加,编辑	localserver.do	3	0	localserver,add,edit	\N	\N	\N	\N	\N	0
@@ -18621,6 +19011,7 @@ COPY auth_tb (id, nname, state, isparent, nid, pid, sub_auth, url, oid, sort, ac
 99	泊车价格管理	0	f	0	97	查看,添加	carstopsprice.do	5	971	query,create	\N	\N	\N	\N	\N	0
 295	运营集团收费今日汇总	0	f	\N	294	查看	feebygroup.do	7	0	query	\N	\N	\N	\N	\N	0
 117	功能管理	0	f	0	51		orgmanage.do?action=orgtree	5	0		\N	\N	\N	\N	\N	0
+83	订单记录	0	f	0	2	查看,导出,0元结算	order.do	8	20	query,exportExcel,completezeroorder	\N	\N	\N	\N	\N	0
 55	功能期限管理	1	f	0	51	查看,添加,编辑,删除	authmanage.do	5	513	query,create,edit,delete	\N	1460804725	\N	\N	1000001	0
 118	城市管理	0	f	\N	53	查看,添加,编辑,删除,设置	city.do	5	0	quickquery,create,edit,delete,set	\N	\N	\N	\N	\N	0
 90	集团管理	0	f	0	53	查看,添加,编辑,删除,设置	citygroup.do	5	531	quickquery,create,edit,delete,set	\N	\N	\N	\N	\N	0
@@ -18802,16 +19193,26 @@ COPY auth_tb (id, nname, state, isparent, nid, pid, sub_auth, url, oid, sort, ac
 287	卡片明细	0	f	\N	285	查看	cardaccount.do	2	0	query	\N	\N	\N	\N	\N	0
 288	车检器在线率	0	f	\N	251	查询	sensoronline.do	2	0	querytrend	\N	\N	\N	\N	\N	0
 289	车检器在线率	0	f	\N	194	查询	sensoronline.do	7	0	querytrend	\N	\N	\N	\N	\N	0
-297	月卡续费	0	f	\N	7	查看,导出	buycardrecord.do	8	0	query,export	\N	\N	\N	\N	\N	0
 7	月卡会员	0	f	0	0		parkepaymenu.do	8	2		\N	\N	\N	\N	\N	0
-298	月卡会员	0	f	\N	7	查看,注册会员,编辑,修改车牌,删除,导出会员,续费	vipuser.do	8	0	query,create,edit,addcar,delete,export.renew	\N	\N	\N	\N	\N	0
-71	商户管理	0	f	0	0		shopmenu.do	8	5	\N	\N	\N	\N	\N	\N	0
+71	商户管理	0	f	0	0		shopmenu.do	8	5		\N	\N	\N	\N	\N	0
 299	商户管理	0	f	\N	71	查看,添加,编辑,删除,设置,续费	shop.do	8	1	query,create,edit,delete,editrole,addmoney	\N	\N	\N	\N	\N	0
 300	流水查询	0	f	\N	71	查看	shopaccount.do	8	2	query	\N	\N	\N	\N	\N	0
-301		1	f	\N	54			5	0		\N	1504093978	\N	\N	1000001	0
-302	黑名单管理	0	f	0	24	查询,添加,编辑,删除,导出	zldblack.do	8	247	query,create,edit,delete,export	\N	\N	\N	\N	\N	0
-303	上下班记录	0	f	0	24	查询,导出	workrecord.do	8	248	query,export	\N	\N	\N	\N	\N	0
-80	系统日志	0	f	0	24	查看,导出	parklogsmongo.do	8	246	query,export	\N	\N	\N	\N	\N	0
+301	中央监控	0	f	\N	0	查看	monitor.do	2	301	show	\N	\N	\N	\N	\N	0
+302	中央监控	0	f	\N	0	查看	monitor.do	8	302	show	\N	\N	\N	\N	\N	0
+303	月卡续费	0	f	\N	122	查看,导出	buycardrecord.do	7	0	query,export	\N	\N	\N	\N	\N	0
+304	月卡续费	0	f	\N	173	查询,导出	buycardrecord.do	7	0	query,export	\N	\N	\N	\N	\N	0
+305	月卡续费	0	f	\N	223	查看,导出	buycardrecord.do	2	0	query,export	\N	\N	\N	\N	\N	0
+306	对讲管理	0	f	\N	16	查看,添加,编辑	monitor.do?action=phoneManager	8	0	query,creat,edit	\N	\N	\N	\N	\N	0
+308	对讲管理	0	f	\N	229	查看,添加,编辑,	monitor.do?action=phoneManager	2	0	query，create，edit	\N	\N	\N	\N	\N	0
+309	监控管理	0	f	\N	229	查看，添加，编辑，播放	monitor.do?action=monitorManager	2	0	query,create,edit,play	\N	\N	\N	\N	\N	0
+307	监控管理	1	f	\N	16	查看,添加,编辑,播放	monitor.do?action=monitorManager	8	0	query,creat,edit,play	\N	1511585490	\N	\N	1000001	0
+310	监控管理	0	f	\N	16	查看,添加,编辑,播放	monitor.do?action=monitorManager	8	0	query,creat,edit,play	\N	\N	\N	\N	\N	0
+298	月卡会员	0	f	\N	7	查看,注册会员,编辑,修改车牌,删除,导出,续费	vipuser.do	8	0	query,create,edit,addcar,delete,export,renew	\N	\N	\N	\N	\N	0
+297	月卡续费记录	0	f	\N	7	查看,导出	buycardrecord.do	8	0	query,export	\N	\N	\N	\N	\N	0
+311	优惠券管理	0	f	\N	71	查看	shopticket.do	8	0	query	\N	\N	\N	\N	\N	0
+312	上下班记录	0	f	\N	24	查看,导出	workrecord.do	8	0	query,export	\N	\N	\N	\N	\N	0
+313	黑名单管理	0	f	\N	24	查询,添加,编辑,删除,导出	zldblack.do	8	0	query,create,edit,delete,export	\N	\N	\N	\N	\N	0
+80	系统日志	0	f	0	24	查看,导出	parklogs.do	8	246	query,export	\N	\N	\N	\N	\N	0
 \.
 
 
@@ -18836,11 +19237,6 @@ COPY berth_order_tb_error (id, berth_id, in_time, out_time, total, state, orderi
 --
 
 COPY bizcircle_tb (id, name, resume, state, create_time) FROM stdin;
-3	中关村商圈		0	1404205379
-2	CBD商圈		0	1404205368
-4	朝外商圈		0	1404369371
-1	上奥商圈		1	1404205368
-5	燕莎商圈		0	1404369387
 \.
 
 
@@ -18856,7 +19252,7 @@ COPY bolink_ccount_tb (id, comid, groupid, money, giveto, ctime, uin, type, orde
 -- Data for Name: bolink_order_tb; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY bolink_order_tb (id, union_id, money, start_time, end_time, state, in_time, out_time, update_time, union_name, park_name, order_id, plate_number, uin, pay_type, pay_union_id, prepay, park_id, duration) FROM stdin;
+COPY bolink_order_tb (id, union_id, money, start_time, end_time, state, in_time, out_time, update_time, union_name, park_name, order_id, plate_number, uin, pay_type, pay_union_id, prepay, park_id, duration, prepay_time) FROM stdin;
 \.
 
 
@@ -18881,7 +19277,6 @@ COPY bonus_type_tb (id, name, ctime, state) FROM stdin;
 --
 
 COPY car_info_tb (id, uin, car_number, state, create_time, is_auth, is_comuse, pic_url1, pic_url2, remark) FROM stdin;
-256442	523582	粤B99999	1	1504516014	0	0	\N	\N	\N
 \.
 
 
@@ -18913,17 +19308,7 @@ COPY car_stops_tb (id, name, longitude, latitude, start_price, next_price, max_p
 -- Data for Name: car_type_tb; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY car_type_tb (id, name, comid, sort, cartype_id, create_time, update_time, is_delete) FROM stdin;
-393	二类车	21860	1	1	1504743995	1504743995	0
-394	一类车	21860	0	0	1504743995	1504743995	0
-395	三类车	21860	2	2	1504743995	1504743995	0
-396	四类车	21860	3	3	1504743995	1504743995	0
-397	五类车	21860	4	4	1504743995	1504743995	0
-398	六类车	21860	5	5	1504743995	1504743995	0
-399	七类车	21860	6	6	1504743996	1504743996	0
-400	八类车	21860	7	7	1504743996	1504743996	0
-401	九类车	21860	8	8	1504743996	1504743996	0
-402	十类车	21860	9	9	1504743996	1504743996	0
+COPY car_type_tb (id, name, comid, sort, cartype_id, is_delete, create_time, update_time) FROM stdin;
 \.
 
 
@@ -18955,7 +19340,7 @@ COPY card_carnumber_tb (id, car_number, card_id, is_delete, create_time) FROM st
 -- Data for Name: card_renew_tb; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY card_renew_tb (id, trade_no, card_id, pay_time, amount_receivable, amount_pay, collector, pay_type, car_number, user_id, resume, buy_month, comid, create_time, update_time) FROM stdin;
+COPY card_renew_tb (id, trade_no, card_id, pay_time, amount_receivable, amount_pay, collector, pay_type, car_number, user_id, resume, buy_month, comid, create_time, update_time, limit_time) FROM stdin;
 \.
 
 
@@ -18971,7 +19356,7 @@ COPY carower_product (id, pid, uin, create_time, b_time, e_time, total, remark, 
 -- Data for Name: carpic_tb; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY carpic_tb (id, order_id, create_time, car_number, pic_type, resume, comid, update_time, content, picture_source, liftrod_id, park_order_type, liftpic_table_name, carpic_table_name) FROM stdin;
+COPY carpic_tb (id, order_id, create_time, car_number, pic_type, resume, comid, update_time, content, picture_source, liftrod_id, park_order_type, liftpic_table_name, carpic_table_name, event_id, confirmpic_table_name) FROM stdin;
 \.
 
 
@@ -19004,10 +19389,6 @@ COPY city_account_tb (id, cityid, amount, create_time, type, source, remark, wit
 --
 
 COPY city_hotarea_tb (id, name, adress, reason, create_time, create_user, update_time, update_user, delete_time, delete_user, state, cityid) FROM stdin;
-2	瘦西湖			1460947248	400093	\N	\N	\N	\N	0	1
-1	万达周边	天长路	万达周边3家停车场	1460947200	400185	1460947279	400185	\N	\N	0	2
-4				1480651124	423413	\N	\N	1480651139	423413	1	15
-3	111			1461748217	401664	1461748641	401664	\N	\N	1	7
 \.
 
 
@@ -19080,8 +19461,6 @@ COPY com_account_tb (id, comid, uin, card_number, atype, name, mobile, bank_name
 --
 
 COPY com_alert_tb (id, create_time, source, content, type, state, handle_user, handle_time, cityid) FROM stdin;
-1	1461748746	15678哦		3	0	\N	\N	7
-2	1463988502	001		-1	0	\N	\N	1
 \.
 
 
@@ -19146,7 +19525,6 @@ COPY com_nfc_tb (id, nfc_uuid, comid, create_time, state, use_times, uin, uid, u
 --
 
 COPY com_park_tb (id, comid, cid, state, qid, order_id, dici_id, enter_time, end_time, address, berthsec_id, create_time, uuid, longitude, latitude, is_delete) FROM stdin;
-35	3251	10222	0	150515	\N	\N	\N	\N	221	-1	\N	\N	\N	\N	0
 \.
 
 
@@ -19207,6 +19585,14 @@ COPY com_worksite_tb (id, comid, worksite_name, description, net_type, host_name
 
 
 --
+-- Data for Name: confirm_order_tb; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY confirm_order_tb (id, event_id, car_number, upload_time, channel_id, state, comid, groupid) FROM stdin;
+\.
+
+
+--
 -- Data for Name: consume_anlysis_tb; Type: TABLE DATA; Schema: public; Owner: tracqdev
 --
 
@@ -19259,7 +19645,6 @@ COPY dictionary_detail_tb (id, item_id, subitemdesc, sub_item_id) FROM stdin;
 --
 
 COPY dictionary_item_tb (id, park_id, itemdesc, item_name) FROM stdin;
-2	15989	c_type	进场类型
 \.
 
 
@@ -19300,10 +19685,6 @@ COPY flygame_score_tb (id, uin, fgid, remark, ctime, ptype, money, is_operate) F
 --
 
 COPY free_reasons_tb (id, name, comid, sort) FROM stdin;
-8	非月卡免费	3251	1
-15	领导车	3251	0
-85	业主车	21754	2
-86	警官车	21754	1
 \.
 
 
@@ -19328,8 +19709,6 @@ COPY hasparker_anlysis_tb (id, anlysis_time, total) FROM stdin;
 --
 
 COPY ibeacon_tb (id, buy_time, ibcid, state) FROM stdin;
-1	1399478400	D03972A1CD95	1
-2	1400000000	7C669D9B4C90	1
 \.
 
 
@@ -19338,9 +19717,6 @@ COPY ibeacon_tb (id, buy_time, ibcid, state) FROM stdin;
 --
 
 COPY induce_ad_history_tb (id, induce_id, create_time, begin_time, end_time, ad, creator_id) FROM stdin;
-1	2	1462696746	1462696735	1464683938	这是一级诱导屏广告语！！	400093
-2	3	1462696794	\N	\N	这是二级诱导屏广告！	400093
-3	3	1462855832	\N	\N	这是二级诱导屏广告！	-1
 \.
 
 
@@ -19413,8 +19789,6 @@ COPY liftrod_info_tb (id, channel_id, channel_name, operate, state, comid) FROM 
 --
 
 COPY local_info_tb (id, comid, version, cpu, memory, harddisk, is_update, create_time, limit_time, secret, remark) FROM stdin;
-137	21742	10	95%	61.93%	19/29	0	1478171590	1785168000	zldtingchebao21742	
-136	3251	10	95%	61.93%	19/29	0	1478171590	1785168000	zldtingchebao3251	
 \.
 
 
@@ -19471,6 +19845,14 @@ COPY money_record_tb (id, comid, create_time, amount, uin, type, remark, pay_typ
 --
 
 COPY money_set_tb (id, comid, uin, mtype, giveto) FROM stdin;
+\.
+
+
+--
+-- Data for Name: monitor_info_tb; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY monitor_info_tb (id, net_status, is_show, show_order, play_src, comid, groupid, channel_id, name, state) FROM stdin;
 \.
 
 
@@ -19575,8 +19957,6 @@ COPY org_channel_tb (id, name, state, create_time, logo_url) FROM stdin;
 --
 
 COPY org_city_merchants (id, ctime, name, state, balance, gps, address, is_group_pursue, is_inpark_incity, union_id, ukey) FROM stdin;
-34	1504144344	十堰	0	0.00	\N	\N	0	1		
-35	1504511928	深圳	0	0.00	\N	\N	0	1		
 \.
 
 
@@ -19625,7 +20005,6 @@ COPY park_log_tb (id, type, content, operate_time, operate_user, remark, log_id,
 --
 
 COPY park_ticket_tb (id, comid, tnumber, money, exptime, haveget) FROM stdin;
-1	1197	30	8.00	10	30
 \.
 
 
@@ -19658,7 +20037,6 @@ COPY parkuser_account_tb (id, uin, amount, type, create_time, remark, target, or
 --
 
 COPY parkuser_cash_tb (id, uin, amount, orderid, type, create_time, ctype, target, card_account_id, comid, berthseg_id, berth_id, groupid, is_delete) FROM stdin;
-17045224	523595	0.10	35437277	0	1508124699	0	0	-1	21860	-1	\N	-1	0
 \.
 
 
@@ -19711,6 +20089,14 @@ COPY peakalert_anlysis_tb (id, create_time, comid, present, berths) FROM stdin;
 
 
 --
+-- Data for Name: phone_info_tb; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY phone_info_tb (id, name, tele_phone, comid, park_phone, group_phone, monitor_id, groupid, is_call, call_time, main_phone_type, state) FROM stdin;
+\.
+
+
+--
 -- Data for Name: price_assist_tb; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -19730,7 +20116,7 @@ COPY price_tb (id, comid, price, state, unit, pay_type, create_time, b_time, e_t
 -- Data for Name: product_package_tb; Type: TABLE DATA; Schema: public; Owner: tracqdev
 --
 
-COPY product_package_tb (id, p_name, b_time, e_time, remain_number, state, comid, price, bmin, emin, resume, old_price, type, reserved, limitday, favourable_precent, free_minutes, out_favourable_precent, scope, card_id, update_time, create_time, describe, operate_type, is_sync, is_delete, car_type_id, period) FROM stdin;
+COPY product_package_tb (id, p_name, b_time, e_time, remain_number, state, comid, price, bmin, emin, resume, old_price, type, reserved, limitday, favourable_precent, free_minutes, out_favourable_precent, scope, card_id, update_time, create_time, describe, operate_type, is_sync, is_delete, period, car_type_id) FROM stdin;
 \.
 
 
@@ -19755,7 +20141,6 @@ COPY qr_thirdpark_code (id, park_id, union_id, code) FROM stdin;
 --
 
 COPY recharge_tb (id, uin, amount, create_time, charge_type) FROM stdin;
-1	1000010	590.00	1401228000	0
 \.
 
 
@@ -19796,7 +20181,6 @@ COPY register_anlysis_tb (id, reg_time, reg_count, carnumber_count) FROM stdin;
 --
 
 COPY remain_berth_tb (id, comid, berthseg_id, amount, update_time, state, total) FROM stdin;
-55319556	3251	-1	0	1494314196	0	10
 \.
 
 
@@ -19813,9 +20197,6 @@ COPY reward_account_tb (id, uin, score, type, create_time, remark, target, rewar
 --
 
 COPY role_auth_tb (id, auth, role_id) FROM stdin;
-3	[{'nid':1,'pid':0},{'nid':11,'pid':1},{'nid':117,'pid':11}]	11
-2	[{'nid':1,'pid':0},{'nid':11,'pid':1},{'nid':115,'pid':11},{'nid':117,'pid':11},{'nid':119,'pid':11},{'nid':1191,'pid':119},{'nid':11911,'pid':1191},{'nid':11912,'pid':1191},{'nid':11913,'pid':1191},{'nid':11914,'pid':1191},{'nid':13,'pid':1},{'nid':131,'pid':13}]	5
-1	[{'nid':1,'pid':0},{'nid':11,'pid':1},{'nid':115,'pid':11},{'nid':117,'pid':11},{'nid':119,'pid':11},{'nid':1191,'pid':119},{'nid':11911,'pid':1191},{'nid':11912,'pid':1191},{'nid':11913,'pid':1191},{'nid':11914,'pid':1191},{'nid':13,'pid':1},{'nid':131,'pid':13}]	10
 \.
 
 
@@ -19831,175 +20212,175 @@ COPY sensor_online_anlysis_tb (id, comid, create_time, online, total) FROM stdin
 -- Name: seq_advert_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_advert_tb', 4, true);
+SELECT pg_catalog.setval('seq_advert_tb', 1, false);
 
 
 --
 -- Name: seq_alipay_log; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_alipay_log', 710892, true);
+SELECT pg_catalog.setval('seq_alipay_log', 1, false);
 
 
 --
 -- Name: seq_area_ibeacon_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_area_ibeacon_tb', 67, true);
+SELECT pg_catalog.setval('seq_area_ibeacon_tb', 1, false);
 
 
 --
 -- Name: seq_auth_role_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_auth_role_tb', 30727, true);
+SELECT pg_catalog.setval('seq_auth_role_tb', 1, false);
 
 
 --
 -- Name: seq_auth_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_auth_tb', 303, true);
+SELECT pg_catalog.setval('seq_auth_tb', 1, false);
 
 
 --
 -- Name: seq_berth_order_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_berth_order_tb', 6596330, true);
+SELECT pg_catalog.setval('seq_berth_order_tb', 1, false);
 
 
 --
 -- Name: seq_bizcircle_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_bizcircle_tb', 33, true);
+SELECT pg_catalog.setval('seq_bizcircle_tb', 1, false);
 
 
 --
 -- Name: seq_bolink_ccount_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_bolink_ccount_tb', 34, true);
+SELECT pg_catalog.setval('seq_bolink_ccount_tb', 1, false);
 
 
 --
 -- Name: seq_bolink_order_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_bolink_order_tb', 79, true);
+SELECT pg_catalog.setval('seq_bolink_order_tb', 1, false);
 
 
 --
 -- Name: seq_bonus_record_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_bonus_record_tb', 175687, true);
+SELECT pg_catalog.setval('seq_bonus_record_tb', 1, false);
 
 
 --
 -- Name: seq_bonus_type_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_bonus_type_tb', 33, true);
+SELECT pg_catalog.setval('seq_bonus_type_tb', 1, false);
 
 
 --
 -- Name: seq_bouns_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_bouns_tb', 61921, true);
+SELECT pg_catalog.setval('seq_bouns_tb', 1, false);
 
 
 --
 -- Name: seq_car_info_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_car_info_tb', 256442, true);
+SELECT pg_catalog.setval('seq_car_info_tb', 1, false);
 
 
 --
 -- Name: seq_car_number_type_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_car_number_type_tb', 12624, true);
+SELECT pg_catalog.setval('seq_car_number_type_tb', 1, false);
 
 
 --
 -- Name: seq_car_picturs_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_car_picturs_tb', 27883357, true);
+SELECT pg_catalog.setval('seq_car_picturs_tb', 1, false);
 
 
 --
 -- Name: seq_car_stops_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_car_stops_tb', 46, true);
+SELECT pg_catalog.setval('seq_car_stops_tb', 1, false);
 
 
 --
 -- Name: seq_car_type_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_car_type_tb', 402, true);
+SELECT pg_catalog.setval('seq_car_type_tb', 1, false);
 
 
 --
 -- Name: seq_card_account_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_card_account_tb', 89546, true);
+SELECT pg_catalog.setval('seq_card_account_tb', 1, false);
 
 
 --
 -- Name: seq_card_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_card_anlysis_tb', 1132, true);
+SELECT pg_catalog.setval('seq_card_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_card_carnumber_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_card_carnumber_tb', 9031, true);
+SELECT pg_catalog.setval('seq_card_carnumber_tb', 1, false);
 
 
 --
 -- Name: seq_card_renew_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_card_renew_tb', 533, true);
+SELECT pg_catalog.setval('seq_card_renew_tb', 1, false);
 
 
 --
 -- Name: seq_carower_product; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_carower_product', 52692, true);
+SELECT pg_catalog.setval('seq_carower_product', 1, false);
 
 
 --
 -- Name: seq_carpic_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_carpic_tb', 51035, true);
+SELECT pg_catalog.setval('seq_carpic_tb', 1, false);
 
 
 --
 -- Name: seq_carstop_order_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_carstop_order_tb', 1644, true);
+SELECT pg_catalog.setval('seq_carstop_order_tb', 1, false);
 
 
 --
 -- Name: seq_carstops_price_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_carstops_price_tb', 44, true);
+SELECT pg_catalog.setval('seq_carstops_price_tb', 1, false);
 
 
 --
@@ -20013,14 +20394,14 @@ SELECT pg_catalog.setval('seq_city_account_tb', 1, false);
 -- Name: seq_city_hotarea_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_city_hotarea_tb', 4, true);
+SELECT pg_catalog.setval('seq_city_hotarea_tb', 1, false);
 
 
 --
 -- Name: seq_city_peakalert_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_city_peakalert_tb', 29898, true);
+SELECT pg_catalog.setval('seq_city_peakalert_tb', 1, false);
 
 
 --
@@ -20034,105 +20415,105 @@ SELECT pg_catalog.setval('seq_city_video_tb', 1, false);
 -- Name: seq_collect_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_collect_anlysis_tb', 48425, true);
+SELECT pg_catalog.setval('seq_collect_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_collector_account_pic_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_collector_account_pic_tb', 143, true);
+SELECT pg_catalog.setval('seq_collector_account_pic_tb', 1, false);
 
 
 --
 -- Name: seq_collector_scroe_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_collector_scroe_tb', 130326, true);
+SELECT pg_catalog.setval('seq_collector_scroe_tb', 1, false);
 
 
 --
 -- Name: seq_collector_set_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_collector_set_tb', 121, true);
+SELECT pg_catalog.setval('seq_collector_set_tb', 1, false);
 
 
 --
 -- Name: seq_collector_sort; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_collector_sort', 86634, true);
+SELECT pg_catalog.setval('seq_collector_sort', 1, false);
 
 
 --
 -- Name: seq_com_account_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_account_tb', 1703, true);
+SELECT pg_catalog.setval('seq_com_account_tb', 1, false);
 
 
 --
 -- Name: seq_com_alert_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_alert_tb', 2, true);
+SELECT pg_catalog.setval('seq_com_alert_tb', 1, false);
 
 
 --
 -- Name: seq_com_berthsecs_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_berthsecs_tb', 2405, true);
+SELECT pg_catalog.setval('seq_com_berthsecs_tb', 1, false);
 
 
 --
 -- Name: seq_com_brake_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_brake_tb', 48, true);
+SELECT pg_catalog.setval('seq_com_brake_tb', 1, false);
 
 
 --
 -- Name: seq_com_camera_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_camera_tb', 1621, true);
+SELECT pg_catalog.setval('seq_com_camera_tb', 1, false);
 
 
 --
 -- Name: seq_com_comment_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_comment_tb', 1266, true);
+SELECT pg_catalog.setval('seq_com_comment_tb', 1, false);
 
 
 --
 -- Name: seq_com_info_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_info_tb', 21863, true);
+SELECT pg_catalog.setval('seq_com_info_tb', 1, false);
 
 
 --
 -- Name: seq_com_led_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_led_tb', 1418, true);
+SELECT pg_catalog.setval('seq_com_led_tb', 1, false);
 
 
 --
 -- Name: seq_com_nfc_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_nfc_tb', 167604, true);
+SELECT pg_catalog.setval('seq_com_nfc_tb', 1, false);
 
 
 --
 -- Name: seq_com_park_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_park_tb', 68288, true);
+SELECT pg_catalog.setval('seq_com_park_tb', 1, false);
 
 
 --
@@ -20146,28 +20527,28 @@ SELECT pg_catalog.setval('seq_com_parkstatus_tb', 1, false);
 -- Name: seq_com_pass_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_pass_tb', 1672, true);
+SELECT pg_catalog.setval('seq_com_pass_tb', 1, false);
 
 
 --
 -- Name: seq_com_picturs_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_picturs_tb', 2176, true);
+SELECT pg_catalog.setval('seq_com_picturs_tb', 1, false);
 
 
 --
 -- Name: seq_com_pos_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_pos_tb', 1, true);
+SELECT pg_catalog.setval('seq_com_pos_tb', 1, false);
 
 
 --
 -- Name: seq_com_praise_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_praise_tb', 1304, true);
+SELECT pg_catalog.setval('seq_com_praise_tb', 1, false);
 
 
 --
@@ -20181,168 +20562,175 @@ SELECT pg_catalog.setval('seq_com_temp_tb', 1, false);
 -- Name: seq_com_worksite_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_com_worksite_tb', 918, true);
+SELECT pg_catalog.setval('seq_com_worksite_tb', 1, false);
+
+
+--
+-- Name: seq_confirm_order_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('seq_confirm_order_tb', 1, false);
 
 
 --
 -- Name: seq_consume_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_consume_anlysis_tb', 773, true);
+SELECT pg_catalog.setval('seq_consume_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_dataauth_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_dataauth_tb', 620, true);
+SELECT pg_catalog.setval('seq_dataauth_tb', 1, false);
 
 
 --
 -- Name: seq_department_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_department_tb', 68, true);
+SELECT pg_catalog.setval('seq_department_tb', 1, false);
 
 
 --
 -- Name: seq_device_fault_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_device_fault_tb', 3165037, true);
+SELECT pg_catalog.setval('seq_device_fault_tb', 1, false);
 
 
 --
 -- Name: seq_dici_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_dici_tb', 673978, true);
+SELECT pg_catalog.setval('seq_dici_tb', 1, false);
 
 
 --
 -- Name: seq_dictionary_detail_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_dictionary_detail_tb', 21, true);
+SELECT pg_catalog.setval('seq_dictionary_detail_tb', 1, false);
 
 
 --
 -- Name: seq_dictionary_item_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_dictionary_item_tb', 5, true);
+SELECT pg_catalog.setval('seq_dictionary_item_tb', 1, false);
 
 
 --
 -- Name: seq_directpay_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_directpay_anlysis_tb', 838, true);
+SELECT pg_catalog.setval('seq_directpay_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_flygame_pool_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_flygame_pool_tb', 205966, true);
+SELECT pg_catalog.setval('seq_flygame_pool_tb', 1, false);
 
 
 --
 -- Name: seq_flygame_score_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_flygame_score_anlysis_tb', 29271, true);
+SELECT pg_catalog.setval('seq_flygame_score_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_flygame_score_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_flygame_score_tb', 1243484, true);
+SELECT pg_catalog.setval('seq_flygame_score_tb', 1, false);
 
 
 --
 -- Name: seq_free_reasons_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_free_reasons_tb', 86, true);
+SELECT pg_catalog.setval('seq_free_reasons_tb', 1, false);
 
 
 --
 -- Name: seq_group_account_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_group_account_tb', 725, true);
+SELECT pg_catalog.setval('seq_group_account_tb', 1, false);
 
 
 --
 -- Name: seq_hasparker_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_hasparker_anlysis_tb', 35412, true);
+SELECT pg_catalog.setval('seq_hasparker_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_ibeacon_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_ibeacon_tb', 2, true);
+SELECT pg_catalog.setval('seq_ibeacon_tb', 1, false);
 
 
 --
 -- Name: seq_induce_ad_history_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_induce_ad_history_tb', 3, true);
+SELECT pg_catalog.setval('seq_induce_ad_history_tb', 1, false);
 
 
 --
 -- Name: seq_induce_ad_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_induce_ad_tb', 11, true);
+SELECT pg_catalog.setval('seq_induce_ad_tb', 1, false);
 
 
 --
 -- Name: seq_induce_module_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_induce_module_tb', 25, true);
+SELECT pg_catalog.setval('seq_induce_module_tb', 1, false);
 
 
 --
 -- Name: seq_induce_park_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_induce_park_tb', 113, true);
+SELECT pg_catalog.setval('seq_induce_park_tb', 1, false);
 
 
 --
 -- Name: seq_induce_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_induce_tb', 31, true);
+SELECT pg_catalog.setval('seq_induce_tb', 1, false);
 
 
 --
 -- Name: seq_inspect_event_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_inspect_event_tb', 326939, true);
+SELECT pg_catalog.setval('seq_inspect_event_tb', 1, false);
 
 
 --
 -- Name: seq_inspect_group_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_inspect_group_tb', 33, true);
+SELECT pg_catalog.setval('seq_inspect_group_tb', 1, false);
 
 
 --
 -- Name: seq_lift_rod_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_lift_rod_tb', 648907, true);
+SELECT pg_catalog.setval('seq_lift_rod_tb', 1, false);
 
 
 --
@@ -20356,98 +20744,105 @@ SELECT pg_catalog.setval('seq_liftrod_info_tb', 1, false);
 -- Name: seq_local_info_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_local_info_tb', 195, true);
+SELECT pg_catalog.setval('seq_local_info_tb', 1, false);
 
 
 --
 -- Name: seq_logo_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_logo_tb', 12, true);
+SELECT pg_catalog.setval('seq_logo_tb', 1, false);
 
 
 --
 -- Name: seq_lottery_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_lottery_tb', 3127, true);
+SELECT pg_catalog.setval('seq_lottery_tb', 1, false);
 
 
 --
 -- Name: seq_message_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_message_tb', 134292, true);
+SELECT pg_catalog.setval('seq_message_tb', 1, false);
 
 
 --
 -- Name: seq_mobile_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_mobile_tb', 1636, true);
+SELECT pg_catalog.setval('seq_mobile_tb', 1, false);
 
 
 --
 -- Name: seq_mobilepay_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_mobilepay_anlysis_tb', 18032, true);
+SELECT pg_catalog.setval('seq_mobilepay_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_money_record_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_money_record_tb', 347883, true);
+SELECT pg_catalog.setval('seq_money_record_tb', 1, false);
 
 
 --
 -- Name: seq_money_set_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_money_set_tb', 396, true);
+SELECT pg_catalog.setval('seq_money_set_tb', 1, false);
+
+
+--
+-- Name: seq_monitor_info_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('seq_monitor_info_tb', 1, false);
 
 
 --
 -- Name: seq_no_payment_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_no_payment_tb', 3251956, true);
+SELECT pg_catalog.setval('seq_no_payment_tb', 1, false);
 
 
 --
 -- Name: seq_online_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_online_anlysis_tb', 8377824, true);
+SELECT pg_catalog.setval('seq_online_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_order_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_order_anlysis_tb', 184, true);
+SELECT pg_catalog.setval('seq_order_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_order_attach_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_order_attach_tb', 328164, true);
+SELECT pg_catalog.setval('seq_order_attach_tb', 1, false);
 
 
 --
 -- Name: seq_order_log_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_order_log_tb', 4088, true);
+SELECT pg_catalog.setval('seq_order_log_tb', 1, false);
 
 
 --
 -- Name: seq_order_message_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_order_message_tb', 2687859, true);
+SELECT pg_catalog.setval('seq_order_message_tb', 1, false);
 
 
 --
@@ -20461,287 +20856,294 @@ SELECT pg_catalog.setval('seq_order_reserve_tb', 1, false);
 -- Name: seq_order_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_order_tb', 35437278, true);
+SELECT pg_catalog.setval('seq_order_tb', 1, false);
 
 
 --
 -- Name: seq_order_ticket_detail_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_order_ticket_detail_tb', 6101075, true);
+SELECT pg_catalog.setval('seq_order_ticket_detail_tb', 1, false);
 
 
 --
 -- Name: seq_order_ticket_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_order_ticket_tb', 903749, true);
+SELECT pg_catalog.setval('seq_order_ticket_tb', 1, false);
 
 
 --
 -- Name: seq_org_area_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_org_area_tb', 49, true);
+SELECT pg_catalog.setval('seq_org_area_tb', 1, false);
 
 
 --
 -- Name: seq_org_channel_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_org_channel_tb', 39, true);
+SELECT pg_catalog.setval('seq_org_channel_tb', 1, false);
 
 
 --
 -- Name: seq_org_city_merchants; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_org_city_merchants', 35, true);
+SELECT pg_catalog.setval('seq_org_city_merchants', 1, false);
 
 
 --
 -- Name: seq_org_group_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_org_group_tb', 76, true);
+SELECT pg_catalog.setval('seq_org_group_tb', 1, false);
 
 
 --
 -- Name: seq_park_account_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_park_account_tb', 143444, true);
+SELECT pg_catalog.setval('seq_park_account_tb', 1, false);
 
 
 --
 -- Name: seq_park_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_park_anlysis_tb', 9395233, true);
+SELECT pg_catalog.setval('seq_park_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_park_charge_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_park_charge_tb', 22, true);
+SELECT pg_catalog.setval('seq_park_charge_tb', 1, false);
 
 
 --
 -- Name: seq_park_log_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_park_log_tb', 4785, true);
+SELECT pg_catalog.setval('seq_park_log_tb', 1, false);
 
 
 --
 -- Name: seq_park_ticket_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_park_ticket_tb', 33, true);
+SELECT pg_catalog.setval('seq_park_ticket_tb', 1, false);
 
 
 --
 -- Name: seq_park_token_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_park_token_tb', 2979, true);
+SELECT pg_catalog.setval('seq_park_token_tb', 1, false);
 
 
 --
 -- Name: seq_park_verify_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_park_verify_tb', 364, true);
+SELECT pg_catalog.setval('seq_park_verify_tb', 1, false);
 
 
 --
 -- Name: seq_parkuser_account_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_parkuser_account_tb', 1395172, true);
+SELECT pg_catalog.setval('seq_parkuser_account_tb', 1, false);
 
 
 --
 -- Name: seq_parkuser_cash_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_parkuser_cash_tb', 17045224, true);
+SELECT pg_catalog.setval('seq_parkuser_cash_tb', 1, false);
 
 
 --
 -- Name: seq_parkuser_comment_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_parkuser_comment_tb', 3245, true);
+SELECT pg_catalog.setval('seq_parkuser_comment_tb', 1, false);
 
 
 --
 -- Name: seq_parkuser_income_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_parkuser_income_anlysis_tb', 173130, true);
+SELECT pg_catalog.setval('seq_parkuser_income_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_parkuser_message_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_parkuser_message_tb', 21686, true);
+SELECT pg_catalog.setval('seq_parkuser_message_tb', 1, false);
 
 
 --
 -- Name: seq_parkuser_reward_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_parkuser_reward_tb', 162551, true);
+SELECT pg_catalog.setval('seq_parkuser_reward_tb', 1, false);
 
 
 --
 -- Name: seq_parkuser_work_record_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_parkuser_work_record_tb', 189477, true);
+SELECT pg_catalog.setval('seq_parkuser_work_record_tb', 1, false);
 
 
 --
 -- Name: seq_peakalert_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_peakalert_anlysis_tb', 13452480, true);
+SELECT pg_catalog.setval('seq_peakalert_anlysis_tb', 1, false);
+
+
+--
+-- Name: seq_phone_info_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('seq_phone_info_tb', 1, false);
 
 
 --
 -- Name: seq_price_assist_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_price_assist_tb', 99, true);
+SELECT pg_catalog.setval('seq_price_assist_tb', 1, false);
 
 
 --
 -- Name: seq_price_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_price_tb', 4657, true);
+SELECT pg_catalog.setval('seq_price_tb', 1, false);
 
 
 --
 -- Name: seq_product_package_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_product_package_tb', 915, true);
+SELECT pg_catalog.setval('seq_product_package_tb', 1, false);
 
 
 --
 -- Name: seq_qr_code_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_qr_code_tb', 255380, true);
+SELECT pg_catalog.setval('seq_qr_code_tb', 100000, false);
 
 
 --
 -- Name: seq_qr_thirdpark_code; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_qr_thirdpark_code', 5, true);
+SELECT pg_catalog.setval('seq_qr_thirdpark_code', 1, false);
 
 
 --
 -- Name: seq_recharge_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_recharge_tb', 1, true);
+SELECT pg_catalog.setval('seq_recharge_tb', 1, false);
 
 
 --
 -- Name: seq_recom_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_recom_tb', 507, true);
+SELECT pg_catalog.setval('seq_recom_tb', 1, false);
 
 
 --
 -- Name: seq_recommend_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_recommend_tb', 221703, true);
+SELECT pg_catalog.setval('seq_recommend_tb', 1, false);
 
 
 --
 -- Name: seq_reg_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_reg_anlysis_tb', 5700, true);
+SELECT pg_catalog.setval('seq_reg_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_register_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_register_anlysis_tb', 1106, true);
+SELECT pg_catalog.setval('seq_register_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_remain_berth_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_remain_berth_tb', 55516353, true);
+SELECT pg_catalog.setval('seq_remain_berth_tb', 1, false);
 
 
 --
 -- Name: seq_reward_account_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_reward_account_tb', 218983, true);
+SELECT pg_catalog.setval('seq_reward_account_tb', 1, false);
 
 
 --
 -- Name: seq_role_auth_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_role_auth_tb', 35, true);
+SELECT pg_catalog.setval('seq_role_auth_tb', 1, false);
 
 
 --
 -- Name: seq_sensor_online_anlysis_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_sensor_online_anlysis_tb', 697382, true);
+SELECT pg_catalog.setval('seq_sensor_online_anlysis_tb', 1, false);
 
 
 --
 -- Name: seq_share_log_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_share_log_tb', 5936687, true);
+SELECT pg_catalog.setval('seq_share_log_tb', 1, false);
 
 
 --
 -- Name: seq_shop_account_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_shop_account_tb', 124, true);
+SELECT pg_catalog.setval('seq_shop_account_tb', 188, false);
 
 
 --
 -- Name: seq_shop_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_shop_tb', 81, true);
+SELECT pg_catalog.setval('seq_shop_tb', 1, false);
 
 
 --
 -- Name: seq_sim_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_sim_tb', 81, true);
+SELECT pg_catalog.setval('seq_sim_tb', 1, false);
 
 
 --
 -- Name: seq_sites_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_sites_tb', 43584, true);
+SELECT pg_catalog.setval('seq_sites_tb', 1, false);
 
 
 --
@@ -20755,7 +21157,7 @@ SELECT pg_catalog.setval('seq_sites_voltage_tb', 1, false);
 -- Name: seq_slow_alert_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_slow_alert_tb', 189, true);
+SELECT pg_catalog.setval('seq_slow_alert_tb', 1, false);
 
 
 --
@@ -20769,161 +21171,168 @@ SELECT pg_catalog.setval('seq_sub_account_tb', 1, false);
 -- Name: seq_switch_line_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_switch_line_tb', 1, true);
+SELECT pg_catalog.setval('seq_switch_line_tb', 1, false);
 
 
 --
 -- Name: seq_sync_info_pool_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_sync_info_pool_tb', 245394, true);
+SELECT pg_catalog.setval('seq_sync_info_pool_tb', 1, false);
+
+
+--
+-- Name: seq_thirdpay_order_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('seq_thirdpay_order_tb', 4390, false);
 
 
 --
 -- Name: seq_ticket_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_ticket_tb', 4364729, true);
+SELECT pg_catalog.setval('seq_ticket_tb', 1, false);
 
 
 --
 -- Name: seq_ticket_uion_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_ticket_uion_tb', 182, true);
+SELECT pg_catalog.setval('seq_ticket_uion_tb', 1, false);
 
 
 --
 -- Name: seq_tingchebao_account_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_tingchebao_account_tb', 1364609, true);
+SELECT pg_catalog.setval('seq_tingchebao_account_tb', 1, false);
 
 
 --
 -- Name: seq_tmp_p4top5_primarykey; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_tmp_p4top5_primarykey', 972067, true);
+SELECT pg_catalog.setval('seq_tmp_p4top5_primarykey', 1, false);
 
 
 --
 -- Name: seq_transfer_url_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_transfer_url_tb', 34682, true);
+SELECT pg_catalog.setval('seq_transfer_url_tb', 1, false);
 
 
 --
 -- Name: seq_union_park_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_union_park_tb', 8000352, true);
+SELECT pg_catalog.setval('seq_union_park_tb', 1, false);
 
 
 --
 -- Name: seq_user_account_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_account_tb', 2920912, true);
+SELECT pg_catalog.setval('seq_user_account_tb', 1, false);
 
 
 --
 -- Name: seq_user_friend_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_friend_tb', 79092, true);
+SELECT pg_catalog.setval('seq_user_friend_tb', 1, false);
 
 
 --
 -- Name: seq_user_info_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_info_tb', 523599, true);
+SELECT pg_catalog.setval('seq_user_info_tb', 1, false);
 
 
 --
 -- Name: seq_user_liuyan_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_liuyan_tb', 886, true);
+SELECT pg_catalog.setval('seq_user_liuyan_tb', 1, false);
 
 
 --
 -- Name: seq_user_local_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_local_tb', 8482212, true);
+SELECT pg_catalog.setval('seq_user_local_tb', 1, false);
 
 
 --
 -- Name: seq_user_log_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_log_tb', 50163, true);
+SELECT pg_catalog.setval('seq_user_log_tb', 1, false);
 
 
 --
 -- Name: seq_user_message_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_message_tb', 475630, true);
+SELECT pg_catalog.setval('seq_user_message_tb', 1, false);
 
 
 --
 -- Name: seq_user_payaccount_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_payaccount_tb', 703355, true);
+SELECT pg_catalog.setval('seq_user_payaccount_tb', 1, false);
 
 
 --
 -- Name: seq_user_pic_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_pic_tb', 69, true);
+SELECT pg_catalog.setval('seq_user_pic_tb', 1, false);
 
 
 --
 -- Name: seq_user_preaddfriend_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_preaddfriend_tb', 47, true);
+SELECT pg_catalog.setval('seq_user_preaddfriend_tb', 1, false);
 
 
 --
 -- Name: seq_user_profile_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_profile_tb', 289909, true);
+SELECT pg_catalog.setval('seq_user_profile_tb', 1, false);
 
 
 --
 -- Name: seq_user_role_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_role_tb', 626, true);
+SELECT pg_catalog.setval('seq_user_role_tb', 1, false);
 
 
 --
 -- Name: seq_user_session_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_session_tb', 181653, true);
+SELECT pg_catalog.setval('seq_user_session_tb', 1, false);
 
 
 --
 -- Name: seq_user_worksite_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_user_worksite_tb', 7394, true);
+SELECT pg_catalog.setval('seq_user_worksite_tb', 1, false);
 
 
 --
 -- Name: seq_verification_code_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_verification_code_tb', 312463, true);
+SELECT pg_catalog.setval('seq_verification_code_tb', 1, false);
 
 
 --
@@ -20937,98 +21346,98 @@ SELECT pg_catalog.setval('seq_vip_apply_tb', 1, false);
 -- Name: seq_visit_info_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_visit_info_tb', 13231, true);
+SELECT pg_catalog.setval('seq_visit_info_tb', 1, false);
 
 
 --
 -- Name: seq_withdrawer_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_withdrawer_tb', 41150, true);
+SELECT pg_catalog.setval('seq_withdrawer_tb', 1, false);
 
 
 --
 -- Name: seq_work_berthsec_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_work_berthsec_tb', 2203, true);
+SELECT pg_catalog.setval('seq_work_berthsec_tb', 1, false);
 
 
 --
 -- Name: seq_work_detail_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_work_detail_tb', 5812726, true);
+SELECT pg_catalog.setval('seq_work_detail_tb', 1, false);
 
 
 --
 -- Name: seq_work_employee_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_work_employee_tb', 2748, true);
+SELECT pg_catalog.setval('seq_work_employee_tb', 1, false);
 
 
 --
 -- Name: seq_work_group_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_work_group_tb', 658, true);
+SELECT pg_catalog.setval('seq_work_group_tb', 1, false);
 
 
 --
 -- Name: seq_work_inspector_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_work_inspector_tb', 63, true);
+SELECT pg_catalog.setval('seq_work_inspector_tb', 1, false);
 
 
 --
 -- Name: seq_work_time_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_work_time_tb', 16, true);
+SELECT pg_catalog.setval('seq_work_time_tb', 1, false);
 
 
 --
 -- Name: seq_wxp_user_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_wxp_user_tb', 141354, true);
+SELECT pg_catalog.setval('seq_wxp_user_tb', 1, false);
 
 
 --
 -- Name: seq_zld_black_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_zld_black_tb', 13640, true);
+SELECT pg_catalog.setval('seq_zld_black_tb', 1, false);
 
 
 --
 -- Name: seq_zld_game_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_zld_game_tb', 222832, true);
+SELECT pg_catalog.setval('seq_zld_game_tb', 1, false);
 
 
 --
 -- Name: seq_zld_organize_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_zld_organize_tb', 4, true);
+SELECT pg_catalog.setval('seq_zld_organize_tb', 1, false);
 
 
 --
 -- Name: seq_zld_orgtype_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_zld_orgtype_tb', 9, true);
+SELECT pg_catalog.setval('seq_zld_orgtype_tb', 1, false);
 
 
 --
 -- Name: seq_zld_protocol_tb; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seq_zld_protocol_tb', 602, true);
+SELECT pg_catalog.setval('seq_zld_protocol_tb', 1, false);
 
 
 --
@@ -21051,7 +21460,7 @@ COPY shop_account_tb (id, shop_id, shop_name, ticket_limit, ticketfree_limit, ti
 -- Data for Name: shop_tb; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY shop_tb (id, name, address, mobile, phone, comid, ticket_limit, description, state, create_time, ticketfree_limit, ticket_type, ticket_money, default_limit, discount_percent, discount_money, validite_time) FROM stdin;
+COPY shop_tb (id, name, address, mobile, phone, comid, ticket_limit, description, state, create_time, ticketfree_limit, ticket_type, ticket_money, default_limit, discount_percent, discount_money, validite_time, ticket_unit, free_money) FROM stdin;
 \.
 
 
@@ -21108,6 +21517,14 @@ COPY switch_line_tb (id, comid, create_time, end_time) FROM stdin;
 --
 
 COPY sync_info_pool_tb (id, comid, table_name, table_id, create_time, operate, state) FROM stdin;
+\.
+
+
+--
+-- Data for Name: thirdpay_order_tb; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY thirdpay_order_tb (out_trade_no, id, order_id_local) FROM stdin;
 \.
 
 
@@ -21180,7 +21597,7 @@ COPY user_friend_tb (id, buin, euin, ctime, atype, is_add_hx) FROM stdin;
 --
 
 COPY user_info_tb (id, nickname, password, strid, sex, email, phone, mobile, address, resume, reg_time, logon_time, logoff_time, online_flag, comid, auth_flag, balance, state, recom_code, md5pass, cid, department_id, media, isview, collector_pics, collector_auditor, imei, client_type, version, wxp_openid, wx_name, wx_imgurl, shop_id, credit_limit, is_auth, reward_score, firstorderquota, rewardquota, recommendquota, ticketquota, hx_name, hx_pass, role_id, order_hid, chanid, groupid, creator_id, cityid, union_state, upload_union_time, member_id, operate_type, is_sync, update_time, user_id) FROM stdin;
-1000001	\N	yunplat	admin	\N	\N	\N	\N	\N	\N	\N	1400743883	\N	22	0	0	0.00	0	\N	db706980811f86dacd066acd8489d5a8	\N	\N	0	1	0	\N	\N	0	\N	\N	\N	\N	\N	0.00	0	0.00	8.00	2.00	5.00	-1.00	\N	\N	0	0	-1	-1	\N	-1	0	\N	\N	\N	0	\N	\N
+1000001	\N	123456	admin	1	\N	\N	\N	\N	\N	\N	1400743883	\N	22	0	0	0.00	0	\N	18432daeaf270b986d347513a1d78761	\N	\N	0	1	0	\N	\N	0	\N	\N	\N	\N	\N	0.00	0	0.00	8.00	2.00	5.00	-1.00	\N	\N	0	0	-1	-1	\N	-1	0	\N	\N	\N	0	\N	\N
 \.
 
 
@@ -21263,11 +21680,19 @@ BOSS管理员	0	345	5	\N	0	\N	0	0	0
 收费员	0	620	8		1	522716	0	1	0
 System	0	621	8		1	522705	0	1	0
 总管理员	0	0	5	\N	0	1000001	0	0	0
-商家续费工作员	0	622	8		1	522746	0	0	0
-查费	1	623	8		1	522756	1	0	0
-联盟厂商管理员	0	625	9	\N	0	\N	0	0	0
-联盟厂商管理员	0	626	9	\N	0	\N	0	0	0
-张三	1	624	5		1	1000001	0	0	1
+财务管理员	0	622	8		1	522740	0	0	1
+何正文	0	623	8		1	522772	1	0	0
+系统管理员	0	624	2		1	522739	0	1	0
+小组长	1	625	2		1	522852	0	0	0
+ceshi	0	626	8		1	522951	0	1	0
+QQ	0	627	2		1	523068	0	0	0
+商户	0	628	8		1	523181	0	0	0
+11	0	629	8		1	522993	0	1	0
+系统管理员	0	630	8		1	522993	0	1	0
+收费员	0	631	8		1	523575	0	1	0
+茶楼	1	633	8		1	523575	0	0	1
+佳丽酒楼	1	632	8		1	523575	0	0	1
+111	0	634	8	111	1	522951	0	0	0
 \.
 
 
@@ -21292,7 +21717,6 @@ COPY user_worksite_tb (id, worksite_id, uin) FROM stdin;
 --
 
 COPY verification_code_tb (id, verification_code, uin, create_time, state) FROM stdin;
-312449	6860	522659	1494645124	0
 \.
 
 
@@ -21852,6 +22276,14 @@ ALTER TABLE ONLY com_temp_tb
 
 ALTER TABLE ONLY com_worksite_tb
     ADD CONSTRAINT com_worksite_tb_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: confirm_order_tb confirm_order_tb_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY confirm_order_tb
+    ADD CONSTRAINT confirm_order_tb_pkey PRIMARY KEY (id);
 
 
 --
@@ -22684,6 +23116,14 @@ ALTER TABLE ONLY user_friend_tb
 
 ALTER TABLE ONLY user_info_tb
     ADD CONSTRAINT user_info_tb_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_info_tb user_info_tb_strid_key; Type: CONSTRAINT; Schema: public; Owner: tracqdev
+--
+
+ALTER TABLE ONLY user_info_tb
+    ADD CONSTRAINT user_info_tb_strid_key UNIQUE (strid);
 
 
 --
@@ -23791,6 +24231,13 @@ CREATE INDEX com_temp_tb_next_time_idx ON com_temp_tb USING btree (next_time);
 --
 
 CREATE INDEX com_worksite_tb_comid_idx ON com_worksite_tb USING btree (comid);
+
+
+--
+-- Name: confirm_order_event_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX confirm_order_event_id_idx ON confirm_order_tb USING btree (event_id);
 
 
 --
@@ -25110,6 +25557,13 @@ CREATE INDEX system_message_tb_comid_idx ON order_message_tb USING btree (comid)
 
 
 --
+-- Name: thirdpay_order_order_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX thirdpay_order_order_id_idx ON thirdpay_order_tb USING btree (order_id_local);
+
+
+--
 -- Name: ticket_tb_limit_day_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -25908,6 +26362,13 @@ CREATE TRIGGER com_worksite_tb_trigger BEFORE INSERT ON com_worksite_tb FOR EACH
 
 
 --
+-- Name: confirm_order_tb confirm_order_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER confirm_order_trigger BEFORE INSERT ON confirm_order_tb FOR EACH ROW EXECUTE PROCEDURE trigger_fct_confirm_order_trigger();
+
+
+--
 -- Name: consume_anlysis_tb consume_anlysis_tb_trigger; Type: TRIGGER; Schema: public; Owner: tracqdev
 --
 
@@ -26108,6 +26569,13 @@ CREATE TRIGGER money_record_tb_trigger BEFORE INSERT ON money_record_tb FOR EACH
 --
 
 CREATE TRIGGER money_set_tb_trigger BEFORE INSERT ON money_set_tb FOR EACH ROW EXECUTE PROCEDURE trigger_fct_money_set_tb_trigger();
+
+
+--
+-- Name: monitor_info_tb monitor_info_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER monitor_info_trigger BEFORE INSERT ON monitor_info_tb FOR EACH ROW EXECUTE PROCEDURE trigger_fct_monitor_tb_trigger();
 
 
 --
@@ -26314,6 +26782,13 @@ CREATE TRIGGER peakalert_anlysis_tb_trigger BEFORE INSERT ON peakalert_anlysis_t
 
 
 --
+-- Name: phone_info_tb phone_info_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER phone_info_trigger BEFORE INSERT ON phone_info_tb FOR EACH ROW EXECUTE PROCEDURE trigger_fct_phone_tb_trigger();
+
+
+--
 -- Name: price_assist_tb price_assist_tb_trigger; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -26479,6 +26954,13 @@ CREATE TRIGGER switch_line_tb_trigger BEFORE INSERT ON switch_line_tb FOR EACH R
 --
 
 CREATE TRIGGER sync_info_pool_tb_trigger BEFORE INSERT ON sync_info_pool_tb FOR EACH ROW EXECUTE PROCEDURE trigger_fct_sync_info_pool_tb_trigger();
+
+
+--
+-- Name: thirdpay_order_tb thirdpay_order_tb_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER thirdpay_order_tb_trigger BEFORE INSERT ON thirdpay_order_tb FOR EACH ROW EXECUTE PROCEDURE trigger_fct_thirdpay_order_tb_trigger();
 
 
 --
