@@ -43,9 +43,9 @@ function getBrake(id){
 var worksites = getWorksites();
 var _mediaField = [
 		{fieldcnname:"通道ID",fieldname:"id",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false,edit:false,fhide:true},
-		{fieldcnname:"编号",fieldname:"channel_id",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
+		{fieldcnname:"编号",fieldname:"channel_id",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false,edit:false},
 		{fieldcnname:"名称",fieldname:"passname",fieldvalue:'',inputtype:"text", twidth:"200" ,height:"",issort:false},
-		{fieldcnname:"通道类型",fieldname:"passtype",fieldvalue:'',inputtype:"select",noList:[{"value_no":0,"value_name":"入"},{"value_no":1,"value_name":"出"},{"value_no":2,"value_name":"出入"}], twidth:"100" ,height:"",issort:false},
+		{fieldcnname:"通道类型",fieldname:"passtype",fieldvalue:'',inputtype:"select",noList:[{"value_no":0,"value_name":"出"},{"value_no":1,"value_name":"入"},{"value_no":2,"value_name":"出入"}], twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"所属工作站",fieldname:"worksite_id",fieldvalue:'',inputtype:"select",noList:worksites, twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"非月卡车",fieldname:"month_set",fieldvalue:'',defaultValue:'不限制||-1',inputtype:"select", noList:[{"value_no":-1,"value_name":"默认车场设置"},{"value_no":0,"value_name":"不限制"},{"value_no":1,"value_name":"禁止进入"}] , twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"月卡第二辆车",fieldname:"month2_set",fieldvalue:'',defaultValue:'不限制||-1',inputtype:"select", noList:[{"value_no":-1,"value_name":"默认车场设置"},{"value_no":0,"value_name":"不限制"},{"value_no":1,"value_name":"禁止进入"}], twidth:"100" ,height:"",issort:false},

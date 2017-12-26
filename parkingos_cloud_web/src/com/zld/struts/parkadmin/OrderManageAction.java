@@ -615,7 +615,7 @@ public class OrderManageAction extends Action{
 						map.put("isclick", -1);
 				}
 			}
-			List<Map<String, Object>> shopTicketList = queryShopTicket(orderidList);
+			/*List<Map<String, Object>> shopTicketList = queryShopTicket(orderidList);
 			if(shopTicketList != null && !shopTicketList.isEmpty()){
 				for(Map<String, Object> map : list){
 					Long id = (Long)map.get("id");
@@ -636,7 +636,7 @@ public class OrderManageAction extends Action{
 						}
 					}
 				}
-			}
+			}*/
 		}
 		arrayList.add(list);
 		arrayList.add(pageNum);

@@ -146,7 +146,8 @@ function getAuthButtons(){
 							tabletitle:"高级搜索结果",
 							extparam:"&comid="+comid+"&action=query&"+Serializ(formName)
 						})
-                        addcoms();
+                        addgroups();
+                        addCitycoms();
 					}
 				});	
 			}
@@ -169,7 +170,7 @@ function getAuthButtons(){
 					SubAction:
 					function(callback,formName){
 						T("#exportiframe").src="buycardrecord.do?action=exportExcel&comid="+comid
-						+"&rp="+2147483647+"&fieldsstr="+"id__collector__amount_pay__car_number__user_id__buy_month__create_time&"+Serializ(formName)
+						+"&rp="+2147483647+"&fieldsstr="+"id__trade_no__card_id__pay_time__amount_receivable__amount_pay__collector__pay_type__car_number__user_id__limit_time__resume&"+Serializ(formName)
 						TwinC("buycard_export_w");
 						T.loadTip(1,"正在导出，请稍候...",2,"");
 					}
@@ -230,7 +231,9 @@ function addCitycoms(){
             var name = child.value_name;
             jQuery("#newCompanys").append("<option value='"+id+"'>"+name+"</option>");
         }
-        T("#newCompanys").value = comid;
+        if(comid){
+            T("#newCompanys").value = comid;
+        };
     }
 }
 

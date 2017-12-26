@@ -186,7 +186,7 @@ function searchdata(){
     _cityvipT.C({
         cpage:1,
         tabletitle:"高级搜索结果",
-        extparam:"action=query&comid="+comid
+        extparam:"action=query&comid="+comid,
     });
     addcoms(comid);
 }
@@ -251,11 +251,13 @@ function getAuthButtons(){
                 ],
                 SubAction:
                     function(callback,formName){
+                        comid = T("#companys").value;
                         _cityvipT.C({
                             cpage:1,
                             tabletitle:"高级搜索结果",
                             extparam:"action=query&"+Serializ(formName)
                         })
+                        addcoms(comid);
                     }
             });
         }

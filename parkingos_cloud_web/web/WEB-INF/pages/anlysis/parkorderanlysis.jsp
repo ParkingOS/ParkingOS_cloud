@@ -51,7 +51,8 @@ var _mediaField = [
 			}},
 		//{fieldcnname:"应收金额",fieldname:"amount_receivable",inputtype:"text", twidth:"90",issort:false},
 		{fieldcnname:"月卡订单数",fieldname:"monthcount",inputtype:"text", twidth:"80",issort:false},
-		{fieldcnname:"现金支付",fieldname:"cash_pay",inputtype:"text", twidth:"80",issort:false},
+		{fieldcnname:"现金结算",fieldname:"cash_pay",inputtype:"text", twidth:"80",issort:false},
+        {fieldcnname:"现金预付",fieldname:"cash_prepay",inputtype:"text", twidth:"80",issort:false},
 		{fieldcnname:"电子支付",fieldname:"electronic_pay",inputtype:"text", twidth:"80",issort:false},
 		{fieldcnname:"免费金额",fieldname:"free_pay",inputtype:"text", twidth:"100",issort:false},
 		{fieldcnname:"减免券支付",fieldname:"reduce_pay",inputtype:"text", twidth:"100",issort:false},
@@ -74,13 +75,13 @@ var _orderanlyT = new TQTable({
 });
 
 function coutomsearch(){
-	var html=    "<input type='button' onclick='searchtoday();' value='今天'/>&nbsp;&nbsp;<input type='button' onclick='searchtoweek();' value='本周'/>&nbsp;&nbsp;<input type='button' onclick='searchlastweek();' value='上周'/>&nbsp;&nbsp;<input type='button' onclick='searchtomonth();' value='本月'/>&nbsp;&nbsp;时间：<input id='coutom_btime' value='"+btime+"' style='width:70px' onClick=\"WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-01',alwaysUseStartDate:true});\"/>"
-				+" - <input id='coutom_etime' value='"+etime+"' style='width:70px' onClick=\"WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'%y-%M-01',alwaysUseStartDate:true});\"/>"+
+	var html=    "<input type='button' onclick='searchtoday();' value='今天'/>&nbsp;&nbsp;<input type='button' onclick='searchtoweek();' value='本周'/>&nbsp;&nbsp;<input type='button' onclick='searchlastweek();' value='上周'/>&nbsp;&nbsp;<input type='button' onclick='searchtomonth();' value='本月'/>&nbsp;&nbsp;时间：<input id='coutom_btime' value='"+btime+"' style='width:70px' onClick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',startDate:'%y-%M-01 %H:%m:%s',alwaysUseStartDate:true});\"/>"
+				+" - <input id='coutom_etime' value='"+etime+"' style='width:70px' onClick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',startDate:'%y-%M-01 %H:%m:%s',alwaysUseStartDate:true});\"/>"+
 				"&nbsp;&nbsp;<input type='button' onclick='searchdata();' value=' 查 询 '/>";//"&nbsp;&nbsp;总计：900.00元";
 	if(groupid != "" || cityid != ""){
 		html += "&nbsp;&nbsp;&nbsp;&nbsp;当前车场:&nbsp;&nbsp;<select id='companys' onchange='searchcoms();' ></select>";
 	}
-	html += "";
+    html += "&nbsp;&nbsp;<span id='total_money'></span>";
 	return html;
 }
 function searchcoms(){
@@ -150,6 +151,7 @@ function viewdetail(type,value,id,pay_type){
 	var name =_orderanlyT.GD(id,"name");
 	var uid = _orderanlyT.GD(id,"out_uid");
 	var pmoney=_orderanlyT.GD(id,"cash_pay");
+    var ppremoney=_orderanlyT.GD(id,"cash_prepay");
 	var pmobile=_orderanlyT.GD(id,"electronic_pay");
 	var free=_orderanlyT.GD(id,"free_pay");
 	//alert(uid);
@@ -159,7 +161,7 @@ function viewdetail(type,value,id,pay_type){
 		Width:T.gww()-100,
 		Height:T.gwh()-50,
 		sysfunI:id,
-		Content:"<iframe name='parkorder_detail_'"+id+" id='parkorder_detail_'"+id+" src='orderanly.do?action=detail&otype="+viewtype+"&uid="+uid+"&btime="+btime+"&etime="+etime+"&total="+total+"&count="+count+"&pmobile="+pmobile+"&pmoney="+pmoney+"&comid="+comid+"&free="+free+"&pay_type="+pay_type+"' width='100%' height='100%' frameborder='0' scrolling='no' style='overflow:hidden;' ></iframe>"
+		Content:"<iframe name='parkorder_detail_'"+id+" id='parkorder_detail_'"+id+" src='orderanly.do?action=detail&otype="+viewtype+"&uid="+uid+"&btime="+btime+"&etime="+etime+"&total="+total+"&count="+count+"&pmobile="+pmobile+"&pmoney="+pmoney+"&ppremoney="+ppremoney+"&comid="+comid+"&free="+free+"&pay_type="+pay_type+"' width='100%' height='100%' frameborder='0' scrolling='no' style='overflow:hidden;' ></iframe>"
 	})
 }
 function viewworkdetail(type,value,id,pay_type){

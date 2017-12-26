@@ -81,6 +81,9 @@ public class CollectByCollectorAnlyAction extends Action {
 				sql += " u.id in ("+preParams+") ";
 				countSql += " u.id in ("+preParams+") ";
 				params.addAll(collectors);
+			}else{
+				sql += "1 = 1";
+				countSql += "1 = 1";
 			}
 			if(sqlInfo != null) {
 				countSql += " and "+ sqlInfo.getSql();

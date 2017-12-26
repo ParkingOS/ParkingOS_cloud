@@ -286,7 +286,7 @@ function getAuthButtons(){
 			}
 		})
 	}})
-	/*if(subauth[2])
+	if(subauth[2])
 		authButs.push({dname:"0Ôª½áËã",icon:"toxls.gif",onpress:function(Obj){
 		var sids = _orderT.GS();
 		//var a = _orderT.GSByField("c_type");
@@ -302,7 +302,7 @@ function getAuthButtons(){
 			location.reload();
 		}
 		)}})
-	}})*/
+	}})
 	
 
 	return authButs;

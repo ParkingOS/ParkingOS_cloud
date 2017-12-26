@@ -72,8 +72,8 @@ public class MemberManageAction extends Action{
 			request.setAttribute("comid", comid);
 			return mapping.findForward("adminlist");
 		}else if(action.equals("quickquery")){
-			String sql = "select * from user_info_tb where comid=? and auth_flag>? and state=? ";
-			String countSql = "select count(*) from user_info_tb  where comid=? and auth_flag>? and state=? ";
+			String sql = "select * from user_info_tb where comid=? and auth_flag>? and state=? and auth_flag<>? and auth_flag<>?";
+			String countSql = "select count(*) from user_info_tb  where comid=? and auth_flag>? and state=? and auth_flag<>? and auth_flag<>?";
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			List list = null;//daService.getPage(sql, null, 1, 20);
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
@@ -82,6 +82,8 @@ public class MemberManageAction extends Action{
 			params.add(comid);
 			params.add(0);
 			params.add(0);
+			params.add(14);
+			params.add(15);
 
 			if(supperadmin!=1&&isAdmin!=null&&isAdmin==0){//不是车场管理员登录，隐藏车场管理员
 				sql +=" and role_id <>? ";
@@ -344,6 +346,7 @@ public class MemberManageAction extends Action{
 		String loginuin = request.getSession().getAttribute("loginuin")+"";
 		Long role_id =RequestUtil.getLong(request, "role_id", -1L);
 		Integer isview = RequestUtil.getInteger(request, "isview", 1);
+		Long sex = RequestUtil.getLong(request,"sex",-1L);
 		if(nickname.equals("")) nickname=null;
 		if(phone.equals("")) phone=null;
 		if(mobile.equals("")) mobile=null;
@@ -376,10 +379,10 @@ public class MemberManageAction extends Action{
 			auth_flag = 1L;
 		}
 		String sql="insert into user_info_tb (id,nickname,password,strid," +
-				"address,reg_time,mobile,phone,auth_flag,comid,role_id,isview,user_id,cityid,groupid) " +
-				"values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				"address,reg_time,mobile,phone,auth_flag,comid,role_id,isview,user_id,cityid,groupid,sex) " +
+				"values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		Object [] values= new Object[]{nextid,nickname,strid,strid,
-				adminMap.get("address"),time,mobile,phone,auth_flag,comId,role_id,isview,userId,cityId,groupId};
+				adminMap.get("address"),time,mobile,phone,auth_flag,comId,role_id,isview,userId,cityId,groupId,sex};
 		int r = daService.update(sql, values);
 		if(r==1){
 			//判断是否支持验证ETCPark

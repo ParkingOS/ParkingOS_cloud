@@ -62,6 +62,24 @@ public class ShopManageAction extends Action {
 			Long count = daService.getCount(countsql, params);
 			if(count > 0){
 				list = daService.getAll(sql, params, pageNum, pageSize);
+				for(Map<String, Object> map : list){
+					if((int)map.get("ticket_type") == 1){//时长
+						Integer ticket_unit = map.get("ticket_unit")==null ? 2 : (int) map.get("ticket_unit");
+						//默认小时，原先只支持小时
+						if(ticket_unit==1){//分钟
+							map.put("ticket_limit_minute",map.get("ticket_limit"));
+						}else if(ticket_unit==2){
+							map.put("ticket_limit_hour",map.get("ticket_limit"));
+						}else if(ticket_unit==3){
+							map.put("ticket_limit_day",map.get("ticket_limit"));
+						}
+						map.put("ticket_money","");
+					}else{//金额
+						map.put("ticket_limit_minute","");
+						map.put("ticket_limit_hour","");
+						map.put("ticket_limit_day","");
+					}
+				}
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
@@ -72,21 +90,33 @@ public class ShopManageAction extends Action {
 			String mobile = RequestUtil.processParams(request, "mobile");
 			String phone = RequestUtil.processParams(request, "phone");
 			Integer ticket_type = RequestUtil.getInteger(request, "ticket_type",1);
+			Integer ticket_unit = RequestUtil.getInteger(request, "ticket_unit", 1);//单位
 			//Integer ticket_limit = RequestUtil.getInteger(request, "ticket_limit", 0);
 			//Integer ticketfree_limit = RequestUtil.getInteger(request, "ticketfree_limit", 0);
 			String default_limit = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "default_limit"));
 			double discount_percent = RequestUtil.getDouble(request, "discount_percent",100.00);//商户折扣/%
 			double discount_money = RequestUtil.getDouble(request, "discount_money",1.00);//商户折扣---每小时/元
+			double free_money = RequestUtil.getDouble(request, "free_money",1.00);//全免劵单价---每张/元
 			Integer validite_time = RequestUtil.getInteger(request, "validite_time", 0);//有效期/小时
+			if(!Check.isEmpty(default_limit) && default_limit.contains("，")){
+				default_limit.replaceAll("，", ",");
+			}
+			//数据校验
 			if(0>=validite_time){
 				AjaxUtil.ajaxOutput(response, "有效期必须输入正整数");
 				return null;
 			}
-			if(!Check.isEmpty(default_limit) && default_limit.contains("，")){
-				default_limit.replaceAll("，", ",");
+			if(!Check.isEmpty(default_limit) && !default_limit.contains(",")){
+				AjaxUtil.ajaxOutput(response, "默认额度数据格式不对");
+				return null;
 			}
-			int r = daService.update("insert into shop_tb(name,address,mobile,phone,comid,ticket_type,create_time,default_limit,discount_percent,discount_money,validite_time) values(?,?,?,?,?,?,?,?,?,?,?)",
-					new Object[] { name, address, mobile, phone, comid, ticket_type,System.currentTimeMillis() / 1000, default_limit, discount_percent, discount_money,validite_time});
+			String[] default_limits = default_limit.split(",");
+			if(default_limits.length>3){
+				AjaxUtil.ajaxOutput(response, "默认额度最多不能超过3个");
+				return null;
+			}
+			int r = daService.update("insert into shop_tb(name,address,mobile,phone,comid,ticket_type,create_time,default_limit,discount_percent,discount_money,free_money,validite_time,ticket_unit) values(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+					new Object[] { name, address, mobile, phone, comid, ticket_type,System.currentTimeMillis() / 1000, default_limit, discount_percent, discount_money,free_money,validite_time,ticket_unit});
 			if(r==1)
 				mongoDbUtils.saveLogs( request,0, 2, "添加了商户："+name+",地址："+address+",手机:"+mobile+",电话:"+phone);
 			AjaxUtil.ajaxOutput(response, r+"");
@@ -101,30 +131,31 @@ public class ShopManageAction extends Action {
 			Integer ticket_time = RequestUtil.getInteger(request, "ticket_time", 0);
 			//Integer ticket_time_type = RequestUtil.getInteger(request, "ticket_time_type",1);
 			Integer ticket_money = RequestUtil.getInteger(request, "ticket_money", 0);
+			Integer ticket_free = RequestUtil.getInteger(request, "ticketfree_limit", 0);
 			double addmoney = RequestUtil.getDouble(request, "addmoney",0.00);
 			//减免类型
 			Integer ticket_type = Integer.parseInt(shopMap.get("ticket_type")+"");
 			if(ticket_type == 1){
-				if(0>=ticket_time){
+				if(0>ticket_time){
 					AjaxUtil.ajaxOutput(response, "减免小时必须输入正整数");
 					return null;
 				}
 			}else{
-				if(0>=ticket_money){
-					AjaxUtil.ajaxOutput(response, "减免劵必须输入正整数");
+				if(0>ticket_money){
+					AjaxUtil.ajaxOutput(response, "减免劵金额必须输入正整数");
 					return null;
 				}
+			}
+			if(0>ticket_free){
+				AjaxUtil.ajaxOutput(response, "减免劵张数必须输入正整数");
+				return null;
 			}
 			Integer ticket_limit = 0;
 			Integer ticketfree_limit = 0;
 			//减免劵(小时)
 			ticket_limit += ticket_time;
-			/*if(ticket_time_type ==1){
-
-			}else{
-				//全免劵(张)
-				ticketfree_limit += ticket_time;
-			}*/
+			//全免劵(张)
+			ticketfree_limit += ticket_free;
 			int r = daService.update("update shop_tb set ticket_limit=ticket_limit+?, ticketfree_limit =ticketfree_limit+?, ticket_money=ticket_money+? where id=? ",
 					new Object[] {ticket_limit, ticketfree_limit, ticket_money, shoppingmarket_id});
 			mongoDbUtils.saveLogs( request,0,3, "商户:"+shopMap.get("name")+"续费:"+addmoney+"元");
@@ -154,11 +185,13 @@ public class ShopManageAction extends Action {
 			String mobile = RequestUtil.processParams(request, "mobile");
 			String phone = RequestUtil.processParams(request, "phone");
 			Integer ticket_type = RequestUtil.getInteger(request, "ticket_type",1);
+			Integer ticket_unit = RequestUtil.getInteger(request, "ticket_unit", 1);//单位
 			//Integer ticket_limit = RequestUtil.getInteger(request, "ticket_limit", 0);
 			//Integer ticketfree_limit = RequestUtil.getInteger(request, "ticketfree_limit", 0);
 			String default_limit = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "default_limit"));
 			double discount_percent = RequestUtil.getDouble(request, "discount_percent",100.00);//商户折扣/%
 			double discount_money = RequestUtil.getDouble(request, "discount_money",1.00);//商户折扣---每小时/元
+			double free_money = RequestUtil.getDouble(request, "free_money",1.00);//全免劵单价---每张/元
 			Integer validite_time = RequestUtil.getInteger(request, "validite_time", 0);//有效期/小时
 			if(0>=validite_time){
 				AjaxUtil.ajaxOutput(response, "有效期必须输入正整数");
@@ -168,8 +201,8 @@ public class ShopManageAction extends Action {
 				default_limit = default_limit.replaceAll("，", ",");
 			}
 			int r = daService.update("update shop_tb set name=?,address=?,mobile=?,phone=?," +
-							"default_limit=?,ticket_type=?,discount_percent=?, discount_money=?, validite_time=?  where id=? ",
-					new Object[] { name, address, mobile, phone, default_limit, ticket_type,discount_percent,discount_money,validite_time,shoppingmarket_id});
+							"default_limit=?,ticket_type=?,discount_percent=?, discount_money=?, free_money=?,validite_time=?, ticket_unit=? where id=? ",
+					new Object[] { name, address, mobile, phone, default_limit, ticket_type,discount_percent,discount_money,free_money,validite_time,ticket_unit,shoppingmarket_id});
 			if(r==1)
 				mongoDbUtils.saveLogs( request,0, 3, "修改了商户："+name+",地址："+address+",手机:"+mobile+",电话:"+phone);
 			AjaxUtil.ajaxOutput(response, r+"");

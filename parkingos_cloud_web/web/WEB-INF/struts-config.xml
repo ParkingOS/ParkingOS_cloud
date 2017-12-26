@@ -964,6 +964,12 @@
 		<action path="/workrecord" type="org.springframework.web.struts.DelegatingActionProxy" >
 			<forward name="list" path="/WEB-INF/pages/parkadmin/workrecord.jsp" redirect="false" />
 		</action>
+		<!-- 中央监控 -->
+		<action path="/monitor" type="org.springframework.web.struts.DelegatingActionProxy" >
+			<forward name="list" path="/WEB-INF/pages/monitor/list.jsp" redirect="false" />
+			<forward name="monitorList" path="/WEB-INF/pages/monitor/monitorList.jsp" redirect="false" />
+			<forward name="phoneList" path="/WEB-INF/pages/monitor/phoneList.jsp" redirect="false" />
+		</action>
 	</action-mappings>
 </struts-config>
 

@@ -85,7 +85,7 @@ public class ParkOrderanlysisAction extends Action {
 			String btime = RequestUtil.processParams(request, "btime");
 			String etime = RequestUtil.processParams(request, "etime");
 			if(btime.equals(""))
-				btime = nowtime;
+				btime = nowtime + " 00:00:00";
 			if(etime.equals(""))
 				etime = nowtime;
 			SqlInfo sqlInfo =null;
@@ -115,7 +115,7 @@ public class ParkOrderanlysisAction extends Action {
 						new Object[]{b,e});
 				dstr="本月";
 			}else if(!btime.equals("")&&!etime.equals("")){
-				b = TimeTools.getLongMilliSecondFrom_HHMMDD(btime)/1000;
+				b = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(btime);
 				e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime+" 23:59:59");
 				sqlInfo =new SqlInfo(" end_time between ? and ? ",
 						new Object[]{b,e});
@@ -129,7 +129,7 @@ public class ParkOrderanlysisAction extends Action {
 			}
 			params.add(comid);
 			params.add(1);
-			params.add(0);
+			params.add(-1);
 			params.add(0);
 			//总订单集合
 			List<Map<String, Object>> totalList = pgOnlyReadService.getAllMap(sql +" group by out_uid,comid order by scount desc ",params);
@@ -139,6 +139,8 @@ public class ParkOrderanlysisAction extends Action {
 			List<Map<String, Object>> freeList = pgOnlyReadService.getAllMap(free_sql +" and pay_type=8 group by out_uid,comid order by scount desc ",params);
 			int totalCount = 0;//总订单数
 			int monthCount = 0;
+			double cashpay = 0.0;//现金结算
+			double cashprepay = 0.0;//现金预付
 			double totalMoney = 0.0;//订单金额
 			double cashMoney = 0.0;//现金支付金额
 			double elecMoney = 0.0;//电子支付金额
@@ -190,12 +192,19 @@ public class ParkOrderanlysisAction extends Action {
 							}
 						}
 					}
-					cashMoney +=StringUtils.formatDouble(totalOrder.get("cash_pay"))+StringUtils.formatDouble(totalOrder.get("cash_prepay"));
+					//现金结算
+					cashpay += StringUtils.formatDouble(totalOrder.get("cash_pay"));
+					totalOrder.put("cash_pay",String.format("%.2f",StringUtils.formatDouble(totalOrder.get("cash_pay"))));
+					//现金预付
+					cashprepay += StringUtils.formatDouble(totalOrder.get("cash_prepay"));
+					totalOrder.put("cash_prepay",String.format("%.2f",StringUtils.formatDouble(totalOrder.get("cash_prepay"))));
+
+//					cashMoney +=StringUtils.formatDouble(totalOrder.get("cash_pay"))+StringUtils.formatDouble(totalOrder.get("cash_prepay"));
+//					totalOrder.put("cash_pay",String.format("%.2f",StringUtils.formatDouble(totalOrder.get("cash_pay"))+StringUtils.formatDouble(totalOrder.get("cash_prepay"))));
 					//电子支付
 
-					totalOrder.put("electronic_pay", String.format("%.2f",Double.parseDouble((totalOrder.get("electronic_pay")== null ? "0" : totalOrder.get("electronic_pay")+""))));
-					elecMoney += Double.parseDouble((totalOrder.get("electronic_pay")== null ? "0" : totalOrder.get("electronic_pay")+""));
-
+					elecMoney += StringUtils.formatDouble(totalOrder.get("electronic_pay"))+StringUtils.formatDouble(totalOrder.get("electronic_prepay"));
+					totalOrder.put("electronic_pay", String.format("%.2f",StringUtils.formatDouble(totalOrder.get("electronic_pay"))+StringUtils.formatDouble(totalOrder.get("electronic_prepay"))));
 					//免费支付
 					totalOrder.put("free_pay",0.0);
 					//遍历免费集合
@@ -213,8 +222,11 @@ public class ParkOrderanlysisAction extends Action {
 			}
 
 
+//			String money = "总订单数："+totalCount+",月卡订单数:"+monthCount+",订单金额:"+StringUtils.formatDouble(totalMoney)+"元," +
+//					"现金支付:"+StringUtils.formatDouble(cashMoney)+"元,电子支付 :"+StringUtils.formatDouble(elecMoney)+"元," +
+//					"免费金额:"+StringUtils.formatDouble(freeMoney)+"元,减免劵支付:"+StringUtils.formatDouble(reduce_amount)+"元";
 			String money = "总订单数："+totalCount+",月卡订单数:"+monthCount+",订单金额:"+StringUtils.formatDouble(totalMoney)+"元," +
-					"现金支付:"+StringUtils.formatDouble(cashMoney)+"元,电子支付 :"+StringUtils.formatDouble(elecMoney)+"元," +
+					"现金结算:"+StringUtils.formatDouble(cashpay)+"现金预付:"+StringUtils.formatDouble(cashprepay)+"元,电子支付 :"+StringUtils.formatDouble(elecMoney)+"元," +
 					"免费金额:"+StringUtils.formatDouble(freeMoney)+"元,减免劵支付:"+StringUtils.formatDouble(reduce_amount)+"元";
 			String json = JsonUtil.anlysisMap2Json(backList,1,backList.size(), fieldsstr,"id",money);
 			System.out.println(json);
@@ -246,10 +258,13 @@ public class ParkOrderanlysisAction extends Action {
 			}else if(type.equals("tomonth")){
 				btime=TimeTools.getMonthStartSeconds();
 			}else if(type.equals("custom")){
-				btime = TimeTools.getLongMilliSecondFrom_HHMMDD(bt)/1000;
+				if(bt.length()==10){
+					bt = bt + " 00:00:00";
+				}
+				btime = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(bt);
 				etime =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(et+" 23:59:59");
 			}else if(!bt.equals("")&&!et.equals("")){
-				btime = TimeTools.getLongMilliSecondFrom_HHMMDD(bt)/1000;
+				btime = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(bt);
 				etime =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(et+" 23:59:59");
 			}
 			long uid = RequestUtil.getLong(request, "uid", -1L);
@@ -257,7 +272,7 @@ public class ParkOrderanlysisAction extends Action {
 					" from " +
 					" parkuser_work_record_tb a left join " +
 					" com_worksite_tb b  on b.id=a.worksite_id  " +
-					"where (a.end_time  between ? and ? or a.start_time between ? and ? or (a.start_time between ? and ? and " +
+					"where a.start_time is not null and (a.end_time  between ? and ? or a.start_time between ? and ? or (a.start_time between ? and ? and " +
 					"(a.end_time>? or a.end_time is null))) and a.uid = ? ";// order by a.end_time desc";//查询上班信息
 			List<Object> params = new ArrayList();
 			params.add(btime);
@@ -275,7 +290,9 @@ public class ParkOrderanlysisAction extends Action {
 
 			logger.error(list);
 			double amountmoney = 0.0;//总金额
-			double cash_money = 0.0;//现金支付金额
+//			double cash_money = 0.0;//现金支付金额
+			double cashpay = 0.0;//现金结算金额
+			double cashprepay = 0.0;//现金预付金额
 			double elec_money = 0.0;//电子支付金额
 			double reduce_money = 0.0;//减免支付金额
 			double free_money = 0.0;//减免支付金额
@@ -331,8 +348,16 @@ public class ParkOrderanlysisAction extends Action {
 					work.put("total",StringUtils.formatDouble(totalMOney));
 					amountmoney+=totalMOney;
 					//现金支付
-					cash_money +=StringUtils.formatDouble(oMap.get("cash_pay"))+StringUtils.formatDouble(oMap.get("cash_prepay"));
-					work.put("cash_pay",StringUtils.formatDouble(oMap.get("cash_pay"))+StringUtils.formatDouble(oMap.get("cash_prepay")));
+//					cash_money +=StringUtils.formatDouble(oMap.get("cash_pay"))+StringUtils.formatDouble(oMap.get("cash_prepay"));
+//					work.put("cash_pay",StringUtils.formatDouble(oMap.get("cash_pay"))+StringUtils.formatDouble(oMap.get("cash_prepay")));
+					//现金结算
+					cashpay += StringUtils.formatDouble(oMap.get("cash_pay"));
+					work.put("cash_pay",String.format("%.2f",StringUtils.formatDouble(oMap.get("cash_pay"))));
+					//现金预付
+					cashprepay += StringUtils.formatDouble(oMap.get("cash_prepay"));
+					work.put("cash_prepay",String.format("%.2f",StringUtils.formatDouble(oMap.get("cash_prepay"))));
+
+
 					//电子支付
 					elec_money += StringUtils.formatDouble(oMap.get("electronic_pay"))+StringUtils.formatDouble(oMap.get("electronic_prepay"));
 					work.put("electronic_pay", StringUtils.formatDouble(oMap.get("electronic_pay"))+StringUtils.formatDouble(oMap.get("electronic_prepay")));
@@ -349,8 +374,11 @@ public class ParkOrderanlysisAction extends Action {
 				free_money += Double.parseDouble((list6.get("free_pay")== null ? "0" : list6.get("free_pay")+""));
 				work.put("free_pay", StringUtils.formatDouble(Double.parseDouble(list6.get("free_pay")== null ? "0" : (list6.get("free_pay")+""))));
 			}
-			String title = "总订单数："+count+"，月卡订单数："+monthcount+"，总结算金额："+String.format("%.2f",amountmoney)+"元，其中现金支付："+String.format("%.2f",cash_money)
-					+"元，电子支付 ："+StringUtils.formatDouble(elec_money)+"元，" +
+//			String title = "总订单数："+count+"，月卡订单数："+monthcount+"，总结算金额："+String.format("%.2f",amountmoney)+"元，其中现金支付："+String.format("%.2f",cash_money)
+//					+"元，电子支付 ："+StringUtils.formatDouble(elec_money)+"元，" +
+//					"免费金额："+String.format("%.2f",free_money)+"元,减免劵支付："+String.format("%.2f",reduce_money)+"元";
+			String title = "总订单数："+count+"，月卡订单数："+monthcount+"，总结算金额："+String.format("%.2f",amountmoney)+"元，其中现金结算："+String.format("%.2f",cashpay)
+					+"元，现金预付 : "+String.format("%.2f",cashprepay)+"元, 电子支付 ："+StringUtils.formatDouble(elec_money)+"元，" +
 					"免费金额："+String.format("%.2f",free_money)+"元,减免劵支付："+String.format("%.2f",reduce_money)+"元";
 			String ret = JsonUtil.anlysisMap2Json(list,1,list.size(), fieldsstr,"id",title);
 			logger.error(ret);
@@ -395,7 +423,10 @@ public class ParkOrderanlysisAction extends Action {
 				sqlInfo =new SqlInfo(" end_time between ? and ? ",
 						new Object[]{b,e});
 			}else if(!btime.equals("")&&!etime.equals("")){
-				b = TimeTools.getLongMilliSecondFrom_HHMMDD(btime)/1000;
+				if(btime.length()==10){
+					btime = btime + " 00:00:00";
+				}
+				b = TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(btime);
 				e =  TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(etime+" 23:59:59");
 				sqlInfo =new SqlInfo(" end_time between ? and ? ",
 						new Object[]{b,e});
@@ -411,7 +442,9 @@ public class ParkOrderanlysisAction extends Action {
 
 
 			double amountmoney = 0.0;//总金额
-			double cash_money = 0.0;//现金支付金额
+//			double cash_money = 0.0;//现金支付金额
+			double cashpay = 0.0;//现金结算金额
+			double cashprepay = 0.0;//现金预付金额
 			double elec_money = 0.0;//电子支付金额
 			int count =0;
 
@@ -426,9 +459,13 @@ public class ParkOrderanlysisAction extends Action {
 					//结算日期
 					work.put("end_time", order.get("end_time"));
 					//订单金额
-					work.put("total", order.get("total"));
+					work.put("amount_receivable", order.get("amount_receivable"));
 					//现金支付  order.get("amount_receivable")
-					work.put("cashMoney", StringUtils.formatDouble(order.get("cash_pay"))+StringUtils.formatDouble(order.get("cash_prepay")));
+//					work.put("cashMoney", StringUtils.formatDouble(order.get("cash_pay"))+StringUtils.formatDouble(order.get("cash_prepay")));
+					//现金结算
+					work.put("cash_pay", StringUtils.formatDouble(order.get("cash_pay")));
+					//现金预付
+					work.put("cash_prepay", StringUtils.formatDouble(order.get("cash_prepay")));
 					//电子支付
 					work.put("elecMoney", StringUtils.formatDouble(order.get("electronic_prepay"))+StringUtils.formatDouble(order.get("electronic_pay")));
 							//+ Double.parseDouble((order.get("electronic_prepay")== null ? "0" : order.get("electronic_prepay")+"")));
@@ -457,14 +494,18 @@ public class ParkOrderanlysisAction extends Action {
 				Double reduce_pay = 0.0;
 				if(orderList!=null && orderList.size()>0){
 					Map<String, Object> map = orderList.get(0);
-					amountmoney = StringUtils.formatDouble((map.get("total")));
-					cash_money = StringUtils.formatDouble((map.get("cash_pay")))+StringUtils.formatDouble((map.get("cash_prepay")));
+					amountmoney = StringUtils.formatDouble((map.get("amount_receivable")));
+//					cash_money = StringUtils.formatDouble((map.get("cash_pay")))+StringUtils.formatDouble((map.get("cash_prepay")));
+					cashpay = StringUtils.formatDouble((map.get("cash_pay")));
+					cashprepay = StringUtils.formatDouble((map.get("cash_prepay")));
 					elec_money = StringUtils.formatDouble((map.get("electronic_pay")))+StringUtils.formatDouble((map.get("electronic_prepay")));
 					count+=Integer.parseInt((map.get("ordertotal"))+"");
 					reduce_pay = StringUtils.formatDouble((map.get("reduce_pay")));
 				}
-				String title = StringUtils.formatDouble(amountmoney)+"元，其中现金支付："+String.format("%.2f",cash_money)+"元，" +
-						"电子支付 ："+String.format("%.2f",elec_money)+"元，减免券支付："+String.format("%.2f",reduce_pay)+"元，共"+count+"条";
+//				String title = StringUtils.formatDouble(amountmoney)+"元，其中现金支付："+String.format("%.2f",cash_money)+"元，" +
+//						"电子支付 ："+String.format("%.2f",elec_money)+"元，减免券支付："+String.format("%.2f",reduce_pay)+"元，共"+count+"条";
+				String title = StringUtils.formatDouble(amountmoney)+"元，其中现金结算："+String.format("%.2f",cashpay)+"元，" +
+						"现金预付 : "+String.format("%.2f",cashprepay)+"元, 电子支付 ："+String.format("%.2f",elec_money)+"元，减免券支付："+String.format("%.2f",reduce_pay)+"元，共"+count+"条";
 				String json = JsonUtil.anlysisMap2Json(list,1,list.size(), fieldsstr,"id",title);
 				//String json = JsonUtil.Map2Json(list,1,count, fieldsstr,"id");
 				AjaxUtil.ajaxOutput(response, json);
@@ -562,6 +603,7 @@ public class ParkOrderanlysisAction extends Action {
 		}
 		request.setAttribute("free", RequestUtil.getDouble(request, "free", 0d));
 		request.setAttribute("pmoney", RequestUtil.getDouble(request, "pmoney", 0d));
+		request.setAttribute("ppremoney", RequestUtil.getDouble(request, "ppremoney", 0d));
 		request.setAttribute("pmobile", RequestUtil.getDouble(request, "pmobile", 0d));
 		request.setAttribute("count", RequestUtil.getInteger(request, "count", 0));
 		request.setAttribute("comid", RequestUtil.getInteger(request, "comid", 0));

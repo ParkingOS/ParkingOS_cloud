@@ -66,16 +66,16 @@ var _cartypesetT = new TQTable({
 });
 function getAuthButtons(){
  	var bts=[];
- 	/*if(subauth[1])
+ 	if(subauth[1])
  		bts.push({dname:"添加车型",icon:"edit_add.png",onpress:function(Obj){
-		/!*Tconfirm({
-				Title:"提示信息",
-				Ttype:"alert",
-				Content:"提示：添加车型需要更新车场端HD，版本在1.2.5以上才可以使用！",
-				OKFn:function(){
-
-				}
-			});*!/
+//		Tconfirm({
+//				Title:"提示信息",
+//				Ttype:"alert",
+//				Content:"提示：添加车型需要更新车场端HD，版本在1.2.5以上才可以使用！",
+//				OKFn:function(){
+//
+//				}
+//			});
             Twin({Id:"cartype_add",Title:"添加车型",Width:550,sysfun:function(tObj){
                 Tform({
                     formname: "parking_edit_f",
@@ -125,14 +125,14 @@ function getAuthButtons(){
 					},0,null)
 				}
 			});
-		}})*/
+		}})
 	return bts;
 }
 
 //查看,添加,编辑,删除,设置区分大小车
 function getAuthIsoperateButtons(){
 	var bts = [];
-	/*if(subauth[2])
+	if(subauth[2])
 		bts.push({name:"编辑",fun:function(id){
 		T.each(_cartypesetT.tc.tableitems,function(o,j){
 			o.fieldvalue = _cartypesetT.GD(id)[j]
@@ -178,7 +178,7 @@ function getAuthIsoperateButtons(){
 				}
 			}
 		)}})
-	}});*/
+	}});
 	
 	if(bts.length <= 0){return false;}
 	return bts;

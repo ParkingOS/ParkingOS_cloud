@@ -79,7 +79,7 @@ var rules =[
 		{name:"price",type:"doub",url:"",requir:true,warn:"请输入价格!",okmsg:""},
 		{name:"limitday",type:"date",url:"",requir:true,warn:"请输入有效期!",okmsg:""}];
 var _packageT = new TQTable({
-	tabletitle:"套餐管理",
+	tabletitle:"套餐管理&nbsp;&nbsp;<font color='#a9a9a9'>（续费周期只作显示，云端续费仍按月延期）</font>",
 	ischeck:false,
 	tablename:"package_tables",
 	dataUrl:"package.do",

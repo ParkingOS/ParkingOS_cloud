@@ -1,12 +1,9 @@
 package com.zld.struts.admin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zld.AjaxUtil;
+import com.zld.service.DataBaseService;
+import com.zld.utils.JsonUtil;
+import com.zld.utils.RequestUtil;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -14,10 +11,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.zld.AjaxUtil;
-import com.zld.service.DataBaseService;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class PassManageAction extends Action {
 	@Autowired
@@ -41,7 +39,8 @@ public class PassManageAction extends Action {
 			request.setAttribute("comid", comid);
 			return mapping.findForward("list");
 		}else if(action.equals("passquery")){
-			String sql = "select cp.*,cw.worksite_name from com_pass_tb cp,com_worksite_tb cw where cp.worksite_id=cw.id and cp.comid=?";
+//			String sql = "select cp.*,cw.worksite_name from com_pass_tb cp,com_worksite_tb cw where cp.worksite_id=cw.id and cp.comid=?";
+			String sql = "select cp.* from com_pass_tb cp where cp.comid=?";
 			String countsql = "select count(1) from com_pass_tb where comid=?";
 			Long count = daService.getLong(countsql, new Object[]{comid});
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");

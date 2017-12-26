@@ -49,8 +49,33 @@ public class GetDatas extends Action{
 					result+=",{\"value_no\":\""+map.get("id")+"\",\"value_name\":\""+map.get("nickname")+"\"}";
 				}
 			}
+
 			result+="]";
 			AjaxUtil.ajaxOutput(response, result);
+		}else if(action.equals("getChannels")){
+			Long id =RequestUtil.getLong(request, "id", -1L);
+			List<Map<String, Object>> channels = commonMethods.getChannels(id+"",null);
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"请选择\"}";
+			if(channels!=null&&channels.size()>0){
+				for(Map map : channels){
+					result+=",{\"value_no\":\""+map.get("value_no")+"\",\"value_name\":\""+map.get("value_name")+"\"}";
+				}
+			}
+			result+="]";
+			AjaxUtil.ajaxOutput(response, result);
+			return null;
+		}else if(action.equals("getMonitors")){
+			Long id = RequestUtil.getLong(request, "id", -1L);
+			List<Map<String, Object>> channels = commonMethods.getMonitors(id + "", null);
+			String result = "[{\"value_no\":\"-1\",\"value_name\":\"请选择\"}";
+			if (channels != null && channels.size() > 0) {
+				for (Map map : channels) {
+					result += ",{\"value_no\":\"" + map.get("value_no") + "\",\"value_name\":\"" + map.get("value_name") + "\"}";
+				}
+			}
+			result += "]";
+			AjaxUtil.ajaxOutput(response, result);
+			return null;
 		}else if(action.equals("getpark")){
 			Long id =RequestUtil.getLong(request, "id", -1L);
 			List<Map<String,Object>> tradsList = dataBaseService.getAll("select id,company_name from com_info_tb  where uid =? ",
@@ -1223,6 +1248,20 @@ public class GetDatas extends Action{
 				}
 			}
 			AjaxUtil.ajaxOutput(response, nickname);
+		}
+		else if(action.equals("getticketunit")){//根据减免劵类型获得减免劵单位
+			Long ticketType = RequestUtil.getLong(request, "id", -1L);// 1-时长 2-金额
+			String result = "[";
+			if(ticketType == 1){
+				result+="{\"value_no\":\"1\",\"value_name\":\"分钟\"}";
+				result+=",{\"value_no\":\"2\",\"value_name\":\"小时\"}";
+				result+=",{\"value_no\":\"3\",\"value_name\":\"天\"}";
+			}
+			if(ticketType == 2){
+				result+="{\"value_no\":\"4\",\"value_name\":\"元\"}";
+			}
+			result+="]";
+			AjaxUtil.ajaxOutput(response, result);
 		}
 		return null;
 	}

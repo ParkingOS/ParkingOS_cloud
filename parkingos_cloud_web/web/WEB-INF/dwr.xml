@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN" "http://getahead.org/dwr/dwr30.dtd">
+<dwr>
+	<allow>
+        <create creator="new" javascript="Push">
+            <param name="class" value="com.zld.struts.dwr.Push" />
+        </create>
+    </allow>
+</dwr>

@@ -32,6 +32,7 @@ var btime="${btime}";
 var etime="${etime}";
 var total = '${total}';
 var pmoney = '${pmoney}';
+var ppremoney = '${ppremoney}';
 var pmobile = '${pmobile}';
 var pay_type = "${pay_type}";
 var otype = "${otype}";
@@ -56,7 +57,9 @@ var _mediaField = [
 				}},
 		//{fieldcnname:"应收金额",fieldname:"amount_receivable",inputtype:"text", twidth:"90",issort:false},
 		{fieldcnname:"月卡订单数",fieldname:"monthcount",inputtype:"text", twidth:"70" ,issort:false},
-		{fieldcnname:"现金支付",fieldname:"cash_pay",inputtype:"text", twidth:"90",issort:false},
+//		{fieldcnname:"现金支付",fieldname:"cash_pay",inputtype:"text", twidth:"90",issort:false},
+        {fieldcnname:"现金结算",fieldname:"cash_pay",inputtype:"text", twidth:"80",issort:false},
+        {fieldcnname:"现金预付",fieldname:"cash_prepay",inputtype:"text", twidth:"80",issort:false},
 		{fieldcnname:"电子支付",fieldname:"electronic_pay",inputtype:"text", twidth:"90",issort:false},
 		{fieldcnname:"免费支付",fieldname:"free_pay",inputtype:"text", twidth:"90",issort:false},
 		{fieldcnname:"减免券支付",fieldname:"reduce_pay",inputtype:"text", twidth:"90",issort:false},

@@ -108,6 +108,58 @@
   <error-page>  
     <error-code>404</error-code>  
   	<location>/WEB-INF/pages/zld/404.jsp</location>  
-  </error-page>  
+  </error-page>
+  <!-- 定时任务 -->
+  <servlet>
+    <servlet-name>JobServlet</servlet-name>
+    <servlet-class>com.zld.struts.scheduler.TimeTaskServlet</servlet-class>
+    <load-on-startup>10</load-on-startup>
+  </servlet>
+  <!-- dwr  -->
+  <servlet>
+    <servlet-name>dwr-invoker</servlet-name>
+    <servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
+    <init-param>
+      <param-name>org.directwebremoting.extend.ScriptSessionManager</param-name>
+      <param-value>com.zld.struts.dwr.DWRScriptSessionManager</param-value>
+    </init-param>
+    <init-param>
+      <param-name>crossDomainSessionSecurity</param-name>
+      <param-value>false</param-value>
+    </init-param>
+    <init-param>
+      <param-name>allowScriptTagRemoting</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>classes</param-name>
+      <param-value>java.lang.Object</param-value>
+    </init-param>
+    <init-param>
+      <param-name>activeReverseAjaxEnabled</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>initApplicationScopeCreatorsAtStartup</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>maxWaitAfterWrite</param-name>
+      <param-value>3000</param-value>
+    </init-param>
+    <init-param>
+      <param-name>debug</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>logLevel</param-name>
+      <param-value>WARN</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>dwr-invoker</servlet-name>
+    <url-pattern>/dwr/*</url-pattern>
+  </servlet-mapping>
+
 </web-app>
 

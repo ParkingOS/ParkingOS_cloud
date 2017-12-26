@@ -1685,8 +1685,8 @@ function cactic_Select(value,target,action,params){
         var preValue ="";
         for(var j=0;j<tar.length;j++){
             var vl = getChildById(act[j],value,paraStr);
-            if(vl)
-                preValue =vl;
+              //if(vl)
+                 preValue =vl;
             //alert(tar[j]);
             //alert(vl)
             var selectform = document.getElementById(tar[j]);
@@ -1697,8 +1697,6 @@ function cactic_Select(value,target,action,params){
                     var index = preValue.indexOf(".");
                     if(preValue.length>index+3)
                         preValue = preValue.substring(0,index+3);
-                }else{
-                    preValue=v;
                 }
                // alert(preValue);
                 selectform.value=preValue;

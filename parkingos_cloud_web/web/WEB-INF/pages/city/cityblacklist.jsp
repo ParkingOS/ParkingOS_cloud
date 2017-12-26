@@ -33,10 +33,10 @@ var role=${role};
 var parks = eval(T.A.sendData("cityberthseg.do?action=getcityparks"));
 var _mediaField = [
 		{fieldcnname:"编号",fieldname:"id",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",hide:true},
-		{fieldcnname:"账号",fieldname:"uin",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",hide:true},
+		/*{fieldcnname:"账号",fieldname:"uin",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",hide:true},*/
 		{fieldcnname:"手机",fieldname:"mobile",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"车牌号",fieldname:"car_number",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
-		{fieldcnname:"序列号",fieldname:"uuid",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
+		{fieldcnname:"序列号",fieldname:"black_uuid",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"状态",fieldname:"state",fieldvalue:'',inputtype:"select", noList:[{"value_no":-1,"value_name":"全部"},{"value_no":0,"value_name":"正常"},{"value_no":1,"value_name":"已漂白"}] ,twidth:"50" ,height:"",issort:false},
 		{fieldcnname:"所属车场",fieldname:"comid",fieldvalue:'',inputtype:"select",noList:parks,twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"新建日期",fieldname:"ctime",fieldvalue:'',inputtype:"date", twidth:"200" ,height:"",issort:false},

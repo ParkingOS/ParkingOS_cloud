@@ -1,23 +1,5 @@
 package com.zld.struts.parkadmin;
 
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.bouncycastle.util.encoders.UrlBase64Encoder;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.zld.AjaxUtil;
 import com.zld.impl.CommonMethods;
 import com.zld.impl.MongoDbUtils;
@@ -26,6 +8,20 @@ import com.zld.service.DataBaseService;
 import com.zld.utils.HttpProxy;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PassManageAction extends Action {
 	@Autowired
@@ -83,7 +79,7 @@ public class PassManageAction extends Action {
 			int month_set =RequestUtil.getInteger(request, "month_set", -1);
 			int month2_set =RequestUtil.getInteger(request, "month2_set", -1);
 			Long worksite_id = RequestUtil.getLong(request, "worksite_id", -1L);
-			String channelId = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "channel_id"));
+			//String channelId = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "channel_id"));
 			if(passname.equals("")) passname = null;
 			if(description.equals("")) description = null;
 			if(passtype.equals("")) passtype = null;
@@ -99,7 +95,7 @@ public class PassManageAction extends Action {
 			map.put("description", description);
 			map.put("month_set", month_set);
 			map.put("month2_set", month2_set);
-			map.put("channel_id", channelId);
+			//map.put("channel_id", channelId);
 			Long result = commonMethods.createPass(request, map);
 			if(result > 0){
 				AjaxUtil.ajaxOutput(response, "1");

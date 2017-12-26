@@ -49,8 +49,8 @@ var _mediaField = [
 		{fieldcnname:"时间",fieldname:"ctime",fieldvalue:'',defaultValue:'',inputtype:"date", twidth:"140" ,height:"",issort:false},
 		{fieldcnname:"收费员",fieldname:"uin",fieldvalue:'',inputtype:"select",noList:users, twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"通道",fieldname:"out_channel_id",fieldvalue:'',inputtype:"text",twidth:"100" ,height:"",issort:false},
-		//{fieldcnname:"抬杆原因",fieldname:"reason",fieldvalue:'',defaultValue:'',inputtype:"select",noList:liftreason, twidth:"100" ,height:"",issort:false},
-		{fieldcnname:"抬杆原因",fieldname:"resume",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
+		{fieldcnname:"抬杆原因",fieldname:"reason",fieldvalue:'',defaultValue:'',inputtype:"select",noList:liftreason, twidth:"100" ,height:"",issort:false},
+		{fieldcnname:"备注",fieldname:"resume",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
 		
 		/*{fieldcnname:"图片",fieldname:"img",fieldvalue:'',inputtype:"text", twidth:"145" ,issort:false,
 			process:function(value,cid,liftrod_id){
@@ -143,7 +143,7 @@ function getAuthButtons(){
 					//formitems:[{kindname:"",kinditemts:_excelField}],
 					SubAction:
 					function(callback,formName){
-						T("#exportiframe").src="liftrod.do?action=exportExcel&comid="+comid+"&rp="+2147483647+"&fieldsstr="+"id__uin__ctime__reason&"+Serializ(formName)
+						T("#exportiframe").src="liftrod.do?action=exportExcel&comid="+comid+"&rp="+2147483647+"&fieldsstr="+"id__uin__ctime__reason__resume&"+Serializ(formName)
 						TwinC("liftrod_export_w");
 						T.loadTip(1,"正在导出，请稍候...",2,"");
 					}

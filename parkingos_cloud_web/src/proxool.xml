@@ -3,7 +3,7 @@
   
   <proxool>
 		<alias>dbconfig</alias>
-		<driver-url>jdbc:postgresql://zlddb.tq.cn:5432/zldetc</driver-url>
+		<driver-url>jdbc:postgresql://zlddb.tq.cn:54909/zldetc</driver-url>
 		<driver-class>org.postgresql.Driver</driver-class>
 		<driver-properties>
 			<property name="user" value="postgres" />
@@ -18,7 +18,7 @@
 	</proxool>
  	<proxool>
 		<alias>onlyread</alias>
-		<driver-url>jdbc:postgresql://zlddb_standby.tq.cn:5432/zldetc</driver-url>
+		<driver-url>jdbc:postgresql://zlddb_standby.tq.cn:54909/zldetc</driver-url>
 		<driver-class>org.postgresql.Driver</driver-class>
 		<driver-properties>
 			<property name="user" value="postgres" />

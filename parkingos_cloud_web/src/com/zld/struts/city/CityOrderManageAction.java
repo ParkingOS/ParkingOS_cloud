@@ -224,6 +224,7 @@ public class CityOrderManageAction extends Action {
 			}
 			AjaxUtil.ajaxOutput(response, name);
 		}else if(action.equals("exportExcel")){
+
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			String orderfield = RequestUtil.processParams(request, "orderfield");
 			SqlInfo sqlInfo = RequestUtil.customSearch(request,"order_tb");
@@ -284,18 +285,23 @@ public class CityOrderManageAction extends Action {
 						if(v == null)
 							v = "";
 						if("c_type".equals(field)){
-							switch(Integer.valueOf(v + "")){//0:NFC,1:IBeacon,2:照牌   3通道照牌 4直付 5月卡用户
-								case 0:values.add("NFC刷卡");break;
-								case 1:values.add("Ibeacon");break;
-								case 2:values.add("手机扫牌");break;
-								case 3:values.add("通道扫牌");break;
-								case 4:values.add("直付");break;
-								case 5:values.add("全天月卡");break;
-								case 6:values.add("车位二维码");break;
-								case 7:values.add("月卡第二辆车");break;
-								case 8:values.add("分段月卡");break;
-								default:values.add("");
-							}
+							try{
+								switch(Integer.valueOf(v + "")){//0:NFC,1:IBeacon,2:照牌   3通道照牌 4直付 5月卡用户
+									case 0:values.add("NFC刷卡");break;
+									case 1:values.add("Ibeacon");break;
+									case 2:values.add("手机扫牌");break;
+									case 3:values.add("通道扫牌");break;
+									case 4:values.add("直付");break;
+									case 5:values.add("全天月卡");break;
+									case 6:values.add("车位二维码");break;
+									case 7:values.add("月卡第二辆车");break;
+									case 8:values.add("分段月卡");break;
+									default:values.add("");
+								}
+							}catch (Exception e){
+								values.add((String) v);
+							};
+
 						}else if("duration".equals(field)){
 							Long start = (Long)map.get("create_time");
 							Long end = (Long)map.get("end_time");
@@ -580,45 +586,84 @@ public class CityOrderManageAction extends Action {
 	}
 
 	private void getPassName(List<Map<String, Object>> list) {
-		if(list != null && !list.isEmpty()){
+		if(list != null && !list.isEmpty()) {
 			List<Object> idList = new ArrayList<Object>();
-			String preParams  ="";
-			for(Map<String, Object> order : list){
-				if(!idList.contains(order.get("in_passid"))){
-					idList.add(order.get("in_passid"));
-					if(preParams.equals(""))
-						preParams ="?";
-					else
-						preParams += ",?";
+			String preParams = "";
+			for (Map<String, Object> order : list) {
+				if (!idList.contains(order.get("in_passid"))) {
+					if (order.get("in_passid") != null && !"".equals(order.get("in_passid"))) {
+						try {
+							idList.add(Long.parseLong((String) order.get("in_passid")));
+							if (preParams.equals(""))
+								preParams = "?";
+							else
+								preParams += ",?";
+						} catch (Exception e) {
+							continue;
+						}
+						;
+					}
+					//idList.add(order.get("in_passid"));
+//					if(preParams.equals(""))
+//						preParams ="?";
+//					else
+//						preParams += ",?";
 				}
 
-				if(!idList.contains(order.get("out_passid"))){
-					idList.add(order.get("out_passid"));
-					if(preParams.equals(""))
-						preParams ="?";
-					else
-						preParams += ",?";
+				if (!idList.contains(order.get("out_passid"))) {
+					//idList.add(order.get("out_passid"));
+					if (order.get("out_passid") != null && !"".equals(order.get("out_passid"))) {
+						try {
+							idList.add(Long.parseLong((String) order.get("out_passid")));
+							if (preParams.equals(""))
+								preParams = "?";
+							else
+								preParams += ",?";
+						} catch (Exception e) {
+							continue;
+						}
+						;
+					}
+//					if(preParams.equals(""))
+//						preParams ="?";
+//					else
+//						preParams += ",?";
 				}
 			}
-
-			List<Map<String, Object>> rList = pgOnlyReadService.getAllMap("select passname,id from com_pass_tb where id in ("
-					+ preParams + ")", idList);
-			if(rList != null && !rList.isEmpty()){
-				for(Map<String, Object> map : list){
-					Long in_passid = (Long)map.get("in_passid");
-					Long out_passid = (Long)map.get("out_passid");
-					for(Map<String, Object> map2 : rList){
-						Long id = (Long)map2.get("id");
-						if(in_passid.intValue() == id.intValue()){
-							map.put("in_passname", map2.get("passname"));
-							break;
+			if (!"".equals(preParams)) {
+				List<Map<String, Object>> rList = pgOnlyReadService.getAllMap("select passname,id from com_pass_tb where id in ("
+						+ preParams + ")", idList);
+				if (rList != null && !rList.isEmpty()) {
+					for (Map<String, Object> map : list) {
+						Long in_passid = null;
+						Long out_passid = null;
+	//					Long in_passid = (Long)map.get("in_passid");
+	//					Long out_passid = (Long)map.get("out_passid");
+						try {
+							in_passid = (Long) map.get("in_passid");
+							out_passid = (Long) map.get("out_passid");
+						} catch (Exception e) {
+							continue;
 						}
-					}
-					for(Map<String, Object> map2 : rList){
-						Long id = (Long)map2.get("id");
-						if(out_passid.intValue() == id.intValue()){
-							map.put("out_passname", map2.get("passname"));
-							break;
+						;
+						if (in_passid != null) {
+							for (Map<String, Object> map2 : rList) {
+								Long id = (Long) map2.get("id");
+								if (in_passid.intValue() == id.intValue()) {
+									map.put("in_passname", map2.get("passname"));
+									break;
+								}
+							}
+						}
+
+						if (out_passid != null) {
+							for (Map<String, Object> map2 : rList) {
+								Long id = (Long) map2.get("id");
+								if (out_passid.intValue() == id.intValue()) {
+									map.put("out_passname", map2.get("passname"));
+									break;
+								}
+							}
 						}
 					}
 				}

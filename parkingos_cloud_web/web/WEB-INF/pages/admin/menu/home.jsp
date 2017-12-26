@@ -50,7 +50,8 @@ function gww(_w) {
 }
 function switchTag(tag,url){
 	//debugger;
-    var menulength= document.getElementsByTagName('li').length;
+    var menulength= document.getElementsByTagName('li').length-1;
+    //alert(menulength);
 	//if(tag.parentNode.className.indexOf("selected") != -1)return;
 	for(var i=0;i<menulength;i++){
 		document.getElementById("iframe-"+(i+1)+"-div").style.display = "none";
@@ -60,11 +61,14 @@ function switchTag(tag,url){
 		}
 	}
 	//tag.parentNode.className += ' selected';
-	
+    if(document.getElementById("iframe-"+(menulength+1)+"-div")){
+        document.getElementById("iframe-"+(menulength+1)+"-div").style.display = "none";
+    }
 	var oDiv = document.getElementById(tag.id+"-div");
 	var iDiv = document.getElementById(tag.id+"-iframe");
 	oDiv.style.display = "block";
 	oDiv.style.marginTop='80px';
+
 	if(iDiv != undefined)
     	iDiv.style.display = "block";
 	createIframe(oDiv,tag.id,url);
@@ -144,17 +148,23 @@ function init(){
 		liele.setAttribute("id", "tag"+(i+1));
 		var aurl=menus[i].url+"?authid="+menus[i].authid;
 		var innerHTML = '<div></div><a href="#" id="iframe-'+(i+1)+'" tid="'+aurl+'" onClick="switchTag(this,\''+aurl+'\')">'+mname+'</a>';
-		liele.innerHTML +=innerHTML;
-		mulele.appendChild(liele);
-		var subdiv = document.createElement("div");
-		subdiv.setAttribute("id", "iframe-"+(i+1)+"-div");
-		subdiv.setAttribute("name", "iframe-"+(i+1)+"-div");
-		if(i==0){
-			subdiv.style.marginTop='80px';
-		}else{
-			subdiv.style.display='none';
-		}
-		document.body.appendChild(subdiv);
+        if(aurl.indexOf("monitor.do?") > -1){
+            innerHTML = '<div></div><a href="'+aurl+'" target="_blank" id="iframe-'+(i+1)+'" tid="'+aurl+'">'+menus[i].name+'</a>';
+            liele.innerHTML +=innerHTML;
+            mulele.appendChild(liele);
+        }else{
+            liele.innerHTML +=innerHTML;
+            mulele.appendChild(liele);
+            var subdiv = document.createElement("div");
+            subdiv.setAttribute("id", "iframe-"+(i+1)+"-div");
+            subdiv.setAttribute("name", "iframe-"+(i+1)+"-div");
+            if(i==0){
+                subdiv.style.marginTop='80px';
+            }else{
+                subdiv.style.display='none';
+            }
+            document.body.appendChild(subdiv);
+        }
 	}
 	var role ='${role}';
 	createIframe(document.getElementById('iframe-1-div'),'iframe-1',menus[0].url+"?authid="+menus[0].authid);

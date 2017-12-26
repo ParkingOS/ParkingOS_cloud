@@ -43,7 +43,7 @@ var _mediaField = [
 		{fieldcnname:"车牌",fieldname:"car_number",fieldvalue:'',inputtype:"text",twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"添加时间",fieldname:"ctime",fieldvalue:'',inputtype:"date",twidth:"100" ,height:"",issort:false,edit:false},
 		{fieldcnname:"修改时间",fieldname:"utime",fieldvalue:'',inputtype:"date",twidth:"100" ,height:"",issort:false,edit:false},
-		{fieldcnname:"加入原因",fieldname:"remark",fieldvalue:'',inputtype:"text",twidth:"100" ,height:"",issort:false},
+		{fieldcnname:"备注",fieldname:"remark",fieldvalue:'',inputtype:"text",twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"操作人",fieldname:"operator",fieldvalue:'',inputtype:"text",twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"状态",fieldname:"state",fieldvalue:'',inputtype:"select",noList:[{"value_no":"0","value_name":"正常"},{"value_no":"1","value_name":"删除"}],twidth:"100" ,height:"",issort:false}
 	];
@@ -66,7 +66,7 @@ function getAuthButtons(){
  	var bts=[];
  	if(subauth[1])
  		bts.push({dname:"添加黑名单",icon:"edit_add.png",onpress:function(Obj){
-			Twin({Id:"zldblack_add",Title:"添加车型",Width:550,sysfun:function(tObj){
+			Twin({Id:"zldblack_add",Title:"添加黑名单",Width:550,sysfun:function(tObj){
 				Tform({
 					formname: "parking_edit_f",
 					formObj:tObj,

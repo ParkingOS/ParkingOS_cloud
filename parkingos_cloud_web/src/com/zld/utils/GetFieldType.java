@@ -138,6 +138,8 @@ public class GetFieldType {
 			return cardRenew(field);
 		}else if(table.equals("monitor_info_tb")){
 			return getMonitorInfoFieldType(field);
+		}else if(table.equals("phone_info_tb")){
+			return getPhoneInfoFieldType(field);
 		}
 		return 12;
 	}
@@ -945,4 +947,18 @@ public class GetFieldType {
 		}else 
 			return 12;
 	}
+	private static Integer getPhoneInfoFieldType(String field) {
+		if(field.equals("name")
+				|| field.equals("comid")
+				|| field.equals("groupid")){
+			return 12;
+		}else if(field.equals("tele_phone")
+				|| field.equals("park_phone")
+				|| field.equals("group_phone")
+				|| field.equals("monitor_id")){
+			return 3;
+		}else
+			return 4;
+	}
+
 }

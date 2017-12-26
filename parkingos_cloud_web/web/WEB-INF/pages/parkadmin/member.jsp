@@ -49,6 +49,7 @@ var _mediaField = [
 		{fieldcnname:"手机",fieldname:"mobile",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"角色",fieldname:"role_id",fieldvalue:'',inputtype:"select",noList:adminroles ,twidth:"100" ,height:"",issort:false,edit:isedit},
 		{fieldcnname:"创建时间",fieldname:"reg_time",fieldvalue:'',inputtype:"date", twidth:"130" ,height:"",edit:false},
+        {fieldcnname:"性别",fieldname:"sex",fieldvalue:'',inputtype:"select",noList:[{"value_no":-1,"value_name":""},{"value_no":0,"value_name":"女"},{"value_no":1,"value_name":"男"}] , twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"最近登录时间",fieldname:"logon_time",fieldvalue:'',inputtype:"date", twidth:"130" ,height:"",edit:false},
 		{fieldcnname:"收费",fieldname:"isview",fieldvalue:'',inputtype:"select", noList:[{"value_no":-1,"value_name":"全部"},{"value_no":0,"value_name":"不可收费"},{"value_no":1,"value_name":"可收费"}] , twidth:"60" ,height:"",issort:false}
 	];
@@ -58,6 +59,7 @@ var _addMemberField = [
 		{fieldcnname:"电话",fieldname:"phone",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"手机",fieldname:"mobile",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"角色",fieldname:"role_id",fieldvalue:'',inputtype:"select",noList:adminroles ,twidth:"100" ,height:"",issort:false,edit:isedit},
+        {fieldcnname:"性别",fieldname:"sex",fieldvalue:'',inputtype:"select", noList:[{"value_no":0,"value_name":"女"},{"value_no":1,"value_name":"男"}] , twidth:"60" ,height:"",issort:false},
 		{fieldcnname:"创建时间",fieldname:"reg_time",fieldvalue:'',inputtype:"date", twidth:"130" ,height:"",edit:false},
 		{fieldcnname:"最近登录时间",fieldname:"logon_time",fieldvalue:'',inputtype:"date", twidth:"130" ,height:"",edit:false},
 		{fieldcnname:"收费",fieldname:"isview",fieldvalue:'',inputtype:"select", noList:[{"value_no":-1,"value_name":"全部"},{"value_no":0,"value_name":"不可收费"},{"value_no":1,"value_name":"可收费"}] , twidth:"60" ,height:"",issort:false}

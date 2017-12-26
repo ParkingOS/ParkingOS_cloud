@@ -110,15 +110,19 @@ public class BuyCardRecordAction extends Action{
 			String [] heards = null;
 			if(list!=null&&list.size()>0){
 				//setComName(list);
-				String [] f = new String[]{"id","trade_no","card_id","pay_time","amount_receivable","amount_pay","collector","pay_type","car_number","user_id","buy_month","limit_time","resume"};
-				heards = new String[]{"编号","购买流水号","月卡编号","月卡续费时间","应收金额","实收金额","收费员","缴费类型","车牌号","用户编号","购买月数","有效期","备注"};
+				String [] f = new String[]{"id","trade_no","card_id","pay_time","amount_receivable","amount_pay","collector","pay_type","car_number","user_id","limit_time","resume"};
+				heards = new String[]{"编号","购买流水号","月卡编号","月卡续费时间","应收金额","实收金额","收费员","缴费类型","车牌号","用户编号","有效期","备注"};
 				for(Map<String, Object> map : list){
 					List<String> values = new ArrayList<String>();
 					for(String field : f){
 						if("collector".equals(field)){
-							Object uid = map.get("field");
+							Object uid = map.get("collector");
 							if(Check.isNumber(uid+""))
-								values.add(getUinName(Long.valueOf(map.get(field)+"")));
+								if(getUinName(Long.valueOf(map.get(field)+""))!=null){
+									values.add(getUinName(Long.valueOf(map.get(field)+"")));
+								}else{
+									values.add(uid+"");
+								}
 							else
 								values.add(uid+"");
 						}else{

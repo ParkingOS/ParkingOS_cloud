@@ -253,19 +253,19 @@ function getAuthIsoperateButtons(){
 }
 
 function viewdetail(value,id){
-	var car_number =_orderT.GD(id,"car_number");
-	var comid = _orderT.GD(id,"comid");
+    var car_number =_orderT.GD(id,"car_number");
+    var comid = _orderT.GD(id,"comid");
     var orderIdLocal =_orderT.GD(id,"order_id_local");
-    //alert(comid);
-	var tip = "³µÁ¾Í¼Æ¬";
-	Twin({
-		Id:"carpics_detail_"+id,
-		Title:tip+"  --> ³µÅÆ£º"+car_number,
-		Width:T.gww()-100,
-		Height:T.gwh()-50,
-		sysfunI:id,
-		Content:"<iframe name='carpics_detail_'"+id+" id='carpics_detail_'"+id+" src='order.do?action=carpicsnew&comid="+comid+"&orderid="+orderIdLocal+"&r="+Math.random()+"' width='100%' height='"+(T.gwh()-100)+"' frameborder='0' style='overflow:auto;' ></iframe>"
-	})
+    var tip = "³µÁ¾Í¼Æ¬";
+    Twin({
+        Id:"carpics_detail_"+id,
+        Title:tip+"  --> ³µÅÆ£º"+car_number,
+        Width:T.gww()-100,
+        Height:T.gwh()-50,
+        sysfunI:id,
+        //Content:"<iframe name='carpics_detail_'"+id+" id='carpics_detail_'"+id+" src='order.do?action=carpics&orderid="+id+"&comid="+comid+"&r="+Math.random()+"' width='100%' height='"+(T.gwh()-100)+"' frameborder='0' style='overflow:auto;' ></iframe>"
+        Content:"<iframe name='carpics_detail_'"+id+" id='carpics_detail_'"+id+" src='order.do?action=carpicsnew&comid="+comid+"&orderid="+orderIdLocal+"&r="+Math.random()+"' width='100%' height='"+(T.gwh()-100)+"' frameborder='0' style='overflow:auto;' ></iframe>"
+    })
 }
 
 function setcname(value,pid,colname){

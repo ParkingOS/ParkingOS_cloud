@@ -113,7 +113,7 @@ function getAuthButtons(){
 		T.each(_cameraT.tc.tableitems,function(o,j){
 			o.fieldvalue ="";
 		}); 
-		Twin({Id:"camera_search_w",Title:"ËÑË÷Í£³µ³¡",Width:550,sysfun:function(tObj){
+		Twin({Id:"camera_search_w",Title:"ËÑË÷ÉãÏñÍ·",Width:550,sysfun:function(tObj){
 				TSform ({
 					formname: "camera_search_f",
 					formObj:tObj,

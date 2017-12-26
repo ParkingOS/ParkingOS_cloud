@@ -149,7 +149,7 @@ function getAuthButtons(){
 		T.each(_priceT.tc.tableitems,function(o,j){
 			o.fieldvalue ="";
 		});
-		Twin({Id:"price_search_w",Title:"搜索收费员",Width:550,sysfun:function(tObj){
+		Twin({Id:"price_search_w",Title:"搜索价格",Width:550,sysfun:function(tObj){
 				TSform ({
 					formname: "price_search_f",
 					formObj:tObj,

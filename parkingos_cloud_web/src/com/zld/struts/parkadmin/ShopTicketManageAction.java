@@ -64,6 +64,30 @@ public class ShopTicketManageAction extends Action {
 			Long count = daService.getCount(countsql, params);
 			if(count > 0){
 				list = daService.getAll(sql, params, pageNum, pageSize);
+				for(Map<String, Object> map : list){
+					Map shopMap = daService.getMap("select * from shop_tb where id=? ", new Object[]{map.get("shop_id")});
+					if((int)map.get("type") == 3){//时长
+						Integer ticket_unit = shopMap.get("ticket_unit")==null ? 2 : (int) shopMap.get("ticket_unit");
+						//默认小时，原先只支持小时
+						if(ticket_unit==1){//分钟
+							map.put("money_minute",map.get("money"));
+						}else if(ticket_unit==2){
+							map.put("money_hour",map.get("money"));
+						}else if(ticket_unit==3){
+							map.put("money_day",map.get("money"));
+						}
+						map.put("umoney","");
+					}else if ((int)map.get("type") == 5){//金额
+						map.put("money_minute","");
+						map.put("money_hour","");
+						map.put("money_day","");
+					}else if ((int)map.get("type") == 4){//全免
+						map.put("money_minute","");
+						map.put("money_hour","");
+						map.put("money_day","");
+						map.put("umoney","");
+					}
+				}
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
@@ -73,6 +97,30 @@ public class ShopTicketManageAction extends Action {
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			List ret = query(request,comid);
+			for(Map<String, Object> map : (List<Map<String,Object>>)ret.get(0)){
+				Map shopMap = daService.getMap("select * from shop_tb where id=? ", new Object[]{map.get("shop_id")});
+				if((int)map.get("type") == 3){//时长
+					Integer ticket_unit = shopMap.get("ticket_unit")==null ? 2 : (int) shopMap.get("ticket_unit");
+					//默认小时，原先只支持小时
+					if(ticket_unit==1){//分钟
+						map.put("money_minute",map.get("money"));
+					}else if(ticket_unit==2){
+						map.put("money_hour",map.get("money"));
+					}else if(ticket_unit==3){
+						map.put("money_day",map.get("money"));
+					}
+					map.put("umoney","");
+				}else if ((int)map.get("type") == 5){//金额
+					map.put("money_minute","");
+					map.put("money_hour","");
+					map.put("money_day","");
+				}else if ((int)map.get("type") == 4){//全免
+					map.put("money_minute","");
+					map.put("money_hour","");
+					map.put("money_day","");
+					map.put("umoney","");
+				}
+			}
 			List list = (List) ret.get(0);
 			Long count =  (Long) ret.get(1);
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
@@ -88,13 +136,16 @@ public class ShopTicketManageAction extends Action {
 		Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 		String car_number = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "car_number"));
 		String shop_name = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "shop_name"));
+		Integer ticket_unit = RequestUtil.getInteger(request, "ticket_unit_start", 1);
+		Integer money = RequestUtil.getInteger(request, "money_start", 0);
+		String money_operate_type = RequestUtil.processParams(request, "money");;
 		List<Object> ret = new ArrayList<Object>();
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		List<Object> params = new ArrayList<Object>();
 		String sql = "select t.*,s.name shop_name from ticket_tb t,shop_tb s where t.comid= ? and t.shop_id = s.id ";
 		String countsql = "select count(*) from ticket_tb t,shop_tb s where t.comid= ? and t.shop_id = s.id ";
 		SqlInfo base = new SqlInfo("1=1", new Object[]{comid});
-		SqlInfo sqlInfo = RequestUtil.customSearch(request,"ticket_tb","t",new String[]{"car_number"});
+		SqlInfo sqlInfo = RequestUtil.customSearch(request,"ticket_tb","t",new String[]{"car_number","ticket_unit"});
 		if(sqlInfo != null ){
 			sqlInfo = SqlInfo.joinSqlInfo(base,sqlInfo, 2);
 			sql += " and " + sqlInfo.getSql();
@@ -113,6 +164,35 @@ public class ShopTicketManageAction extends Action {
 			sql+=" and s.name like ?";
 			countsql+=" and s.name like ?";
 			params.add("%"+shop_name+"%");
+		}
+		if(ticket_unit >0){
+			if(ticket_unit == 2 || ticket_unit == 4){
+				sql+=" and (s.ticket_unit=? or s.ticket_unit is null)";
+				countsql+=" and (s.ticket_unit=? or s.ticket_unit is null)";
+			}else{
+				sql+=" and s.ticket_unit=?";
+				countsql+=" and s.ticket_unit=?";
+			}
+			params.add(ticket_unit);
+		}
+		if("1".equals(money_operate_type) && money >0){
+			sql+=" and t.money >= ?";
+			countsql+=" and t.money >= ?";
+			params.add(money);
+		}
+		if("2".equals(money_operate_type) && money >0){
+			sql+=" and ? >= t.money";
+			countsql+=" and ? >= t.money";
+			params.add(money);
+		}
+		if("3".equals(money_operate_type) && money >0){
+			sql+=" and t.money = ?";
+			countsql+=" and t.money = ?";
+			params.add(money);
+		}
+		if("null".equals(money_operate_type) && money >0){
+			sql+=" and t.money is null";
+			countsql+=" and t.money is null";
 		}
 		if("".equals(orderfield)){
 			orderfield = " id";

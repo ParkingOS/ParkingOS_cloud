@@ -35,11 +35,13 @@
     var _showmediaField = [
         {fieldcnname:"商户编号",fieldname:"shop_id",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false,edit:false},
         {fieldcnname:"商户名称",fieldname:"shop_name",fieldvalue:'',inputtype:"text", twidth:"150" ,height:"",issort:false},
-        {fieldcnname:"额度(小时)",fieldname:"ticket_limit",fieldvalue:'',inputtype:"text",twidth:"200" ,height:"",hide:true},
-        //{fieldcnname:"额度(张)",fieldname:"ticketfree_limit",fieldvalue:'',inputtype:"text",twidth:"200" ,height:"",issort:false},
-        {fieldcnname:"额度(元)",fieldname:"ticket_money",fieldvalue:'',inputtype:"text",twidth:"200" ,height:"",issort:false},
+        {fieldcnname:"额度(分钟)",fieldname:"ticket_limit_minute",fieldvalue:'',inputtype:"text",twidth:"100" ,height:"",hide:true},
+        {fieldcnname:"额度(小时)",fieldname:"ticket_limit_hour",fieldvalue:'',inputtype:"text",twidth:"100" ,height:"",hide:true},
+        {fieldcnname:"额度(天)",fieldname:"ticket_limit_day",fieldvalue:'',inputtype:"text",twidth:"100" ,height:"",hide:true},
+        {fieldcnname:"额度(张)",fieldname:"ticketfree_limit",fieldvalue:'',inputtype:"text",twidth:"200" ,height:"",issort:false},
+        {fieldcnname:"额度(元)",fieldname:"ticket_money",fieldvalue:'',inputtype:"text",twidth:"100" ,height:"",issort:false},
         {fieldcnname:"缴费金额(元)",fieldname:"add_money",fieldvalue:'',inputtype:"text",twidth:"130" ,height:"",issort:false},
-        {fieldcnname:"操作人",fieldname:"operate_name",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
+        {fieldcnname:"操作人",fieldname:"operate_name",fieldvalue:'',inputtype:"text", twidth:"150" ,height:"",issort:false},
         {fieldcnname:"操作时间",fieldname:"operate_time",fieldvalue:'',inputtype:"date", twidth:"130" ,height:"",hide:true},
         {fieldcnname:"流水类型",fieldname:"operate_type",fieldvalue:'',inputtype:"select", noList:operate_types,twidth:"130" ,height:"",issort:false},
     ];
@@ -48,6 +50,7 @@
         {fieldcnname:"商户名称",fieldname:"shop_name",inputtype:"text", twidth:"500",issort:false},
         {fieldcnname:"操作人",fieldname:"operator_name",inputtype:"text", twidth:"500",issort:false},
         {fieldcnname:"操作时间",fieldname:"operate_time",inputtype:"date", twidth:"500",issort:false},
+        {fieldcnname:"优惠单位",fieldname:"ticket_unit",inputtype:"select", noList:[{"value_no":1,"value_name":"分钟"},{"value_no":2,"value_name":"小时"},{"value_no":3,"value_name":"天"},{"value_no":4,"value_name":"元"}], twidth:"500",issort:false},
         {fieldcnname:"流水类型",fieldname:"operate_type",inputtype:"select", noList:operate_types,twidth:"130" ,height:"",issort:false},
     ];
     var _shopT = new TQTable({

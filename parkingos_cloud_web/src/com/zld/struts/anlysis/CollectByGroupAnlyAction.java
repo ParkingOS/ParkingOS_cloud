@@ -30,29 +30,30 @@ public class CollectByGroupAnlyAction extends Action {
 	private StatsAccountFacade accountFacade;
 
 	private Logger logger = Logger.getLogger(CollectByGroupAnlyAction.class);
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
-		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
-		Long cityid = (Long)request.getSession().getAttribute("cityid");
+		Long uin = (Long) request.getSession().getAttribute("loginuin");//登录的用户id
+		Long cityid = (Long) request.getSession().getAttribute("cityid");
 		request.setAttribute("authid", request.getParameter("authid"));
-		if(uin == null){
+		if (uin == null) {
 			response.sendRedirect("login.do");
 			return null;
 		}
-		if(cityid == null){
+		if (cityid == null) {
 			return null;
 		}
-		if(cityid == null) cityid = -1L;
-		if(action.equals("")){
+		if (cityid == null) cityid = -1L;
+		if (action.equals("")) {
 			commonMethods.setIndexAuthId(request);
-			if(cityid > 0){
+			if (cityid > 0) {
 				request.setAttribute("cityid", cityid);
 			}
 			return mapping.findForward("list");
-		}else if(action.equals("query")){
+		} else if (action.equals("query")) {
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
@@ -65,14 +66,14 @@ public class CollectByGroupAnlyAction extends Action {
 			String sql = "select id,name from org_group_tb where cityid=? and state=? ";
 			String countSql = "select count(id) from org_group_tb where cityid=? and state=? ";
 			List<Map<String, Object>> list = null;
-			if(sqlInfo != null) {
-				countSql += " and "+ sqlInfo.getSql();
-				sql += " and "+sqlInfo.getSql();
+			if (sqlInfo != null) {
+				countSql += " and " + sqlInfo.getSql();
+				sql += " and " + sqlInfo.getSql();
 				params.addAll(sqlInfo.getParams());
 			}
 
 			Long count = pgOnlyReadService.getCount(countSql, params);
-			if(count > 0){
+			if (count > 0) {
 				list = pgOnlyReadService.getAll(sql, params, pageNum, pageSize);
 				logger.error(list);
 				setList(list, b, e);
@@ -83,11 +84,11 @@ public class CollectByGroupAnlyAction extends Action {
 		return null;
 	}
 
-	private void setList(List<Map<String, Object>> userList, Long startTime, Long endTime){
+	private void setList(List<Map<String, Object>> userList, Long startTime, Long endTime) {
 		try {
-			if(userList != null && !userList.isEmpty()){
+			if (userList != null && !userList.isEmpty()) {
 				List<Object> idList = new ArrayList<Object>();
-				for(Map<String, Object> map : userList){
+				for (Map<String, Object> map : userList) {
 					idList.add(map.get("id"));
 				}
 				StatsReq req = new StatsReq();
@@ -96,9 +97,9 @@ public class CollectByGroupAnlyAction extends Action {
 				req.setEndTime(endTime);
 				StatsFacadeResp resp = accountFacade.statsGroupAccount(req);
 				logger.error(resp);
-				if(resp.getResult() == 1){
+				if (resp.getResult() == 1) {
 					List<StatsAccountClass> classes = resp.getClasses();
-					for(StatsAccountClass accountClass : classes){
+					for (StatsAccountClass accountClass : classes) {
 						long id = accountClass.getId();
 						double cashParkingFee = accountClass.getCashParkingFee();
 						double cashPrepayFee = accountClass.getCashPrepayFee();
@@ -132,9 +133,9 @@ public class CollectByGroupAnlyAction extends Action {
 						double totalPursueFee = StringUtils.formatDouble(cashPursueFee + ePayPursueFee + cardPursueFee);
 
 
-						for(Map<String, Object> infoMap : userList){
-							Long userId = (Long)infoMap.get("id");
-							if(id == userId.intValue()){
+						for (Map<String, Object> infoMap : userList) {
+							Long userId = (Long) infoMap.get("id");
+							if (id == userId.intValue()) {
 								infoMap.put("cashPursueFee", cashPursueFee);
 								infoMap.put("cashCustomFee", cashCustomFee);
 								infoMap.put("cashTotalFee", cashTotalFee);
@@ -159,3 +160,5 @@ public class CollectByGroupAnlyAction extends Action {
 		}
 	}
 }
+
+

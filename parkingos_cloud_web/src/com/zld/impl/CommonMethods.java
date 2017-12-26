@@ -1,29 +1,18 @@
 package com.zld.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.zld.CustomDefind;
 import com.zld.pojo.WorkRecord;
 import com.zld.pojo.WorkTime;
 import com.zld.service.DataBaseService;
 import com.zld.service.PgOnlyReadService;
-import com.zld.utils.Check;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
-import com.zld.utils.TimeTools;
+import com.zld.utils.*;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.*;
 @Repository
 public class CommonMethods {
 
@@ -1438,7 +1427,9 @@ public class CommonMethods {
 			Map<String, Object> pMap = daService.getMap("select limitday,price from product_package_tb where id=? ",
 					new Object[]{prodId});
 			if(pMap!=null){
-				price = Double.valueOf(pMap.get("price")+"");
+				if(pMap.get("price")!=null){
+					price = Double.valueOf(pMap.get("price")+"");
+				}
 			}
 			total = months*price;
 		}
@@ -1766,15 +1757,15 @@ public class CommonMethods {
 			Long nextid = daService.getLong(
 					"SELECT nextval('seq_com_pass_tb'::REGCLASS) AS newid", null);
 			String sql = "insert into com_pass_tb(id,worksite_id,comid,passname,passtype,description,month_set,month2_set,channel_id) values(?,?,?,?,?,?,?,?,?)";
-			int r = daService.update(sql, new Object[]{nextid,map.get("worksite_id"),comid,map.get("passname"),map.get("passtype"),map.get("description"),map.get("month_set"),map.get("month2_set"),map.get("channel_id")});
+			int r = daService.update(sql, new Object[]{nextid,map.get("worksite_id"),comid,map.get("passname"),map.get("passtype"),map.get("description"),map.get("month_set"),map.get("month2_set"),nextid+""});
 			logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" pass ");
 			if(r == 1){
 				/*
-				 * 添加的通道信息向下同步的接口暂不开放
-				 * if(publicMethods.isEtcPark(comid)){
+				 * 添加的通道信息向下同步的接口暂不开放*/
+				  if(publicMethods.isEtcPark(comid)){
 					int re = daService.update("insert into sync_info_pool_tb(comid,table_name,table_id,create_time,operate) values(?,?,?,?,?)", new Object[]{comid,"com_pass_tb",nextid,System.currentTimeMillis()/1000,0});
 					logger.error("parkadmin or admin:"+operater+" add comid:"+comid+" pass ,add sync ret:"+re);
-				}*/
+				}
 				mongoDbUtils.saveLogs( request,0, 2, "添加了通道:"+map.get("passname"));
 				return nextid;
 			}
@@ -2876,4 +2867,79 @@ public class CommonMethods {
 		return map;
 	}
 	//----------------选券逻辑end--------------------//
+	/**
+	 * 获取监控器
+	 * @param comid
+	 * @return
+	 */
+
+	public List<Map<String, Object>> getMonitors(String comid,String groupid){
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		try {
+			List<Object> params = new ArrayList<Object>();
+			String sql = "";
+			if(!Check.isEmpty(comid) && !"0".equals(comid)&& !"-1".equals(comid)){
+				sql = "select id as value_no,name as value_name from monitor_info_tb where comid=? and state=?";
+				params.add(comid);
+				params.add(1);
+			}else{
+				List<Map<String, Object>> parks = getParkList(Long.parseLong(groupid));
+				sql = "select id as value_no,name as value_name from monitor_info_tb where comid in (";
+				for(int i=0; i<parks.size();i++){
+					sql += " ?";
+					if(i!=parks.size()-1){
+						sql += ",";
+					}
+					params.add(parks.get(i).get("value_no").toString());
+				}
+				sql += " ) and state=?";
+				params.add(1);
+			}
+			list = pgOnlyReadService.getAllMap(sql, params);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	public List<Map<String, Object>> getParkList(Long groupid){
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		try {
+			List<Object> params = new ArrayList<Object>();
+			String sql = "select id as value_no, company_name as value_name from com_info_tb where state<>? and groupid=? " ;
+			params.add(1);
+			params.add(groupid);
+			list = pgOnlyReadService.getAllMap(sql, params);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	public List<Map<String, Object>> getChannels(String comid,String groupid){
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		try {
+			List<Object> params = new ArrayList<Object>();
+			String sql = "";
+			if(!Check.isEmpty(comid) && !"0".equals(comid)&& !"-1".equals(comid)){
+				//sql = "SELECT DISTINCT (cp. ID) AS value_no, cp.passname AS value_name,mi.id FROM com_pass_tb cp,monitor_info_tb mi WHERE cp.id = mi.channel_id and cp.comid=?";
+				sql = "SELECT DISTINCT (cp. ID) AS value_no, cp.passname AS value_name FROM com_pass_tb cp WHERE cp.comid=?";
+				params.add(Long.valueOf(comid));
+			}else{
+				List<Map<String, Object>> parks = getParkList(Long.parseLong(groupid));
+				//sql = "SELECT DISTINCT (cp. ID) AS value_no, cp.passname AS value_name,mi.id FROM com_pass_tb cp,monitor_info_tb mi WHERE cp.id = mi.channel_id and cp.comid in (";
+				sql = "SELECT DISTINCT (cp. ID) AS value_no, cp.passname AS value_name FROM com_pass_tb cp WHERE cp.comid in (";
+				for(int i=0; i<parks.size();i++){
+					sql += " ?";
+					if(i!=parks.size()-1){
+						sql += ",";
+					}
+					params.add(Long.parseLong(parks.get(i).get("value_no").toString()));
+				}
+				sql += " )";
+			}
+			list = pgOnlyReadService.getAllMap(sql, params);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 }

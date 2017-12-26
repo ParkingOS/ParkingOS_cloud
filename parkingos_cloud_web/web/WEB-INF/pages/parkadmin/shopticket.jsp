@@ -35,11 +35,13 @@ for(var i=0;i<ownsubauth.length;i++){
 //                   {"value_no":1,"value_name":"专用停车券"},{"value_no":2,"value_name":"微信打折券"},
 //                   {"value_no":3,"value_name":"时长减免"},{"value_no":4,"value_name":"全免券"},
 //                   {"value_no":5,"value_name":"金额减免"}];
-var ticket_type = [{"value_no":-1,"value_name":"全部"},{"value_no":3,"value_name":"时长减免"},{"value_no":5,"value_name":"金额减免"}];                   
+var ticket_type = [{"value_no":-1,"value_name":"全部"},{"value_no":3,"value_name":"时长减免"},{"value_no":4,"value_name":"全免券"},{"value_no":5,"value_name":"金额减免"}];
 var _mediaField = [
 		{fieldcnname:"编号",fieldname:"id",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",issort:false,edit:false},
 		{fieldcnname:"商户名称",fieldname:"shop_name",fieldvalue:'',inputtype:"text", twidth:"150" ,height:"",issort:false},
-		{fieldcnname:"优惠时长",fieldname:"money",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",issort:false},
+		{fieldcnname:"优惠时长(分钟)",fieldname:"money_minute",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",issort:false},
+        {fieldcnname:"优惠时长(小时)",fieldname:"money_hour",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",issort:false},
+        {fieldcnname:"优惠时长(天)",fieldname:"money_day",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"优惠金额",fieldname:"umoney",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"到期时间",fieldname:"limit_day",fieldvalue:'',inputtype:"date", twidth:"150" ,height:"",hide:true},
 		//{fieldcnname:"使用时间",fieldname:"utime",fieldvalue:'',inputtype:"date", twidth:"130" ,height:"",hide:true},
@@ -48,6 +50,20 @@ var _mediaField = [
 		{fieldcnname:"车牌号",fieldname:"car_number",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
 		{fieldcnname:"优惠券类型",fieldname:"type",fieldvalue:'',inputtype:"select",noList:ticket_type,twidth:"100" ,height:"",issort:false}
 	];
+//高级查询
+var _highField = [
+    {fieldcnname:"编号",fieldname:"id",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",issort:false,edit:false},
+    {fieldcnname:"商户名称",fieldname:"shop_name",fieldvalue:'',inputtype:"text", twidth:"150" ,height:"",issort:false},
+    {fieldcnname:"优惠金额",fieldname:"umoney",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",issort:false},
+    {fieldcnname:"优惠时长",fieldname:"money",fieldvalue:'',inputtype:"number", twidth:"100" ,height:"",issort:false},
+    {fieldcnname:"优惠时长单位",fieldname:"ticket_unit",inputtype:"select", noList:[{"value_no":1,"value_name":"分钟"},{"value_no":2,"value_name":"小时"},{"value_no":3,"value_name":"天"},{"value_no":4,"value_name":"元"}], twidth:"500",issort:false},
+    {fieldcnname:"到期时间",fieldname:"limit_day",fieldvalue:'',inputtype:"date", twidth:"150" ,height:"",hide:true},
+    //{fieldcnname:"使用时间",fieldname:"utime",fieldvalue:'',inputtype:"date", twidth:"130" ,height:"",hide:true},
+    //{fieldcnname:"车主",fieldname:"uin",fieldvalue:'',inputtype:"text", twidth:"80" ,height:"",issort:false},
+    {fieldcnname:"状态",fieldname:"state",fieldvalue:'',inputtype:"select",noList:[{"value_no":"-1","value_name":"全部"},{"value_no":"0","value_name":"未使用"},{"value_no":"1","value_name":"已使用"},{"value_no":"2","value_name":"回收作废"}], twidth:"100" ,height:"",issort:false},
+    {fieldcnname:"车牌号",fieldname:"car_number",fieldvalue:'',inputtype:"text", twidth:"100" ,height:"",issort:false},
+    {fieldcnname:"优惠券类型",fieldname:"type",fieldvalue:'',inputtype:"select",noList:ticket_type,twidth:"100" ,height:"",issort:false}
+];
 var _ticketT = new TQTable({
 	tabletitle:"优惠券查询",
 	ischeck:false,
@@ -77,7 +93,7 @@ function getAuthButtons(){
 					formWinId:"ticket_search_w",
 					formFunId:tObj,
 					formAttr:[{
-						formitems:[{kindname:"",kinditemts:_mediaField}]
+						formitems:[{kindname:"",kinditemts:_highField}]
 					}],
 					buttons : [//工具
 						{name: "cancel", dname: "取消", tit:"取消添加",icon:"cancel.gif", onpress:function(){TwinC("ticket_search_w");} }

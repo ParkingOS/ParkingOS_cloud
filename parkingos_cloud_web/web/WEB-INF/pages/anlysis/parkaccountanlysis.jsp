@@ -99,7 +99,7 @@ function getAuthButtons(){
 			T.each(_parkaccountanlysisT.tc.tableitems,function(o,j){
 				o.fieldvalue ="";
 			});
-			Twin({Id:"paccount_search_w",Title:"搜索收费员",Width:550,sysfun:function(tObj){
+			Twin({Id:"paccount_search_w",Title:"搜索交易记录",Width:550,sysfun:function(tObj){
 					TSform ({
 						formname: "paccount_search_f",
 						formObj:tObj,

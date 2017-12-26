@@ -97,8 +97,8 @@ public class LiftRodAction extends Action{
 			String [] heards = null;
 			if(list!=null&&list.size()>0){
 				//setComName(list);
-				String [] f = new String[]{"id","liftrod_id","ctime","uin","out_channel_id","reason"};
-				heards = new String[]{"编号","抬杆编号","时间","收费员","通道","原因"};
+				String [] f = new String[]{"id","liftrod_id","ctime","uin","out_channel_id","reason","resume"};
+				heards = new String[]{"编号","抬杆编号","时间","收费员","通道","原因","备注"};
 				Map<Integer, String> reasonMap = (Map)getLiftReason(comid, 1);
 				for(Map<String, Object> map : list){
 					List<String> values = new ArrayList<String>();

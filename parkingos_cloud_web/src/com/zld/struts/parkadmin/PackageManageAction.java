@@ -1,21 +1,5 @@
 package com.zld.struts.parkadmin;
 
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.RequestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.zld.AjaxUtil;
 import com.zld.impl.MongoDbUtils;
 import com.zld.impl.PublicMethods;
@@ -23,7 +7,19 @@ import com.zld.service.DataBaseService;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
-import com.zld.utils.TimeTools;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 /**
  * 停车场后台管理员登录后，查看订单，不能修改和删除
  * @author Administrator
@@ -62,7 +58,7 @@ public class PackageManageAction extends Action{
 			return mapping.findForward("list");
 		}else if(action.equals("quickquery")){
 			String sql = "select * from product_package_tb where comid=? ";
-			String countSql = "select count(*) from product_package_tb  where comid=? ";
+			String countSql = "select count(*) from product_package_tb  where comid=? and is_delete=0 ";
 			List comsList = daService.getAll("select * from com_info_tb where pid = ?",new Object[]{comid});
 			Object[] parm = new Object[comsList.size()+1];
 			parm[0] = comid;
@@ -90,7 +86,7 @@ public class PackageManageAction extends Action{
 			return null;
 		}else if(action.equals("query")){
 			String sql = "select * from product_package_tb where comid=?  ";
-			String countSql = "select count(*) from product_package_tb where  comid=?  " ;
+			String countSql = "select count(*) from product_package_tb where comid=? and is_delete=0 " ;
 			Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 			Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 			String fieldsstr = RequestUtil.processParams(request, "fieldsstr");

@@ -324,4 +324,7 @@
 	<bean name="/workrecord" class="com.zld.struts.parkadmin.WorkRecordAction"></bean>
 	<bean name="/shopticket"  class="com.zld.struts.parkadmin.ShopTicketManageAction"></bean>
 	<context:component-scan base-package="com.zld" />
+	<!-- 中央监控 -->
+	<bean name="/monitor" class="com.zld.struts.monitor.CenterMonitorAction"></bean>
+	<context:component-scan base-package="com.zld" />
 	</beans>

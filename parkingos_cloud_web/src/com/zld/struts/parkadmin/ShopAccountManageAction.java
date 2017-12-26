@@ -60,6 +60,26 @@ public class ShopAccountManageAction extends Action {
 			Long count = daService.getCount(countsql, countsqlparams);
 			if(count > 0){
 				list = daService.getAll(sql, sqlparams, pageNum, pageSize);
+				for(Map<String, Object> map : list){
+					Map shopMap = daService.getMap("select * from shop_tb where id=? ", new Object[]{map.get("shop_id")});
+					if((int)shopMap.get("ticket_type") == 1){//时长
+						Integer ticket_unit = shopMap.get("ticket_unit")==null ? 2 : (int) shopMap.get("ticket_unit");
+						String ticket_limit = (int)map.get("ticket_limit")==0 ? "" : map.get("ticket_limit")+"";
+						//默认小时，原先只支持小时
+						if(ticket_unit==1){//分钟
+							map.put("ticket_limit_minute",ticket_limit);
+						}else if(ticket_unit==2){
+							map.put("ticket_limit_hour",ticket_limit);
+						}else if(ticket_unit==3){
+							map.put("ticket_limit_day",ticket_limit);
+						}
+						map.put("ticket_money","");
+					}else{//金额
+						map.put("ticket_limit_minute","");
+						map.put("ticket_limit_hour","");
+						map.put("ticket_limit_day","");
+					}
+				}
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);
@@ -74,6 +94,7 @@ public class ShopAccountManageAction extends Action {
 			String operate_time = RequestUtil.getString(request, "operate_time");
 			String operate_time_start = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "operate_time_start"));
 			String operate_time_end = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "operate_time_end"));
+			Integer ticket_unit = RequestUtil.getInteger(request, "ticket_unit_start", 1);
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			List<Object> params = new ArrayList<Object>();
 			String sql = "select su.* from (SELECT s.*, u.nickname operate_name FROM shop_account_tb s, user_info_tb u" +
@@ -121,10 +142,34 @@ public class ShopAccountManageAction extends Action {
 				params.add(TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(operate_time_start));
 				params.add(TimeTools.getLongMilliSecondFrom_HHMMDDHHmmss(operate_time_end));
 			}
+			if(ticket_unit >0){
+				sql+=" and su.shop_id in (select st.id from shop_tb st where (st.ticket_unit=? or st.ticket_unit is null))";
+				countsql+=" and su.shop_id in (select st.id from shop_tb st where (st.ticket_unit=? or st.ticket_unit is null))";
+				params.add(ticket_unit);
+			}
 			sql+=" order by su.operate_time desc";
 			Long count = daService.getCount(countsql, params);
 			if(count > 0){
 				list = daService.getAll(sql, params, pageNum, pageSize);
+				for(Map<String, Object> map : list){
+					Map shopMap = daService.getMap("select * from shop_tb where id=? ", new Object[]{map.get("shop_id")});
+					if((int)shopMap.get("ticket_type") == 1){//时长
+						//Integer ticket_unit = shopMap.get("ticket_unit")==null ? 2 : (int) shopMap.get("ticket_unit");
+						//默认小时，原先只支持小时
+						if(ticket_unit==1){//分钟
+							map.put("ticket_limit_minute",map.get("ticket_limit")=="0" ? "" : map.get("ticket_limit"));
+						}else if(ticket_unit==2){
+							map.put("ticket_limit_hour",map.get("ticket_limit")=="0" ? "" : map.get("ticket_limit"));
+						}else if(ticket_unit==3){
+							map.put("ticket_limit_day",map.get("ticket_limit")=="0" ? "" : map.get("ticket_limit"));
+						}
+						map.put("ticket_money","");
+					}else{//金额
+						map.put("ticket_limit_minute","");
+						map.put("ticket_limit_hour","");
+						map.put("ticket_limit_day","");
+					}
+				}
 			}
 			String json = JsonUtil.Map2Json(list,pageNum,count, fieldsstr,"id");
 			AjaxUtil.ajaxOutput(response, json);

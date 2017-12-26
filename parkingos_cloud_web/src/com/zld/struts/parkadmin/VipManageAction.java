@@ -115,19 +115,64 @@ public class VipManageAction extends Action{
 			if(list!=null&&list.size()>0){
 				mongoDbUtils.saveLogs( request,0, 5, "导出会员数量："+list.size());
 				//setComName(list);
-				String [] f = new String[]{"id","p_name","mobile","uin","name","address","car_number","create_time","b_time","e_time","total","remark"};
-				heards = new String[]{"编号","包月产品名称","车主手机","车主账户","名字","地址","车牌号码","购买时间","开始时间","结束时间","金额","备注"};
+				String [] f = new String[]{"id","p_name","mobile"/*,"uin"*/,"name","car_number","create_time","b_time","e_time","total","car_type_id","limit_day_type","remark"};
+				heards = new String[]{"编号","包月产品名称","车主手机"/*,"车主账户"*/,"名字","车牌号码","购买时间","开始时间","结束时间","金额","车型类型","单双日限行","备注"};
 				for(Map<String, Object> map : list){
 					List<String> values = new ArrayList<String>();
 					for(String field : f){
-						if("car_number".equals(field)){
-							values.add(commonMethods.getcar(Long.valueOf(values.get(3)+"")));
-						}else if("p_name".equals(field)){
-							Map cpMap = daService.getMap("select p_name from product_package_tb where id =? ",new Object[]{Long.valueOf(map.get("p_name")+"")});
-							values.add(cpMap.get("p_name")+"");
-						}else{
+//						if("car_number".equals(field)){
+//							if(map.get(3)!= null && !"".equals(map.get(3))){
+//								values.add(commonMethods.getcar(Long.parseLong(map.get(3)+"")));
+//							}else{
+//								values.add("");
+//							}
+//							//values.add(commonMethods.getcar(Long.valueOf(values.get(3)+"")));
+//						}
+						if("p_name".equals(field)){
+							if(map.get("pid")!= null) {
+								Map cpMap = daService.getMap("select p_name from product_package_tb where id =? ", new Object[]{Long.parseLong(map.get("pid") + "")});
+								if(cpMap!=null){
+									values.add(cpMap.get("p_name") + "");
+								}else{
+									values.add("");
+								}
+							}else{
+								values.add("");
+							}
+						}else if("car_type_id".equals(field)){
+							if(map.get("car_type_id")!= null){
+								Map cpMap = null;
+								try{
+									cpMap = daService.getMap("select name from car_type_tb where id =? ", new Object[]{Long.parseLong(map.get("car_type_id") + "")});
+								}catch (Exception e){
+									//cpMap = daService.getMap("select name from car_type_tb where id =?",new Object[]{-1L});
+									values.add(map.get("car_type_id")+"");
+								}
+								if(cpMap!=null){
+									values.add(cpMap.get("name") + "");
+								}else{
+									values.add("");
+								}
+							}else{
+								values.add("");
+							}
+						}else if("limit_day_type".equals(field)){
+							if(map.get("limit_day_type")!=null){
+								if((Integer)map.get("limit_day_type")==0){
+									values.add("不限行");
+								}else if((Integer)map.get("limit_day_type")==1){
+									values.add("限行");
+								}
+							}else{
+								values.add("");
+							}
+						} else{
 							if("create_time".equals(field)||"b_time".equals(field)||"e_time".equals(field)){
-								values.add(TimeTools.getTime_yyyyMMdd_HHmmss(Long.valueOf((map.get(field)+""))*1000));
+								if(map.get(field)!=null){
+									values.add(TimeTools.getTime_yyyyMMdd_HHmmss(Long.valueOf((map.get(field)+""))*1000));
+								}else {
+									values.add("");
+								}
 							}else{
 								values.add(map.get(field)+"");
 							}
@@ -923,7 +968,11 @@ public class VipManageAction extends Action{
 		}*/
 		Long cartypeId =-1L;
 		if(pMap!=null && pMap.containsKey("car_type_id") && pMap.get("car_type_id")!=null){
-			cartypeId = Long.parseLong( pMap.get("car_type_id")+"");;
+			try{
+				cartypeId = Long.parseLong( pMap.get("car_type_id")+"");
+			}catch (Exception e){
+
+			}
 		}
 		logger.error(">>>>>>>>>>>>>>>>"+cartypeId);
 		//Long carTypeId = RequestUtil.getLong(request, "car_type_id", -1L);
@@ -944,7 +993,7 @@ public class VipManageAction extends Action{
 		String tradeNo  = TimeTools.getTimeYYYYMMDDHHMMSS()+""+comid;
 		String operater = (String)request.getSession().getAttribute("nickname");
 		reNewMap.put("values",new Object[]{renewId,tradeNo,cardId,ntime,total+"",act_total+"",operater,"现金"
-				,carNumber,name,"用户续费",months,comid,ntime,ntime});
+				,carNumber,name,remark,months,comid,ntime,ntime});
 		bathSql.add(reNewMap);
 		//************
 		bathSql.add(carowerPackMap);
@@ -1561,7 +1610,9 @@ public class VipManageAction extends Action{
 		Integer pageNum = RequestUtil.getInteger(request, "page", 1);
 		Integer pageSize = RequestUtil.getInteger(request, "rp", 20);
 		String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
-		SqlInfo sqlInfo = RequestUtil.customSearch(request, "c_product", "c", null);
+		//SqlInfo sqlInfo = RequestUtil.customSearch(request, "c_product", "c", null);
+		SqlInfo sqlInfo =RequestUtil.customSearch(request, "c_product");
+		//SqlInfo newsqlInfo =RequestUtil.customSearch(request, "product_package_tb");
 		//	SqlInfo ssqlInfo = getSuperSqlInfo(request);
 		if(sqlInfo!=null){
 			/*if(ssqlInfo!=null)
