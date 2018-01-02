@@ -16,6 +16,7 @@ import parkingos.com.bolink.utlis.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,8 +49,8 @@ public class ShopLoginAction {
             pass = StringUtils.MD5(pass +"zldtingchebao201410092009");
         }
         if(!StringUtils.isNumber(username)){
-            infoMap.put("info", "fail");
-            AjaxUtil.ajaxOutput(response, StringUtils.createXML(infoMap));
+            infoMap.put("info", "用户名错误");
+            AjaxUtil.ajaxOutput(response, infoMap);
         }
         UserInfoTb user = shopLoginService.qryShopUserByIdAndPass(Long.valueOf(username),pass);
         //logger.error(user);
@@ -75,16 +76,31 @@ public class ShopLoginAction {
                 infoMap.put("shop_name", shopInfo.getName());
                 //减免劵类型 1-时长 2-金额
                 infoMap.put("ticket_type", shopInfo.getTicketType());
+                //减免劵单位 1-分钟 2-小时 3-天 4 元
+                Integer ticket_unit = shopInfo.getTicketUnit();
+                if(ticket_unit == null){
+                    if(shopInfo.getTicketType() == 1){
+                        ticket_unit = 2;
+                    }
+                    if(shopInfo.getTicketType() == 2){
+                        ticket_unit = 4;
+                    }
+                }
+                infoMap.put("ticket_unit", ticket_unit);
                 //获取默认显示额度
                 JSONArray ranges = new JSONArray();
                 String defalut_limit = shopInfo.getDefaultLimit();
                 if(!Check.isEmpty(defalut_limit)){
                     String[] defaluts = defalut_limit.split(",");
+                    defaluts = Arrays.copyOf(defaluts, 3);//取前三个额度
                     for(String defalut : defaluts){
                         Map<String, Object> range = new HashMap<String, Object>();
                         range.put("range", defalut);
                         ranges.add(range);
                     }
+                    Map<String, Object> range = new HashMap<String, Object>();
+                    range.put("range", "全免");
+                    ranges.add(range);
 					/*if("1".equals(shopMap.get("ticket_type")+"")){
 						Map<String, Object> range = new HashMap<String, Object>();
 						range.put("range", "全免");

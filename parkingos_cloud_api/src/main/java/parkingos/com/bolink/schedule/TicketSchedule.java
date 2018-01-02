@@ -56,7 +56,7 @@ public class TicketSchedule extends TimerTask {
 		//遍历shop_id 集合
 		for(int i=0; i<shopid_list.size();i++){
 			Map<String, Object> map = new HashMap<String,Object>();
-			Long shop_id = shopid_list.get(i);//商户id
+			long shop_id = shopid_list.get(i);//商户id
 			//根据shop_id 查询商户信息
 			ShopTb shopConditions = new ShopTb();
 			shopConditions.setId(shop_id);
@@ -66,20 +66,27 @@ public class TicketSchedule extends TimerTask {
 			map.put("comid",shopTb.getComid());
 			Integer money = 0;//回收时长额度
 			Integer umoney = 0; //回收金额额度
+			Integer ecount = 0; //回收全免额度
 			Integer type = 0;//商户类型
 			for(int j=0; j<ticketTbs.size();j++){
-				if(shop_id == ticketTbs.get(j).getShopId()){
+				if(shop_id == ticketTbs.get(j).getShopId().longValue()){
 					money += ticketTbs.get(j).getMoney();
 					umoney += ticketTbs.get(j).getUmoney().intValue();
 					type = ticketTbs.get(j).getType();
+					if(type==4){
+						ecount++;
+					}
 				}
 			}
 			Integer money_total = shopTb.getTicketLimit() + money;//回收后时长额度  =现有额度+回收额度
 			Integer umoney_total = shopTb.getTicketMoney() + umoney; //回收后金额额度  =现有额度+回收额度
+			Integer ecount_total = shopTb.getTicketfreeLimit() + ecount; //回收后金额额度  =现有额度+回收额度
 			map.put("money",money);
 			map.put("umoney",umoney);
+			map.put("ecount",ecount);
 			map.put("money_total",money_total);
 			map.put("umoney_total",umoney_total);
+			map.put("ecount_total",ecount_total);
 			backShops.add(map);
 		}
 		logger.error("回收优惠券定时任务....回收集合:"+backShops);
@@ -91,6 +98,7 @@ public class TicketSchedule extends TimerTask {
 			ShopTb shopTb  = new ShopTb();
 			shopTb.setTicketLimit((int)map.get("money_total"));//回收后时长额度
 			shopTb.setTicketMoney((int)map.get("umoney_total"));
+			shopTb.setTicketfreeLimit((int)map.get("ecount_total"));
 			Integer backResult = commonDao.updateByConditions(shopTb,shopConditions);
 			logger.error("回收优惠券定时任务.."+(Long)map.get("shop_id")+"..回收结果:"+backResult);
 
@@ -99,7 +107,7 @@ public class TicketSchedule extends TimerTask {
 			shopAccountTb.setShopId(Integer.parseInt(map.get("shop_id")+""));
 			shopAccountTb.setShopName((String)map.get("name"));
 			shopAccountTb.setTicketLimit((int)(map.get("money")));
-			shopAccountTb.setTicketfreeLimit(0);
+			shopAccountTb.setTicketfreeLimit((int)(map.get("ecount")));
 			shopAccountTb.setTicketMoney((int)(map.get("umoney")));
 			shopAccountTb.setOperateTime(System.currentTimeMillis() / 1000);
 			shopAccountTb.setParkId((Long)map.get("comid"));

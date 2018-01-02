@@ -36,7 +36,7 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 
 	 @Override 
 	 public void channelActive(ChannelHandlerContext ctx) throws Exception { 
-		 logger.info("一个新的连接"); 
+		 logger.info("一个新的连接>>>>>>>>>>>"+ctx.channel().remoteAddress().toString());
 		 ctx.fireChannelActive(); 
 		 ctx.flush();
 	 }
@@ -47,7 +47,7 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 	}
 
 	private void  handleMessage(final ChannelHandlerContext ctx,final Object msg){
-		logger.info("tcp 开始处理消息>>>>"+msg.toString());
+		logger.info("tcp 开始处理消息>>>>"+msg.toString()+">>>>>>"+ctx.channel().remoteAddress().toString());
 		ExecutorService es  = ExecutorsUtil.getExecutorPool();
 		es.execute(new Runnable() {
 			public void run() {
@@ -102,6 +102,11 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 								logger.error("tcp park login ,error:未识别到park_id标记");
 								String mess = "{\"state\":0,\"errmsg\":\"未识别到park_id标记\"}";
 								doBackMessage(mess, ctx.channel());
+								try {
+									logger.error("关闭链接>>>>>"+ctx.channel().disconnect().isSuccess());
+								}catch (Exception e){
+									e.printStackTrace();
+								}
 								return;
 							}
 							String localId = null;
@@ -295,15 +300,29 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 		if (doUpload != null) {
 			String token = doUpload.doLogin(data, sign,clientChannel.remoteAddress().toString());
 			String result = "{\"state\":1,\"token\":\"" + token + "\","+"\"service_name\":\"login\"}";
+			boolean isLongin = true;
 			if (token != null && token.indexOf("error") != -1) {// 登录失败
 				result = "{\"state\":0,\"errmsg\":\"" + token + "\","+"\"service_name\":\"login\"}";
+				isLongin = false;
 			}
 			logger.error("返回登录消息" + result + ",channel:" + clientChannel);
 			doBackMessage(result, clientChannel);
+			if(!isLongin){
+				try {
+					logger.error("关闭链接>>>>>"+clientChannel.disconnect().isSuccess());
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			}
 		} else {
 			logger.error("服务器初始化失败");
 			String result = "{\"state\":0,\"errmsg\":\"服务器初始化异常\"}";
 			doBackMessage(result, clientChannel);
+			try {
+				logger.error("关闭链接>>>>>"+clientChannel.disconnect().isSuccess());
+			}catch (Exception e){
+				e.printStackTrace();
+			}
 		}
 	}
 

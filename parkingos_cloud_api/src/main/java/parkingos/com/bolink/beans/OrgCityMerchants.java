@@ -22,9 +22,48 @@ public class OrgCityMerchants {
 
     private Integer isInparkIncity;
 
+    public String getAppid() {
+        return appid;
+    }
+
+    public void setAppid(String appid) {
+        this.appid = appid;
+    }
+
+    public String getAppsecert() {
+        return appsecert;
+    }
+
+    public void setAppsecert(String appsecert) {
+        this.appsecert = appsecert;
+    }
+
     private String unionId;
 
     private String ukey;
+
+    private String appid;
+
+    private String appsecert;
+
+    @Override
+    public String toString() {
+        return "OrgCityMerchants{" +
+                "id=" + id +
+                ", ctime=" + ctime +
+                ", name='" + name + '\'' +
+                ", state=" + state +
+                ", balance=" + balance +
+                ", gps='" + gps + '\'' +
+                ", address='" + address + '\'' +
+                ", isGroupPursue=" + isGroupPursue +
+                ", isInparkIncity=" + isInparkIncity +
+                ", unionId='" + unionId + '\'' +
+                ", ukey='" + ukey + '\'' +
+                ", appid='" + appid + '\'' +
+                ", appsecert='" + appsecert + '\'' +
+                '}';
+    }
 
     public Long getId() {
         return id;

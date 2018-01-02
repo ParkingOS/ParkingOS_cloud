@@ -639,24 +639,45 @@ public class DoUploadImpl implements DoUpload{
         logger.info(jsonData);*/
         OrderTb orderTb = setOrder(jsonData);//JSON.parseObject(jsonData.toJSONString(),OrderTb.class);
         orderTb.setState(1);
-        // logger.info(orderTb);
+        logger.info("================>>>"+orderTb);
         OrderTb con = new OrderTb();
+        OrderTb newCon = new OrderTb();
         con.setCarNumber(orderTb.getCarNumber());
         con.setComid(orderTb.getComid());
         con.setCreateTime(orderTb.getCreateTime());
         con.setOrderIdLocal(orderTb.getOrderIdLocal());
         //OrderTb order =(OrderTb)commonDao.selectObjectByConditions(con);
         OrderTb order = null;
+        OrderTb newOrder = null;
         Integer count = commonDao.selectCountByConditions(con);
+        int r =0;
         if(count==1){
             order = (OrderTb)commonDao.selectObjectByConditions(con);
+        }else{
+            newCon.setCarNumber(orderTb.getCarNumber());
+            newCon.setComid(orderTb.getComid());
+            newCon.setState(0);
+            Integer newCount = commonDao.selectCountByConditions(newCon);
+            if(newCount!=null&&newCount==1){
+                newOrder = (OrderTb)commonDao.selectObjectByConditions(newCon);
+                r = commonDao.updateByConditions(orderTb,newOrder);
+                writeToAccount(newOrder);
+            }else if (newCount>1){
+                logger.error("请先结算这辆车的其它未出场订单");
+            }else{
+                Long newId = commonDao.selectSequence(OrderTb.class);
+                orderTb.setId(newId);
+                r = commonDao.insert(orderTb);
+                writeToAccount(orderTb);
+            }
         }
-        int r =0;
+
         if(order!=null&&order.getId()!=null){
             r = commonDao.updateByConditions(orderTb,con);
             orderTb.setId(order.getId());
             writeToAccount(orderTb);
         }
+
 //        Long comid = jsonData.getLong("comid");
         Integer emplyPlot = jsonData.getInteger("empty_plot");
         jsonData.clear();
@@ -753,22 +774,39 @@ public class DoUploadImpl implements DoUpload{
 
     @Override
     public String uploadMonthCard(JSONObject jsonData) {
+        logger.error("=======>>>>>>上传月卡套餐"+jsonData);
         String packageId = jsonData.getString("package_id");
         ProductPackageTb packageTb = new ProductPackageTb();
         packageTb.setCardId(packageId);
         packageTb.setComid(jsonData.getLong("comid"));
         Integer operateType = jsonData.getInteger("operate_type");
         int count = commonDao.selectCountByConditions(packageTb);
+        logger.error("=============>>>>>>>>套餐上传查询"+count);
+        ProductPackageTb newProductPackage =(ProductPackageTb)commonDao.selectObjectByConditions(packageTb);
+        Long pid = -1L;
+        logger.error("==========>>>>>>>月卡上传套餐newProductPackage"+newProductPackage);
+        if(newProductPackage!=null){
+            pid = newProductPackage.getId();
+        }
         int ret = 0;
         if(count>0){
             if(operateType==3){
                 ProductPackageTb fields = new ProductPackageTb();
                 fields.setIsDelete(1L);
                 ret =  commonDao.updateByConditions(fields,packageTb);
+                CarowerProduct carowerProduct = new CarowerProduct();
+                carowerProduct.setPid(pid);
+                List<CarowerProduct> carowerProductList=commonDao.selectListByConditions(carowerProduct);
+                for (CarowerProduct carowerProduct1 : carowerProductList){
+                    CarowerProduct field = new CarowerProduct();
+                    field.setPid(-1L);
+                    commonDao.updateByConditions(field,carowerProduct1);
+                }
             }else{
                 operateType =2;
             }
         }
+        logger.error("==========>>>>>>>>月卡套餐上传operatetype"+operateType);
         if(operateType!=3){
             packageTb.setCreateTime(jsonData.getLong("create_time"));
             packageTb.setUpdateTime(jsonData.getLong("update_time"));
@@ -795,11 +833,13 @@ public class DoUploadImpl implements DoUpload{
             packageTb.setIsDelete(0L);
             if(operateType==1){
                 ret = commonDao.insert(packageTb);
+                logger.error("上传月卡套餐插入=======>>>>"+ret);
             }else if(operateType==2){
                 ProductPackageTb con = new ProductPackageTb();
                 con.setCardId(packageId);
                 con.setComid(jsonData.getLong("comid"));
                 ret = commonDao.updateByConditions(packageTb,con);
+                logger.error("上传月卡套餐更新=======>>>>"+ret);
             }
         }
         jsonData.clear();
@@ -814,9 +854,11 @@ public class DoUploadImpl implements DoUpload{
     public String monthPayRecord(JSONObject jsonData) {
         String cardId = jsonData.getString("card_id");
         String comId = jsonData.getString("comid");
+        String trade_no = jsonData.getString("trade_no");
         CardRenewTb renewTb = new CardRenewTb();
         renewTb.setComid(comId);
         renewTb.setCardId(cardId);
+        renewTb.setTradeNo(trade_no);
         //int count = 0;
         int count = commonDao.selectCountByConditions(renewTb);
         renewTb.setPayTime(jsonData.getInteger("pay_time"));
@@ -829,12 +871,13 @@ public class DoUploadImpl implements DoUpload{
         renewTb.setUserId(jsonData.getString("user_id"));
         renewTb.setResume(jsonData.getString("resume"));
         renewTb.setLimitTime(jsonData.getLong("limit_time"));
-        renewTb.setTradeNo(jsonData.getString("trade_no"));
+//        renewTb.setTradeNo(jsonData.getString("trade_no"));
         int ret = 0;
         if(count>0){
             CardRenewTb con = new CardRenewTb();
             con.setComid(comId);
             con.setCardId(cardId);
+            con.setTradeNo(trade_no);
             ret = commonDao.updateByConditions(renewTb,con);
         }else{
             ret = commonDao.insert(renewTb);
@@ -928,18 +971,48 @@ public class DoUploadImpl implements DoUpload{
     @Override
     public void monthMemberSync(JSONObject jsonData) {
         Integer  state = jsonData.getInteger("state");
+        logger.info("==========>>>monthMemberSync>>>state"+state);
         if(state!=null&&state==1){
             String cardId = jsonData.getString("card_id");
-            CarowerProduct product = new CarowerProduct();
-            product.setCardId(cardId);
-            product.setComId(jsonData.getLong("comid"));
-            product= (CarowerProduct)commonDao.selectObjectByConditions(product);
+            String cardIdLocal = jsonData.getString("card_id_local");
+
+            CarowerProduct conditions = new CarowerProduct();
+            conditions.setCardId(cardId);
+            conditions.setComId(jsonData.getLong("comid"));
+            CarowerProduct product= null;
+            int count = commonDao.selectCountByConditions(conditions);
+            logger.info("==========>>>monthMemberSync>>>count1"+count);
+            CarowerProduct fields = new CarowerProduct();
+            if(count>0){
+                product= (CarowerProduct)commonDao.selectObjectByConditions(conditions);
+                if(!Check.isEmpty(cardIdLocal)){
+                    logger.info("==========>>>monthMemberSync>>>product"+product);
+                    conditions.setCardId(cardIdLocal);
+                    count = commonDao.selectCountByConditions(conditions);
+                    logger.info("==========>>>monthMemberSync>>>count2"+count);
+                    if(count==0){
+                        fields.setCardId(cardIdLocal);
+                        int r = commonDao.updateByConditions(fields,conditions);
+
+                    }else{
+                        logger.info("==========>>>monthMemberSync>>>card_id_local重复,不能更新");
+                    }
+                }else{
+                    logger.info("==========>>>monthMemberSync>>>cardIdLocal为空"+cardIdLocal);
+                }
+            }else{
+                logger.info("==========>>>monthMemberSync>>>没有这张月卡信息");
+            }
+
             if(product!=null){
                 Long tableId = product.getId();
                 String tableName = "carower_product";//product.getClass().getAnnotation(TableName.class).value();
                 updateSyncRecord(tableId,tableName);
+            }else{
+                logger.info("==========>>>monthMemberSync>>>product"+product+" 为空");
             }
-
+        }else{
+            logger.info("==========>>>monthMemberSync>>>state"+state+" 异常");
         }
     }
 
@@ -1281,7 +1354,11 @@ public class DoUploadImpl implements DoUpload{
             orderTb.setInPassid(inChannelId);
         }
         orderTb.setWorkStationUuid(jsonData.getString("work_station_uuid"));
-        orderTb.setReduceAmount(jsonData.getBigDecimal("reduce_amount"));
+        BigDecimal reduceAount = jsonData.getBigDecimal("reduce_amount");
+        if(reduceAount==null||reduceAount.doubleValue()<0.01)
+            reduceAount = new BigDecimal(0.0);
+        logger.info(reduceAount);
+        orderTb.setReduceAmount(reduceAount);
         orderTb.setAmountReceivable(jsonData.getBigDecimal("amount_receivable"));
         //orderTb.setReduceAmount(jsonData.getBigDecimal("reduce_amount"));
         orderTb.setElectronicPrepay(jsonData.getBigDecimal("electronic_prepay"));
