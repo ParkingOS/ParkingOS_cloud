@@ -53,6 +53,7 @@ public class WeixinProdServiceImpl implements WeixinProdService {
             for (CarInfoTb carInfo : carInfos) {
                 CarowerProduct carOwnerProductConditions = new CarowerProduct();
                 //carOwnerProductConditions.setUin(uin);
+                carOwnerProductConditions.setIsDelete(0L);
                 List<SearchBean> searchBeans = new ArrayList<SearchBean>();
                 SearchBean searchBean = new SearchBean();
                 searchBean.setBasicValue(carInfo.getCarNumber());
@@ -87,15 +88,19 @@ public class WeixinProdServiceImpl implements WeixinProdService {
                             //TODO 有月卡套餐
                             ProductPackageTb productPackageCondition = new ProductPackageTb();
                             productPackageCondition.setId(pid);
+                            productPackageCondition.setIsDelete(0L);
                             productPackageTb = productPackageCommonDao.selectObjectByConditions(productPackageCondition);
-                            prodView.setProdName(productPackageTb.getpName());
-                            prodView.setProdId(pid);
-
-                        }else{
+                            if(productPackageTb!=null){
+                                prodView.setProdName(productPackageTb.getpName());
+                                prodView.setProdId(pid);
+                            } else {
+                                prodView.setProdName("月卡");
+                                prodView.setProdId(-1L);
+                            }
+                        }else {
                             prodView.setProdName("月卡");
                             prodView.setProdId(-1L);
                         }
-
                         Long beginTime = carOwnerProduct.getbTime();
                         Long endTime = carOwnerProduct.geteTime();
                         String cardId = carOwnerProduct.getCardId();

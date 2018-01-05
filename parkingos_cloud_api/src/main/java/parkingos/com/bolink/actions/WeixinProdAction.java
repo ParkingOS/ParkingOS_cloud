@@ -1,10 +1,12 @@
 package parkingos.com.bolink.actions;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zld.common_dao.dao.CommonDao;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import parkingos.com.bolink.beans.ComInfoTb;
 import parkingos.com.bolink.component.CommonComponent;
 import parkingos.com.bolink.constant.Constants;
 import parkingos.com.bolink.constant.WeixinConstants;
@@ -14,6 +16,7 @@ import parkingos.com.bolink.utlis.*;
 import parkingos.com.bolink.vo.ProdPriceView;
 import parkingos.com.bolink.vo.ProdView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -33,6 +36,8 @@ public class WeixinProdAction {
 
     @Autowired
     CommonComponent commonComponent;
+    @Autowired
+    CommonDao commonDao;
 
     /**
      * 获取月卡列表数据
@@ -84,9 +89,16 @@ public class WeixinProdAction {
         Long carOwnerProductId = RequestUtil.getLong(request, "car_owner_product_id", -1l);
         String prodId = RequestUtil.getString(request, "prod_id");
         Integer type = RequestUtil.getInteger(request, "type", 0);//0:购买 1：续费
-        String parkName = RequestUtil.getString(request,"park_name");
-        parkName = StringUtils.decodeUTF8(parkName);
-        parkName = new String(parkName.getBytes("GBK"), "utf-8");
+        ComInfoTb comInfoTb = new ComInfoTb();
+        comInfoTb.setId(comId);
+        comInfoTb = (ComInfoTb) commonDao.selectObjectByConditions(comInfoTb);
+        logger.info(comInfoTb);
+        String parkName = comInfoTb.getCompanyName();
+//        String parkName = RequestUtil.getString(request,"park_name");
+//        logger.info(parkName);
+//        parkName = StringUtils.decodeUTF8(parkName);
+//        logger.info(parkName);
+//        parkName = new String(parkName.getBytes("GBK"), "utf-8");
         logger.info("tobuyprod=>"+uin+"~"+cardId+"~"+comId+"~"+carOwnerProductId+"~"+prodId+"~"+type+"~"+endTime+"~"+parkName);
 
         String bTime = TimeTools.getDate_YY_MM_DD();
@@ -132,12 +144,26 @@ public class WeixinProdAction {
         String startTime = RequestUtil.processParams(request, "start_time");
         Long sTime = TimeTools.getLongMilliSecondFrom_HHMMDD(startTime)/1000;
         logger.info("topayprod:"+uin+"~"+cardId+"~"+comId+"~"+months+"~"+tradeNo+"~"+price+"~"+startTime);
-
         String openid =   RequestUtil.processParams(request, "openid");
+        String appid = "";
+        Cookie[] cookies = request.getCookies();//这样便可以获取一个cookie数组
+        if(cookies!=null){
+            for(Cookie cookie : cookies){
+                if(cookie!=null&&cookie.getName().equals("userappid"))
+                    appid =cookie.getValue();
+            }
+        }
+        //userAgent = "E6A32CR";
+        logger.info("cookie中用户appid="+appid);
+        String secert = Defind.getProperty(appid);
+        if(Check.isEmpty(appid)||Check.isEmpty(secert)){
+            appid = Defind.getProperty("WXPUBLIC_APPID");
+            secert = Defind.getProperty("WXPUBLIC_SECRET");
+        }
         logger.info(openid);
         if(openid.equals("")){
             String code = RequestUtil.processParams(request, "code");
-            String access_token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+Defind.getProperty("WXPUBLIC_APPID")+"&secret="+Defind.getProperty("WXPUBLIC_SECRET")+"&code="+code+"&grant_type=authorization_code";
+            String access_token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appid+"&secret="+secert+"&code="+code+"&grant_type=authorization_code";
             String result = CommonUtils.httpsRequest(access_token_url, "GET", null);
             JSONObject map = JSONObject.parseObject(result);
             logger.error("third pay map:"+map);
@@ -151,7 +177,7 @@ public class WeixinProdAction {
                         "%26start_time%3d"+startTime+
                         "%26trade_no%3d"+tradeNo;
                 String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
-                        + Defind.getProperty("WXPUBLIC_APPID")
+                        + appid
                         + "&redirect_uri="
                         + redirect_url
                         + "&response_type=code&scope=snsapi_base&state=123#wechat_redirect";
@@ -198,7 +224,7 @@ public class WeixinProdAction {
             String sign = CheckUtil.createSign(paramsMap, unionKey);
 
             String url = Constants.UNIONIP +
-                    "/handlemonthpay?openid="+openid+"&appid="+Defind.getProperty("WXPUBLIC_APPID")+"&money="+price+"&union_id="+unionId+"&sign="+sign+"&backurl="+backUrl+"&park_id="+comId+"&trade_no="+tradeNo+"&attch="+attach;
+                    "/handlemonthpay?openid="+openid+"&appid="+appid+"&money="+price+"&union_id="+unionId+"&sign="+sign+"&backurl="+backUrl+"&park_id="+comId+"&trade_no="+tradeNo+"&attch="+attach;
             logger.info("topayprod:"+url);
             try {
                 response.sendRedirect(url);

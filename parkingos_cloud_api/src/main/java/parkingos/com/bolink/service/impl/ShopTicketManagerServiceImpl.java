@@ -73,15 +73,20 @@ public class ShopTicketManagerServiceImpl implements ShopTicketManagerService {
     public List<TicketTb> queryShopTicketPage(Long shopId, Long bTime, Long eTime, Integer type,Integer pageNum,Integer pageSize) {
         TicketTb ticketConditions = new TicketTb();
         ticketConditions.setShopId(shopId);
-        if(type != -1){
+       /* if(type != -1){
             ticketConditions.setType(type);
-        }
+        }*/
         List<SearchBean> list = new ArrayList<SearchBean>();
         SearchBean searchBean = new SearchBean();
         searchBean.setFieldName("create_time");
         searchBean.setOperator(FieldOperator.BETWEEN);
         searchBean.setStartValue(bTime);
         searchBean.setEndValue(eTime);
+        list.add(searchBean);
+        SearchBean searchBean1 = new SearchBean();
+        searchBean1.setFieldName("type");
+        searchBean1.setOperator(FieldOperator.CONTAINS);
+        searchBean1.setBasicValue(type+",4");//默认查询出全免劵
         list.add(searchBean);
         PageOrderConfig pageOrderConfig = new PageOrderConfig();
         pageOrderConfig.setOrderInfo("create_time","desc");

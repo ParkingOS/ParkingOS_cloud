@@ -37,6 +37,8 @@ public class ShopTb {
 
     private Integer validiteTime;
 
+    private Integer ticketUnit;
+
     public Long getId() {
         return id;
     }
@@ -171,5 +173,13 @@ public class ShopTb {
 
     public void setValiditeTime(Integer validiteTime) {
         this.validiteTime = validiteTime;
+    }
+
+    public Integer getTicketUnit() {
+        return ticketUnit;
+    }
+
+    public void setTicketUnit(Integer ticketUnit) {
+        this.ticketUnit = ticketUnit;
     }
 }
