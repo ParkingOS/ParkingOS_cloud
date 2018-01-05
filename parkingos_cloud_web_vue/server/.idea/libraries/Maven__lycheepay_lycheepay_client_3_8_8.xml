@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: lycheepay:lycheepay-client:3.8.8">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/lycheepay/lycheepay-client/3.8.8/lycheepay-client-3.8.8.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/lycheepay/lycheepay-client/3.8.8/lycheepay-client-3.8.8-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/lycheepay/lycheepay-client/3.8.8/lycheepay-client-3.8.8-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
