@@ -8,23 +8,33 @@ maven 环境配置：
     </mirror>
 	<profiles>
 		<!-- 在setting中设置私服可以让本机的所有Maven项目都使用Maven私服 -->
-		<profile>
+	<profile>
             <id>nexus</id>
             <repositories>
                 <repository>
                     <id>nexus_public</id>
                     <url>http://106.75.7.55:8081/nexus/content/groups/public/</url>
-                   ...
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                    <enabled>true</enabled>
                 </snapshots>    
             </repository>
 			</repositories>
+			<!-- 插件仓库 -->
 			<pluginRepositories>
 				<pluginRepository>
 					<id>nexus_public</id>
 					<url>http://106.75.7.55:8081/nexus/content/groups/public/</url>
-					  ...<br>
+					<releases>
+						<enabled>true</enabled>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
 				</pluginRepository>
-			</pluginRepositories>		
+			</pluginRepositories>			
 		</profile>
 	</profiles>
 2、在setting.xml文件中配置本地仓库目录：<localRepository>D:\user\mavenrepo</localRepository>
