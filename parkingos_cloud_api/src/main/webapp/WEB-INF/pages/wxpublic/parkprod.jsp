@@ -382,7 +382,7 @@
 			</div>
 
 		</div>
-		<div class="weui-cells" style="position:absolute;bottom: 0px;width:100%;display: block">
+		<div class="weui-cells" style="position:absolute;bottom: 0px;width:100%;display: block" id = "carlist">
 			<a class="weui-cell weui-cell_access" href="tocarnumbers?uin=${uin}">
 				<div class="weui-cell__hd"><img src="${pageContext.request.contextPath}/resources/images/wxpublic/carnumber1.png" alt="" style="width:20px;margin-right:5px;display:block"></div>
 				<div class="weui-cell__bd">
@@ -400,6 +400,10 @@
 	<input id="uin" type="text" style="display:none;" value="${uin}"/>
 </body>
 <script type="text/javascript">
+	var pagefrom = "${page}"
+	if(pagefrom=='page'){
+	    document.getElementById("carlist").style.display='none';
+	}
 	function tobuy(){
 		window.location.href = "http://${domain}${pageContext.request.contextPath}";
 	}

@@ -160,8 +160,9 @@ public class WeixinProdAction {
             appid = Defind.getProperty("WXPUBLIC_APPID");
             secert = Defind.getProperty("WXPUBLIC_SECRET");
         }
-        logger.info(openid);
-        if(openid.equals("")){
+        boolean isHaveWxAppid = "1".equals(WeixinConstants.IS_HAVE_WXAPPID);
+        logger.info("openid:"+openid+",isHaveWxAppid:"+isHaveWxAppid);
+        if(openid.equals("")&&isHaveWxAppid){
             String code = RequestUtil.processParams(request, "code");
             String access_token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appid+"&secret="+secert+"&code="+code+"&grant_type=authorization_code";
             String result = CommonUtils.httpsRequest(access_token_url, "GET", null);

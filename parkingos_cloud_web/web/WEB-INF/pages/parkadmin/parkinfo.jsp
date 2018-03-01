@@ -8,21 +8,45 @@
 <link href="css/tq.css" rel="stylesheet" type="text/css">
 <link href="css/iconbuttons.css" rel="stylesheet" type="text/css">
 </head>
+
+<style>
+	body{
+		overflow-y:scroll;
+	}
+</style>
 <body>
 <script src="js/tq.js?08137" type="text/javascript">//基本</script>
 <script src="js/tq.public.js?08031" type="text/javascript">//公共</script>
 <script src="js/tq.window.js?008136" type="text/javascript">//弹窗</script>
 <script src="js/tq.form.js?08301" type="text/javascript">//表单</script>
 <script src="js/tq.validata.js?0817" type="text/javascript">//验证</script>
+<script src="js/jquery.js" type="text/javascript">//表格</script>
+<script src="js/qrcode.js" type="text/javascript">//表格</script>
+<script src="js/jquery_qrcode_logo.js" type="text/javascript">//表格</script>
+
+
+<%--<script src="js/jquery.js" type="text/javascript"></script>--%>
 
 <div id="alllayout">
 	<div style="width:100%;float:left;height:60px;border-bottom:1px solid #ccc" id="top"></div>
 	<div style="width:100%;float:left;">
     	<div id="right" style="width:auto;border-left:1px solid #ccc;float:left"></div>
+
 	</div>
-</div>	
+</div>
+<div id="download_image" style="width:800px;margin-left: 30px" ><span style="font-weight: bold">电子支付二维码 </span>&nbsp;&nbsp;&nbsp;
+	<input type="text" id="qrurl" value = "http://yxiudongyeahnet.vicp.cc/zld/prepaymonth" style="width: 300px" readonly/>&nbsp;&nbsp;&nbsp;&nbsp;
+	<input type="button" onclick="copyLink()" value=" 复制 "/>
+	<div id="qrcode"></div>
+	<p class="col-lg-6 col-md-6" style="text-align: left;" >
+		<a id="download" download="qrcode.jpg"></a>
+		<a id="saveQrCode" style="cursor: pointer;">下载二维码</a>
+	</p>
+
+</div>
 <div id="loadtip" style="display:none;"></div>
 <div id="cover" style="display:none;"></div>
+
 </body>
 <script type="text/javascript">
 /*权限*/
@@ -42,11 +66,11 @@ var topO = document.getElementById("top");
 var rightO = document.getElementById("right");
 
 rightO.style.width = T.gww()  + "px";
-rightO.style.height = T.gwh() - 50 + "px";
+rightO.style.height = T.gwh() - 240 + "px";
 
 T.bind(window,"resize",function(){
     rightO.style.width = T.gww() + "px";
-    rightO.style.height = T.gwh() - 50 + "px"
+    rightO.style.height = T.gwh() - 240 + "px"
 })
 
 
@@ -208,6 +232,48 @@ if(isfixed==1){
 	T("#opconfirm_address_showmap").disabled=true;
 }
 
+function copyLink(){
+    var e = document.getElementById("qrurl");
+    e.select(); // 选择对象
+    document.execCommand("Copy"); // 执行浏览器复制命令
+    T.loadTip(1,"复制链接成功！",3,null);
+}
+//var imageurl = "http://yxiudongyeahnet.vicp.cc/tcbcloud/images/payqr.jpg";
+var imageurl = window.location.href;//http://test.bolink.club";
+imageurl = imageurl.substring(imageurl.indexOf("//")+2);
+imageurl = imageurl.substring(0,imageurl.indexOf("/"));
+imageurl = "http://"+imageurl;
+
+document.getElementById("qrurl").value=imageurl+"/zld/elecpay";
+//创建二维码
+function createQRCode(id, url, width, height, src){
+    $('#'+id).empty();
+    jQuery('#'+id).qrcode({
+        render: 'canvas',
+        text: url,
+        width : width,              //二维码的宽度
+        height : height,            //二维码的高度
+        imgWidth : width/4,         //图片宽
+        imgHeight : height/4,       //图片高
+        src: src            //图片中央的二维码
+    });
+}
+function init() {
+    createQRCode("qrcode", imageurl+"/zld/elecpay", 180, 180, "images/bolinklogo.png");
+}
+
+$('#saveQrCode').click(function(){
+    var canvas = $('#qrcode').find("canvas").get(0);
+    try {//解决IE转base64时缓存不足，canvas转blob下载
+        var blob = canvas.msToBlob();
+        navigator.msSaveBlob(blob, 'qrcode.jpg');
+    } catch (e) {//如果为其他浏览器，使用base64转码下载
+        var url = canvas.toDataURL('image/jpeg');
+        $("#download").attr('href', url).get(0).click();
+    }
+    return false;
+});
+	init();
 </script>
 
 

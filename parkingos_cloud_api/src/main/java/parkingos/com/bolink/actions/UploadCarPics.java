@@ -1,6 +1,7 @@
 package parkingos.com.bolink.actions;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -93,6 +94,7 @@ public class UploadCarPics {
 			logger.error(">>>>>>>>>>>>>>>>收到图片数据内容长度........" + data.length());
 			String result = handleSDKuploadPic(data, comidNew); //doUpload.uploadCarpic(comidNew, data);
 			logger.error(">>>>>>>>>>>>>>>>>>>>上传图片执行结果：uploadCarpic:" + result);
+			StringUtils.ajaxOutput(response, result);
 		}else if(action.equals("getpic")){
 			String typeStr = RequestUtil.getString(request, "typeNew");
 			String orderidlocal = RequestUtil.getString(request, "orderid");
@@ -126,6 +128,34 @@ public class UploadCarPics {
 				}
 //				Map cityMap = .getMap("select ukey from org_city_merchants where id = " +
 //						"(select cityid from com_info_tb where id =? )", new Object[]{comId});
+			}
+		}else if(action.equals("getnewcloudpic")){
+			String orgData  = readBodyFormRequsetStream(request);
+			logger.error(orgData);
+			JSONObject dataJson = JSONObject.parseObject(orgData, Feature.OrderedField);
+			JSONObject jsonObject = JSONObject.parseObject(dataJson.getString("data"));
+			String typeStr = jsonObject.getString("type");
+			String orderidlocal = jsonObject.getString("orderid");
+			String comid = jsonObject.getString("comid");
+			String sign = jsonObject.getString("sign");
+			Long comId = -1L;
+			if(Check.isLong(comid)){
+				comId = Long.parseLong(comid);
+				ComInfoTb infoTb = new ComInfoTb();
+				infoTb.setId(comId);
+				infoTb = (ComInfoTb)commonDao.selectObjectByConditions(infoTb);
+				if(infoTb!=null&&infoTb.getCityid()!=null){
+					OrgCityMerchants merchants = new OrgCityMerchants();
+					merchants.setId(infoTb.getCityid());
+					merchants = (OrgCityMerchants)commonDao.selectObjectByConditions(merchants);
+					logger.error("cityinfo:"+merchants);
+					if(merchants!=null){
+						String signString = dataJson.getString("data")+"key="+merchants.getUkey();
+						String _sign = StringUtils.MD5(signString, "utf-8");
+						logger.error("presign:"+sign+",sign:"+_sign+",result:"+sign.equals(_sign));
+					}
+					getpictureNew(orderidlocal, comId,typeStr,request,response);
+				}
 			}
 		}
 	}
