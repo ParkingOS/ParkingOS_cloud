@@ -156,7 +156,7 @@
             <span class="pullUpLabel">上拉加载更多...</span>
         </div>
     </div>
-    <div class="weui-cells" style="position:absolute;bottom: 0px;width:100%;display: block">
+    <div class="weui-cells" style="position:absolute;bottom: 0px;width:100%;display: block" id = "carlist">
         <a class="weui-cell weui-cell_access" href="tocarnumbers?uin=${uin}">
             <div class="weui-cell__hd"><img src="${pageContext.request.contextPath}/resources/images/wxpublic/carnumber1.png" alt="" style="width:20px;margin-right:5px;display:block"></div>
             <div class="weui-cell__bd">
@@ -176,4 +176,12 @@
 <script src="${pageContext.request.contextPath}/resources/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/jquery-weui.min.js"></script>
 </body>
+<script type="text/javascript">
+    var pagefrom = "${from}";
+    if(pagefrom=='page'){
+        document.getElementById("carlist").style.display='none';
+    }
+
+
+</script>
 </html>
