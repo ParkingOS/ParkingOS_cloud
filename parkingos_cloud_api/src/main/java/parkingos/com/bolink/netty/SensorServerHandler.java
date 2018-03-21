@@ -15,7 +15,9 @@ import parkingos.com.bolink.utlis.Check;
 import parkingos.com.bolink.utlis.ExecutorsUtil;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 
@@ -129,6 +131,7 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 								//验证token
 								return;
 							}
+
 							DoUpload doUpload = NettyChannelMap.doUpload;
 							if (doUpload == null) {
 								logger.error("server error ,初始化失败....");
@@ -144,6 +147,16 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 								doBackMessage(mess, ctx.channel());
 								return;
 							}
+
+							//token有效  判断是不是攻击  频率最高10s 1000次
+							logger.error("判断是都攻击==>chen");
+							if(isHit(token)){
+								logger.error("data error ,error:request_over_times");
+								String mess = "{\"state\":0,\"errmsg\":\"request_over_times\"}";
+								doBackMessage(mess, ctx.channel());
+								return;
+							}
+							logger.error("不是攻击==>>chen");
 
 							String backMesg = "";
 							JSONObject jsonData = JSONObject.parseObject(data);
@@ -243,6 +256,43 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 					}
 				}
 			}});
+	}
+
+	private boolean isHit(String token) {
+
+//		return true;
+		logger.info("SensorServerHandler recive data，token:"+token);
+		Map<String,List<Long>> tokenAccessMap =NettyChannelMap.tokenAccessMap;
+		Long ntime = System.currentTimeMillis()/1000;
+		if(tokenAccessMap.containsKey(token)){
+			List<Long> requestTimes = tokenAccessMap.get(token);
+			//logger.info("tcp recive data，request cache:"+requestTimes);
+			if(requestTimes==null){
+				requestTimes = new ArrayList<Long>();
+				tokenAccessMap.put(token, requestTimes);
+			}
+			while (requestTimes.size()>1000) {
+				requestTimes.remove(0);
+			}
+			//logger.info("tcp recive data，request cache:"+requestTimes);
+			tokenAccessMap.put(token, requestTimes);
+			if(requestTimes.size()==1000){
+				Long preRequest = requestTimes.get(0);
+				if(preRequest!=null&&ntime-preRequest<11){//10秒内100请求限制
+					logger.error("tcp recive data，10秒内超过100次，返回:"+token);
+					return true;
+				}
+			}
+			requestTimes.add(ntime);
+		}else {
+			List<Long> requestTimes = new ArrayList<Long>();
+			requestTimes.add(ntime);
+			tokenAccessMap.put(token, requestTimes);
+			//logger.info("tcp recive data，request cache:"+requestTimes);
+		}
+		//logger.info("tcp recive data，没有超过10秒100次限制");
+
+		return false;
 	}
 
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {

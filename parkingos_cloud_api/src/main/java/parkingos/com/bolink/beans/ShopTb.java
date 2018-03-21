@@ -39,6 +39,8 @@ public class ShopTb {
 
     private Integer ticketUnit;
 
+    private Integer handInputEnable;
+
     public Long getId() {
         return id;
     }
@@ -181,5 +183,13 @@ public class ShopTb {
 
     public void setTicketUnit(Integer ticketUnit) {
         this.ticketUnit = ticketUnit;
+    }
+
+    public Integer getHandInputEnable() {
+        return handInputEnable;
+    }
+
+    public void setHandInputEnable(Integer handInputEnable) {
+        this.handInputEnable = handInputEnable;
     }
 }

@@ -55,6 +55,8 @@ public class CardRenewTb {
 
     private Long limitTime;
 
+    private Long startTime;
+
     public Integer getId() {
         return id;
     }
@@ -182,5 +184,13 @@ public class CardRenewTb {
 
     public void setUpdateTime(Integer updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Long startTime) {
+        this.startTime = startTime;
     }
 }

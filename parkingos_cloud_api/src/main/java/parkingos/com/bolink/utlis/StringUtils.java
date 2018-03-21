@@ -1155,8 +1155,9 @@ public class StringUtils {
 		String[] ss = new String[ids.length];
 		for (int i = 0; i < ids.length; i++) {
 			String vInteger = ids[i] + "";
-			if (vInteger.length() < 6) {
-				for (int k = 0; k < 6 - vInteger.length(); k++) {
+			Integer length = vInteger.length();
+			if (length < 6) {
+				for (int k = 0; k < 6 - length; k++) {
 					vInteger = "0" + vInteger;
 				}
 			}

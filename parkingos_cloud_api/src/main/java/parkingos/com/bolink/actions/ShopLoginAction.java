@@ -108,6 +108,8 @@ public class ShopLoginAction {
 					}*/
                 }
                 infoMap.put("ticket_range", ranges);
+                //是否可以手输额度
+                infoMap.put("handInputEnable",shopInfo.getHandInputEnable());
             }
             //5 保存session，更新登录时间
             doSaveSession(uin,token,version);

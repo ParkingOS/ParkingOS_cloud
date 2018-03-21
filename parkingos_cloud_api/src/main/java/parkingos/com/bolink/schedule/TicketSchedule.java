@@ -2,6 +2,7 @@ package parkingos.com.bolink.schedule;
 
 import com.zld.common_dao.dao.CommonDao;
 import com.zld.common_dao.enums.FieldOperator;
+import com.zld.common_dao.qo.PageOrderConfig;
 import com.zld.common_dao.qo.SearchBean;
 import org.apache.log4j.Logger;
 import parkingos.com.bolink.beans.ShopAccountTb;
@@ -44,7 +45,9 @@ public class TicketSchedule extends TimerTask {
 		searchBean.setOperator(FieldOperator.LESS_THAN);
 		searchBean.setEndValue(date);
 		searchBeans.add(searchBean);
-		List<TicketTb> ticketTbs = commonDao.selectListByConditions(ticketConditions,searchBeans);//待回收减免劵集合
+		PageOrderConfig pageOrderConfig = new PageOrderConfig();
+		pageOrderConfig.setPageInfo(null,null);
+		List<TicketTb> ticketTbs = commonDao.selectListByConditions(ticketConditions,searchBeans,pageOrderConfig);//待回收减免劵集合
 		logger.error("回收优惠券定时任务....待回收集合:"+ticketTbs);
 		List<Map<String, Object>> backShops = new ArrayList<Map<String,Object>>();//回收减免劵集合
 		ArrayList<Long> shopid_list = new ArrayList<Long>();//shop_id集合

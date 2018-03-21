@@ -46,13 +46,15 @@ public class WeixinAccountAction {
             appid = bforward.split("_")[0];
         }else
             forward = bforward;
-        String local = Constants.WX_LOCAL;
+        String local = "0";// Constants.WX_LOCAL;
         logger.error("wxpaccount>>>>>>>>>>>appid>>>>>>>"+appid+",forward:"+forward);
         String secert = Defind.getProperty(appid);
         logger.error("wxpaccount>>>>>>>>>>>appid>>>>>>>"+appid+">>>>>secert:"+secert);
+        String cloudAPPID = WeixinConstants.WXPUBLIC_APPID;
+        String cloudSECERT= WeixinConstants.WXPUBLIC_SECRET;
         if(Check.isEmpty(appid)|| Check.isEmpty(secert)){
-            appid = WeixinConstants.WXPUBLIC_APPID;
-            secert = WeixinConstants.WXPUBLIC_SECRET;
+            appid =cloudAPPID;
+            secert =cloudSECERT;
         }else{
             Cookie cookie = new Cookie("userappid",appid);
             cookie.setMaxAge(86400*100);//暂定900天
@@ -61,11 +63,12 @@ public class WeixinAccountAction {
             logger.error("appid 已保存到cookie>>>>>>"+appid+">>>");
         }
         String openId = "";
+
         if("1".equals(local)){
             openId = "o809KwgZVcVlGERyPsuHxfgO3gX0";
         }else{
             String code = RequestUtil.processParams(request, "code");
-            String accessTokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appid+"&secret="+secert+"&code="+code+"&grant_type=authorization_code";
+            String accessTokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+cloudAPPID+"&secret="+cloudSECERT+"&code="+code+"&grant_type=authorization_code";
             String result = WexinPublicUtil.httpsRequest(accessTokenUrl, "GET", null);
             JSONObject map = null;
             JSONObject wxUserInfo = null;
@@ -80,7 +83,7 @@ public class WeixinAccountAction {
                 logger.error("获取openid失败....");
                 String redirect_url = "http%3a%2f%2f"+ WeixinConstants.WXPUBLIC_REDIRECTURL+"%2fzld%2fwxpaccount.do?forward="+forward;
                 String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
-                        + appid
+                        + cloudAPPID
                         + "&redirect_uri="
                         + redirect_url
                         + "&response_type=code&scope="+fromScope+"&state=123#wechat_redirect";
@@ -151,7 +154,7 @@ public class WeixinAccountAction {
         }
 
         request.setAttribute("uin",uin);
-        request.setAttribute("appid",appid);
+        request.setAttribute("appid",cloudAPPID);
         //4.跳转页面
         if("topresentorderlist".equals(forward)){
             //跳转至在场订单页面

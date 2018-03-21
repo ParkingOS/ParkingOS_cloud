@@ -1,5 +1,5 @@
 /* ============================================================
-   样式重置
+   样式重置   00
    ============================================================ */
 body,p,ul,ol,li,dl,dt,dd,h1,h2,h3,h4,h5,h6,form,fieldset,legend,input,select,textarea,button,th,td{margin:0;padding:0;}
 h1,h2,h3,h4,h5,h6{font-size:100%;}
@@ -102,6 +102,15 @@ body{background-color:#E5E7E5;}
 
 .ok-icon{
 	background:url(../images/wxpublic/success.gif) no-repeat;
+	width:78px;
+	height:78px;
+	-webkit-background-size: 78px 78px;
+	background-size: 78px 78px;
+	display:inline-block;
+}
+
+.error-icon{
+	background:url(../images/wxpublic/error.png) no-repeat;
 	width:78px;
 	height:78px;
 	-webkit-background-size: 78px 78px;

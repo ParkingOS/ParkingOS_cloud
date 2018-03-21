@@ -60,6 +60,7 @@ public class TcpComponentImpl implements TcpComponent {
         //serverIp = "127.0.0.1";
         if(serverIp!=null){
             String url = "http://"+serverIp+"/zld/sendmsgtopark.do";
+            logger.info(url);
             try {
                 String result = httpProxy.doPost(url,params);
                 if(CheckUtil.isNotNull(result)){

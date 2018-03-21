@@ -8,9 +8,9 @@
 			<property name="user" value="postgres" /> 
 			<property name="password" value="tracq123" />
 		</driver-properties>
-		<maximum-connection-count>100</maximum-connection-count>
+		<maximum-connection-count>500</maximum-connection-count>
 		<minimum-connection-count>10</minimum-connection-count>
-		<simultaneous-build-throttle>40</simultaneous-build-throttle>
+		<simultaneous-build-throttle>200</simultaneous-build-throttle>
 		<house-keeping-sleep-time>90000</house-keeping-sleep-time>
 		<house-keeping-test-sql>select current_date</house-keeping-test-sql>
 		<maximum-active-time>60000</maximum-active-time>

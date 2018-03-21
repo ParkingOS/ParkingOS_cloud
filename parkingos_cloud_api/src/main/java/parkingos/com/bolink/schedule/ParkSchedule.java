@@ -175,11 +175,12 @@ public class ParkSchedule extends TimerTask {
 			jsonSend.put("pay_time", renewTb.getPayTime());
 			jsonSend.put("amount_receivable",renewTb.getAmountReceivable());
 			jsonSend.put("pay_type",renewTb.getPayType());
-			jsonSend.put("collector", renewTb.getCollector());
+			jsonSend.put("collector",renewTb.getCollector());
 			jsonSend.put("buy_month",renewTb.getBuyMonth());
 			jsonSend.put("car_number",renewTb.getCarNumber());
 			jsonSend.put("user_id",renewTb.getUserId());
 			jsonSend.put("resume",renewTb.getResume());
+			jsonSend.put("start_time",renewTb.getStartTime());
 			//jsonSend.put("operate_type", operate);
 			jsonSend.put("amount_pay",renewTb.getAmountPay());
 		} else {

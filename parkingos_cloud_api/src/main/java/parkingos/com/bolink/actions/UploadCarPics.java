@@ -137,7 +137,7 @@ public class UploadCarPics {
 			String typeStr = jsonObject.getString("type");
 			String orderidlocal = jsonObject.getString("orderid");
 			String comid = jsonObject.getString("comid");
-			String sign = jsonObject.getString("sign");
+			String sign = dataJson.getString("sign");
 			Long comId = -1L;
 			if(Check.isLong(comid)){
 				comId = Long.parseLong(comid);

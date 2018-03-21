@@ -2,6 +2,7 @@ package parkingos.com.bolink.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zld.common_dao.dao.CommonDao;
+import com.zld.common_dao.qo.PageOrderConfig;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,8 +37,11 @@ public class DoUploadImpl implements DoUpload{
         logger.info(tokenTb.toString());
         String result ="";
         String parkId = "";
-        if(tokenTb!=null)
-            parkId= tokenTb.getParkId();
+        if(tokenTb==null){
+            result = "error:token无效";
+            return result;
+        }
+        parkId= tokenTb.getParkId();
         if(!Check.isEmpty(parkId)){
             if(Check.isLong(parkId)){
                 result = parkId;
@@ -54,9 +58,9 @@ public class DoUploadImpl implements DoUpload{
                         String _sign = StringUtils.MD5(strKey,"utf-8").toUpperCase();
                         logger.error(strKey + "," + _sign + ":" + sign
                                 + ",ret:" + sign.equals(_sign));
-//						if (!sign.equals(preSign)) {
-//							result = "error:签名错误";
-//						}
+						if (!sign.equals(_sign)) {
+							result = "error:签名错误";
+					    }
                     } catch (Exception e) {
                         e.printStackTrace();
                         result = "error:md5加密出现异常,请联系后台管理员！！！";
@@ -102,7 +106,7 @@ public class DoUploadImpl implements DoUpload{
             }
 
             logger.error(strKey+","+sign+":"+preSign+",ret:"+sign.equals(preSign));
-            sign = preSign;
+            //sign = preSign;
             if(sign.equals(preSign)){
                 token = UUID.randomUUID().toString().replace("-", "");
                 ParkTokenTb params= new ParkTokenTb();
@@ -157,8 +161,8 @@ public class DoUploadImpl implements DoUpload{
                 return "error:签名错误";
             }
         }else {
-            logger.error(logStr+"error:车场不存在");
-            return "error:车场不存在";
+            logger.error(logStr+"error:云平台车场不存在");
+            return "error:云平台车场不存在";
         }
     }
     @Override
@@ -188,7 +192,7 @@ public class DoUploadImpl implements DoUpload{
     @Override
     public String inPark(JSONObject object) {
 //        JSONObject object = JSONObject.parseObject(data);
-        logger.info(object);
+        logger.error("====>>>进入inpark:"+object);
         /*String errmsg = "";
         Map<String, Object> params = new HashMap<String, Object>();
         logger.info(params);
@@ -227,7 +231,22 @@ public class DoUploadImpl implements DoUpload{
 //        logger.info(orderTb);
 
 
+        //判断车场 订单是不是唯一 ,如果已经存在此订单 ,打回
+        OrderTb newcon = new OrderTb();
+        newcon.setComid(orderTb.getComid());
+        newcon.setOrderIdLocal(orderTb.getOrderIdLocal());
+        int countOnly = commonDao.selectCountByConditions(newcon);
+        logger.error("===>>>订单号是否唯一:"+countOnly);
+        if(countOnly>0){
+            object.clear();
+            object.put("service_name","in_park");
+            object.put("state",0);
+            object.put("errmsg","该订单已经存在");
+            object.put("order_id",orderTb.getOrderIdLocal());
+            return object.toJSONString();
+        }
 
+        //增加上面逻辑  防止车辆进场--出场之后  重新进场完全一样订单
         OrderTb con = new OrderTb();
         con.setComid(Long.valueOf(object.getString("comid")));
         con.setCarNumber(orderTb.getCarNumber());
@@ -235,6 +254,7 @@ public class DoUploadImpl implements DoUpload{
         con.setState(0);
         //查询是否已入场
         int count = commonDao.selectCountByConditions(con);
+        logger.error("inpark====>>>>是否入场:"+count);
         OrderTb fields = new OrderTb();
         fields.setEndTime(System.currentTimeMillis()/1000);
         fields.setTotal(new BigDecimal(0.0));
@@ -243,20 +263,22 @@ public class DoUploadImpl implements DoUpload{
         con.setOrderIdLocal(null);
         //0元结算掉所有车场编号、车牌号一致、未结算的订单
         int update = commonDao.updateByConditions(fields,con);
-        logger.error("update order :"+update);
+        logger.error("零元结算 update order :"+update);
         //写入新订单
         int r=0;
         if(count>0){
             con.setOrderIdLocal(orderTb.getOrderIdLocal());
             orderTb.setState(0);
             con.setState(null);
+            logger.error("update order :"+orderTb);
             r = commonDao.updateByConditions(orderTb,con);
-            logger.info("update order:,con:"+con+",order:"+orderTb);
+            logger.error("update order:,con:"+con+",order:"+orderTb+",r:"+r);
         }else{
             Long newId = commonDao.selectSequence(OrderTb.class);
             orderTb.setId(newId);
-            logger.info("insert order :"+orderTb);
+            logger.error("insert order :"+orderTb);
             r= commonDao.insert(orderTb);
+            logger.error("inpark>>>insert:"+r);
         }
         String orderId = orderTb.getOrderIdLocal();
         object.clear();
@@ -282,7 +304,7 @@ public class DoUploadImpl implements DoUpload{
         operate=operate==null?0:operate;
         userInfoTb.setComid(comid);
         userInfoTb.setAuthFlag(2L);
-        userInfoTb.setStrid(jsonData.getString("user_id"));
+//        userInfoTb.setStrid(jsonData.getString("user_id"));
         userInfoTb.setPassword(jsonData.getString("user_id"));
         userInfoTb.setPassword("135246");
         userInfoTb.setRoleId(30L);
@@ -302,9 +324,15 @@ public class DoUploadImpl implements DoUpload{
         UserInfoTb con = new UserInfoTb();
         con.setComid(userInfoTb.getComid());
         con.setUserId(userId);
+        if(operate==1||operate==2){
+            con.setState(0);
+        }
         int count = commonDao.selectCountByConditions(con);
         int r;
         if(operate==1&&count<1){//新增收费员
+            Long nextId = commonDao.selectSequence(UserInfoTb.class);
+            userInfoTb.setId(nextId);
+            userInfoTb.setStrid(nextId+"");
             r = commonDao.insert(userInfoTb);
         }else{
             if(operate==3){//删除
@@ -336,13 +364,13 @@ public class DoUploadImpl implements DoUpload{
         String userId = jsonData.getString("user_id");
         Long comId = jsonData.getLong("comid");
         String uuid = jsonData.getString("uuid");
-        //Long uid =getUserId(userId,comId);
-        Long uid = null;
-        try{
-            uid = Long.parseLong(userId);
-        }catch (Exception e){
-            uid = -1L;
-        }
+        Long uid =getUserId(userId,comId);
+//        Long uid = null;
+//        try{
+//            uid = Long.parseLong(userId);
+//        }catch (Exception e){
+//            uid = -1L;
+//        }
 
         if(uid==-1){
             errmsg ="收费员不存在";
@@ -507,6 +535,7 @@ public class DoUploadImpl implements DoUpload{
         product.setCardId(cardId);
         Long comId = jsonData.getLong("comid");
         product.setComId(comId);
+        product.setIsDelete(0L);
         int count = commonDao.selectCountByConditions(product);
         int ret = 0;
         if(count>0){
@@ -555,11 +584,12 @@ public class DoUploadImpl implements DoUpload{
             product.setMobile(jsonData.getString("tel"));
             product.setLimitDayType(jsonData.getInteger("limit_day_type"));
             product.setpLot(jsonData.getString("p_lot"));
-            product.setIsDelete(0L);
+//            product.setIsDelete(0L);
             if(operateType==1){//添加
                 ret = commonDao.insert(product);
             }else if(operateType==2){//更新
                 CarowerProduct con = new CarowerProduct();
+                con.setIsDelete(0L);
                 con.setCardId(cardId);
                 con.setComId(comId);
                 ret = commonDao.updateByConditions(product,con);
@@ -576,7 +606,7 @@ public class DoUploadImpl implements DoUpload{
     @Override
     public String outPark(JSONObject jsonData) {
         String errmsg="";
-        logger.info("handel out park>>>>"+jsonData);
+        logger.error("handel out park>>>>"+jsonData);
        /* Map<String, Object> params = new HashMap<String, Object>();
 //        logger.info(params);
         for (String key : jsonData.keySet()) {
@@ -639,7 +669,7 @@ public class DoUploadImpl implements DoUpload{
         logger.info(jsonData);*/
         OrderTb orderTb = setOrder(jsonData);//JSON.parseObject(jsonData.toJSONString(),OrderTb.class);
         orderTb.setState(1);
-        logger.info("================>>>"+orderTb);
+        logger.error("================>>>"+orderTb);
         OrderTb con = new OrderTb();
         OrderTb newCon = new OrderTb();
         con.setCarNumber(orderTb.getCarNumber());
@@ -650,28 +680,45 @@ public class DoUploadImpl implements DoUpload{
         OrderTb order = null;
         OrderTb newOrder = null;
         Integer count = commonDao.selectCountByConditions(con);
+        logger.error("outpark====>>>count:"+count);
         int r =0;
         if(count==1){
             order = (OrderTb)commonDao.selectObjectByConditions(con);
-        }else{
+        }else{//兼容时间不准确
             newCon.setCarNumber(orderTb.getCarNumber());
             newCon.setComid(orderTb.getComid());
+            newCon.setOrderIdLocal(orderTb.getOrderIdLocal());
             newCon.setState(0);
             Integer newCount = commonDao.selectCountByConditions(newCon);
             if(newCount!=null&&newCount==1){
                 newOrder = (OrderTb)commonDao.selectObjectByConditions(newCon);
-                r = commonDao.updateByConditions(orderTb,newOrder);
-                writeToAccount(newOrder);
+                logger.error("chenbowen"+newOrder);
+                r = commonDao.updateByConditions(orderTb,newCon);
+                orderTb.setId(newOrder.getId());
+                writeToAccount(orderTb);
             }else if (newCount>1){
                 logger.error("请先结算这辆车的其它未出场订单");
             }else{
-                Long newId = commonDao.selectSequence(OrderTb.class);
-                orderTb.setId(newId);
-                r = commonDao.insert(orderTb);
-                writeToAccount(orderTb);
+                logger.error("没有这辆车辆的入场订单");
+                newCon.setState(null);
+                //防止车场没有调用出场直接调用2.3 然后返回来调用2.2出场
+                int countOnly = commonDao.selectCountByConditions(newCon);
+                logger.error("====outpark>>>countOnly:"+countOnly);
+                if(countOnly==0) {
+                    Long newId = commonDao.selectSequence(OrderTb.class);
+                    orderTb.setId(newId);
+                    r = commonDao.insert(orderTb);
+                    writeToAccount(orderTb);
+                }else{
+                    logger.error("已经存在这个车场的车牌的该订单号,进行更新操作");
+                    r = commonDao.updateByConditions(orderTb,newCon);
+                    //重新进行记账操作
+                    OrderTb payOrder = (OrderTb) commonDao.selectObjectByConditions(newCon);
+                    writeToAccount(payOrder);
+                }
             }
         }
-
+        logger.error("outPark>>>订单:"+order);
         if(order!=null&&order.getId()!=null){
             r = commonDao.updateByConditions(orderTb,con);
             orderTb.setId(order.getId());
@@ -699,21 +746,56 @@ public class DoUploadImpl implements DoUpload{
         OrderTb con = new OrderTb();
         con.setOrderIdLocal(orderId);
         con.setComid(comid);
-        con.setState(0);
-        OrderTb order =(OrderTb)commonDao.selectObjectByConditions(con);
+        con.setIshd(0);
+//        con.setState(0);
+//        OrderTb order =(OrderTb)commonDao.selectObjectByConditions(con);
+//        int ret = 0;
+//        orderTb.setState(1);
+        /*
+        *  上面是之前的逻辑,下面是只根据订单id查询重复,不管是不是结算订单.这样避免了无限制的传同一个结算订单
+        * */
+        PageOrderConfig pageOrderConfig = new PageOrderConfig();
+        pageOrderConfig.setPageInfo(null,null);
+        //查询这个车场 相同订单编号的所有 订单 集合
+        List<OrderTb> list = commonDao.selectListByConditions(con,pageOrderConfig);
+        logger.error("根据条件查询的结果list:"+list.size());
         int ret = 0;
         orderTb.setState(1);
-        if(order!=null&&order.getId()!=null){
-            con.setOrderIdLocal(orderId);
-            con.setComid(comid);
-            orderTb.setId(order.getId());
-            ret = commonDao.updateByConditions(orderTb,con);
-//            orderTb.setId(order.getId());
+        logger.error("需要更新的order:"+orderTb);
+        if(list!=null&&list.size()>0){
+            for(int i =0;i<list.size();i++){
+                OrderTb order = list.get(i);
+                if(i==0){
+//                    con.setOrderIdLocal(orderId);
+//                    con.setComid(comid);
+                    logger.error("更新的原有订单:"+order);
+                    con.setId(order.getId());
+                    ret = commonDao.updateByConditions(orderTb,con);
+                    logger.error("更新上传订单ret:"+ret);
+                }else{
+                    order.setIshd(1);
+                    int delete = commonDao.updateByPrimaryKey(order);
+                    logger.error("更新删除状态delete:"+delete);
+//                    commonDao.deleteByConditions(order);
+                }
+            }
         }else{
             Long newId = commonDao.selectSequence(OrderTb.class);
             orderTb.setId(newId);
             ret = commonDao.insert(orderTb);
+            logger.error("插入上传订单ret:"+ret);
         }
+//        if(order!=null&&order.getId()!=null){
+//            con.setOrderIdLocal(orderId);
+//            con.setComid(comid);
+//            orderTb.setId(order.getId());
+//            ret = commonDao.updateByConditions(orderTb,con);
+////            orderTb.setId(order.getId());
+//        }else{
+//            Long newId = commonDao.selectSequence(OrderTb.class);
+//            orderTb.setId(newId);
+//            ret = commonDao.insert(orderTb);
+//        }
         Integer emptyPlot = jsonData.getInteger("empty_plot");
         jsonData.clear();
         jsonData.put("service_name","upload_order");
@@ -973,27 +1055,32 @@ public class DoUploadImpl implements DoUpload{
         Integer  state = jsonData.getInteger("state");
         logger.info("==========>>>monthMemberSync>>>state"+state);
         if(state!=null&&state==1){
+            Integer operate = jsonData.getInteger("operate_type");
             String cardId = jsonData.getString("card_id");
             String cardIdLocal = jsonData.getString("card_id_local");
 
             CarowerProduct conditions = new CarowerProduct();
             conditions.setCardId(cardId);
             conditions.setComId(jsonData.getLong("comid"));
+            conditions.setIsDelete(0L);
             CarowerProduct product= null;
             int count = commonDao.selectCountByConditions(conditions);
-            logger.info("==========>>>monthMemberSync>>>count1"+count);
+            logger.info("==========>>>>>>查询是否有该月卡count:"+count);
             CarowerProduct fields = new CarowerProduct();
+
+            int r = 0;
             if(count>0){
-                product= (CarowerProduct)commonDao.selectObjectByConditions(conditions);
+//                product= (CarowerProduct)commonDao.selectObjectByConditions(conditions);
                 if(!Check.isEmpty(cardIdLocal)){
-                    logger.info("==========>>>monthMemberSync>>>product"+product);
+//                    logger.info("==========>>>>>>product"+product);
                     conditions.setCardId(cardIdLocal);
                     count = commonDao.selectCountByConditions(conditions);
-                    logger.info("==========>>>monthMemberSync>>>count2"+count);
+                    logger.info("==========>>>>>>count查询card_id_local是否重复:"+count);
                     if(count==0){
+                        conditions.setCardId(cardId);
                         fields.setCardId(cardIdLocal);
-                        int r = commonDao.updateByConditions(fields,conditions);
-
+                        r= commonDao.updateByConditions(fields,conditions);
+                        logger.info("====card_id_local替换card_id"+r);
                     }else{
                         logger.info("==========>>>monthMemberSync>>>card_id_local重复,不能更新");
                     }
@@ -1004,10 +1091,28 @@ public class DoUploadImpl implements DoUpload{
                 logger.info("==========>>>monthMemberSync>>>没有这张月卡信息");
             }
 
-            if(product!=null){
-                Long tableId = product.getId();
-                String tableName = "carower_product";//product.getClass().getAnnotation(TableName.class).value();
-                updateSyncRecord(tableId,tableName);
+
+            //如果card_id_local 替换掉card_id 那么就不能再用card作为搜索条件
+            if(r==1){
+                conditions.setCardId(cardIdLocal);
+            }else{
+                conditions.setCardId(cardId);
+            }
+            conditions.setComId(jsonData.getLong("comid"));
+            if(operate==3){
+                conditions.setIsDelete(1L);
+            } else{
+                conditions.setIsDelete(0L);
+            }
+            logger.error("chenbowen operate:"+operate);
+            List<CarowerProduct> list =  commonDao.selectListByConditions(conditions);
+            logger.error("chenbowen size:"+list.size());
+            if(list!=null&&list.size()>0){
+                for(CarowerProduct carowerProduct:list){
+                    Long tableId = carowerProduct.getId();
+                    String tableName = "carower_product";//product.getClass().getAnnotation(TableName.class).value();
+                    updateSyncRecord(tableId,tableName);
+                }
             }else{
                 logger.info("==========>>>monthMemberSync>>>product"+product+" 为空");
             }
@@ -1220,6 +1325,7 @@ public class DoUploadImpl implements DoUpload{
         SyncInfoPoolTb poolTb = new SyncInfoPoolTb();
         poolTb.setTableName(tableName);
         poolTb.setTableId(id);
+        poolTb.setState(0);
         SyncInfoPoolTb fields = new SyncInfoPoolTb();
         fields.setState(1);
         ret = commonDao.updateByConditions(fields,poolTb);
@@ -1269,6 +1375,7 @@ public class DoUploadImpl implements DoUpload{
         UserInfoTb userInfoTb = new UserInfoTb();
         userInfoTb.setUserId(userId);
         userInfoTb.setComid(comId);
+        userInfoTb.setState(0);
         //查询收费员编号
         userInfoTb = (UserInfoTb)commonDao.selectObjectByConditions(userInfoTb);
         logger.info(userInfoTb);
@@ -1300,19 +1407,20 @@ public class DoUploadImpl implements DoUpload{
         orderTb.setEndTime(jsonData.getLong("out_time"));
         orderTb.setCarNumber(jsonData.getString("car_number"));
         String uid = jsonData.getString("uid");
-//        orderTb.setUid(getUserId(uid,comid));
-        try{
-            orderTb.setUid(Long.parseLong(uid));
-        }catch (Exception e){
-            orderTb.setUid(-1L);
-        }
+        orderTb.setUid(getUserId(uid,comid));
+//        try{
+//            orderTb.setUid(Long.parseLong(uid));
+//        }catch (Exception e){
+//            orderTb.setUid(-1L);
+//        }
         String outUid = jsonData.getString("out_uid");
-//        orderTb.setOutUid(getUserId(outUid,comid));
-        try{
-            orderTb.setOutUid(Long.parseLong(outUid));
-        }catch (Exception e){
-            orderTb.setOutUid(-1L);
-        }
+        orderTb.setOutUid(getUserId(outUid,comid));
+//        try{
+//            orderTb.setOutUid(Long.parseLong(outUid));
+//        }catch (Exception e){
+//            orderTb.setOutUid(-1L);
+//        }
+
         orderTb.setDuration(jsonData.getLong("duration"));
         String carType = jsonData.getString("car_type");
         Long carTypeId = getCarType(carType,comid);
@@ -1401,8 +1509,7 @@ public class DoUploadImpl implements DoUpload{
                 cashTb.setOrderid(orderTb.getId());
                 int count = commonDao.selectCountByConditions(cashTb);
                 logger.info("cash account count:"+count);
-                if(count>0)
-                    return ;
+
                 cashTb.setAmount(new BigDecimal(caPay));
                 cashTb.setComid(comid);
                 cashTb.setCreateTime(endTime);
@@ -1412,7 +1519,13 @@ public class DoUploadImpl implements DoUpload{
                     cashTb.setUin(orderTb.getOutUid());
                 cashTb.setCtype(0);
                 cashTb.setGroupid(groupId);
-                r = commonDao.insert(cashTb);
+                if(count>0){
+                    ParkuserCashTb con = new ParkuserCashTb();
+                    con.setOrderid(orderTb.getId());
+                    r = commonDao.updateByConditions(cashTb,con);
+                }else{
+                    r = commonDao.insert(cashTb);
+                }
                 logger.info("cash account insert:"+r);
             }
             if(elPay>0){//电子支付
@@ -1420,8 +1533,7 @@ public class DoUploadImpl implements DoUpload{
                 accountTb.setOrderid(orderTb.getId());
                 int count = commonDao.selectCountByConditions(accountTb);
                 logger.info("epay account count:"+count);
-                if(count>0)
-                    return ;
+
                 accountTb.setAmount(new BigDecimal(elPay));
                 accountTb.setComid(comid);
                 accountTb.setGroupid(groupId);
@@ -1432,7 +1544,13 @@ public class DoUploadImpl implements DoUpload{
                 if(orderTb.getOutUid()!=null)
                     accountTb.setUin(orderTb.getOutUid());
                 accountTb.setType(0);
-                r = commonDao.insert(accountTb);
+                if(count>0){
+                    ParkuserAccountTb con = new ParkuserAccountTb();
+                    con.setOrderid(orderTb.getId());
+                    r = commonDao.updateByConditions(accountTb,con);
+                }else{
+                    r = commonDao.insert(accountTb);
+                }
                 logger.info("epay account insert :"+r);
             }
         //}

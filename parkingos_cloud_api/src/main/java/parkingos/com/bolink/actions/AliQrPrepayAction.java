@@ -364,10 +364,11 @@ public class AliQrPrepayAction {
                 messageMap.put("money", money+"");
                 messageMap.put("car_number", carNumber);
                 messageMap.put("ticket_type", ticketType);
+                ShopTb shopTb = new ShopTb();
+                shopTb.setId(shopId);
+                shopTb = (ShopTb) commonDao.selectObjectByConditions(shopTb);
+                messageMap.put("shop_name",shopTb.getName());
                 if(ticketType==1){//时长减免，加上减免单位
-                    ShopTb shopTb = new ShopTb();
-                    shopTb.setId(shopId);
-                    shopTb = (ShopTb) commonDao.selectObjectByConditions(shopTb);
                     logger.error("发送减免券得到商户信息："+shopTb);
                     messageMap.put("ticket_unit", shopTb.getTicketUnit());
                 }
