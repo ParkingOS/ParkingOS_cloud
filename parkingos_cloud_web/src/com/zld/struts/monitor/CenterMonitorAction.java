@@ -1,53 +1,33 @@
 package com.zld.struts.monitor;
 
-import com.alibaba.fastjson.JSON;
-import com.zld.impl.*;
-import com.zld.struts.dwr.DWRScriptSessionListener;
-import com.zld.utils.*;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.directwebremoting.Browser;
-import org.directwebremoting.ScriptSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.thoughtworks.xstream.alias.ClassMapper.Null;
 import com.zld.AjaxUtil;
+import com.zld.impl.*;
 import com.zld.service.DataBaseService;
+import com.zld.struts.dwr.DWRScriptSessionListener;
 import com.zld.struts.dwr.Push;
-import freemarker.template.utility.StringUtil;
+import com.zld.utils.*;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.directwebremoting.ScriptSession;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.Inet4Address;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.*;
 
 
 
@@ -62,7 +42,7 @@ public class CenterMonitorAction extends Action {
 	private CommonMethods commonMethods;
 	@Autowired
 	private MemcacheUtils memcacheUtils;
-	
+
 	private Logger logger = Logger.getLogger(CenterMonitorAction.class);
 	private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 	int[] berthTimeData = new int[24];
@@ -73,10 +53,22 @@ public class CenterMonitorAction extends Action {
 			throws Exception {
 		String action = RequestUtil.processParams(request, "action");
 		Long uin = (Long)request.getSession().getAttribute("loginuin");//登录的用户id
+		if(uin==null){
+			uin = Long.parseLong(request.getParameter("loginuin"));
+			request.getSession().setAttribute("loginuin",uin);
+		}
 		request.setAttribute("authid", request.getParameter("authid"));
 		//Long cityid = (Long)request.getSession().getAttribute("cityid");
 		String groupid = request.getSession().getAttribute("groupid") == null ? "" : request.getSession().getAttribute("groupid")+"";
+		if("".equals(groupid)&&request.getParameter("groupid")!=null&&!"undefined".equals(request.getParameter("groupid"))){
+			groupid = request.getParameter("groupid");
+			request.getSession().setAttribute("groupid",groupid);
+		}
 		String comid = request.getSession().getAttribute("comid") == null ? "" : request.getSession().getAttribute("comid")+"";
+		if("".equals(comid)&&request.getParameter("comid")!=null){
+			comid = request.getParameter("comid");
+			request.getSession().setAttribute("comid",comid);
+		}
 		//String comid = "21798";
 		logger.error("中央监控>>>>>action:"+action+">>>>");
 		//是否根据推送消息弹出视频
@@ -109,10 +101,10 @@ public class CenterMonitorAction extends Action {
 						mainPhoneType = 1;
 					}
 					logger.error("中央监控>>>>>呼入主机机号类型(1-集团 0-车场)："+mainPhoneType+">>>>");
-					
+
 					*//*String sql = "update phone_info_tb set call_time=?,is_call=?,main_phone_type=? where tele_phone=? ";
 					int result = daService.update(sql, new Object[]{callTime, 1, mainPhoneType, Long.parseLong(telePhone)});*//*
-					
+
 					//推送弹视频的消息
 					Map<String, Object> message = new HashMap<String,Object>();
 					message.put("main_phone_type", mainPhoneType);
@@ -158,7 +150,7 @@ public class CenterMonitorAction extends Action {
 			}
 			return null;
 
-		}	
+		}
 		if(uin == null){
 			if(action.equals("alert")){//无账号登陆时，页面datatables 报错 invalid json response
 				String ret = "{\"recordsTotal\":\"0\",\"draw\":\"0\",\"recordsFiltered\":\"0\",\"data\":[]}";
@@ -210,7 +202,7 @@ public class CenterMonitorAction extends Action {
 				}
 			}
 			request.setAttribute("videos", videoMap);
-			
+
 			return mapping.findForward("list");
 		}else if(action.equals("alert")){
 			Long ntime = System.currentTimeMillis()/1000;
@@ -237,7 +229,7 @@ public class CenterMonitorAction extends Action {
 				}
 			}*/
 			String ret = "{\"recordsTotal\":\""+confirmOrderList.size()+"\",\"draw\":\""+draw+"\",\"recordsFiltered\":\""+confirmOrderList.size()+"\",\"data\":[]}";
-			
+
 			String jsonData =StringUtils.createJson(confirmOrderList);
 			ret = ret.replace("[]", jsonData);
 			AjaxUtil.ajaxOutput(response, ret);
@@ -493,9 +485,9 @@ public class CenterMonitorAction extends Action {
 			params.add(0);
 			List<Map<String, Object>> confirmOrderList = daService.getAll(sql, params,0,0);
 			response.setHeader("Content-type", "text/html;charset=UTF-8");
-	        PrintWriter out = response.getWriter();  
-	        out.println(JSONArray.fromObject(confirmOrderList));  
-	        out.flush();  
+	        PrintWriter out = response.getWriter();
+	        out.println(JSONArray.fromObject(confirmOrderList));
+	        out.flush();
 	        out.close();
 		}else if(action.equals("getConfirmOrder")){//获取事件图片
 			System.out.println("进入获取单个图片的时间>>>>>>>>>>>"+new Date().getTime());
@@ -529,9 +521,9 @@ public class CenterMonitorAction extends Action {
 					new Object[]{Long.parseLong(comid),carNumber,0});
 			//Map<String, Object> retMap = publicMethods.catBolinkOrder(null,orderId,carNumber, comid,0,-1L);
 			response.setHeader("Content-type", "text/html;charset=UTF-8");
-	        PrintWriter out = response.getWriter();  
-	        out.println(JSONObject.fromObject(retMap));  
-	        out.flush();  
+	        PrintWriter out = response.getWriter();
+	        out.println(JSONObject.fromObject(retMap));
+	        out.flush();
 	        out.close();
 		}else if(action.equals("balanceOrderInfo")){//推送匹配订单通知到车场
 			String orderId = RequestUtil.getString(request, "order_id");
@@ -598,9 +590,9 @@ public class CenterMonitorAction extends Action {
 				retMap.put("img", "balFail.png");
 			}
 			response.setHeader("Content-type", "text/html;charset=UTF-8");
-	        PrintWriter out = response.getWriter();  
-	        out.println(JSONObject.fromObject(retMap));  
-	        out.flush();  
+	        PrintWriter out = response.getWriter();
+	        out.println(JSONObject.fromObject(retMap));
+	        out.flush();
 	        out.close();
 		}else if(action.equals("liftRod")){//抬杆通知
 			Map<String, String> retMap = new HashMap<String, String>();
@@ -634,7 +626,7 @@ public class CenterMonitorAction extends Action {
 					Long state = -1L;
 					for(int i=0;i<30;i++){
 						Thread.sleep(100);
-						Map map = daService.getMap("select state from liftrod_info_tb where channel_id=? and operate=? and comid=?", 
+						Map map = daService.getMap("select state from liftrod_info_tb where channel_id=? and operate=? and comid=?",
 								new Object[]{channel_id,0,String.valueOf(comid)});
 						if(map != null && !map.isEmpty()){
 							state = Long.valueOf(String.valueOf(map.get("state")));
@@ -658,9 +650,9 @@ public class CenterMonitorAction extends Action {
 				}
 			}
 			response.setHeader("Content-type", "text/html;charset=UTF-8");
-	        PrintWriter out = response.getWriter();  
-	        out.println(JSONObject.fromObject(retMap));  
-	        out.flush();  
+	        PrintWriter out = response.getWriter();
+	        out.println(JSONObject.fromObject(retMap));
+	        out.flush();
 	        out.close();
 		}else if(action.equals("berthpercent")){
 			String json = berthPercent(request, comid, null, groupid);
@@ -673,7 +665,7 @@ public class CenterMonitorAction extends Action {
 			params.add(qrytime);
 			if(!Check.isEmpty(comid) && !"0".equals(comid)){
 				elecSql = "select sum(electronic_pay+electronic_prepay) total from order_tb o where o.state=1 and create_time>? and o.comid=?";
-		    	countsql = "SELECT COUNT (DISTINCT(o.order_id_local)) FROM order_tb o WHERE o. STATE = 1 and (o.electronic_pay>0 or o.electronic_prepay>0) and create_time>? AND o.comid =? "; 
+		    	countsql = "SELECT COUNT (DISTINCT(o.order_id_local)) FROM order_tb o WHERE o. STATE = 1 and (o.electronic_pay>0 or o.electronic_prepay>0) and create_time>? AND o.comid =? ";
 		    	params.add(Long.valueOf(comid));
 			}else{
 				List<Map<String, Object>> parks = commonMethods.getParkList(Long.parseLong(groupid));
@@ -698,7 +690,7 @@ public class CenterMonitorAction extends Action {
 	    		elecMap.put("total",0);
 	    	}
 	    	elecMap.put("count", elecCount);
-	    	logger.error("初次加载------车场:"+comid+">>>>>>>电子交易集合："+elecMap); 
+	    	logger.error("初次加载------车场:"+comid+">>>>>>>电子交易集合："+elecMap);
 			AjaxUtil.ajaxOutput(response, StringUtils.createJson(elecMap));
 		}else if(action.equals("updateConfirmStatus")){
 			Long id = RequestUtil.getLong(request, "id", 0L);
@@ -715,7 +707,7 @@ public class CenterMonitorAction extends Action {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 泊位利用率
 	 * @param request
@@ -731,7 +723,7 @@ public class CenterMonitorAction extends Action {
 				comid = Long.parseLong(com_id);
 			}
 			if(!Check.isEmpty(city_id)){
-				cityid = Long.parseLong(city_id);			
+				cityid = Long.parseLong(city_id);
 			}
 			if(!Check.isEmpty(group_id)){
 				groupid = Long.parseLong(group_id);
@@ -868,18 +860,18 @@ public class CenterMonitorAction extends Action {
 					}
 					 InputStream in = new ByteArrayInputStream(content);
 					 String filePath = request.getServletContext().getRealPath("/images/monitor/"+comid+"_"+eventId+"_"+carNumber.substring(1)+".jpg");
-		             File file=new File(filePath);//可以是任何图片格式.jpg,.png等  
-		             FileOutputStream fos=new FileOutputStream(file);  
-		             byte[] b = new byte[1024*8];  
-		             int nRead = 0;  
-		             while ((nRead = in.read(b)) != -1) {  
-		                  fos.write(b, 0, nRead);  
-		              }  
-		              fos.flush();  
-		              fos.close();  
+		             File file=new File(filePath);//可以是任何图片格式.jpg,.png等
+		             FileOutputStream fos=new FileOutputStream(file);
+		             byte[] b = new byte[1024*8];
+		             int nRead = 0;
+		             while ((nRead = in.read(b)) != -1) {
+		                  fos.write(b, 0, nRead);
+		              }
+		              fos.flush();
+		              fos.close();
 		              in.close();
 		              response.setHeader("Content-type", "text/html;charset=UTF-8");
-		              PrintWriter out = response.getWriter();  
+		              PrintWriter out = response.getWriter();
 		              JSONObject retObj = new JSONObject();
 		              retObj.put("picName", comid+"_"+event_id+"_"+carNumber.substring(1)+".jpg");
 		              retObj.put("event_id", event_id);
@@ -902,8 +894,8 @@ public class CenterMonitorAction extends Action {
 		}
 		return;
 	}
-	
-	
+
+
 	/**
 	 * 模糊匹配进场车辆图片
 	 * @param comid
@@ -956,7 +948,7 @@ public class CenterMonitorAction extends Action {
 				document.put("gate", "in");
 				DBObject obj  = collection.findOne(document);
 				if(obj == null){
-					AjaxUtil.ajaxOutput(response, "");
+					//AjaxUtil.ajaxOutput(response, "");
 					logger.error(">>>>>>>>>>>>>根据车牌"+carNumber+"匹配到orderid"+orderid+"取图片错误.....");
 					continue;
 				}
@@ -972,18 +964,18 @@ public class CenterMonitorAction extends Action {
 					}
 					 InputStream in = new ByteArrayInputStream(content);
 					 String filePath = request.getServletContext().getRealPath("/images/monitor/"+comid+"_"+orderid+".jpg");
-		             File file=new File(filePath);//可以是任何图片格式.jpg,.png等  
-		             FileOutputStream fos=new FileOutputStream(file);  
-		             byte[] b = new byte[1024*8];  
-		             int nRead = 0;  
-		             while ((nRead = in.read(b)) != -1) {  
-		                  fos.write(b, 0, nRead);  
-		              }  
-		              fos.flush();  
-		              fos.close();  
+		             File file=new File(filePath);//可以是任何图片格式.jpg,.png等
+		             FileOutputStream fos=new FileOutputStream(file);
+		             byte[] b = new byte[1024*8];
+		             int nRead = 0;
+		             while ((nRead = in.read(b)) != -1) {
+		                  fos.write(b, 0, nRead);
+		              }
+		              fos.flush();
+		              fos.close();
 		              in.close();
 		              System.out.println("进入获取多个图片开始第"+(i+1)+"次循环生成图片的时间>>>>>>>>>>>"+new Date().getTime());
-		              JSONObject jsonObject = new JSONObject(); 
+		              JSONObject jsonObject = new JSONObject();
 		              jsonObject.put("orderId", orderid);
 		              jsonObject.put("carNumber", car_number);
 		              jsonObject.put("picName", comid+"_"+orderid+".jpg");
@@ -995,7 +987,7 @@ public class CenterMonitorAction extends Action {
 			    System.out.println("mongdb over.....");
 			}
 		}
-		
+
 		response.setHeader("Content-type", "text/html;charset=UTF-8");
         /*PrintWriter out = response.getWriter();  
         out.println(jsonArray);  
@@ -1004,29 +996,29 @@ public class CenterMonitorAction extends Action {
 		AjaxUtil.ajaxOutput(response, jsonArray.toString());
 		return;
 	}
-	
-	/** 
-     * 二进制转字符串 
-     * @param b 
-     * @return 
-     */  
-    public static String byte2hex(byte[] b) // 二进制转字符串  
-    {  
-        StringBuffer sb = new StringBuffer();  
-        String stmp = "";  
-        for (int n = 0; n < b.length; n++) {  
-            stmp = Integer.toHexString(b[n] & 0XFF);  
-            if (stmp.length() == 1) {  
-                sb.append("0" + stmp);  
-            } else {  
-                sb.append(stmp);  
-            }  
-  
-        }  
-        return sb.toString();  
-    }  
+
+	/**
+     * 二进制转字符串
+     * @param b
+     * @return
+     */
+    public static String byte2hex(byte[] b) // 二进制转字符串
+    {
+        StringBuffer sb = new StringBuffer();
+        String stmp = "";
+        for (int n = 0; n < b.length; n++) {
+            stmp = Integer.toHexString(b[n] & 0XFF);
+            if (stmp.length() == 1) {
+                sb.append("0" + stmp);
+            } else {
+                sb.append(stmp);
+            }
+
+        }
+        return sb.toString();
+    }
     /**
-     * 根据车牌号模糊查询在场订单 
+     * 根据车牌号模糊查询在场订单
      * @param comid
      * @param carNumber
      * @return
@@ -1043,7 +1035,7 @@ public class CenterMonitorAction extends Action {
     	//1 模糊匹配除去一位汉字
     	params.add("%"+carNumber.substring(1));
     	params.add(0);
-    	list = daService.getAllMap("select * from order_tb where comid =? and car_number like ?" 
+    	list = daService.getAllMap("select * from order_tb where comid =? and car_number like ?"
     			+" and state=? order by create_time desc", params);
     	if(list == null || list.size() == 0){
     		// 2 模糊匹配除去两位
@@ -1051,7 +1043,7 @@ public class CenterMonitorAction extends Action {
 			params.add(1,"%"+carNumber.substring(1,carNumber.length()-1)+"%");
 			params.add(2,"%"+carNumber.substring(2)+"%");
 			params.add(0);
-        	list = daService.getAllMap("select * from order_tb where comid =? and (car_number like ? or car_number like ? )" 
+        	list = daService.getAllMap("select * from order_tb where comid =? and (car_number like ? or car_number like ? )"
         			+" and state=? order by create_time desc", params);
         	if(list == null || list.size() == 0){
         		//3  模糊匹配除去三位
@@ -1060,8 +1052,8 @@ public class CenterMonitorAction extends Action {
         		params.add(2,"%"+carNumber.substring(2,carNumber.length()-1)+"%");
         		params.add(3,"%"+carNumber.substring(3,carNumber.length())+"%");
         		params.add(0);
-        		list = daService.getAllMap("select * from order_tb where comid =? and" 
-            			+" (car_number like ? or car_number like ? or car_number like ? )" 
+        		list = daService.getAllMap("select * from order_tb where comid =? and"
+            			+" (car_number like ? or car_number like ? or car_number like ? )"
             			+" and state=? order by create_time desc", params);
         		if(list == null || list.size() == 0){
             		//4 模糊匹配除去四位
@@ -1071,15 +1063,15 @@ public class CenterMonitorAction extends Action {
             		params.add(3,"%"+carNumber.substring(3,carNumber.length()-1)+"%");
             		params.add(4,"%"+carNumber.substring(4,carNumber.length())+"%");
             		params.add(0);
-            		list = daService.getAllMap("select * from order_tb where comid =? and" 
-                			+" (car_number like ? or car_number like ? or car_number like ? or car_number like ?)" 
+            		list = daService.getAllMap("select * from order_tb where comid =? and"
+                			+" (car_number like ? or car_number like ? or car_number like ? or car_number like ?)"
                 			+" and state=? order by create_time desc", params);
             	}
         	}
     	}
     	return list;
     }
-    
+
     private List query(HttpServletRequest request,String comid, String groupid){
 		String orderfield = RequestUtil.processParams(request, "orderfield");
 		String orderby = RequestUtil.processParams(request, "orderby");

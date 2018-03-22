@@ -1,10 +1,5 @@
 package com.zld.struts.dwr;
 
-import java.util.Collection;
-
-import javax.servlet.http.HttpSession;
-
-;
 import com.zld.utils.Constants;
 import org.apache.log4j.Logger;
 import org.directwebremoting.ScriptSession;
@@ -12,6 +7,11 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.event.ScriptSessionEvent;
 import org.directwebremoting.event.ScriptSessionListener;
+
+import javax.servlet.http.HttpSession;
+import java.util.Collection;
+
+;
 
 
 /**

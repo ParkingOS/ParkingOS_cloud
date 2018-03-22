@@ -1,11 +1,10 @@
 package com.zld.struts.admin;
 
-import java.io.OutputStream;
-import java.util.Calendar;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.mongodb.*;
+import com.zld.AjaxUtil;
+import com.zld.impl.MongoClientFactory;
+import com.zld.service.DataBaseService;
+import com.zld.utils.RequestUtil;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -13,15 +12,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.zld.AjaxUtil;
-import com.zld.impl.MongoClientFactory;
-import com.zld.service.DataBaseService;
-import com.zld.utils.RequestUtil;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
+import java.util.Calendar;
 
 public class MarketerPicsAction extends Action {
 	@Autowired

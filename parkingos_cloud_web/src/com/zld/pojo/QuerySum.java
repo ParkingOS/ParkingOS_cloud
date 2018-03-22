@@ -1,10 +1,10 @@
 package com.zld.pojo;
 
+import com.zld.service.PgOnlyReadService;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.Callable;
-
-import com.zld.service.PgOnlyReadService;
 
 public class QuerySum implements Callable<Map> {
 	private String sql;

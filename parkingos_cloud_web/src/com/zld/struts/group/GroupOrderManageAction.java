@@ -3,7 +3,6 @@ package com.zld.struts.group;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
 import com.zld.AjaxUtil;
 import com.zld.impl.MongoClientFactory;
 import com.zld.impl.MongoDbUtils;

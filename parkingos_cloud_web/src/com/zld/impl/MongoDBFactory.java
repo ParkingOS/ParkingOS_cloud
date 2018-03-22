@@ -1,15 +1,11 @@
 package com.zld.impl;
 
+import com.mongodb.*;
+
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoOptions;
-import com.mongodb.ReadPreference;
-import com.mongodb.ServerAddress;
 
 
 /**mongodb配置**/

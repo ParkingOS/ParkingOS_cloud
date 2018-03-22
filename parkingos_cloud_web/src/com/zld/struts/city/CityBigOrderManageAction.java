@@ -1,30 +1,24 @@
 package com.zld.struts.city;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zld.AjaxUtil;
+import com.zld.impl.CommonMethods;
+import com.zld.pojo.QueryCount;
+import com.zld.pojo.QueryList;
+import com.zld.service.PgOnlyReadService;
+import com.zld.utils.*;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.zld.AjaxUtil;
-import com.zld.impl.CommonMethods;
-import com.zld.pojo.QueryCount;
-import com.zld.pojo.QueryList;
-import com.zld.service.PgOnlyReadService;
-import com.zld.utils.ExecutorsUtil;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public class CityBigOrderManageAction extends Action {
 	@Autowired

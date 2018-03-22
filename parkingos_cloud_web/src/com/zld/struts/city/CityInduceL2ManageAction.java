@@ -1,19 +1,5 @@
 package com.zld.struts.city;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.zld.AjaxUtil;
 import com.zld.impl.CommonMethods;
 import com.zld.service.DataBaseService;
@@ -22,6 +8,18 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
 import com.zld.utils.TimeTools;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CityInduceL2ManageAction extends Action {
 	@Autowired

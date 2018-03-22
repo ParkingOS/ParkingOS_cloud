@@ -1,14 +1,13 @@
 package com.zld;
 
+import com.ibatis.common.resources.Resources;
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
-
-import org.apache.log4j.Logger;
-
-import com.ibatis.common.resources.Resources;
 
 /**
  * 读取配置文件

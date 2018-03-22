@@ -23,7 +23,7 @@ public class TimeTools {
 
 	// 时间格式数组
 	private static String[] formatArray = { "yyyy-MM-dd", "yyyy-MM-dd HH:mm",
-			"yyyy-MM-dd HH:mm:ss", "yy-MM-dd HH:mm", "yyyyMMdd HH:mm", "yyyy-MM-dd HH" };
+			"yyyy-MM-dd HH:mm:ss", "yy-MM-dd HH:mm", "yyyyMMdd HH:mm", "yyyy-MM-dd HH","yyyy-MM" };
 
 	// 检测一个时间格式是否为合法格式
 	private static boolean isRightFormat(String formatStr) {
@@ -144,6 +144,11 @@ public class TimeTools {
 	public static String getTime_yyMMdd_HHmm(Long milliSeconds) {
 
 		return secondsToDateStr(milliSeconds, "yy-MM-dd HH:mm");
+	}
+
+	public static String getTime_yyMM(Long milliSeconds) {
+
+		return secondsToDateStr(milliSeconds, "yyyy-MM");
 	}
 
 	public static String getTime_yyyyMMdd_HH(Long milliSeconds) {
@@ -684,7 +689,27 @@ public class TimeTools {
 		return date;
 	}
 
+	public static Long getDateFromStr2(String strDate){
+		SimpleDateFormat   sdf   =   new   SimpleDateFormat("yyyy-MM");
 
+		// Calendar   calendar   =   new   GregorianCalendar();
+		Date   date = null;
+		Long seconds = null;
+		Calendar rightNow =null;
+		try{
+			date   =   sdf.parse(strDate);
+			seconds = new Long(date.getTime());
+//			System.out.println("====:"+seconds);
+			rightNow = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+			rightNow.setTime(date);
+//			System.out.println("====:"+rightNow);
+			rightNow.set(Calendar.MONTH, rightNow.get(Calendar.MONTH)+1);
+
+		}catch(Exception e){
+
+		}
+		return rightNow.getTimeInMillis();
+	}
 	/**
 	 * @author yangzi
 	 * @version 2007-5-28 上午11:57:41
@@ -811,6 +836,13 @@ public class TimeTools {
 		rightNow.setTimeInMillis(getMonthStartSeconds()*1000);
 		rightNow.set(Calendar.MONTH, rightNow.get(Calendar.MONTH)-1);
 		return rightNow.getTimeInMillis()/1000;
+	}
+
+	public static long getNextMonthStartMillis() {
+		Calendar rightNow = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+		rightNow.setTimeInMillis(getMonthStartSeconds()*1000);
+		rightNow.set(Calendar.MONTH, rightNow.get(Calendar.MONTH)+1);
+		return rightNow.getTimeInMillis();
 	}
 	/**
 	 * @return 本周一的秒数 2007-4-12

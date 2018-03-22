@@ -1,21 +1,5 @@
 package com.zld.struts.parkadmin;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -25,14 +9,21 @@ import com.zld.impl.MongoDbUtils;
 import com.zld.impl.PublicMethods;
 import com.zld.service.DataBaseService;
 import com.zld.service.PgOnlyReadService;
-import com.zld.utils.Check;
-import com.zld.utils.ExportExcelUtil;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
-import com.zld.utils.TimeTools;
-import com.zld.utils.ZLDType;
+import com.zld.utils.*;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 /**
  * 停车场后台管理员登录后，查看订单，不能修改和删除
  * @author Administrator
@@ -556,22 +547,32 @@ public class OrderManageAction extends Action{
 		String fieldsstr = RequestUtil.processParams(request, "fieldsstr");
 		SqlInfo base = new SqlInfo("1=1", new Object[]{comid});
 
-		if(isHd==1){
-			if(otype>-1){
-				countSql +=" and ishd=? and state=? and isclick=? ";
-				sql      +=" and ishd=? and state=? and isclick=? ";
-				base = new SqlInfo("1=1", new Object[]{comid,0,1,otype});
-			}else {
-				countSql +=" and ishd=? ";
-				sql      +=" and ishd=? ";
-				base = new SqlInfo("1=1", new Object[]{comid,0});
-			}
+//		if(isHd==1){
+//			if(otype>-1){
+//				countSql +=" and ishd=? and state=? and isclick=? ";
+//				sql      +=" and ishd=? and state=? and isclick=? ";
+//				base = new SqlInfo("1=1", new Object[]{comid,0,1,otype});
+//			}else {
+//				countSql +=" and ishd=? ";
+//				sql      +=" and ishd=? ";
+//				base = new SqlInfo("1=1", new Object[]{comid,0});
+//			}
+//		}else {
+//			if(otype>-1){
+//				countSql +=" and state=? and isclick=? and ishd = ?";
+//				sql      +=" and state=? and isclick=? and ishd = ?";
+//				base = new SqlInfo("1=1", new Object[]{comid,1,otype,0});
+//			}
+//		}
+
+		if(otype>-1){
+			countSql +=" and ishd=? and state=? and isclick=? ";
+			sql      +=" and ishd=? and state=? and isclick=? ";
+			base = new SqlInfo("1=1", new Object[]{comid,0,1,otype});
 		}else {
-			if(otype>-1){
-				countSql +=" and state=? and isclick=? ";
-				sql      +=" and state=? and isclick=? ";
-				base = new SqlInfo("1=1", new Object[]{comid,1,otype});
-			}
+			countSql +=" and ishd=? ";
+			sql      +=" and ishd=? ";
+			base = new SqlInfo("1=1", new Object[]{comid,0});
 		}
 
 		SqlInfo sqlInfo = RequestUtil.customSearch(request,"order_tb");

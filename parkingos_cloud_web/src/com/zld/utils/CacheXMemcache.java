@@ -1,12 +1,12 @@
 package com.zld.utils;
 
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-
 import net.rubyeye.xmemcached.CASOperation;
 import net.rubyeye.xmemcached.Counter;
 import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.exception.MemcachedException;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * XMemcached缓存类

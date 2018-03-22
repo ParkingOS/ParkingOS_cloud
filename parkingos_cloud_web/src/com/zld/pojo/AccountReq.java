@@ -1,9 +1,8 @@
 package com.zld.pojo;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.zld.utils.SqlInfo;
+
+import java.io.Serializable;
 
 public class AccountReq implements Serializable {
 	private long id;

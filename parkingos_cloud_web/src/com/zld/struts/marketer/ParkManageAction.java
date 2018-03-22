@@ -1,15 +1,12 @@
 package com.zld.struts.marketer;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zld.AjaxUtil;
+import com.zld.CustomDefind;
+import com.zld.impl.PublicMethods;
+import com.zld.service.DataBaseService;
+import com.zld.service.LogService;
+import com.zld.service.PgOnlyReadService;
+import com.zld.utils.*;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -17,17 +14,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.zld.AjaxUtil;
-import com.zld.CustomDefind;
-import com.zld.impl.PublicMethods;
-import com.zld.service.DataBaseService;
-import com.zld.service.LogService;
-import com.zld.service.PgOnlyReadService;
-import com.zld.utils.Check;
-import com.zld.utils.GetLocalCode;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.StringUtils;
-import com.zld.utils.TimeTools;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.*;
 public class ParkManageAction extends Action {
 	@Autowired
 	private DataBaseService daService;

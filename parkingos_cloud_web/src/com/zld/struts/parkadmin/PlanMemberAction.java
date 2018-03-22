@@ -1,19 +1,5 @@
 package com.zld.struts.parkadmin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.zld.AjaxUtil;
 import com.zld.impl.CommonMethods;
 import com.zld.impl.MongoDbUtils;
@@ -22,7 +8,17 @@ import com.zld.utils.Check;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 /**
  * 停车场后台管理员登录后，管理员工，员工分为收费员和财务
  * @author Administrator

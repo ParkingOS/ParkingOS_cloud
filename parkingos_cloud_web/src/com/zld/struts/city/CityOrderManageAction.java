@@ -163,6 +163,7 @@ public class CityOrderManageAction extends Action {
 					orderfield = "o." + orderfield;
 				}
 				logger.error(sql);
+				logger.error(cashSql);
 				logger.error(params);
 				sql += " order by " + orderfield + " " + orderby + " nulls last ";
 				QuerySum querySum = new QuerySum(pgOnlyReadService, sumSql, params);
@@ -182,12 +183,30 @@ public class CityOrderManageAction extends Action {
 					total = Double.valueOf(map.get("total") + "");
 				}
 				Map<String, Object> cashMap = futureCash.get();
-				if(cashMap != null && cashMap.get("total") != null){
-					cash_total = StringUtils.formatDouble(cashMap.get("total")) + StringUtils.formatDouble(cashMap.get("pretotal"));
+				if(cashMap != null ){
+					Double cashtotal = 0.0;
+					Double precashtotal = 0.0;
+					if(cashMap.get("total")!=null){
+						cashtotal = StringUtils.formatDouble(cashMap.get("total"));
+					}
+					if(cashMap.get("pretotal")!=null){
+						precashtotal =  StringUtils.formatDouble(cashMap.get("pretotal"));
+					}
+					cash_total = cashtotal+precashtotal;
+//					cash_total = StringUtils.formatDouble(cashMap.get("total")) + StringUtils.formatDouble(cashMap.get("pretotal"));
 				}
 				Map<String, Object> elecMap = futureElec.get();
-				if(elecMap != null && elecMap.get("total") != null){
-					elec_total = StringUtils.formatDouble(elecMap.get("total")) + StringUtils.formatDouble(elecMap.get("pretotal"));
+				if(elecMap != null ){
+					Double eletotal = 0.0;
+					Double preeletotal = 0.0;
+					if(elecMap.get("total")!=null){
+						eletotal = StringUtils.formatDouble(elecMap.get("total"));
+					}
+					if(elecMap.get("pretotal")!=null){
+						preeletotal =  StringUtils.formatDouble(elecMap.get("pretotal"));
+					}
+					elec_total = eletotal+preeletotal;
+//					elec_total = StringUtils.formatDouble(elecMap.get("total")) + StringUtils.formatDouble(elecMap.get("pretotal"));
 				}
 				getCollector(list);
 				queryShopTicket(list);

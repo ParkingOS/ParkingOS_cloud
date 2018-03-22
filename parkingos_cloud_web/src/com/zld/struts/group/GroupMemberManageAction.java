@@ -1,27 +1,25 @@
 package com.zld.struts.group;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zld.AjaxUtil;
+import com.zld.impl.CommonMethods;
+import com.zld.service.DataBaseService;
 import com.zld.service.PgOnlyReadService;
+import com.zld.utils.JsonUtil;
+import com.zld.utils.RequestUtil;
+import com.zld.utils.SqlInfo;
+import com.zld.utils.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.zld.AjaxUtil;
-import com.zld.impl.CommonMethods;
-import com.zld.service.DataBaseService;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 /*说明：城市商户、渠道、集团的人员管理不能在一个类里处理，如果同一个类，城市商户登录里有人员管理，
 城市商户的运营集团管理里也有人员管理，因为链接地址相同在授权的时候就会混乱，所以在每一个组织类型都有一个人员管理类*/
 public class GroupMemberManageAction extends Action {

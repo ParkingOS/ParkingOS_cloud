@@ -1,14 +1,10 @@
 package com.zld.struts.admin;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zld.AjaxUtil;
+import com.zld.service.DataBaseService;
+import com.zld.utils.JsonUtil;
+import com.zld.utils.RequestUtil;
+import com.zld.utils.SqlInfo;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -16,11 +12,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.zld.AjaxUtil;
-import com.zld.service.DataBaseService;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 public class ParkPraiseAction extends Action {
 	@Autowired

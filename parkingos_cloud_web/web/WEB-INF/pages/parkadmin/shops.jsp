@@ -44,6 +44,7 @@ var _addmediaField = [
 		{fieldcnname:"每分钟/元",fieldname:"discount_money",fieldvalue:'',defaultValue:"1",inputtype:"number", twidth:"150" ,height:"",issort:false},
         {fieldcnname:"全免每张/元",fieldname:"free_money",fieldvalue:'',defaultValue:"1",inputtype:"number", twidth:"150" ,height:"",issort:false},
         {fieldcnname:"有效期/小时",fieldname:"validite_time",fieldvalue:'',defaultValue:"24",inputtype:"number", twidth:"150" ,height:"",issort:false},
+        {fieldcnname:"手输额度",fieldname:"hand_input_enable",defaultValue:'1',inputtype:"select", noList:[{"value_no":1,"value_name":"支持"},{"value_no":0,"value_name":"不支持"}],twidth:"180" ,height:"",issort:false},
 		];
 //查看
 var _showmediaField = [
@@ -64,6 +65,7 @@ var _showmediaField = [
 		{fieldcnname:"每小时/元",fieldname:"discount_money",fieldvalue:'',inputtype:"number", twidth:"150" ,height:"",issort:false,fhide:true},
         {fieldcnname:"全免每张/元",fieldname:"free_money",fieldvalue:'',defaultValue:"1",inputtype:"number", twidth:"150" ,height:"",issort:false,fhide:true},
         {fieldcnname:"有效期/小时",fieldname:"validite_time",fieldvalue:'',defaultValue:"24",inputtype:"number", twidth:"150" ,height:"",issort:false},
+        {fieldcnname:"手输额度",fieldname:"hand_input_enable",defaultValue:'1',inputtype:"select", noList:[{"value_no":1,"value_name":"支持"},{"value_no":0,"value_name":"不支持"}],twidth:"150" ,height:"",issort:false},
 	];
 var _shopT = new TQTable({
 	tabletitle:"商户查询",
@@ -232,6 +234,7 @@ function getAuthIsoperateButtons(){
 								{fieldcnname:price_show,fieldname:"discount_money",fieldvalue:discount_money,inputtype:"number", twidth:"150" ,height:"",issort:false},
                                 {fieldcnname:"全免每张/元",fieldname:"free_money",fieldvalue:free_money,defaultValue:"1",inputtype:"number", twidth:"150" ,height:"",issort:false},
                                 {fieldcnname:"有效期/小时",fieldname:"validite_time",fieldvalue:validite_time,inputtype:"number", twidth:"150" ,height:"",issort:false},
+                                {fieldcnname:"手输额度",fieldname:"hand_input_enable",defaultValue:'1',inputtype:"select", noList:[{"value_no":1,"value_name":"支持"},{"value_no":0,"value_name":"不支持"}],twidth:"150" ,height:"",issort:false},
 							]	
 						}]
 					}],

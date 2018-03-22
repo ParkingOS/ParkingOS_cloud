@@ -1,12 +1,10 @@
 package com.zld.utils;
 
-import com.zld.struts.dwr.DWRScriptSessionListener;
 import org.apache.log4j.Logger;
 import org.directwebremoting.ScriptSession;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class Constants {
 	private Logger logger = Logger.getLogger(Constants.class);

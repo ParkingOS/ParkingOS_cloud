@@ -1,11 +1,11 @@
 package com.zld.pojo;
 
+import com.zld.service.PgOnlyReadService;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-
-import com.zld.service.PgOnlyReadService;
 
 /**
  * 开启线程查询列表

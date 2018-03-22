@@ -1,11 +1,10 @@
 package com.zld.utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.zld.AjaxUtil;
 
 import javax.servlet.http.HttpServletRequest;
-
-import com.zld.AjaxUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RequestUtil {
 

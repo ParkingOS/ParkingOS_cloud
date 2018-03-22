@@ -169,9 +169,11 @@ public class ParkOrderanlysisAction extends Action {
 					}
 					totalCount += Integer.parseInt(totalOrder.get("scount")+"");
 					totalMoney += Double.parseDouble(totalOrder.get("amount_receivable")+"");
-					//设定默认值
+					//设定默认值   名字这个 全部按照user_id来处理
 					String sql_worker = "select nickname from user_info_tb where id = ?";
+//					String sql_worker = "select nickname from user_info_tb where user_id = ? and comid = ? and state =0";
 					Object []val_worker = new Object[]{Long.parseLong(totalOrder.get("out_uid")+"")};
+//					Object []val_worker = new Object[]{totalOrder.get("out_uid")+"",comid};
 					Map worker = daService.getMap(sql_worker ,val_worker);
 					if(worker!=null && worker.containsKey("nickname")){
 						//出场收费员Id

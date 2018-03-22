@@ -1,17 +1,12 @@
 package com.zld.struts.shop;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.mongodb.*;
+import com.zld.AjaxUtil;
+import com.zld.impl.MongoClientFactory;
+import com.zld.service.DataBaseService;
+import com.zld.service.PgOnlyReadService;
+import com.zld.utils.RequestUtil;
+import com.zld.utils.StringUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -23,17 +18,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.zld.AjaxUtil;
-import com.zld.impl.MongoClientFactory;
-import com.zld.service.DataBaseService;
-import com.zld.service.PgOnlyReadService;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.StringUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PicsManageAction extends Action {
 	@Autowired

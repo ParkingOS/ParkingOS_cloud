@@ -1,17 +1,16 @@
 package com.zld.struts.scheduler;
 
-import java.io.IOException;
-import java.util.Timer;
+import com.zld.impl.CommonMethods;
+import com.zld.service.DataBaseService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import com.zld.impl.CommonMethods;
-import com.zld.service.DataBaseService;
+import java.io.IOException;
+import java.util.Timer;
   
 public class TimeTaskServlet extends HttpServlet{  
 	private static final long serialVersionUID = 1L;

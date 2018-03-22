@@ -1,9 +1,6 @@
 package com.zld.impl;
 
-import java.util.List;
-
-import javax.sql.DataSource;
-
+import com.zld.dao.PgOnlyReadDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -12,8 +9,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.zld.dao.PgOnlyReadDao;
-import com.zld.utils.StringUtils;
+import javax.sql.DataSource;
+import java.util.List;
 
 @Repository
 public class PgOnlyReadImpl extends JdbcTemplate implements PgOnlyReadDao {

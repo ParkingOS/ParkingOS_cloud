@@ -171,6 +171,7 @@ public class CityVIPManageAction extends Action {
 
 	private String importExcel(HttpServletRequest request,Long groupid) throws  Exception {
 		String errmsg ="";
+		System.out.println("月卡上传:"+groupid);
 		request.setCharacterEncoding("UTF-8"); // 设置处理请求参数的编码格式
 		DiskFileItemFactory factory = new DiskFileItemFactory(); // 建立FileItemFactory对象
 		factory.setSizeThreshold(16 * 4096 * 1024);

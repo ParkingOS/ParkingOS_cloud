@@ -122,7 +122,8 @@ var _mediaField = [
 var _excelField = [
    		{fieldcnname:"进场时间",fieldname:"create_time",fieldvalue:'',inputtype:"date", twidth:"200" ,height:"",hide:true},
    		{fieldcnname:"金额",fieldname:"total",fieldvalue:'',inputtype:"number", height:"",issort:false},
-   		{fieldcnname:"结算方式",fieldname:"isclick",fieldvalue:'',inputtype:"select",noList:[{"value_no":-1,"value_name":"全部"},{"value_no":0,"value_name":"自动结算"},{"value_no":1,"value_name":"手动结算"}],twidth:"100" ,height:"",issort:false}
+   		{fieldcnname:"结算方式",fieldname:"isclick",fieldvalue:'',inputtype:"select",noList:[{"value_no":-1,"value_name":"全部"},{"value_no":0,"value_name":"自动结算"},{"value_no":1,"value_name":"手动结算"}],twidth:"100" ,height:"",issort:false},
+        {fieldcnname:"车场名称",fieldname:"comid",fieldvalue:'',inputtype:"select",noList:parks,twidth:"150",twidth:"100" ,height:"",issort:false}
    	];
 var back = "";
 if("${from}" == "index"){
@@ -234,7 +235,7 @@ function getAuthButtons(){
 					//formitems:[{kindname:"",kinditemts:_excelField}],
 					SubAction:
 					function(callback,formName){
-						T("#exportiframe").src="cityorder.do?action=exportExcel&fieldsstr=id__c_type__car_number__create_time__end_time__duration__pay_type__total__uid__state__isclick__id__in_passid__out_passid&"+Serializ(formName)
+						T("#exportiframe").src="cityorder.do?action=exportExcel&fieldsstr=id__comid__c_type__car_number__create_time__end_time__duration__pay_type__total__uid__state__isclick__id__in_passid__out_passid&"+Serializ(formName)
 						TwinC("order_export_w");
 						T.loadTip(1,"正在导出，请稍候...",2,"");
 					}

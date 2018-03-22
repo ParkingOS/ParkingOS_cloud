@@ -1,10 +1,6 @@
 package com.zld.service;
 
-import com.zld.pojo.BaseResp;
-import com.zld.pojo.BindCardReq;
-import com.zld.pojo.CardChargeReq;
-import com.zld.pojo.ReturnCardReq;
-import com.zld.pojo.UnbindCardReq;
+import com.zld.pojo.*;
 
 public interface CardService {
 

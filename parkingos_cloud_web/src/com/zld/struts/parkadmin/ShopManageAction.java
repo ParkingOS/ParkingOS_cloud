@@ -1,21 +1,5 @@
 package com.zld.struts.parkadmin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.zld.AjaxUtil;
 import com.zld.impl.MongoDbUtils;
 import com.zld.service.DataBaseService;
@@ -23,6 +7,18 @@ import com.zld.service.PgOnlyReadService;
 import com.zld.utils.Check;
 import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ShopManageAction extends Action {
 	@Autowired
@@ -85,6 +81,7 @@ public class ShopManageAction extends Action {
 			AjaxUtil.ajaxOutput(response, json);
 			return null;
 		}else if(action.equals("create")){
+			Integer handInputEnable = RequestUtil.getInteger(request,"hand_input_enable",1);
 			String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
 			String address = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
 			String mobile = RequestUtil.processParams(request, "mobile");
@@ -115,8 +112,8 @@ public class ShopManageAction extends Action {
 				AjaxUtil.ajaxOutput(response, "默认额度最多不能超过3个");
 				return null;
 			}
-			int r = daService.update("insert into shop_tb(name,address,mobile,phone,comid,ticket_type,create_time,default_limit,discount_percent,discount_money,free_money,validite_time,ticket_unit) values(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-					new Object[] { name, address, mobile, phone, comid, ticket_type,System.currentTimeMillis() / 1000, default_limit, discount_percent, discount_money,free_money,validite_time,ticket_unit});
+			int r = daService.update("insert into shop_tb(name,address,mobile,phone,comid,ticket_type,create_time,default_limit,discount_percent,discount_money,free_money,validite_time,ticket_unit,hand_input_enable) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+					new Object[] { name, address, mobile, phone, comid, ticket_type,System.currentTimeMillis() / 1000, default_limit, discount_percent, discount_money,free_money,validite_time,ticket_unit,handInputEnable});
 			if(r==1)
 				mongoDbUtils.saveLogs( request,0, 2, "添加了商户："+name+",地址："+address+",手机:"+mobile+",电话:"+phone);
 			AjaxUtil.ajaxOutput(response, r+"");
@@ -180,6 +177,7 @@ public class ShopManageAction extends Action {
 				AjaxUtil.ajaxOutput(response, "-1");
 				return null;
 			}
+			Integer handInputEnable = RequestUtil.getInteger(request,"hand_input_enable",1);
 			String name = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "name"));
 			String address = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "address"));
 			String mobile = RequestUtil.processParams(request, "mobile");
@@ -201,8 +199,8 @@ public class ShopManageAction extends Action {
 				default_limit = default_limit.replaceAll("，", ",");
 			}
 			int r = daService.update("update shop_tb set name=?,address=?,mobile=?,phone=?," +
-							"default_limit=?,ticket_type=?,discount_percent=?, discount_money=?, free_money=?,validite_time=?, ticket_unit=? where id=? ",
-					new Object[] { name, address, mobile, phone, default_limit, ticket_type,discount_percent,discount_money,free_money,validite_time,ticket_unit,shoppingmarket_id});
+							"default_limit=?,ticket_type=?,discount_percent=?, discount_money=?, free_money=?,validite_time=?, ticket_unit=?,hand_input_enable=? where id=? ",
+					new Object[] { name, address, mobile, phone, default_limit, ticket_type,discount_percent,discount_money,free_money,validite_time,ticket_unit,handInputEnable,shoppingmarket_id});
 			if(r==1)
 				mongoDbUtils.saveLogs( request,0, 3, "修改了商户："+name+",地址："+address+",手机:"+mobile+",电话:"+phone);
 			AjaxUtil.ajaxOutput(response, r+"");

@@ -1,23 +1,5 @@
 package com.zld.struts.parkadmin;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.zld.AjaxUtil;
 import com.zld.service.DataBaseService;
 import com.zld.service.PgOnlyReadService;
@@ -25,6 +7,17 @@ import com.zld.utils.JsonUtil;
 import com.zld.utils.RequestUtil;
 import com.zld.utils.StringUtils;
 import com.zld.utils.TimeTools;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.*;
 /**
  * 停车场后台概况
  * @author Administrator

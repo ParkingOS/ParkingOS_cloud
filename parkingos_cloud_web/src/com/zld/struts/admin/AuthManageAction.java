@@ -1,13 +1,12 @@
 package com.zld.struts.admin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zld.AjaxUtil;
+import com.zld.service.DataBaseService;
+import com.zld.service.PgOnlyReadService;
+import com.zld.utils.JsonUtil;
+import com.zld.utils.RequestUtil;
+import com.zld.utils.SqlInfo;
+import com.zld.utils.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -18,13 +17,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.zld.AjaxUtil;
-import com.zld.service.DataBaseService;
-import com.zld.service.PgOnlyReadService;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AuthManageAction extends Action {
 	@Autowired

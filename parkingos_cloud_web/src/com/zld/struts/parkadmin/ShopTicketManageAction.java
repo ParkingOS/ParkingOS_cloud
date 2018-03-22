@@ -1,13 +1,10 @@
 package com.zld.struts.parkadmin;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zld.AjaxUtil;
+import com.zld.service.DataBaseService;
+import com.zld.utils.JsonUtil;
+import com.zld.utils.RequestUtil;
+import com.zld.utils.SqlInfo;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -15,14 +12,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.zld.AjaxUtil;
-import com.zld.service.DataBaseService;
-import com.zld.utils.ExportExcelUtil;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
-import com.zld.utils.TimeTools;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ShopTicketManageAction extends Action {
 	@Autowired
@@ -137,7 +131,7 @@ public class ShopTicketManageAction extends Action {
 		String car_number = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "car_number"));
 		String shop_name = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "shop_name"));
 		Integer ticket_unit = RequestUtil.getInteger(request, "ticket_unit_start", 1);
-		Integer money = RequestUtil.getInteger(request, "money_start", 0);
+		Integer money = RequestUtil.getInteger(request, "money_start", -1);
 		String money_operate_type = RequestUtil.processParams(request, "money");;
 		List<Object> ret = new ArrayList<Object>();
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
@@ -145,7 +139,7 @@ public class ShopTicketManageAction extends Action {
 		String sql = "select t.*,s.name shop_name from ticket_tb t,shop_tb s where t.comid= ? and t.shop_id = s.id ";
 		String countsql = "select count(*) from ticket_tb t,shop_tb s where t.comid= ? and t.shop_id = s.id ";
 		SqlInfo base = new SqlInfo("1=1", new Object[]{comid});
-		SqlInfo sqlInfo = RequestUtil.customSearch(request,"ticket_tb","t",new String[]{"car_number","ticket_unit"});
+		SqlInfo sqlInfo = RequestUtil.customSearch(request,"ticket_tb","t",new String[]{"car_number","ticket_unit","shop_name"});
 		if(sqlInfo != null ){
 			sqlInfo = SqlInfo.joinSqlInfo(base,sqlInfo, 2);
 			sql += " and " + sqlInfo.getSql();
@@ -165,34 +159,54 @@ public class ShopTicketManageAction extends Action {
 			countsql+=" and s.name like ?";
 			params.add("%"+shop_name+"%");
 		}
-		if(ticket_unit >0){
-			if(ticket_unit == 2 || ticket_unit == 4){
-				sql+=" and (s.ticket_unit=? or s.ticket_unit is null)";
-				countsql+=" and (s.ticket_unit=? or s.ticket_unit is null)";
+		if(ticket_unit >0 ){
+			if(ticket_unit==4){
+				sql+=" and (s.ticket_unit=? or s.ticket_unit is null) and t.type=5";
+				countsql+=" and (s.ticket_unit=? or s.ticket_unit is null) and t.type=5";
+			}else if(ticket_unit==2){
+				sql+=" and (s.ticket_unit=? or s.ticket_unit is null) and t.type=3";
+				countsql+=" and (s.ticket_unit=? or s.ticket_unit is null) and t.type=3";
 			}else{
-				sql+=" and s.ticket_unit=?";
-				countsql+=" and s.ticket_unit=?";
+				sql+=" and s.ticket_unit=? and t.type=3";
+				countsql+=" and s.ticket_unit=? and t.type=3";
 			}
+//			if(ticket_unit == 2 || ticket_unit == 4){
+////				sql+=" and (s.ticket_unit=? or s.ticket_unit is null)";
+////				countsql+=" and (s.ticket_unit=? or s.ticket_unit is null)";
+//				sql+=" and (s.ticket_unit=? )";
+//				countsql+=" and (s.ticket_unit=? )";
+//			}else{
+//				sql+=" and s.ticket_unit=?";
+//				countsql+=" and s.ticket_unit=?";
+//			}
 			params.add(ticket_unit);
 		}
-		if("1".equals(money_operate_type) && money >0){
-			sql+=" and t.money >= ?";
-			countsql+=" and t.money >= ?";
+		//1 大于等于  between  3 等于  2小于等于
+		if("1".equals(money_operate_type) && money >-1){
+			sql+=" and t.money >= ? and t.type=3";
+			countsql+=" and t.money >= ? and t.type=3";
 			params.add(money);
 		}
-		if("2".equals(money_operate_type) && money >0){
-			sql+=" and ? >= t.money";
-			countsql+=" and ? >= t.money";
+		if("between".equals(money_operate_type) && money >-1){
+			Integer moneyEnd = RequestUtil.getInteger(request, "money_end", 0);
+			sql+=" and t.money >= ? and t.money <= ? and t.type=3";
+			countsql+=" and t.money >= ? and t.money <= ? and t.type=3";
 			params.add(money);
+			params.add(moneyEnd);
 		}
-		if("3".equals(money_operate_type) && money >0){
+		if("3".equals(money_operate_type) && money >-1){
 			sql+=" and t.money = ?";
 			countsql+=" and t.money = ?";
 			params.add(money);
 		}
-		if("null".equals(money_operate_type) && money >0){
-			sql+=" and t.money is null";
-			countsql+=" and t.money is null";
+		if("2".equals(money_operate_type) && money >-1){
+			sql+=" and t.money <= ? and t.type=3";
+			countsql+=" and t.money <= ? and t.type=3";
+			params.add(money);
+		}
+		if("null".equals(money_operate_type)){
+			sql+=" and (t.money is null or t.money = 0) and t.type = 3";
+			countsql+=" and (t.money is null or t.money = 0) and t.type = 3";
 		}
 		if("".equals(orderfield)){
 			orderfield = " id";

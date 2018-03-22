@@ -1,30 +1,5 @@
 package com.zld.struts.admin;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.zld.AjaxUtil;
 import com.zld.CustomDefind;
 import com.zld.impl.CommonMethods;
@@ -33,14 +8,19 @@ import com.zld.impl.PublicMethods;
 import com.zld.service.DataBaseService;
 import com.zld.service.LogService;
 import com.zld.service.PgOnlyReadService;
-import com.zld.utils.GetLocalCode;
-import com.zld.utils.HttpsProxy;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
-import com.zld.utils.SqlInfo;
-import com.zld.utils.StringUtils;
-import com.zld.utils.TimeTools;
-import com.zld.utils.ZLDType;
+import com.zld.utils.*;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.*;
 /**
  * 总管理员   停车场注册修改删除等
  * @author Administrator
@@ -190,6 +170,7 @@ public class ParkManageAction extends Action {
 							logger.error(param);
 							ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
 							JSONObject object = new JSONObject(ret);
+							logger.error("陈博文"+object);
 							if(object!=null){
 								Integer uploadState = object.getInt("state");
 								if(uploadState==1){
@@ -339,6 +320,102 @@ public class ParkManageAction extends Action {
 			if(result == 1){
 				AjaxUtil.ajaxOutput(response, "1");
 				logService.updateSysLog(comId, userId,log, 100);
+			}else {
+				AjaxUtil.ajaxOutput(response, "0");
+			}
+		}else if(action.equals("createAndUpload")){
+			String from = RequestUtil.processParams(request, "from");
+			Integer parkingTotal = RequestUtil.getInteger(request,"parking_total",0);
+			if(parkingTotal==0){
+				AjaxUtil.ajaxOutput(response, "请正确输入停车位信息！");
+				return null;
+			}
+			Double longitude =RequestUtil.getDouble(request, "longitude",0d);
+			Double latitude =RequestUtil.getDouble(request, "latitude",0d);
+			Long count = daService.getLong("select count(*) from com_info_tb where longitude=? and latitude=?",
+					new Object[]{longitude,latitude});
+			if(count>0){//经纬度重复了
+				if(from.equals("client"))
+					AjaxUtil.ajaxOutput(response, "-1");
+				else
+					AjaxUtil.ajaxOutput(response, "经纬度已存在！");
+				return null;
+			}
+			String cmobile =RequestUtil.processParams(request, "cmobile");
+			count = daService.getLong("select count(*) from user_info_tb where mobile=? and auth_flag=?",
+					new Object[]{cmobile,1});
+			if(count>0){//车场管理员手机号重复了
+				if(from.equals("client"))
+					AjaxUtil.ajaxOutput(response, "-2");
+				else
+					AjaxUtil.ajaxOutput(response, "手机号已存在！");
+				return null;
+			}
+			Integer result = createAdmin(request);
+			String log = "新建了停车场,"+result;
+			if(result == 1){
+
+				//更新日志
+				logService.updateSysLog(comId, userId,log, 100);
+
+				//创建完车场直接上传到泊链
+				String sql = "select * from com_info_tb where longitude=? and latitude=?";
+				Map map= daService.getMap(sql,new Object[]{longitude,latitude});
+
+				String union_id = CustomDefind.getValue("UNIONID");//AjaxUtil.decodeUTF8(RequestUtil.getString(request, "union_id"));
+				String union_key = CustomDefind.getValue("UNIONKEY");//AjaxUtil.decodeUTF8(RequestUtil.getString(request, "union_key"));
+				String server_id = CustomDefind.getValue("SERVERID");//AjaxUtil.decodeUTF8(RequestUtil.getString(request, "server_id"));
+				int uploadCount = 0;
+				int unUploadCount=0;
+					if(map!=null){
+						//String url = "https://127.0.0.1/api-web/park/addpark";
+						String url = CustomDefind.UNIONIP+"park/addpark";
+						//String url = "https://s.bolink.club/unionapi/park/addpark";
+						Map<String, Object> paramMap = new HashMap<String, Object>();
+						paramMap.put("park_id", map.get("id"));
+						paramMap.put("name", map.get("company_name"));
+						paramMap.put("address", map.get("address"));
+						paramMap.put("phone", map.get("phone"));
+						paramMap.put("lng",  map.get("longitude")+"");
+						paramMap.put("lat",  map.get("latitude")+"");
+						paramMap.put("total_plot",  map.get("parking_total"));
+						paramMap.put("empty_plot",  map.get("parking_total"));
+						paramMap.put("price_desc", getPrice(Long.valueOf(map.get("id")+"")));
+						paramMap.put("remark",map.get("remarks"));
+						paramMap.put("union_id", union_id);
+						paramMap.put("server_id", server_id);
+						paramMap.put("rand", Math.random());
+						String ret = "";
+						try {
+							logger.error(paramMap);
+							String linkParams = StringUtils.createLinkString(paramMap)+"key="+union_key;
+							System.out.println(linkParams);
+							String sign =StringUtils.MD5(linkParams).toUpperCase();
+							logger.error(sign);
+							paramMap.put("sign", sign);
+							//param = DesUtils.encrypt(param,"NQ0eSXs720170114");
+							String param = StringUtils.createJson(paramMap);
+							logger.error(param);
+							ret = HttpsProxy.doPost(url, param, "utf-8", 20000, 20000);
+							JSONObject object = new JSONObject(ret);
+							if(object!=null){
+								Integer uploadState = object.getInt("state");
+								if(uploadState==1){
+									daService.update("update com_info_tb set upload_union_time=?,union_state=? " +
+											"where id =?", new Object[]{System.currentTimeMillis()/1000,2,map.get("id")});
+									uploadCount = 1;
+								}else {
+									unUploadCount = 1;
+									logger.error(object.get("errmsg"));
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						logger.error(ret);
+				}
+				AjaxUtil.ajaxOutput(response, "新建并上传车场，成功"+uploadCount+"个，未成功"+unUploadCount+"个");
+
 			}else {
 				AjaxUtil.ajaxOutput(response, "0");
 			}
@@ -1042,12 +1119,18 @@ public class ParkManageAction extends Action {
 		//添加自动生成车场16位秘钥的逻辑
 		String ukey = StringUtils.createRandomCharData(16);
 		//String share_number =RequestUtil.processParams(request, "share_number");
+//		String comsql = "insert into com_info_tb(id,company_name,address,mobile,phone,create_time," +
+//				"mcompany,parking_type,parking_total,longitude,latitude,type,update_time,city,uid,biz_id,nfc,etc,book,navi,monthlypay,isnight,epay,car_type,minprice_unit,ukey)" +
+//				" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+//		Object[] comvalues = new Object[]{comId,company,address,mobile,phone,time,
+//				mcompany,parking_type,parking_total,Double.valueOf(longitude),Double.valueOf(latitude),type,time,city,uid,biz_id,
+//				nfc,etc,book,navi,monthlypay,isnight,epay,car_type,minprice_unit,ukey};
 		String comsql = "insert into com_info_tb(id,company_name,address,mobile,phone,create_time," +
-				"mcompany,parking_type,parking_total,longitude,latitude,type,update_time,city,uid,biz_id,nfc,etc,book,navi,monthlypay,isnight,epay,car_type,minprice_unit,ukey)" +
-				" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				"mcompany,parking_type,parking_total,longitude,latitude,type,update_time,city,uid,biz_id,nfc,etc,book,navi,monthlypay,isnight,epay,car_type,minprice_unit,ukey,state,isfixed,union_state)" +
+				" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		Object[] comvalues = new Object[]{comId,company,address,mobile,phone,time,
 				mcompany,parking_type,parking_total,Double.valueOf(longitude),Double.valueOf(latitude),type,time,city,uid,biz_id,
-				nfc,etc,book,navi,monthlypay,isnight,epay,car_type,minprice_unit,ukey};
+				nfc,etc,book,navi,monthlypay,isnight,epay,car_type,minprice_unit,ukey,0,1,0};
 		comMap.put("sql", comsql);
 		comMap.put("values", comvalues);
 

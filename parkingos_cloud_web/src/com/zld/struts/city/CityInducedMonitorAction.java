@@ -1,21 +1,19 @@
 package com.zld.struts.city;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zld.AjaxUtil;
+import com.zld.service.PgOnlyReadService;
+import com.zld.utils.HttpProxy;
+import com.zld.utils.RequestUtil;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.zld.AjaxUtil;
-import com.zld.service.PgOnlyReadService;
-import com.zld.utils.HttpProxy;
-import com.zld.utils.RequestUtil;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
 
 
 public class CityInducedMonitorAction extends Action {

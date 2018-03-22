@@ -1,12 +1,11 @@
 package com.zld;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-
-import javax.servlet.http.HttpServletResponse;
 
 public class AjaxUtil {
 

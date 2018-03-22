@@ -5,7 +5,6 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.zld.AjaxUtil;
-import com.zld.impl.CommonMethods;
 import com.zld.impl.MemcacheUtils;
 import com.zld.impl.MongoClientFactory;
 import com.zld.service.DataBaseService;

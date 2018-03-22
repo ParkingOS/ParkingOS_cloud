@@ -1,22 +1,19 @@
 package com.zld.struts.auth;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zld.AjaxUtil;
+import com.zld.service.DataBaseService;
+import com.zld.utils.JsonUtil;
+import com.zld.utils.RequestUtil;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.sun.org.apache.regexp.internal.REUtil;
-import com.zld.AjaxUtil;
-import com.zld.service.DataBaseService;
-import com.zld.utils.JsonUtil;
-import com.zld.utils.RequestUtil;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RoleManageAction extends Action {
 	@Autowired

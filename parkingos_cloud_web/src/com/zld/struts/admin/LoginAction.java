@@ -41,6 +41,7 @@ public class LoginAction extends Action{
 								 HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String action= RequestUtil.getString(request, "action");
+		logger.error(action);
 		if(action.equals("out")){//退出
 			String ip = StringUtils.getIpAddr(request);
 			Long uin = (Long)request.getSession().getAttribute("loginuin");
@@ -86,11 +87,13 @@ public class LoginAction extends Action{
 		request.getSession().setAttribute("supperadmin",0);//是否总管理员 0否1是
 		request.getSession().setAttribute("loginuin",user.get("id"));
 		request.getSession().setAttribute("comid",user.get("comid"));
+		logger.error(roleMap);
 		if(roleMap!=null){
 			if(roleId == 0 || roleId == 8){
 				request.getSession().setAttribute("supperadmin",1);//是否总管理员 0否1是
 			}
 		}
+		logger.error(roleId);
 		if(roleId!=null && roleId > -1){
 			Map<String, Object> orgMap = pgOnlyReadService.getMap("select name from zld_orgtype_tb where id=? ",
 					new Object[]{roleMap.get("oid")});
@@ -101,6 +104,7 @@ public class LoginAction extends Action{
 				request.getSession().setAttribute("oid", roleMap.get("oid"));//该登录角色所属组织类型
 				target ="parkmanage";
 				String orgname = (String)orgMap.get("name");
+				logger.error(orgname);
 				if(orgname.contains("车场")){
 					request.getSession().setAttribute("isadmin", 1);//是否是管理员 0否1是
 					request.setAttribute("cloudname", " 智慧停车云-车场云 ");
@@ -170,6 +174,7 @@ public class LoginAction extends Action{
 			if(roleId == 0){//总管理员拥有所有权限
 				authList = daService.getAll("select actions,id auth_id,nname,pid,url,sort,sub_auth childauths from auth_tb where oid=? and state=? ",
 						new Object[]{roleMap.get("oid"), 0});
+				logger.error(authList);
 				if(authList != null){
 					for(Map<String, Object> map : authList){
 						if(map.get("childauths") != null){
@@ -236,6 +241,7 @@ public class LoginAction extends Action{
 			}
 		}
 		request.getSession().setAttribute("role",role );
+		logger.error(role);
 		request.getSession().setAttribute("userinfo",user);
 		request.getSession().setAttribute("userid", username);
 		String nickname = "";
@@ -255,6 +261,7 @@ public class LoginAction extends Action{
 //				valuesList, new int[]{3,3,12,12,4});
 //		System.out.println(result);
 		request.setAttribute("logourl", logourl);
+		logger.error("over...."+target);
 		return mapping.findForward(target);
 	}
 

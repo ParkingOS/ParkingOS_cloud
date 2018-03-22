@@ -1,12 +1,12 @@
 package com.zld.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javapns.back.PushNotificationManager;
 import javapns.back.SSLConnectionHelper;
 import javapns.data.Device;
 import javapns.data.PayLoad;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ApnsSend
 {/*

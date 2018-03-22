@@ -1,9 +1,5 @@
 package com.zld.utils;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Map;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
@@ -12,6 +8,10 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Map;
 
 public class HttpProxy {
 
