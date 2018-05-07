@@ -1,5 +1,6 @@
 package parkingos.com.bolink.service;
 
+import parkingos.com.bolink.beans.FixCodeTb;
 import parkingos.com.bolink.beans.QrCodeTb;
 
 public interface QrFilterService {
@@ -10,4 +11,5 @@ public interface QrFilterService {
      */
     QrCodeTb getQrCode(String code);
 
+    FixCodeTb getFixCode(String code);
 }

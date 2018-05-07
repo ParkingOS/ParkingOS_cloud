@@ -6,15 +6,11 @@ import com.zld.common_dao.qo.SearchBean;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import parkingos.com.bolink.beans.CarInfoTb;
-import parkingos.com.bolink.beans.CarowerProduct;
-import parkingos.com.bolink.beans.ComInfoTb;
-import parkingos.com.bolink.beans.ProductPackageTb;
+import parkingos.com.bolink.beans.*;
 import parkingos.com.bolink.component.TcpComponent;
 import parkingos.com.bolink.service.WeixinProdService;
 import parkingos.com.bolink.utlis.CheckUtil;
 import parkingos.com.bolink.utlis.StringUtils;
-import parkingos.com.bolink.utlis.TempDataUtil;
 import parkingos.com.bolink.utlis.TimeTools;
 import parkingos.com.bolink.vo.ProdPriceView;
 import parkingos.com.bolink.vo.ProdView;
@@ -32,6 +28,8 @@ public class WeixinProdServiceImpl implements WeixinProdService {
     CommonDao<CarInfoTb> carInfoCommonDao;
     @Autowired
     CommonDao<ComInfoTb> comInfoCommonDao;
+    @Autowired
+    CommonDao<MonthPriceTb> monthPriceTbCommonDao;
     @Autowired
     CommonDao<ProductPackageTb> productPackageCommonDao;
 
@@ -170,18 +168,21 @@ public class WeixinProdServiceImpl implements WeixinProdService {
             int i = 1;
             long start = System.currentTimeMillis()/1000;
             for(long s=start;s<=start+2;s=System.currentTimeMillis()/1000){
-                Map<String, Object> monthPrice = TempDataUtil.monthPrice;
-                Object value = monthPrice.get(tradeNo);
-                logger.error("getlocalprice 从缓存查询价格第"+i+"次"+"=>"+value);
-                if(value!=null){
-                    String[] split = value.toString().split("_");
+//                Map<String, Object> monthPrice = TempDataUtil.monthPrice;
+//                Object value = monthPrice.get(tradeNo);
+                MonthPriceTb monthPriceTb = new MonthPriceTb();
+                monthPriceTb.setTradeNo(tradeNo);
+                MonthPriceTb priceTb = monthPriceTbCommonDao.selectObjectByConditions(monthPriceTb);
+                logger.error("getlocalprice 从缓存查询价格第"+i+"次"+"=>"+priceTb);
+                if(priceTb!=null){
+                    String[] split = priceTb.getDatastr().split("_");//value.toString().split("_");
                     state = Integer.valueOf(split[0]);
                     if(state==1){
                         money = split[1];
                     }else if(state==0){
                         errMsg = StringUtils.decodeUTF8(split[1]);
                     }
-                    monthPrice.remove(tradeNo);
+                    //monthPrice.remove(tradeNo);
                     break;
                 }
                 try {

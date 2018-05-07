@@ -71,6 +71,19 @@ public class CommonComponentImpl implements CommonComponent {
                         unionKey = orgCityMerchant.getUkey();
                     }
                 }
+            }else{//没有集团编号 直接取cityid拿厂商编号
+                Long cityId = comInfo.getCityid();
+                if(cityId!=null&&cityId>0){
+                    OrgCityMerchants orgCityMerchantConditions = new OrgCityMerchants();
+                    orgCityMerchantConditions.setId(cityId);
+                    //获取城市用户信息
+                    OrgCityMerchants orgCityMerchant = orgCityMerchantCommonDao.selectObjectByConditions(orgCityMerchantConditions);
+                    if(orgCityMerchant!=null){
+                        //获取对应的unionId和unionKey
+                        unionId = Long.valueOf(orgCityMerchant.getUnionId());
+                        unionKey = orgCityMerchant.getUkey();
+                    }
+                }
             }
         }
         unionInfo.setUnionId(unionId);

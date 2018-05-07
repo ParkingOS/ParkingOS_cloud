@@ -9,6 +9,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.prometheus.client.Counter;
 import org.apache.log4j.Logger;
 import parkingos.com.bolink.service.DoUpload;
 import parkingos.com.bolink.utlis.Check;
@@ -32,12 +33,17 @@ import java.util.concurrent.ExecutorService;
 
 @Sharable
 public class SensorServerHandler extends ChannelHandlerAdapter {
-
+	private static final Counter requestTotal = Counter.build()
+			.name("parkingos_tcp_total")
+			.labelNames("event", "tag")
+			.help("parkingos_total").register();
 	Logger logger = Logger.getLogger(SensorServerHandler.class);
 
 
 	 @Override 
-	 public void channelActive(ChannelHandlerContext ctx) throws Exception { 
+	 public void channelActive(ChannelHandlerContext ctx) throws Exception {
+	 	 //连接累计数量
+		 requestTotal.labels("connect","").inc();
 		 logger.info("一个新的连接>>>>>>>>>>>"+ctx.channel().remoteAddress().toString());
 		 ctx.fireChannelActive(); 
 		 ctx.flush();
@@ -49,6 +55,7 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 	}
 
 	private void  handleMessage(final ChannelHandlerContext ctx,final Object msg){
+
 		logger.info("tcp 开始处理消息>>>>"+msg.toString()+">>>>>>"+ctx.channel().remoteAddress().toString());
 		ExecutorService es  = ExecutorsUtil.getExecutorPool();
 		es.execute(new Runnable() {
@@ -65,11 +72,36 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 					if (mesg.length() > 10)
 						logger.error("服务器收到消息：" + mesg);
 					if (mesg.indexOf("0x11") != -1 && mesg.length() < 6) {// 心跳
+						//心跳统计
+						requestTotal.labels("msg","heartbeat").inc();
 						doBackMessage("0x12", ctx.channel());
+						doBeat(ctx.channel());
 						return;
 					}
 					JSONObject jsonMesg = JSON.parseObject(mesg, Feature.OrderedField);
 					logger.info(jsonMesg);
+					JSONObject result = new JSONObject();
+					try {
+						if(TempUtil.isReSend(jsonMesg)){
+							//重复统计
+							requestTotal.labels("msg","resend").inc();
+							result.put("state",0);
+							result.put("errmsg","数据已处理过...");
+							logger.error("发送数据给车场:"+result.toString());
+							doBackMessage(result.toString(), ctx.channel());
+							//logger.error(jsonMesg+",已处理过,不再处理...");
+							return;
+						}
+					} catch (Exception e) {
+						//数据格式错误
+						requestTotal.labels("msg","errorFormat").inc();
+						result.put("state",0);
+						result.put("errmsg","数据格式错误!");
+						doBackMessage(result.toString(), ctx.channel());
+						logger.error(mesg+">>>>>>>"+e.getMessage());
+						return;
+					}
+
 					if (jsonMesg != null) {
 						String service_name = null;
 						if (jsonMesg.containsKey("service_name")) {
@@ -77,6 +109,8 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 						} else {
 							String mess = "{\"state\":0,\"errmsg\":\"未识别到service_name标记\"}";
 							doBackMessage(mess, ctx.channel());
+							//未识别服务名
+							requestTotal.labels("msg","no_service_name").inc();
 							logger.error("**************缺少必须参数：service_name,请检查上传数据********");
 							return;
 						}
@@ -89,22 +123,26 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 							sign = jsonMesg.getString("sign");
 						}
 						if (Check.isEmpty(sign)) {
+							//未识签名
+							requestTotal.labels("msg","no_sign").inc();
 							logger.error("data error  ,error:未识别到sign标记");
 							String mess = "{\"state\":0,\"errmsg\":\"未识别到sign标记\"}";
 							doBackMessage(mess, ctx.channel());
 							return;
 						}
 
-
 						logger.error("开始执行tcp接口协议的方法调用");
 						if (service_name.equals("login")) {// 登录数据
+							requestTotal.labels("msg","login").inc();
 							JSONObject jsonObj = JSONObject.parseObject(data);
 							String parkId = jsonObj.getString("park_id");
 							if (Check.isEmpty(parkId)) {// 账户为空直接返回
+								requestTotal.labels("msg","login_error").inc();
 								logger.error("tcp park login ,error:未识别到park_id标记");
 								String mess = "{\"state\":0,\"errmsg\":\"未识别到park_id标记\"}";
 								doBackMessage(mess, ctx.channel());
 								try {
+									requestTotal.labels("msg","close_tcp").inc();
 									logger.error("关闭链接>>>>>"+ctx.channel().disconnect().isSuccess());
 								}catch (Exception e){
 									e.printStackTrace();
@@ -112,7 +150,16 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 								return;
 							}
 							String localId = null;
-							String key = parkId;
+//							String key = parkId;
+							DoUpload doUpload = NettyChannelMap.doUpload;
+							String key = doUpload.getComId(parkId);
+							if("".equals(key)){//车场编号是字符型，并且不是手输泊链编号的
+								requestTotal.labels("msg","login_error").inc();
+								logger.error("data error  ,error:车场编号是字符类型");
+								String mess = "{\"state\":0,\"errmsg\":\"车场不存在\"}";
+								doBackMessage(mess, ctx.channel());
+								return;
+							}
 							if (jsonObj.containsKey("local_id")) {//收费系统编号
 								localId = jsonObj.getString("local_id");
 								if (!Check.isEmpty(localId)) {
@@ -125,6 +172,8 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 						} else {
 							String token = jsonMesg.getString("token");
 							if (Check.isEmpty(token)) {// token值为空直接返回
+								//统计token错误次数
+								requestTotal.labels("msg","token_error").inc();
 								logger.error("data error ,error:未识别到token标记");
 								String mess = "{\"state\":0,\"errmsg\":\"未识别到token标记\"}";
 								doBackMessage(mess, ctx.channel());
@@ -134,6 +183,8 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 
 							DoUpload doUpload = NettyChannelMap.doUpload;
 							if (doUpload == null) {
+								//统计服务初始化错误次数
+								requestTotal.labels("msg","service_init_error").inc();
 								logger.error("server error ,初始化失败....");
 								String mess = "{\"state\":0,\"errmsg\":\"服务器初始化失败\"}";
 								doBackMessage(mess, ctx.channel());
@@ -142,6 +193,8 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 
 							String parkId = doUpload.checkTokenSign(token, sign, data);
 							if (parkId.indexOf("error") != -1) {//验证有错误
+
+								requestTotal.labels("msg","check_token_error").inc();
 								logger.error("server error ," + parkId);
 								String mess = "{\"state\":0,\"errmsg\":\"" + parkId + "\"}";
 								doBackMessage(mess, ctx.channel());
@@ -151,6 +204,8 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 							//token有效  判断是不是攻击  频率最高10s 1000次
 							logger.error("判断是都攻击==>chen");
 							if(isHit(token)){
+								//统计攻击次数
+								requestTotal.labels("msg","is_attack").inc();
 								logger.error("data error ,error:request_over_times");
 								String mess = "{\"state\":0,\"errmsg\":\"request_over_times\"}";
 								doBackMessage(mess, ctx.channel());
@@ -161,13 +216,19 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 							String backMesg = "";
 							JSONObject jsonData = JSONObject.parseObject(data);
 							if(jsonData!=null){
+								logger.error("车场parkid:"+parkId);
+//								Long id = doUpload.getComId(parkId);
 								jsonData.put("comid",parkId);
 							}else {
 								logger.error("data error:" + data);
+								//统计数据错误
+								requestTotal.labels("msg","data_error").inc();
 								doBackMessage("{\"state\":0,\"errmsg\":\"data error\"}", ctx.channel());
 								return ;
 							}
 							List<String> syncParks= null;
+							//统计各个请求量
+							requestTotal.labels("msg",service_name).inc();
 							if (service_name.equals("in_park")) {//进场 2.1
 								backMesg=doUpload.inPark(jsonData);
 								syncParks=doUpload.syncData(parkId,token,data);
@@ -237,7 +298,7 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 							}/*else if(service_name.equals("completezero_order")){//零元结算订单
 								doUpload.zeroOrderSync(jsonData);
 							}*/
-							logger.info("return message"+backMesg);
+							logger.error("return message"+backMesg);
 							doBackMessage(backMesg, ctx.channel());
 
 							logger.error("需要同步的sdk："+syncParks);
@@ -296,6 +357,7 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 	}
 
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		requestTotal.labels("disconnect","").inc();
 		logger.error("连接断开，释放资源" + ctx.channel());
 		DoUpload doUpload = NettyChannelMap.doUpload;
 		logger.info("tcpHandle:" + doUpload);
@@ -326,15 +388,19 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 				//发送消息给客户端
 //				if(mesg.length()>10)
 //					logger.error("服务器处理返回:"+mesg+","+channel);
+				logger.error("服务器处理返回:"+mesg+","+channel);
 				byte[] req = ("\n" + mesg + "\r").getBytes("UTF-8");
 				ByteBuf buf = Unpooled.buffer(req.length);
 				buf.writeBytes(req);
 				channel.writeAndFlush(buf);
+				requestTotal.labels("msg","back_msg_succ").inc();
 			} catch (UnsupportedEncodingException e) {
+				requestTotal.labels("msg","back_msg_error").inc();
 				e.printStackTrace();
 				logger.error("返回消息到客户端出现异常");
 			}
 		}else{
+			requestTotal.labels("msg","msg_client_down").inc();
 			logger.error("客户端已掉线...");
 		}
 	}
@@ -359,6 +425,7 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 			doBackMessage(result, clientChannel);
 			if(!isLongin){
 				try {
+					requestTotal.labels("disconnect","").inc();
 					logger.error("关闭链接>>>>>"+clientChannel.disconnect().isSuccess());
 				}catch (Exception e){
 					e.printStackTrace();
@@ -369,10 +436,19 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 			String result = "{\"state\":0,\"errmsg\":\"服务器初始化异常\"}";
 			doBackMessage(result, clientChannel);
 			try {
+				requestTotal.labels("disconnect","").inc();
 				logger.error("关闭链接>>>>>"+clientChannel.disconnect().isSuccess());
 			}catch (Exception e){
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public  void doBeat(Channel channel){
+		DoUpload doUpload = NettyChannelMap.doUpload;
+		if (doUpload != null) {
+			doUpload.doBeat(channel.remoteAddress().toString());
+			//doBackMessage("",channel);
 		}
 	}
 

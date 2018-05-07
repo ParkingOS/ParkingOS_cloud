@@ -11,7 +11,7 @@
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/list.css?v=7" />
 	<script src="${pageContext.request.contextPath}/resources/js/jquery.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/js/iscroll.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/js/parkprodlist.js?v=3"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/parkprodlist.js?v=30"></script>
 	<style type="text/css">
 #scroller .li1 {
 	padding: 0 10px;

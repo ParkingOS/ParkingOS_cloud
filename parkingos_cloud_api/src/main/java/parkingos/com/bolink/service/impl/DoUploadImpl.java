@@ -10,7 +10,6 @@ import parkingos.com.bolink.beans.*;
 import parkingos.com.bolink.service.DoUpload;
 import parkingos.com.bolink.utlis.Check;
 import parkingos.com.bolink.utlis.StringUtils;
-import parkingos.com.bolink.utlis.TempDataUtil;
 
 import java.math.BigDecimal;
 import java.net.Inet4Address;
@@ -27,6 +26,10 @@ public class DoUploadImpl implements DoUpload{
     private Logger logger = Logger.getLogger(DoUploadImpl.class);
     @Autowired
     public CommonDao commonDao;
+//    @Autowired
+//    private DataBaseSlaveDao dataBaseSlaveDao;
+
+
 
 
     @Override
@@ -34,13 +37,13 @@ public class DoUploadImpl implements DoUpload{
         ParkTokenTb tokenTb = new ParkTokenTb();
         tokenTb.setToken(token);
         tokenTb = (ParkTokenTb)commonDao.selectObjectByConditions(tokenTb);
-        logger.info(tokenTb.toString());
         String result ="";
         String parkId = "";
         if(tokenTb==null){
             result = "error:token无效";
             return result;
         }
+        logger.info(tokenTb.toString());
         parkId= tokenTb.getParkId();
         if(!Check.isEmpty(parkId)){
             if(Check.isLong(parkId)){
@@ -86,15 +89,38 @@ public class DoUploadImpl implements DoUpload{
         String localId = "";
         if(data.containsKey("local_id"))//多终端电脑登录
             localId = data.getString("local_id");
-        Long comid = -1L;
-        if(Check.isLong(parkId)){//校验车场编号类型
-            comid = Long.valueOf(parkId);
+        Integer receiveCloud = 1;//默认收
+        JSONObject setParams = null;
+        if(data.containsKey("set_params")){//扩展参数
+            setParams = data.getJSONObject("set_params");
+            logger.info(setParams);
+            if(setParams!=null){//是否接收预付消息（prepay_send）或月卡续费消息（month_send）
+                if(setParams.containsKey("receive_cloud")) {//是否接受云平台下行消息
+                    String receiveData = setParams.getString("receive_cloud");
+                    if(receiveData!=null&&("1".equals(receiveData)||"0".equals(receiveData))){
+                        receiveCloud = Integer.parseInt(receiveData);
+                    }else {
+                        logger.error("是否接受云平台下行消息参数设置错误:"+receiveData);
+                    }
+                }
+            }
         }
+
         //查询出车场具体信息
         ComInfoTb infoTb = new ComInfoTb();
-        infoTb.setId(comid);
+        infoTb.setBolinkId(parkId);
         infoTb = (ComInfoTb)commonDao.selectObjectByConditions(infoTb);
-
+        logger.error("douploadimpl=====96:"+infoTb);
+        if(infoTb==null){
+            Long comid = -1L;
+            if(Check.isLong(parkId)){//校验车场编号类型
+                comid = Long.valueOf(parkId);
+            }
+            infoTb = new ComInfoTb();
+            infoTb.setId(comid);
+            infoTb = (ComInfoTb)commonDao.selectObjectByConditions(infoTb);
+        }
+        logger.error("douploadimpl=====107:"+infoTb);
         if(infoTb!=null){
             String strKey = orgdata+"key="+infoTb.getUkey();
             String sign=null;
@@ -110,7 +136,8 @@ public class DoUploadImpl implements DoUpload{
             if(sign.equals(preSign)){
                 token = UUID.randomUUID().toString().replace("-", "");
                 ParkTokenTb params= new ParkTokenTb();
-                params.setParkId(parkId);
+                //params.setParkId(parkId);
+                params.setParkId(infoTb.getId()+"");
                 params.setLocalId(localId);
                 int count = commonDao.selectCountByConditions(params);
 
@@ -124,14 +151,15 @@ public class DoUploadImpl implements DoUpload{
                 if(count==0){
                     //自动生成主键id
                     ParkTokenTb tokenTb = new ParkTokenTb();
-                    tokenTb.setParkId(parkId);
+                    tokenTb.setParkId(infoTb.getId()+"");
                     tokenTb.setToken(token);
                     tokenTb.setLoginTime(System.currentTimeMillis()/1000);
                     tokenTb.setServerIp(serverIP);
                     tokenTb.setSourceIp(sourceIP);
                     tokenTb.setLocalId(localId);
+                    tokenTb.setReceiveCloud(receiveCloud);
                     r = commonDao.insert(tokenTb);
-                    logger.info("tcp login park:"+comid+",token"+token+",login result:"+r);
+                    logger.info("tcp login park:"+parkId+",token"+token+",login result:"+r);
 
                 }else {
 
@@ -140,14 +168,16 @@ public class DoUploadImpl implements DoUpload{
                     tokenTb.setLoginTime(System.currentTimeMillis()/1000);
                     tokenTb.setServerIp(serverIP);
                     tokenTb.setLocalId(localId);
+                    tokenTb.setReceiveCloud(receiveCloud);
                     tokenTb.setSourceIp(sourceIP);
                     ParkTokenTb conditions = new ParkTokenTb();
-                    conditions.setParkId(parkId);
+//                    conditions.setParkId(parkId);  infoTb.getId()+""
+                    conditions.setParkId(infoTb.getId()+"");
                     conditions.setLocalId(localId);
                     r= commonDao.updateByConditions(tokenTb,conditions);
 
 //                    r = daService.update(sql, params);
-                    logger.info("tcp login , relogon,park:"+comid+",token"+token+",result:"+r);
+                    logger.info("tcp login , relogon,park:"+parkId+",token"+token+",result:"+r);
                 }
                 if(r>=1){
                     logger.error(logStr+"error:登录成功");
@@ -193,43 +223,19 @@ public class DoUploadImpl implements DoUpload{
     public String inPark(JSONObject object) {
 //        JSONObject object = JSONObject.parseObject(data);
         logger.error("====>>>进入inpark:"+object);
-        /*String errmsg = "";
-        Map<String, Object> params = new HashMap<String, Object>();
-        logger.info(params);
-        for (String key : object.keySet()) {
-            Object value = object.get(key);
-            if(!Check.isEmpty(value+"")){
-                params.put(StringUtils.underline2Camel(key), value);
-            }
-        }
-        String uid =object.getString("uid");
-        Long comid = object.getLong("comid");
-        Long userid =getUserId(uid,comid);
-        if(userid==-1){
-            errmsg ="收费员不存在";
-        }
-        object.put("uid",userid);
-        logger.info(params);
-        object = (JSONObject) JSON.toJSON(params);
-//        object.put("comid",parkId);inChannelId
-        String carType = object.getString("carType");
-        Long carTypeId = getCarType(carType,comid);
-        if(carTypeId!=-1){
-            object.put("carType",carTypeId);
-        }
-        object.put("uin","-1");
-        object.put("createTime",object.get("inTime"));
-        object.put("orderIdLocal",object.get("orderId"));
-        String inChannelId = object.getString("inChannelId");
-        Long channelId = getComPass(inChannelId,comid);
-        if(channelId!=-1)
-            object.put("inPassid",channelId);
-        else
-            object.put("inPassid",object.get("inChannelId"));
-        logger.info(object);*/
         OrderTb orderTb = setOrder(object);// JSON.parseObject(object.toJSONString(),OrderTb.class);
 //        logger.info(orderTb);
-
+        if(orderTb==null||orderTb.getComid()==null||orderTb.getComid()<0||
+                Check.isEmpty(orderTb.getOrderIdLocal())
+                ||Check.isEmpty(orderTb.getCarNumber())){
+            object.clear();
+            object.put("service_name","in_park");
+            object.put("state",0);
+            object.put("errmsg","数据无效");
+            object.put("order_id",orderTb.getOrderIdLocal());
+            logger.error("inpark error data:"+orderTb);
+            return object.toJSONString();
+        }
 
         //判断车场 订单是不是唯一 ,如果已经存在此订单 ,打回
         OrderTb newcon = new OrderTb();
@@ -243,50 +249,79 @@ public class DoUploadImpl implements DoUpload{
             object.put("state",0);
             object.put("errmsg","该订单已经存在");
             object.put("order_id",orderTb.getOrderIdLocal());
+            logger.error("inpark ,订单号："+orderTb.getOrderIdLocal()+",已经入场...");
             return object.toJSONString();
         }
 
         //增加上面逻辑  防止车辆进场--出场之后  重新进场完全一样订单
-        OrderTb con = new OrderTb();
-        con.setComid(Long.valueOf(object.getString("comid")));
-        con.setCarNumber(orderTb.getCarNumber());
-        con.setOrderIdLocal(orderTb.getOrderIdLocal());
-        con.setState(0);
-        //查询是否已入场
-        int count = commonDao.selectCountByConditions(con);
-        logger.error("inpark====>>>>是否入场:"+count);
+//        OrderTb con = new OrderTb();
+//        con.setComid(Long.valueOf(object.getString("comid")));
+//        con.setCarNumber(orderTb.getCarNumber());
+//        con.setOrderIdLocal(orderTb.getOrderIdLocal());
+//        con.setState(0);
+//        //查询是否已入场
+//        int count = commonDao.selectCountByConditions(con);
+        /*logger.error("inpark begin search order count....");
+        String sql ="select id from order_tb where " +
+                " id in  (select id from order_tb where  comid="+orderTb.getComid()+" " +
+                "AND car_number='"+orderTb.getCarNumber()+"'  " +
+                "AND order_id_local='"+orderTb.getOrderIdLocal()+"' ) and state=0";
+        List<Map<String,Object>> list = commonDao.getObjectBySql(sql);
+        Integer count =0;
+        OrderTb newOrder = null;
+        if(list!=null) {
+            count = list.size();
+            newOrder = new OrderTb();
+            Map<String,Object> map = list.get(0);
+            newOrder.setId((Long)map.get("id"));
+
+        }
+        logger.error("inpark end search order count ..."+count);*/
+
+//        logger.error("inpark====>>>>是否入场:"+count);/**/
+//        if(orderTb.getComid()>0){
         OrderTb fields = new OrderTb();
         fields.setEndTime(System.currentTimeMillis()/1000);
         fields.setTotal(new BigDecimal(0.0));
         fields.setOutUid(orderTb.getOutUid());
         fields.setState(1);
-        con.setOrderIdLocal(null);
+        OrderTb con = new OrderTb();
+        con.setComid(orderTb.getComid());
+        con.setCarNumber(orderTb.getCarNumber());
+        con.setState(0);
         //0元结算掉所有车场编号、车牌号一致、未结算的订单
+        //int update = commonDao.updateByPrimaryKey(newOrder);
         int update = commonDao.updateByConditions(fields,con);
         logger.error("零元结算 update order :"+update);
+//        }
         //写入新订单
-        int r=0;
-        if(count>0){
-            con.setOrderIdLocal(orderTb.getOrderIdLocal());
-            orderTb.setState(0);
-            con.setState(null);
-            logger.error("update order :"+orderTb);
-            r = commonDao.updateByConditions(orderTb,con);
-            logger.error("update order:,con:"+con+",order:"+orderTb+",r:"+r);
-        }else{
-            Long newId = commonDao.selectSequence(OrderTb.class);
-            orderTb.setId(newId);
-            logger.error("insert order :"+orderTb);
-            r= commonDao.insert(orderTb);
-            logger.error("inpark>>>insert:"+r);
-        }
+//        int r=0;
+//        if(count>0){
+////            con.setOrderIdLocal(orderTb.getOrderIdLocal());
+////            orderTb.setState(0);
+////            con.setState(null);
+//            logger.error("update order :"+orderTb);
+//           // r = commonDao.updateByConditions(orderTb,con);
+//            orderTb.setId(newOrder.getId());
+//            orderTb.setState(0);
+//            r = commonDao.updateByPrimaryKey(orderTb);
+//            logger.error("update order:,order:"+orderTb+",r:"+r);
+//        }else{
+       // Long newId = commonDao.selectSequence(OrderTb.class);
+        //orderTb.setId(newId);
+        logger.error("insert order :"+orderTb);
+        int r= commonDao.insert(orderTb);
+        logger.error("inpark>>>insert:"+r);
+//        }
         String orderId = orderTb.getOrderIdLocal();
+        Integer emplyPlot = object.getInteger("empty_plot");
+        Long comid = object.getLong("comid");
         object.clear();
         object.put("service_name","in_park");
-        object.put("state",r);
+        object.put("state",1);
         object.put("errmsg","");
         object.put("order_id",orderId);
-        updateParkPlot(object.getInteger("empty_plot"),object.getLong("comid"));
+        updateParkPlot(emplyPlot,comid);
         return object.toJSONString();
     }
 
@@ -345,7 +380,7 @@ public class DoUploadImpl implements DoUpload{
                 conditions.setComid(userInfoTb.getComid());
                 userInfoTb.setUserId(null);
                 userInfoTb.setPassword(null);
-                userInfoTb.setNickname(null);
+//                userInfoTb.setNickname(null);
                 r = commonDao.updateByConditions(userInfoTb,conditions);
             }
         }
@@ -380,6 +415,8 @@ public class DoUploadImpl implements DoUpload{
         recordTb.setParkId(comId);
         //检查是否已存在记录
         int count = commonDao.selectCountByConditions(recordTb);
+        logger.error("查询是否存在记录条件:"+recordTb);
+        logger.error("是否存在记录:"+count);
 
         Long startTime = jsonData.getLong("start_time");
         Long endTime = jsonData.getLong("end_time");
@@ -394,6 +431,7 @@ public class DoUploadImpl implements DoUpload{
         }else{//已存在时，根据uuid更新
             ParkuserWorkRecordTb con = new ParkuserWorkRecordTb();;
             con.setUuid(uuid);
+            con.setParkId(comId);
             r = commonDao.updateByConditions(recordTb,con);
         }
         jsonData.clear();
@@ -678,29 +716,44 @@ public class DoUploadImpl implements DoUpload{
         con.setOrderIdLocal(orderTb.getOrderIdLocal());
         //OrderTb order =(OrderTb)commonDao.selectObjectByConditions(con);
         OrderTb order = null;
-        OrderTb newOrder = null;
+        //OrderTb newOrder = new OrderTb();
         Integer count = commonDao.selectCountByConditions(con);
         logger.error("outpark====>>>count:"+count);
         int r =0;
         if(count==1){
             order = (OrderTb)commonDao.selectObjectByConditions(con);
-        }else{//兼容时间不准确
-            newCon.setCarNumber(orderTb.getCarNumber());
-            newCon.setComid(orderTb.getComid());
-            newCon.setOrderIdLocal(orderTb.getOrderIdLocal());
-            newCon.setState(0);
-            Integer newCount = commonDao.selectCountByConditions(newCon);
-            if(newCount!=null&&newCount==1){
-                newOrder = (OrderTb)commonDao.selectObjectByConditions(newCon);
-                logger.error("chenbowen"+newOrder);
-                r = commonDao.updateByConditions(orderTb,newCon);
-                orderTb.setId(newOrder.getId());
-                writeToAccount(orderTb);
+        }else{ //兼容时间不准确
+//            newCon.setCarNumber(orderTb.getCarNumber());
+//            newCon.setComid(orderTb.getComid());
+//            newCon.setOrderIdLocal(orderTb.getOrderIdLocal());
+//            newCon.setState(0);
+//            Integer newCount = commonDao.selectCountByConditions(newCon);
+            logger.error("begin search order count....");
+            String sql ="select id from order_tb where " +
+                    " id in  (select id from order_tb where  comid="+orderTb.getComid()+" " +
+                    "AND car_number='"+orderTb.getCarNumber()+"'  " +
+                    "AND order_id_local='"+orderTb.getOrderIdLocal()+"' ) and state=0";
+            List<Map<String,Object>> list = commonDao.getObjectBySql(sql);
+            Integer newCount =0;
+            if(list!=null) {
+                newCount = list.size();
+            }
+            logger.error("end search order count ..."+newCount);
+            if(newCount==1){
+                Map<String,Object> map = list.get(0);
+                //newOrder.setId((Long)map.get("id")); //(OrderTb)commonDao.selectObjectByConditions(newCon);
+                orderTb.setId((Long)map.get("id"));
+                logger.error("outpark...."+orderTb);
+                r =commonDao.updateByPrimaryKey(orderTb); // commonDao.updateByConditions(orderTb,newCon);
+                if(r==1)
+                    writeToAccount(orderTb);
             }else if (newCount>1){
                 logger.error("请先结算这辆车的其它未出场订单");
             }else{
                 logger.error("没有这辆车辆的入场订单");
-                newCon.setState(null);
+                newCon.setCarNumber(orderTb.getCarNumber());
+                newCon.setComid(orderTb.getComid());
+                newCon.setOrderIdLocal(orderTb.getOrderIdLocal());
                 //防止车场没有调用出场直接调用2.3 然后返回来调用2.2出场
                 int countOnly = commonDao.selectCountByConditions(newCon);
                 logger.error("====outpark>>>countOnly:"+countOnly);
@@ -720,19 +773,22 @@ public class DoUploadImpl implements DoUpload{
         }
         logger.error("outPark>>>订单:"+order);
         if(order!=null&&order.getId()!=null){
-            r = commonDao.updateByConditions(orderTb,con);
+            orderTb.setId(order.getId());
+            //r = commonDao.updateByConditions(orderTb,con);
+            r = commonDao.updateByPrimaryKey(orderTb);
             orderTb.setId(order.getId());
             writeToAccount(orderTb);
         }
 
 //        Long comid = jsonData.getLong("comid");
         Integer emplyPlot = jsonData.getInteger("empty_plot");
+        Long comid = jsonData.getLong("comid");
         jsonData.clear();
         jsonData.put("service_name","out_park");
-        jsonData.put("state",r);
+        jsonData.put("state",1);
         jsonData.put("order_id",orderTb.getOrderIdLocal());
         jsonData.put("errmsg",errmsg);
-        updateParkPlot(emplyPlot,jsonData.getLong("comid"));
+        updateParkPlot(emplyPlot,comid);
         return jsonData.toJSONString();
     }
 
@@ -784,6 +840,7 @@ public class DoUploadImpl implements DoUpload{
             orderTb.setId(newId);
             ret = commonDao.insert(orderTb);
             logger.error("插入上传订单ret:"+ret);
+            ret = 1;
         }
 //        if(order!=null&&order.getId()!=null){
 //            con.setOrderIdLocal(orderId);
@@ -1256,7 +1313,7 @@ public class DoUploadImpl implements DoUpload{
     public void queryProdprice(JSONObject jsonData) {
 
         if(!jsonData.containsKey("trade_no")||!jsonData.containsKey("price")||!jsonData.containsKey("state")){
-            logger.info("查询月卡续费价格数据不合法");
+            logger.error("查询月卡续费价格数据不合法");
         }
         String tradeNo = jsonData.getString("trade_no");
         Double price = jsonData.getDouble("price");
@@ -1268,8 +1325,14 @@ public class DoUploadImpl implements DoUpload{
         }else{
             priceInfo = state+"_"+price;
         }
-        Map<String, Object> monthPrice = TempDataUtil.monthPrice;
-        monthPrice.put(tradeNo,priceInfo);
+        MonthPriceTb monthPriceTb = new MonthPriceTb();
+        monthPriceTb.setTradeNo(tradeNo);
+        monthPriceTb.setDatastr(priceInfo);
+        monthPriceTb.setCtime(System.currentTimeMillis()/1000);
+        logger.error(monthPriceTb);
+        logger.error(commonDao.insert(monthPriceTb));
+//        Map<String, Object> monthPrice = TempDataUtil.monthPrice;
+//        monthPrice.put(tradeNo,priceInfo);
     }
 
     @Override
@@ -1333,7 +1396,7 @@ public class DoUploadImpl implements DoUpload{
     }
 
     private void updateParkPlot(Integer plot ,Long comId){
-        if(plot!=null&&plot>0&&comId!=null&&comId>0){
+        if(plot!=null&&plot>=0&&comId!=null&&comId>0){
             ComInfoTb infoTb = new ComInfoTb();
             infoTb.setEmpty(plot);
             infoTb.setId(comId);
@@ -1482,6 +1545,8 @@ public class DoUploadImpl implements DoUpload{
 
     //停车费写入账户表
     private void writeToAccount(OrderTb orderTb){
+        if(orderTb==null||orderTb.getId()==null)
+            return ;
         int r =0;
         Integer payType = orderTb.getPayType();
         Double total = StringUtils.formatDouble(orderTb.getTotal());
@@ -1598,8 +1663,25 @@ public class DoUploadImpl implements DoUpload{
     }
     @Override
     public void operateLiftrod(String comid,String channelId,Integer state,Integer operate) {
+
+        logger.info("抬杆回调："+channelId+"~~~"+comid+"~~~"+operate+"~~~"+state);
+
         LiftrodInfoTb liftrodInfoConditions = new LiftrodInfoTb();
-        liftrodInfoConditions.setChannelId(channelId);
+
+        Long channel = null;
+        ComPassTb comPassTb = new ComPassTb();
+        comPassTb.setComid(Long.parseLong(comid));
+        comPassTb.setChannelId(channelId);
+        comPassTb.setState(0);
+        comPassTb = (ComPassTb)commonDao.selectObjectByConditions(comPassTb);
+        if(comPassTb!=null){
+            channel =comPassTb.getId();
+        }
+        if(channel==null){
+            logger.error("没有对应的通道信息");
+            return;
+        }
+        liftrodInfoConditions.setChannelId(channel+"");
         liftrodInfoConditions.setOperate(Long.parseLong(operate+""));
         liftrodInfoConditions.setComid(comid);
         LiftrodInfoTb liftrodInfoTb = (LiftrodInfoTb)commonDao.selectObjectByConditions(liftrodInfoConditions);
@@ -1825,6 +1907,21 @@ public class DoUploadImpl implements DoUpload{
             return jsonError;
         }
         return jsonResult.toString();
+    }
+
+    @Override
+    public String getComId(String parkId) {
+        ComInfoTb comInfoTb = new ComInfoTb();
+        comInfoTb.setBolinkId(parkId);
+        comInfoTb = (ComInfoTb)commonDao.selectObjectByConditions(comInfoTb);
+        if(comInfoTb!=null){
+            return comInfoTb.getId()+"";
+        }
+        //如果不是手输泊链编号的车场，如果输入的车场号是字符型，直接打回
+        if(Check.isNumber(parkId)){
+            return Long.parseLong(parkId)+"";
+        }
+        return "";
     }
 
     @Override
@@ -2062,6 +2159,14 @@ public class DoUploadImpl implements DoUpload{
             return jsonError;
         }
         return jsonResult.toString();
+    }
+
+    public void doBeat(String sourceIp){
+        ParkTokenTb tokenTb = new ParkTokenTb();
+        tokenTb.setBeatTime(System.currentTimeMillis()/1000);
+        ParkTokenTb con = new ParkTokenTb();
+        con.setSourceIp(sourceIp);
+        logger.info("save beat time >>>>>>"+ commonDao.updateByConditions(tokenTb,con));
     }
 
 }

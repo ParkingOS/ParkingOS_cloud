@@ -1,7 +1,9 @@
 package parkingos.com.bolink.utlis;
 
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -78,7 +80,7 @@ public class HttpProxy {
 		}
 		return result;
 	}
-	
+
 
 	
 	public  String doHeadPost(String url,String content){

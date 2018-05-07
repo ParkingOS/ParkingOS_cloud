@@ -5,6 +5,6 @@ import java.util.Map;
 
 public class TempDataUtil {
 
-    public static final Map<String,Object> monthPrice = new HashMap<String, Object>();
+    public static final Map<String,Integer> pictureMap = new HashMap<String, Integer>();
 
 }

@@ -89,6 +89,9 @@ public class WeixinProdAction {
         Long carOwnerProductId = RequestUtil.getLong(request, "car_owner_product_id", -1l);
         String prodId = RequestUtil.getString(request, "prod_id");
         Integer type = RequestUtil.getInteger(request, "type", 0);//0:购买 1：续费
+        String carNumber = StringUtils.decodeUTF8(RequestUtil.getString(request,"car_number"));
+        logger.info("编yici码："+carNumber+"编2次"+StringUtils.decodeUTF8(carNumber));
+        logger.info("月卡续费车牌"+carNumber);
         ComInfoTb comInfoTb = new ComInfoTb();
         comInfoTb.setId(comId);
         comInfoTb = (ComInfoTb) commonDao.selectObjectByConditions(comInfoTb);
@@ -99,7 +102,7 @@ public class WeixinProdAction {
 //        parkName = StringUtils.decodeUTF8(parkName);
 //        logger.info(parkName);
 //        parkName = new String(parkName.getBytes("GBK"), "utf-8");
-        logger.info("tobuyprod=>"+uin+"~"+cardId+"~"+comId+"~"+carOwnerProductId+"~"+prodId+"~"+type+"~"+endTime+"~"+parkName);
+        logger.info("tobuyprod=>"+uin+"~"+cardId+"~"+comId+"~"+carOwnerProductId+"~"+prodId+"~"+type+"~"+endTime+"~"+parkName+"~"+carNumber);
 
         String bTime = TimeTools.getDate_YY_MM_DD();
         //获取月卡结束时间
@@ -120,10 +123,11 @@ public class WeixinProdAction {
         request.setAttribute("title", "月卡续费");
         request.setAttribute("money", "0.0");
         request.setAttribute("com_id", comId);
-        request.setAttribute("card_id", cardId);
+        request.setAttribute("card_id", StringUtils.encodeUTF8(cardId));
         request.setAttribute("prod_id", prodId);
         request.setAttribute("uin", uin);
         request.setAttribute("park_name", parkName);
+        request.setAttribute("car_number",StringUtils.encodeUTF8(carNumber));
         return "wxpublic/buyprod";
     }
 
@@ -135,7 +139,8 @@ public class WeixinProdAction {
      */
     @RequestMapping("topayprod")
     public String toPayProd(HttpServletRequest request, HttpServletResponse response) throws  Exception{
-        String cardId = RequestUtil.getString(request, "card_id");
+        logger.info("进入第三方支付月卡方法");
+        String cardId = StringUtils.decodeUTF8(RequestUtil.getString(request, "card_id"));
         Long comId = RequestUtil.getLong(request, "com_id", -1L);
         Integer months = RequestUtil.getInteger(request, "months", 1);
         Long uin = RequestUtil.getLong(request,"uin",-1L);
@@ -143,7 +148,10 @@ public class WeixinProdAction {
         Double price = RequestUtil.getDouble(request, "price", -1d);
         String startTime = RequestUtil.processParams(request, "start_time");
         Long sTime = TimeTools.getLongMilliSecondFrom_HHMMDD(startTime)/1000;
-        logger.info("topayprod:"+uin+"~"+cardId+"~"+comId+"~"+months+"~"+tradeNo+"~"+price+"~"+startTime);
+        String carNumber = StringUtils.decodeUTF8(RequestUtil.getString(request,"car_number"));
+//        logger.info("车牌解码"+StringUtils.encodeUTF8(carNumber)+"~~~"+StringUtils.encodeUTF8(StringUtils.encodeUTF8(carNumber)));
+//        logger.info("aaaaaaa"+StringUtils.decodeUTF8(carNumber)+"~~"+StringUtils.decodeUTF8(StringUtils.decodeUTF8(carNumber)));
+        logger.info("topayprod:"+uin+"~"+cardId+"~"+comId+"~"+months+"~"+tradeNo+"~"+price+"~"+startTime+"~"+carNumber);
         String openid =   RequestUtil.processParams(request, "openid");
         String appid = "";
         Cookie[] cookies = request.getCookies();//这样便可以获取一个cookie数组
@@ -173,8 +181,9 @@ public class WeixinProdAction {
                 String redirect_url = "http%3a%2f%2f"+Defind.getProperty("DOMAIN")+"%2fzld%2ftopayprod%3f" +
                         "price%3d"+price+
                         "%26months%3d"+months+
-                        "%26card_id%3d"+cardId+
+                        "%26card_id%3d"+StringUtils.encodeUTF8(StringUtils.encodeUTF8(StringUtils.encodeUTF8(cardId)))+
                         "%26com_id%3d"+comId+
+                        "%26car_number%3d"+StringUtils.encodeUTF8(StringUtils.encodeUTF8(StringUtils.encodeUTF8(carNumber)))+
                         "%26start_time%3d"+startTime+
                         "%26trade_no%3d"+tradeNo;
                 String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
@@ -202,10 +211,17 @@ public class WeixinProdAction {
         Long unionId = unionInfo.getUnionId();
         String unionKey = unionInfo.getUnionKey();
 
+        //根据comid获得车场信息
+        ComInfoTb comInfoTb = new ComInfoTb();
+        comInfoTb.setId(comId);
+        comInfoTb = (ComInfoTb)commonDao.selectObjectByConditions(comInfoTb);
+
+        String parkid ="";
+
         //组织公众号基本参数
         Map<String, Object> attachMap = new HashMap<String, Object>();
         attachMap.put("type", 11);//第三方月卡续费
-        attachMap.put("params", sTime+"__"+months+"__"+tradeNo+"__"+price+"__"+comId+"__"+unionId+"__"+cardId);
+        attachMap.put("params", sTime+"__"+months+"__"+tradeNo+"__"+price+"__"+comId+"__"+unionId+"__"+cardId+"__"+carNumber);
 
         if(isThirdPay){
             // 组织第三方参数,签名
@@ -216,16 +232,33 @@ public class WeixinProdAction {
             paramsMap.put("attch", attach);
             paramsMap.put("union_id", unionId);
             paramsMap.put("money", price);
-            paramsMap.put("park_id", comId);
+            if(comInfoTb.getBolinkId()!=null&&!"".equals(comInfoTb.getBolinkId())){
+                parkid = comInfoTb.getBolinkId();
+                paramsMap.put("park_id", parkid);
+            }else {
+                paramsMap.put("park_id", comId);
+            }
+//            paramsMap.put("park_id", comId);
             paramsMap.put("trade_no", tradeNo);
             paramsMap.put("backurl", backUrl);
+
+            logger.error("topayprod:" + paramsMap);
 //            paramsMap.put("appid",Defind.getProperty("WXPUBLIC_APPID"));
 //            paramsMap.put("openid",openid);
             // 获取unionKey
             String sign = CheckUtil.createSign(paramsMap, unionKey);
 
-            String url = Constants.UNIONIP +
-                    "/handlemonthpay?openid="+openid+"&appid="+appid+"&money="+price+"&union_id="+unionId+"&sign="+sign+"&backurl="+backUrl+"&park_id="+comId+"&trade_no="+tradeNo+"&attch="+attach;
+            String url = "";
+            if(parkid!=null&&!"".equals(parkid)){
+                url = Constants.UNIONIP +
+                        "/handlemonthpay?openid="+openid+"&appid="+appid+"&money="+price+"&union_id="+unionId+"&sign="+sign+"&backurl="+backUrl+"&park_id="+parkid+"&trade_no="+tradeNo+"&attch="+StringUtils.encodeUTF8(attach);
+            }else{
+                url = Constants.UNIONIP +
+                        "/handlemonthpay?openid="+openid+"&appid="+appid+"&money="+price+"&union_id="+unionId+"&sign="+sign+"&backurl="+backUrl+"&park_id="+comId+"&trade_no="+tradeNo+"&attch="+StringUtils.encodeUTF8(attach);
+            }
+
+//            String url = Constants.UNIONIP +
+//                    "/handlemonthpay?openid="+openid+"&appid="+appid+"&money="+price+"&union_id="+unionId+"&sign="+sign+"&backurl="+backUrl+"&park_id="+comId+"&trade_no="+tradeNo+"&attch="+attach;
             logger.info("topayprod:"+url);
             try {
                 response.sendRedirect(url);

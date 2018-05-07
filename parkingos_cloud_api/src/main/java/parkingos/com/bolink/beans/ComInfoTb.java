@@ -143,12 +143,24 @@ public class ComInfoTb {
 
     private String ukey;
 
+    private Integer superimposed;
+
+    private String bolinkId;
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getBolinkId() {
+        return bolinkId;
+    }
+
+    public void setBolinkId(String bolinkId) {
+        this.bolinkId = bolinkId;
     }
 
     public String getCompanyName() {
@@ -777,5 +789,13 @@ public class ComInfoTb {
 
     public void setUkey(String ukey) {
         this.ukey = ukey == null ? null : ukey.trim();
+    }
+
+    public Integer getSuperimposed() {
+        return superimposed;
+    }
+
+    public void setSuperimposed(Integer superimposed) {
+        this.superimposed = superimposed;
     }
 }

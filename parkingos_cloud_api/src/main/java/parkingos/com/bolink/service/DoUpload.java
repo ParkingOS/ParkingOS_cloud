@@ -95,5 +95,7 @@ public interface DoUpload {
 	 */
 	public String uploadPrice(String token,String data);
 
+	void doBeat(String sourceIp);
+    String getComId(String parkId);
 }
 

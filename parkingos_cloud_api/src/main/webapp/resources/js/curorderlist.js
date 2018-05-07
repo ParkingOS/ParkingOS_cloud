@@ -37,7 +37,7 @@ function loaded(uin) {
     $("#pullUp").hide();
 
     pullDownEl.className = 'loading';
-    pullDownEl.querySelector('.pullDownLabel').innerHTML = '加载中...';
+    pullDownEl.querySelector('.pullDownLabel').innerHTML = '加载中....';
 
     page = 1;
     $.post("getwxcurorderlist", {
@@ -141,7 +141,7 @@ function loaded(uin) {
                         +'<span id="lockhtml'+value.id+'" class="weui-form-preview__value">'+lockhtml+'</span>'
                         +'</div></div><div class="weui-form-preview__ft">'
                         +'<input id="lock'+value.id+'" type="checkbox" '+checked+' style="display:none">'
-                        +'<a id="l'+value.id+'" class="weui-form-preview__btn weui-form-preview__btn_primary">'+lockbtn+'</a>'
+                        +'<a id="l'+value.id+'" class="weui-form-preview__btn weui-form-preview__btn_primary" >'+lockbtn+'</a>'
                         +'<a id="pay'+value.id+'" class="weui-form-preview__btn weui-form-preview__btn_primary">'+payhtml+'</a></div></div>'
                         +'</div></div><div style="height:15px"></div>'
                     )
@@ -339,6 +339,9 @@ function orderdetail(com_id,order_id,car_number){
 }
 
 function lock1(oid,is_locked){
+    //重置隐藏
+    $.hideLoading();
+
     var lockstatus;
     if($("#lock"+oid).is(":checked")){
         //解锁
@@ -351,60 +354,75 @@ function lock1(oid,is_locked){
         console.log('锁定')
         $.showLoading("锁定中...");
     }
+
+    setTimeout(function(){  $.hideLoading(); }, 300);
+
     console.log(oid,lockstatus)
-    $.ajax({
-        type:'post',
-        url:'lockcar',
-        data:{
-            'lock_status':lockstatus,
-            'oid':oid,
-        },
-        success:function(ret){
-            //隐藏loading
-            $.hideLoading();
-            //ret.state: -2系统异常 -1通知处理失败  0解锁成功  1锁定成功  3锁定失败 5解锁失败 6已锁定 7未锁定 9车场离线
-            if(ret.state==-2){
-                //系统异常
-                $.alert("系统异常!");
-            }else if(ret.state==-1){
-                //通知处理失败
-                $.alert("网络异常!");
-            }else if(ret.state==0){
-                //解锁成功
-                //修改按钮,改变checked状态
-                $("#lock"+oid).removeAttr("checked")
-                $("#lockhtml"+oid).empty()
-                $("#l"+oid).empty()
-                $("#lockhtml"+oid).append('<span>未锁定</span>')
-                $("#l"+oid).append('锁定车辆')
-                $.alert("解锁成功!您的车辆已经处于解锁状态,可以正常出场");
-            }else if(ret.state==1){
-                //锁定成功
-                //修改按钮
-                $("#lock"+oid).prop("checked",true)
-                $("#lockhtml"+oid).empty()
-                $("#l"+oid).empty()
-                $("#lockhtml"+oid).append('<span style="color:red">已锁定</span>')
-                $("#l"+oid).append('解锁车辆')
-                $.alert("锁定成功!您的车辆已经处于锁定状态,请在出场前解锁,否则无法出场");
-            }else if(ret.state==3){
-                //锁定失败
-                $.alert("锁定失败!请稍后再试或下拉刷新查看车辆状态!");
-            }else if(ret.state==5){
-                //解锁失败
-                $.alert("解锁失败!请稍后再试或下拉刷新查看车辆状态;仍无法解锁请联系车场人员,解锁码:"+ret.lock_key);
-            }else if(ret.state==6){
-                //已锁定
-                $.alert("您的车辆已处于锁定状态,下拉刷新车辆状态!");
-            }else if(ret.state==7){
-                //未锁定
-                $.alert("您的车辆已处于未锁定状态,下拉刷新车辆状态!");
-            }else if(ret.state==9){
-                //车场离线
-                $.alert("停车场处于断网状态,锁车失败!")
+    setTimeout(function(){
+        $.ajax({
+
+            type:'post',
+            url:'toadduser',
+            data:{
+                'lock_status':lockstatus,
+                'oid':oid,
+            },
+            success:function(ret){
+                //隐藏loading
+                $.hideLoading();
+                var lockStatus = ret.lock_status;
+                var orderId = ret.oid;
+                if(ret.state==-10){
+                    //没有手机号
+                    //$.alert("发送手机验证码异常,锁车失败!");
+                    $.hideLoading();
+                    location.href="adduser.do?lockStatus="+lockStatus+"&orderId="+orderId;
+                }
+
+                //ret.state: -2系统异常 -1通知处理失败  0解锁成功  1锁定成功  3锁定失败 5解锁失败 6已锁定 7未锁定 9车场离线
+                else if(ret.state==-2){
+                    //系统异常
+                    $.alert("系统异常!");
+                }else if(ret.state==-1){
+                    //通知处理失败
+                    $.alert("网络异常!");
+                }else if(ret.state==0){
+                    //解锁成功
+                    //修改按钮,改变checked状态
+                    $("#lock"+oid).removeAttr("checked")
+                    $("#lockhtml"+oid).empty()
+                    $("#l"+oid).empty()
+                    $("#lockhtml"+oid).append('<span>未锁定</span>')
+                    $("#l"+oid).append('锁定车辆')
+                    $.alert("解锁成功!您的车辆已经处于解锁状态,可以正常出场");
+                }else if(ret.state==1){
+                    //锁定成功
+                    //修改按钮
+                    $("#lock"+oid).prop("checked",true)
+                    $("#lockhtml"+oid).empty()
+                    $("#l"+oid).empty()
+                    $("#lockhtml"+oid).append('<span style="color:red">已锁定</span>')
+                    $("#l"+oid).append('解锁车辆')
+                    $.alert("锁定成功!您的车辆已经处于锁定状态,请在出场前解锁,否则无法出场");
+                }else if(ret.state==3){
+                    //锁定失败
+                    $.alert("锁定失败!请稍后再试或下拉刷新查看车辆状态!");
+                }else if(ret.state==5){
+                    //解锁失败
+                    $.alert("解锁失败!请稍后再试或下拉刷新查看车辆状态;仍无法解锁请联系车场人员,解锁码:"+ret.lock_key);
+                }else if(ret.state==6){
+                    //已锁定
+                    $.alert("您的车辆已处于锁定状态,下拉刷新车辆状态!");
+                }else if(ret.state==7){
+                    //未锁定
+                    $.alert("您的车辆已处于未锁定状态,下拉刷新车辆状态!");
+                }else if(ret.state==9){
+                    //车场离线
+                    $.alert("停车场处于断网状态,锁车失败!")
+                }
             }
-        }
-    })
+        })
+    },400)
 }
 
 //扩展Date的format方法

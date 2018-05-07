@@ -1,14 +1,12 @@
 package parkingos.com.bolink.actions;
 
 import com.zld.common_dao.dao.CommonDao;
-import io.netty.channel.Channel;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import parkingos.com.bolink.beans.*;
 import parkingos.com.bolink.component.CommonComponent;
-import parkingos.com.bolink.netty.NettyChannelMap;
 import parkingos.com.bolink.service.AliPrepayService;
 import parkingos.com.bolink.service.QrFilterService;
 import parkingos.com.bolink.service.ShopTicketManagerService;
@@ -46,23 +44,40 @@ public class ShopTicketManagerAction {
     @RequestMapping(value="/shopticket")
     public  void shopTicket(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+
+        Map<String,Object> infoMap  = new HashMap<String, Object>();
+
+        String reduceStr = RequestUtil.getString(request,"reduce");
+        Integer reduce =-1;
+        if(reduceStr!=null&&Check.isNumber(reduceStr)){
+            reduce = Integer.parseInt(reduceStr);
+        }else if(reduceStr!=null&&!"".equals(reduceStr)){
+            infoMap.put("state", -1);
+            infoMap.put("error", "请输入正确的减免额度");
+            AjaxUtil.ajaxOutput(response, infoMap);
+            return;
+        }
         String action = RequestUtil.processParams(request, "action");
         String token =RequestUtil.processParams(request, "token");
         Long shop_id = RequestUtil.getLong(request, "shop_id", -1L);
-        Map<String,Object> infoMap  = new HashMap<String, Object>();
-        if(token==null||"null".equals(token)||"".equals(token)){
-            infoMap.put("result", "fail");
-            infoMap.put("message", "登录失效请重新登录");
-            AjaxUtil.ajaxOutput(response, infoMap);
-            return;
+
+
+        if(reduce<0){//不是商户后台车牌减免,原有逻辑
+            if(token==null||"null".equals(token)||"".equals(token)){
+                infoMap.put("result", "fail");
+                infoMap.put("message", "登录失效请重新登录");
+                AjaxUtil.ajaxOutput(response, infoMap);
+                return;
+            }
+            Long uin = validToken(token);
+            if(uin == null){
+                infoMap.put("result", "fail");
+                infoMap.put("message", "登录失效请重新登录");
+                AjaxUtil.ajaxOutput(response, infoMap);
+                return;
+            }
         }
-        Long uin = validToken(token);
-        if(uin == null){
-            infoMap.put("result", "fail");
-            infoMap.put("message", "登录失效请重新登录");
-            AjaxUtil.ajaxOutput(response, infoMap);
-            return;
-        }
+
         if(action.equals("create")){
             Map<String,Object> rMap = createTicket(request,response,shop_id);
             AjaxUtil.ajaxOutput(response, rMap);
@@ -182,16 +197,39 @@ public class ShopTicketManagerAction {
             //2判断是否用过劵
             Integer count = aliPrepayService.unpayOrderForTicket(unpayOrder.getId());
             logger.error("是否已使用过券："+count);
-            if(count>0){
-                rMap.put("result",-1);
-                rMap.put("error","本次停车已使用过优惠券");
-                logger.error("本次停车已使用过优惠券");
-                AjaxUtil.ajaxOutput(response, rMap);
-                return;
+            //获取车场是否支持多个叠加券下发
+            ComInfoTb comInfoTb = new ComInfoTb();
+            comInfoTb.setId(shopInfo.getComid());
+            comInfoTb = (ComInfoTb) commonDao.selectObjectByConditions(comInfoTb);
+            Integer superimposed = 0;//默认不支持
+            if (comInfoTb != null) {
+                superimposed = comInfoTb.getSuperimposed();
             }
+            logger.error("车场是否支持叠加用券：" + superimposed);
+            if(superimposed==0){
+                if(count>0){
+                    rMap.put("result",-1);
+                    rMap.put("error","本次停车已使用过优惠券");
+                    logger.error("本次停车已使用过优惠券");
+                    AjaxUtil.ajaxOutput(response, rMap);
+                    return;
+                }
+            }
+
             //3 生成劵
             Map<String,Object> retMap = createTicket(request,response,shop_id);
-            if(retMap.get("result") == -1 || retMap.get("result") == -2){
+            Object oResult = retMap.get("result");
+            int intResult =  0;
+            if(oResult!=null){
+                try{
+                    intResult = ((Integer)oResult).intValue();
+                }
+                catch(Exception ex){
+                    logger.error("ticket resutl to in error",ex);
+                }
+            }
+
+            if(intResult == -1 || intResult == -2){
                 logger.info("ticketManager noscan 车牌>>>>>>>>"+car_number+"生成减免劵出错，用劵失败");
                 AjaxUtil.ajaxOutput(response, retMap);
                 return;
@@ -204,6 +242,8 @@ public class ShopTicketManagerAction {
         return;
     }
 
+
+
     /**
      * 生成减免劵
      * @param request
@@ -212,10 +252,13 @@ public class ShopTicketManagerAction {
      * @return
      */
     private Map<String,Object> createTicket(HttpServletRequest request, HttpServletResponse response,Long shop_id){
+
+        Integer reduce = RequestUtil.getInteger(request,"reduce",-1);
+
         Integer time = RequestUtil.getInteger(request, "time", 0);
         Integer type = RequestUtil.getInteger(request, "type", 3);
         Integer amount = RequestUtil.getInteger(request, "amount", 0);
-        String remark = AjaxUtil.decodeUTF8(RequestUtil.processParams(request, "remark"));//备注
+        String remark = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "remark"));//备注
         Integer free = 0;//全免劵(张)
         Map<String, Object> rMap = new HashMap<String, Object>();
         if(shop_id == -1){
@@ -223,7 +266,8 @@ public class ShopTicketManagerAction {
             rMap.put("error", "商户编号>>"+shop_id+"不存在");
             return rMap;
         }
-        logger.error(">>>>>>>>>>打印优惠券，优惠券类型type:"+type+",优惠时长time："+time+",优惠金额amount："+amount+",商户shop_id:"+shop_id+"备注remark:"+remark);
+        logger.error(">>>>>>>>>>打印优惠券，优惠券类型type:"+type+",优惠时长time："+time+",优惠金额amount："+amount+",商户shop_id:"+shop_id+"备注remark:"+remark+"减免金额:"+reduce);
+
         SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
         ShopTb shopInfo =  shopTicketManagerService.qryShopInfoById(shop_id);
         Integer ticket_limit = shopInfo.getTicketLimit()== null ? 0: shopInfo.getTicketLimit();
@@ -236,18 +280,35 @@ public class ShopTicketManagerAction {
         Long etime =  btime + validite_time*60*60;
         //判断商户额度是否可以发劵
         if(type == 3){//优惠券-时长
-            amount = 0;
-            if(time <= 0){
-                logger.error("优惠券额度必须为正数"+",商户shop_id:"+shop_id);
-                rMap.put("result", -2);
-                rMap.put("error", "优惠券额度必须为正数");
-                return rMap;
-            }
-            if(ticket_limit < (time)){
-                logger.error("优惠券额度已用完，还剩余额度"+ticket_limit+",优惠券时长time："+time+",商户shop_id:"+shop_id);
-                rMap.put("result", -2);
-                rMap.put("error", "优惠券额度不够");
-                return rMap;
+
+            if(reduce>-1){
+                if(reduce <= 0){
+                    logger.error("优惠券额度必须为正数"+",商户shop_id:"+shop_id);
+                    rMap.put("result", -2);
+                    rMap.put("error", "优惠券额度必须为正数");
+                    return rMap;
+                }
+                if(ticket_limit < (reduce)){
+                    logger.error("优惠券额度已用完，还剩余额度"+ticket_limit+",优惠券时长reduce："+reduce+",商户shop_id:"+shop_id);
+                    rMap.put("result", -2);
+                    rMap.put("error", "优惠券额度不够");
+                    return rMap;
+                }
+                time = reduce;
+            }else{
+                amount = 0;
+                if(time <= 0){
+                    logger.error("优惠券额度必须为正数"+",商户shop_id:"+shop_id);
+                    rMap.put("result", -2);
+                    rMap.put("error", "优惠券额度必须为正数");
+                    return rMap;
+                }
+                if(ticket_limit < (time)){
+                    logger.error("优惠券额度已用完，还剩余额度"+ticket_limit+",优惠券时长time："+time+",商户shop_id:"+shop_id);
+                    rMap.put("result", -2);
+                    rMap.put("error", "优惠券额度不够");
+                    return rMap;
+                }
             }
         }else if(type == 4){//全免券
             time = 0;//全免券
@@ -260,19 +321,37 @@ public class ShopTicketManagerAction {
                 return rMap;
             }
         }else if(type == 5){//优惠券-金额
-            time = 0;
-            if(amount <= 0){
-                logger.error("优惠券额度必须为正数"+",商户shop_id:"+shop_id);
-                rMap.put("result", -2);
-                rMap.put("error", "优惠券额度必须为正数");
-                return rMap;
+
+            if(reduce>-1){
+                if(reduce <= 0){
+                    logger.error("优惠券额度必须为正数"+",商户shop_id:"+shop_id);
+                    rMap.put("result", -2);
+                    rMap.put("error", "优惠券额度必须为正数");
+                    return rMap;
+                }
+                if(ticket_money < (reduce)){
+                    logger.error("优惠券额度已用完，还剩余额度"+ticket_money+",优惠券金额reduce："+reduce+",商户shop_id:"+shop_id);
+                    rMap.put("result", -2);
+                    rMap.put("error", "优惠券额度不够");
+                    return rMap;
+                }
+                amount = reduce;
+            }else{
+                time = 0;
+                if(amount <= 0){
+                    logger.error("优惠券额度必须为正数"+",商户shop_id:"+shop_id);
+                    rMap.put("result", -2);
+                    rMap.put("error", "优惠券额度必须为正数");
+                    return rMap;
+                }
+                if(ticket_money < (amount)){
+                    logger.error("优惠券额度已用完，还剩余额度"+ticket_money+",优惠券金额amount："+amount+",商户shop_id:"+shop_id);
+                    rMap.put("result", -2);
+                    rMap.put("error", "优惠券额度不够");
+                    return rMap;
+                }
             }
-            if(ticket_money < (amount)){
-                logger.error("优惠券额度已用完，还剩余额度"+ticket_money+",优惠券金额amount："+amount+",商户shop_id:"+shop_id);
-                rMap.put("result", -2);
-                rMap.put("error", "优惠券额度不够");
-                return rMap;
-            }
+
         }
         List<Map<String, Object>> bathSql = new ArrayList<Map<String,Object>>();
         //取当前最大减免劵的id然后+1
@@ -420,8 +499,8 @@ public class ShopTicketManagerAction {
         //3 下发减免劵
         boolean isSend = false;//是否已发送的SDK
         if(ticketType!=-1){//取到了券信息并且有通道，发送消息到sdk
-            Channel channel = NettyChannelMap.get(commonUtils.getChannel(ticketTb.getComid()+""));
-            if(channel!=null){
+            ParkTokenTb tokenTb = commonUtils.getChannel(comid);
+            if(tokenTb!=null){
                 Map<String, Object> messageMap = new HashMap<String, Object>();
                 messageMap.put("service_name", "deliver_ticket");
                 messageMap.put("ticket_id", ticketId+"");
@@ -442,7 +521,7 @@ public class ShopTicketManagerAction {
                 messageMap.put("order_id", unpayOrder.getOrderIdLocal());
                 messageMap.put("remark", ticketTb.getRemark());
                 String mesg = StringUtils.createJson(messageMap);
-                isSend=commonUtils.doBackMessage(mesg, channel);
+                isSend=commonUtils.doSendMessage(mesg,tokenTb);//commonUtils.doBackMessage(mesg, channel);
                 logger.error("发送减免券数据到SDK："+mesg+",ret:"+isSend);
                 if(isSend){
                     // 4查询车场是否确认使用减免劵

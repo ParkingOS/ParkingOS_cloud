@@ -4,6 +4,8 @@ import parkingos.com.bolink.beans.ComInfoTb;
 import parkingos.com.bolink.beans.ShopTb;
 import parkingos.com.bolink.beans.UserInfoTb;
 
+import java.util.Map;
+
 public interface ShopLoginService {
     /**
      * 获取商户操作员信息
@@ -50,4 +52,12 @@ public interface ShopLoginService {
      * @return
      */
     Integer SaveUserSession(Long uin, String token, Long time, String version);
+
+    int sendCode(String mobile,String ckey);
+
+    int validCode(String username,String mobile, String code);
+
+    int resetPass(String username, String pass, String md5Pass,String token);
+
+    Map<String,Object> getckey(String mobile, Long userid);
 }

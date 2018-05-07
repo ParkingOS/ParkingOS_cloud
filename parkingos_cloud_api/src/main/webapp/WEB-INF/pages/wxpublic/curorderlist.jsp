@@ -172,7 +172,7 @@
 <input id="domain" type="text" style="display:none;" value="${domain}"/>
 <input id="uin" type="text" style="display:none;" value="${uin}"/>
 <script src="${pageContext.request.contextPath}/resources/js/iscroll.js"></script>
-<script src="${pageContext.request.contextPath}/resources/js/curorderlist.js?v=5"></script>
+<script src="${pageContext.request.contextPath}/resources/js/curorderlist.js?v=673"></script>
 <script src="${pageContext.request.contextPath}/resources/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/jquery-weui.min.js"></script>
 </body>

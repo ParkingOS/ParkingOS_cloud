@@ -17,6 +17,7 @@ import parkingos.com.bolink.beans.ComInfoTb;
 import parkingos.com.bolink.beans.OrgCityMerchants;
 import parkingos.com.bolink.beans.ParkTokenTb;
 import parkingos.com.bolink.dao.MongoDBFactory;
+import parkingos.com.bolink.dao.MongoDbBakFactory;
 import parkingos.com.bolink.utlis.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,6 +63,7 @@ public class UploadCarPics {
 			JSONObject jsonObj = null;
 			try {
 				jsonObj = JSONObject.parseObject(str);
+
 			} catch (Exception e) {
 				StringUtils.ajaxOutput(response, "json数据格式不正确");
 			}
@@ -70,10 +72,10 @@ public class UploadCarPics {
 			if (jsonObj.containsKey("token")) {
 				token = jsonObj.getString("token");
 			}
-			String serviceName = "";
-			if (jsonObj.containsKey("serviceName")) {
-				serviceName = jsonObj.getString("service_name");
-			}
+//			String serviceName = "";
+//			if (jsonObj.containsKey("serviceName")) {
+//				serviceName = jsonObj.getString("service_name");
+//			}
 			String data = "";
 			if (jsonObj.containsKey("data")) {
 				data = jsonObj.getString("data");
@@ -82,6 +84,7 @@ public class UploadCarPics {
 			String comidNew = "";
 			ParkTokenTb tokenTb = new ParkTokenTb();
 			tokenTb.setToken(token);
+
 			tokenTb = (ParkTokenTb) commonDao.selectObjectByConditions(tokenTb);//.selectListByConditions(token);//.selectObjectBySelective(tokenTb);
 
 			if (tokenTb != null) {
@@ -91,7 +94,7 @@ public class UploadCarPics {
 				return;
 			}
 
-			logger.error(">>>>>>>>>>>>>>>>收到图片数据内容长度........" + data.length());
+			logger.error(">>>>>>>>>>>>>>>>收到图片数据内容长度........" + data.length()+",comid:"+comidNew);
 			String result = handleSDKuploadPic(data, comidNew); //doUpload.uploadCarpic(comidNew, data);
 			logger.error(">>>>>>>>>>>>>>>>>>>>上传图片执行结果：uploadCarpic:" + result);
 			StringUtils.ajaxOutput(response, result);
@@ -215,11 +218,31 @@ public class UploadCarPics {
 		String picType = "";
 		String carNumber = "";
 		String eventId = "";
+		if (jsonObj.containsKey("content")) {
+			content = jsonObj.getString("content");
+		} else {
+			return "{\"state\":0,\"errmsg\":\"图片上传失败，缺少图片数据！\"}";
+		}
+		byte[] picture = Base64Utils.decode(content.getBytes());// Base64.decode(content);
+		int picSize = picture.length;
+		logger.error("pic size:"+picSize);
+		if(picSize>201100){
+			return "{\"state\":0,\"errmsg\":\"图片过大，最大支持200K，实际上传大小："+picture.length/1000+"K\"}";
+		}
 		if (pictureSource.equals("order")) {
 			if (jsonObj.containsKey("order_id")) {
 				orderId = jsonObj.getString("order_id");
 				if(Check.isEmpty(orderId)){
 					return "{\"state\":0,\"errmsg\":\"图片上传失败，缺少订单编号！\"}";
+				}else{
+					String key = parkId+"_"+orderId+"_"+picSize;
+					logger.error("uploac pic key:"+key);
+					if(TempDataUtil.pictureMap.containsKey(key)){
+						logger.error("error,图片重复上传"+key);
+						return "{\"state\":0,\"errmsg\":\"图片已上传过，不可再传！\"}";
+					}else {
+						TempDataUtil.pictureMap.put(key,1);
+					}
 				}
 			} else {
 				return "{\"state\":0,\"errmsg\":\"图片上传失败，缺少订单编号！\"}";
@@ -230,6 +253,15 @@ public class UploadCarPics {
 				liftRodId = jsonObj.getString("liftrod_id");
 				if(Check.isEmpty(liftRodId)){
 					return "{\"state\":0,\"errmsg\":\"图片上传失败，缺少抬杆记录编号！\"}";
+				}else{
+					String key = parkId+"_"+liftRodId+"_"+picSize;
+					logger.error("uploac pic key:"+key);
+					if(TempDataUtil.pictureMap.containsKey(key)){
+						logger.error("error,图片重复上传:"+key);
+						return "{\"state\":0,\"errmsg\":\"图片已上传过，不可再传！\"}";
+					}else {
+						TempDataUtil.pictureMap.put(key,1);
+					}
 				}
 			} else {
 				return "{\"state\":0,\"errmsg\":\"图片上传失败，缺少抬杆记录编号！\"}";
@@ -243,11 +275,7 @@ public class UploadCarPics {
 			}
 			dbName = "confirm_pic_" + yearMonth;
 		}
-		if (jsonObj.containsKey("content")) {
-			content = jsonObj.getString("content");
-		} else {
-			return "{\"state\":0,\"errmsg\":\"图片上传失败，缺少图片数据！\"}";
-		}
+
 
 		if (jsonObj.containsKey("create_time")
 				&& Check.isLong(jsonObj.getString("create_time"))) {
@@ -262,7 +290,7 @@ public class UploadCarPics {
 			parkOrderType = jsonObj.getString("park_order_type");
 		if(jsonObj.containsKey("pic_type"))
 			picType = jsonObj.getString("pic_type");
-		byte[] picture = Base64Utils.decode(content.getBytes());// Base64.decode(content);
+
 		DB mydb = MongoDBFactory.getInstance().getMongoDBBuilder("zld");
 		mydb.requestStart();
 		DBCollection collection = mydb.getCollection(dbName);
@@ -380,6 +408,13 @@ public class UploadCarPics {
 					document.put("currentnum", currentnum);
 				}
 				DBObject obj  = collection.findOne(document);
+				if(obj == null){
+					logger.error("从备份mongodb中取....");
+					db = MongoDbBakFactory.getInstance().getMongoDBBuilder("zld");
+					collection = db.getCollection(collectionName);
+					obj = collection.findOne(document);
+					logger.error("从备份mongodb中取...."+obj);
+				}
 				if(obj == null){
 					AjaxUtil.ajaxOutput(response, "");
 					logger.error("取图片错误.....");

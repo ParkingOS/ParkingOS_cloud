@@ -15,6 +15,16 @@ public class QrCodeTb {
 
     private Integer type;
 
+    private Integer isauto;
+
+    public Integer getIsauto() {
+        return isauto;
+    }
+
+    public void setIsauto(Integer isauto) {
+        this.isauto = isauto;
+    }
+
     private Integer state;
 
     private String code;

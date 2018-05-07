@@ -109,6 +109,7 @@
 					<input id="trade_no" style="display:none" name="trade_no" value="">
 					<input id="com_id" style="display:none" name="com_id" value="${com_id}">
 					<input id="uin" style="display:none" name="uin" value="${uin}">
+					<input id="car_number" style="display:none" name="car_number" value="${car_number}">
 					<input id="card_id" style="display:none" name="card_id" value="${card_id}">
 				</div>
 			<input type="button" id="paysubmit" class="weui-btn weui-btn_primary" style="width:95%;display:block" onclick='check();' value="Ðø·ÑÔÂ¿¨" />

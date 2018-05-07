@@ -88,7 +88,7 @@
 	<!-- 我的车牌[[ -->
 		<dl class="my-lpn">
 			<dt class="title">我的车牌号码</dt>
-			<dd class="lpn">${carnumber}<span id ="mycar"><a class="change-btn" href="aliprepay.do?action=toddcar&ticketid=${ticketid}&parkid=${parkid}&openid=${openid}&forward=${forward}">修改</a></span></dd>
+			<dd class="lpn">${carnumber}<span id ="mycar"><a class="change-btn" href="aliprepay.do?action=toddcar&fixcode=${fixcode}&ticketid=${ticketid}&parkid=${parkid}&openid=${openid}&forward=${forward}">修改</a></span></dd>
 		</dl>
 		<!-- 我的车牌]] -->
 	<section class="main">

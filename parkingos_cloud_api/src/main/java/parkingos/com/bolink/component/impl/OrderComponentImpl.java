@@ -1,16 +1,17 @@
 package parkingos.com.bolink.component.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zld.common_dao.dao.CommonDao;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import parkingos.com.bolink.beans.ComInfoTb;
 import parkingos.com.bolink.component.CommonComponent;
 import parkingos.com.bolink.component.OrderComponent;
 import parkingos.com.bolink.constant.Constants;
 import parkingos.com.bolink.dto.CurOrderPrice;
 import parkingos.com.bolink.dto.UnionInfo;
 import parkingos.com.bolink.utlis.CheckUtil;
-import parkingos.com.bolink.utlis.CommonUtils;
 import parkingos.com.bolink.utlis.HttpsProxy;
 
 import java.util.HashMap;
@@ -25,6 +26,8 @@ public class OrderComponentImpl implements OrderComponent {
     CommonComponent commonComponent;
     @Autowired
     HttpsProxy httpsProxy;
+    @Autowired
+    CommonDao commonDao;
 
     @Override
     public CurOrderPrice getCurOrderPrice(Long unionId, Long comId, String carNumber, String orderId) {
@@ -34,7 +37,15 @@ public class OrderComponentImpl implements OrderComponent {
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("order_id", orderId);
         paramMap.put("plate_number",carNumber);
-        paramMap.put("park_id",comId);
+
+        ComInfoTb comInfoTb = new ComInfoTb();
+        comInfoTb.setId(comId);
+        comInfoTb = (ComInfoTb)commonDao.selectObjectByConditions(comInfoTb);
+        if(comInfoTb!=null&&comInfoTb.getBolinkId()!=null&&!"".equals(comInfoTb.getBolinkId())){
+            paramMap.put("park_id",comInfoTb.getBolinkId());
+        }else {
+            paramMap.put("park_id",comId);
+        }
         UnionInfo unionInfo = commonComponent.getUnionInfo(comId);
         paramMap.put("union_id", unionInfo.getUnionId());
 

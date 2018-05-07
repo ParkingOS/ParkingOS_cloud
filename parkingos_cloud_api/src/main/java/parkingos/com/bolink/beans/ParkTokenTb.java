@@ -11,6 +11,13 @@ public class ParkTokenTb {
 
     private Long beatTime;
 
+    private Integer receiveCloud;
+
+
+    public Integer getReceiveCloud() {
+        return receiveCloud;
+    }
+
     @Override
     public String toString() {
         return "ParkTokenTb{" +
@@ -19,10 +26,15 @@ public class ParkTokenTb {
                 ", token='" + token + '\'' +
                 ", loginTime=" + loginTime +
                 ", beatTime=" + beatTime +
+                ", receiveCloud=" + receiveCloud +
                 ", serverIp='" + serverIp + '\'' +
                 ", sourceIp='" + sourceIp + '\'' +
                 ", localId='" + localId + '\'' +
                 '}';
+    }
+
+    public void setReceiveCloud(Integer receiveCloud) {
+        this.receiveCloud = receiveCloud;
     }
 
     private String serverIp;

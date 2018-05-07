@@ -104,6 +104,7 @@
 				<form method="get" role="form" action="${furl}" id="checkform">
 					<input type="text" name="action" value="${action}" class="info">
 					<input type="text" name="code" value="${code}" class="info">
+					<input type="text" name="fixcode" value="${fixcode}" class="info">
 					<input type="text" name="openid" value="${openid}" class="info">
 					<input type="text" name="parkid" value="${comid}" class="info">
 					<input type="text" name="ticketid" value="${ticketid}" class="info">

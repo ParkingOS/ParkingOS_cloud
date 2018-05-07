@@ -144,6 +144,7 @@ public class WeixinAccountAction {
         Integer count = weixinAccountService.getUserCarCount(uin);
         request.setAttribute("domain", Constants.DOMAIN);
         request.setAttribute("openid", openId);
+        request.getSession().setAttribute("openid",openId);
         request.setAttribute("uin",uin);
         logger.info("count:"+count);
 
