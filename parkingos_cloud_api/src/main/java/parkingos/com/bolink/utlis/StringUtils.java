@@ -776,8 +776,11 @@ public class StringUtils {
 			}
 		}
 		String check = "^[A-Z]{1}[A-Z_0-9]{5}$";
-		if (province.equals("使")) {
-			check = "^[A-Z_0-9]{6}$";
+//		if (province.equals("使")) {
+//			check = "^[A-Z_0-9]{6}$";
+//		}
+		if(plate.length()==8){
+			check = "^[A-Z]{1}[A-Z_0-9]{6}$";
 		}
 		plate = plate.substring(1);
 		Pattern p = Pattern.compile(check);
