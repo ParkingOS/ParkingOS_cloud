@@ -19,6 +19,16 @@ public class FixCodeTb {
 
     private Long endTime;
 
+    private Long uin;
+
+    public Long getUin() {
+        return uin;
+    }
+
+    public void setUin(Long uin) {
+        this.uin = uin;
+    }
+
     public Long getCreateTime() {
         return createTime;
     }

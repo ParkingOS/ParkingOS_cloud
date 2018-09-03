@@ -54,7 +54,7 @@ public class WeixinProdServiceImpl implements WeixinProdService {
                 carOwnerProductConditions.setIsDelete(0L);
                 List<SearchBean> searchBeans = new ArrayList<SearchBean>();
                 SearchBean searchBean = new SearchBean();
-                searchBean.setBasicValue(carInfo.getCarNumber());
+                searchBean.setBasicValue("%"+carInfo.getCarNumber()+"%");
                 searchBean.setOperator(FieldOperator.LIKE);
                 searchBean.setFieldName("car_number");
                 searchBeans.add(searchBean);
@@ -71,12 +71,12 @@ public class WeixinProdServiceImpl implements WeixinProdService {
                         uList.add(carOwnerProductId);
                         //获取月卡对应车牌,多个
                         String carNumber = carOwnerProduct.getCarNumber();
-                        String[] carNumbers = carNumber.split("\\|");
-                        String newCarNumber = "";
-                        for (String number : carNumbers) {
-                            newCarNumber += number+",";
-                        }
-                        newCarNumber = newCarNumber.substring(0, newCarNumber.length()-1);
+//                        String[] carNumbers = carNumber.split("\\|");
+//                        String newCarNumber = "";
+//                        for (String number : carNumbers) {
+//                            newCarNumber += number+",";
+//                        }
+//                        newCarNumber = newCarNumber.substring(0, newCarNumber.length()-1);
 
                         //月卡套餐
                         Long pid = carOwnerProduct.getPid();
@@ -123,10 +123,14 @@ public class WeixinProdServiceImpl implements WeixinProdService {
                         prodView.setComId(comId);
                         prodView.setCardId(cardId);
                         prodView.setPrice(price);
-                        prodView.setCarNumber(newCarNumber);
+//                        prodView.setCarNumber(newCarNumber);
+                        prodView.setCarNumber(carNumber);
                         prodView.setCarOwnerProductId(carOwnerProductId);
                         prodView.setLimitDate(limitDate);
                         prodView.setState(state);
+                        if(parkName.length()>8){
+                            parkName = parkName.substring(0,8)+"···";
+                        }
                         prodView.setParkName(parkName);
                         logger.info(prodView);
                         prodViews.add(prodView);

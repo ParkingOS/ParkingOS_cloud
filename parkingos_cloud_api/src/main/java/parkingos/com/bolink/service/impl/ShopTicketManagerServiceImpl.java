@@ -38,6 +38,7 @@ public class ShopTicketManagerServiceImpl implements ShopTicketManagerService {
     public ShopTb qryShopInfoById(Long id) {
         ShopTb shopConditions = new ShopTb();
         shopConditions.setId(id);
+        shopConditions.setState(0);
         return shopTbCommonDao.selectObjectByConditions(shopConditions);
     }
 

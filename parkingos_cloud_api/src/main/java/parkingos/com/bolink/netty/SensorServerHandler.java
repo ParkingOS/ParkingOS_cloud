@@ -3,6 +3,7 @@ package parkingos.com.bolink.netty;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
+import com.google.common.util.concurrent.RateLimiter;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -13,12 +14,14 @@ import io.prometheus.client.Counter;
 import org.apache.log4j.Logger;
 import parkingos.com.bolink.service.DoUpload;
 import parkingos.com.bolink.utlis.Check;
+import parkingos.com.bolink.utlis.Defind;
 import parkingos.com.bolink.utlis.ExecutorsUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
 
@@ -33,6 +36,9 @@ import java.util.concurrent.ExecutorService;
 
 @Sharable
 public class SensorServerHandler extends ChannelHandlerAdapter {
+	//包请求次数限流器池，针对每个车场建立一个限流器，默认每个车场每秒中不超过10个请求，心跳除外，parkid+'login'说明是登陆限制
+	static ConcurrentHashMap<String, RateLimiter> rateLimiterPool = new  ConcurrentHashMap<String, RateLimiter>();
+
 	private static final Counter requestTotal = Counter.build()
 			.name("parkingos_tcp_total")
 			.labelNames("event", "tag")
@@ -56,7 +62,7 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 
 	private void  handleMessage(final ChannelHandlerContext ctx,final Object msg){
 
-		logger.info("tcp 开始处理消息>>>>"+msg.toString()+">>>>>>"+ctx.channel().remoteAddress().toString());
+//		logger.info("tcp 开始处理消息>>>>"+msg.toString()+">>>>>>"+ctx.channel().remoteAddress().toString());
 		ExecutorService es  = ExecutorsUtil.getExecutorPool();
 		es.execute(new Runnable() {
 			public void run() {
@@ -74,12 +80,53 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 					if (mesg.indexOf("0x11") != -1 && mesg.length() < 6) {// 心跳
 						//心跳统计
 						requestTotal.labels("msg","heartbeat").inc();
-						doBackMessage("0x12", ctx.channel());
-						doBeat(ctx.channel());
-						return;
+						//获取该通道的key parkid_localid
+						String key = NettyChannelMap.getParkByChannel(ctx.channel());
+						logger.info("===>>beat:"+key);
+						if(key!=null&&!"".equals(key)){
+							doBackMessage("0x12", ctx.channel());
+							doBeat(ctx.channel());
+							return;
+						}
+						return ;
 					}
 					JSONObject jsonMesg = JSON.parseObject(mesg, Feature.OrderedField);
-					logger.info(jsonMesg);
+					//限流器
+					try{
+						if (jsonMesg != null) {//如果不为空，
+							String data = null;
+							if (jsonMesg.containsKey("data")) {
+								data = jsonMesg.getString("data");
+								JSONObject jsonObj = JSONObject.parseObject(data);
+								String parkId = jsonObj.getString("park_id");
+                                if(!Check.isEmpty(parkId)){//只有有车场id才能作为key限流
+                                    if (rateLimiterPool.containsKey(parkId)) {//这个车场是否设置过限流
+                                        //如果流量达到限制，则先打印出车场来，先不阻拦
+                                        if (!rateLimiterPool.get(parkId).tryAcquire()) {//后续的限流消息可以通过这里下发
+                                            logger.info("rateLimiter  tryAcquire fail,parkId:"+parkId);
+                                        }
+
+                                    }
+                                    else{
+                                        //如果设置了限流速度
+                                        String strRatelimit = Defind.getProperty("TCPRATELIMIT");
+                                        if(strRatelimit != null){
+                                            RateLimiter rateLimiter = RateLimiter.create(Double.valueOf(strRatelimit));
+                                            rateLimiterPool.put(parkId,rateLimiter);
+                                        }
+
+                                    }
+                                }
+
+
+							}
+						}
+					}
+					catch (Exception e){
+							logger.error("rete limit error:",e);
+					}
+
+//					logger.info(jsonMesg);
 					JSONObject result = new JSONObject();
 					try {
 						if(TempUtil.isReSend(jsonMesg)){
@@ -87,6 +134,21 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 							requestTotal.labels("msg","resend").inc();
 							result.put("state",0);
 							result.put("errmsg","数据已处理过...");
+							result.put("service_name",jsonMesg.getString("service_name"));
+							if(jsonMesg.containsKey("data")){
+								JSONObject data = jsonMesg.getJSONObject("data");
+								if(data.containsKey("order_id")) {
+									String orderId = data.getString("order_id");
+									result.put("order_id",orderId);
+								}
+								if(data.containsKey("car_number")) {
+									String carNumber = data.getString("car_number");
+									result.put("car_number",carNumber);
+								}
+							}
+//							result.put("service_name",JSONObject.parseObject(jsonMesg.get("data")+"").get("service_name"));
+//							result.put("car_number",JSONObject.parseObject(jsonMesg.get("data")+"").get("car_number"));
+//							result.put("order_id",JSONObject.parseObject(jsonMesg.get("data")+"").get("order_id"));
 							logger.error("发送数据给车场:"+result.toString());
 							doBackMessage(result.toString(), ctx.channel());
 							//logger.error(jsonMesg+",已处理过,不再处理...");
@@ -131,7 +193,6 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 							return;
 						}
 
-						logger.error("开始执行tcp接口协议的方法调用");
 						if (service_name.equals("login")) {// 登录数据
 							requestTotal.labels("msg","login").inc();
 							JSONObject jsonObj = JSONObject.parseObject(data);
@@ -149,6 +210,29 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 								}
 								return;
 							}
+							//对登陆接口进行限流，默认是不能超过10秒钟一次
+                            try{
+                                String ratelimitKey = parkId+"login";
+                                if (rateLimiterPool.containsKey(ratelimitKey)) {//这个车场是否设置过限流
+                                    //如果流量达到限制，则先打印出车场来，先不阻拦
+                                    if (!rateLimiterPool.get(ratelimitKey).tryAcquire()) {//后续的限流消息可以通过这里下发
+                                        logger.info("rateloginlimiter  tryAcquire fail,parkId:"+parkId);
+                                    }
+
+                                }
+                                else{
+                                    //如果设置了限流速度
+                                    String strRatelimit = Defind.getProperty("TCPLOGINRATELIMIT");
+                                    if(strRatelimit != null){
+                                        RateLimiter rateLimiter = RateLimiter.create(Double.valueOf(strRatelimit));
+                                        rateLimiterPool.put(ratelimitKey,rateLimiter);
+                                    }
+                                }
+                            }
+                            catch (Exception e){
+                                logger.error("rete login limit error:",e);
+                            }
+
 							String localId = null;
 //							String key = parkId;
 							DoUpload doUpload = NettyChannelMap.doUpload;
@@ -202,7 +286,6 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 							}
 
 							//token有效  判断是不是攻击  频率最高10s 1000次
-							logger.error("判断是都攻击==>chen");
 							if(isHit(token)){
 								//统计攻击次数
 								requestTotal.labels("msg","is_attack").inc();
@@ -211,12 +294,10 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 								doBackMessage(mess, ctx.channel());
 								return;
 							}
-							logger.error("不是攻击==>>chen");
 
 							String backMesg = "";
 							JSONObject jsonData = JSONObject.parseObject(data);
 							if(jsonData!=null){
-								logger.error("车场parkid:"+parkId);
 //								Long id = doUpload.getComId(parkId);
 								jsonData.put("comid",parkId);
 							}else {
@@ -262,7 +343,7 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 							}else if(service_name.equals("park_log")){//日志上传
 								backMesg=doUpload.uploadLog(parkId, data);
 							}else if(service_name.equals("upload_confirm_order")){
-								doUpload.UploadConfirmOrder(parkId, data);//手动匹配订单上传2.17
+								backMesg = doUpload.UploadConfirmOrder(parkId, data);//手动匹配订单上传2.17
 							}
 							//下行数据，异步返回，
 							else if  (service_name.equals("month_member_sync")) {//月卡会员下发返回
@@ -295,13 +376,14 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 								doUpload.gateSync(jsonData);
 							}else if(service_name.equals("price_sync")){//价格同步
 								doUpload.priceSync(jsonData);
+							}else if(service_name.equals("visitor_sync")){
+								doUpload.visitorSync(jsonData);
 							}/*else if(service_name.equals("completezero_order")){//零元结算订单
 								doUpload.zeroOrderSync(jsonData);
 							}*/
 							logger.error("return message"+backMesg);
 							doBackMessage(backMesg, ctx.channel());
 
-							logger.error("需要同步的sdk："+syncParks);
 							if(syncParks!=null&&!syncParks.isEmpty()){
 								//logger.error(NettyChannelMap.map);
 								for(String localId : syncParks){
@@ -332,12 +414,12 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 				requestTimes = new ArrayList<Long>();
 				tokenAccessMap.put(token, requestTimes);
 			}
-			while (requestTimes.size()>1000) {
+			while (requestTimes.size()>100) {
 				requestTimes.remove(0);
 			}
 			//logger.info("tcp recive data，request cache:"+requestTimes);
 			tokenAccessMap.put(token, requestTimes);
-			if(requestTimes.size()==1000){
+			if(requestTimes.size()==100){
 				Long preRequest = requestTimes.get(0);
 				if(preRequest!=null&&ntime-preRequest<11){//10秒内100请求限制
 					logger.error("tcp recive data，10秒内超过100次，返回:"+token);
@@ -388,7 +470,7 @@ public class SensorServerHandler extends ChannelHandlerAdapter {
 				//发送消息给客户端
 //				if(mesg.length()>10)
 //					logger.error("服务器处理返回:"+mesg+","+channel);
-				logger.error("服务器处理返回:"+mesg+","+channel);
+//				logger.error("服务器处理返回:"+mesg+","+channel);
 				byte[] req = ("\n" + mesg + "\r").getBytes("UTF-8");
 				ByteBuf buf = Unpooled.buffer(req.length);
 				buf.writeBytes(req);

@@ -12,13 +12,13 @@ public interface WeixinAccountService {
      * @param openId
      * @return
      */
-    public UserInfoTb getUserInfo(String openId, String wxName);
+    public UserInfoTb getUserInfo(String openId, String wxName,String appid);
 
     public List<CarInfoTb> getUserCars(Long uin);
 
     public Integer getUserCarCount(Long uin);
 
-    public Integer addCarNumbers(Long uin, String carNumber);
+    public Integer addCarNumbers(Long uin, String carNumber,String appid);
 
     public Integer delCarNumber(Long carId, String carNumber);
 }

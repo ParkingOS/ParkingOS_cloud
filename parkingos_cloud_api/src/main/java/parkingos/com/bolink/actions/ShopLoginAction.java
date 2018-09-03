@@ -16,7 +16,6 @@ import parkingos.com.bolink.utlis.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -60,6 +59,21 @@ public class ShopLoginAction {
         if(user==null){
             infoMap.put("info", "用户名或密码错误");
         }else {//3 封装用户信息
+
+            //判断权限  是不是可以登陆小程序进行发券操作
+
+            Long roleId = user.getRoleId();
+            if(roleId<0){
+                infoMap.put("info", "权限不足");
+                AjaxUtil.ajaxOutput(response, infoMap);
+                return ;
+            }
+            int isAuth = shopLoginService.getAuthByUser(roleId);
+            if(isAuth==0){
+                infoMap.put("info", "权限不足");
+                AjaxUtil.ajaxOutput(response, infoMap);
+                return ;
+            }
             Long uin = user.getId();
             String token = StringUtils.MD5(username+pass+System.currentTimeMillis());
             infoMap.put("info", "success");
@@ -69,6 +83,7 @@ public class ShopLoginAction {
             infoMap.put("shop_id", user.getShopId());
             //4 取商户减免劵信息
             ShopTb shopInfo =  shopLoginService.qryShopInfoById(user.getShopId());
+            logger.info("登录小程序:"+shopInfo);
             if(shopInfo!=null){
                 //查询车场信息
                 ComInfoTb comInfo =  shopLoginService.qryComInfoById(shopInfo.getComid());
@@ -94,7 +109,7 @@ public class ShopLoginAction {
                 String defalut_limit = shopInfo.getDefaultLimit();
                 if(!Check.isEmpty(defalut_limit)){
                     String[] defaluts = defalut_limit.split(",");
-                    defaluts = Arrays.copyOf(defaluts, 3);//取前三个额度
+//                    defaluts = Arrays.copyOf(defaluts, 3);//取前三个额度
                     for(String defalut : defaluts){
                         Map<String, Object> range = new HashMap<String, Object>();
                         range.put("range", defalut);
@@ -112,7 +127,15 @@ public class ShopLoginAction {
                 infoMap.put("ticket_range", ranges);
                 //是否可以手输额度
                 infoMap.put("handInputEnable",shopInfo.getHandInputEnable());
+                if(shopInfo.getSupportType()!=null){
+                    infoMap.put("support_type",shopInfo.getSupportType());
+                }else{
+                    infoMap.put("support_type",1);
+                }
+            }else{
+                infoMap.put("info", "不存在该商户");
             }
+            logger.info("登录小程序:"+infoMap);
             //5 保存session，更新登录时间
             doSaveSession(uin,token,version);
             shopLoginService.updateShopUserById(System.currentTimeMillis()/1000,user.getId());

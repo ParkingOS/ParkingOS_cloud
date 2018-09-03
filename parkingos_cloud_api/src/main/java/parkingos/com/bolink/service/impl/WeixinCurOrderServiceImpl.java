@@ -58,6 +58,7 @@ public class WeixinCurOrderServiceImpl implements WeixinCurOrderService {
                 OrderTb orderConditions = new OrderTb();
                 orderConditions.setCarNumber(carNumber);
                 orderConditions.setState(0);//在场
+                orderConditions.setIshd(0);//没有删除的订单
                 List<OrderTb> orders = orderCommonDao.selectListByConditions(orderConditions);
                 if (CheckUtil.hasElement(orders)) {
                     for (OrderTb order : orders) {
@@ -112,6 +113,7 @@ public class WeixinCurOrderServiceImpl implements WeixinCurOrderService {
         //1.查询订单信息,根据订单信息,初始化锁车参数
         OrderTb orderConditions = new OrderTb();
         orderConditions.setId(oid);
+        orderConditions.setIshd(0);
         OrderTb order = orderCommonDao.selectObjectByConditions(orderConditions);
         if (order == null) {
             lockCarView.setState(-1);
@@ -195,6 +197,7 @@ public class WeixinCurOrderServiceImpl implements WeixinCurOrderService {
                 //从数据库中查询订单信息
                 orderConditions = new OrderTb();
                 orderConditions.setId(oid);
+                orderConditions.setIshd(0);
                 OrderTb orderResult = orderCommonDao.selectObjectByConditions(orderConditions);
                 if (orderResult != null) {
                     //locksatatus=1,如果islocked为1,则锁定成功;如果islocked值为2,3,则锁定失败"
@@ -308,15 +311,17 @@ public class WeixinCurOrderServiceImpl implements WeixinCurOrderService {
 
         String codeMem = (String) memcacheUtils.getCache(mobile);
         if (code.equals(codeMem)) {
-            UserInfoTb userInfoTb = new UserInfoTb();
-            userInfoTb.setWxpOpenid(openid);
-            userInfoTb = (UserInfoTb) commonDao.selectObjectByConditions(userInfoTb);
-            if (userInfoTb != null && userInfoTb.getId() != null) {
-                userInfoTb.setMobile(mobile);
-                int res = commonDao.updateByPrimaryKey(userInfoTb);
-                logger.error("用户增加手机号:" + res);
-            } else {
-                logger.error("没有该用户,增加失败");
+            if(openid!=null){
+                UserInfoTb userInfoTb = new UserInfoTb();
+                userInfoTb.setWxpOpenid(openid);
+                userInfoTb = (UserInfoTb) commonDao.selectObjectByConditions(userInfoTb);
+                if (userInfoTb != null && userInfoTb.getId() != null) {
+                    userInfoTb.setMobile(mobile);
+                    int res = commonDao.updateByPrimaryKey(userInfoTb);
+                    logger.error("用户增加手机号 :" + res);
+                } else {
+                    logger.error("没有该用户,增加失败");
+                }
             }
             //验证码验证成功,可以进行锁车解锁业务
             return 1;

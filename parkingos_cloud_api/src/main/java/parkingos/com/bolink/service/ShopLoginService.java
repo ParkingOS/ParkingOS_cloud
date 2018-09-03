@@ -60,4 +60,6 @@ public interface ShopLoginService {
     int resetPass(String username, String pass, String md5Pass,String token);
 
     Map<String,Object> getckey(String mobile, Long userid);
+
+    int getAuthByUser(Long roleId);
 }

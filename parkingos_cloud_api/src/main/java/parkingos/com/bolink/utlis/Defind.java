@@ -38,10 +38,11 @@ public class Defind {
 		return config_map.get(key);
 	}
 	
-	public static void reloadConfig() {
+	public static Map<String,String> reloadConfig() {
 		config_map.clear();
 		load();
-		logger.info("config reload complete:"+config_map);
+		logger.info("config reload complete:" + config_map);
+		return config_map;
 	}
 	
 	public static Map<String, String> getMap (){

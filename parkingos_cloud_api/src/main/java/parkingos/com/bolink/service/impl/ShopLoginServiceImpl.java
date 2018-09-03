@@ -16,6 +16,7 @@ import parkingos.com.bolink.utlis.MessageUtils;
 import parkingos.com.bolink.utlis.weixinpay.memcachUtils.MemcacheUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -31,6 +32,8 @@ public class ShopLoginServiceImpl implements ShopLoginService {
     CommonDao<UserSessionTb> userSessionTbCommonDao;
     @Autowired
     private MemcacheUtils memcacheUtils;
+    @Autowired
+    private CommonDao commonDao;
 
     @Override
     public UserInfoTb qryShopUserByIdAndPass(Long id, String md5pass) {
@@ -54,6 +57,7 @@ public class ShopLoginServiceImpl implements ShopLoginService {
     public ShopTb qryShopInfoById(Long id) {
         ShopTb shopConditions = new ShopTb();
         shopConditions.setId(id);
+        shopConditions.setState(0);
         return shopTbCommonDao.selectObjectByConditions(shopConditions);
     }
 
@@ -187,5 +191,15 @@ public class ShopLoginServiceImpl implements ShopLoginService {
         retMap.put("ckey", encode);
 
         return retMap;
+    }
+
+    @Override
+    public int getAuthByUser(Long roleId) {
+        String sql="SELECT auth_id,nname,A.pid,ar.sub_auth FROM auth_role_tb ar LEFT JOIN auth_tb A ON ar.auth_id = A.ID WHERE role_id = "+roleId+" AND A.STATE = 0 AND A.nname = '商户管理'";
+        List<Map<String,Object>> list = commonDao.getObjectBySql(sql);
+        if(list!=null&&list.size()>0){
+            return 1;
+        }
+        return 0;
     }
 }

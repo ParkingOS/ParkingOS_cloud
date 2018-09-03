@@ -42,7 +42,7 @@ public interface DoUpload {
 
 	String blackUpload(JSONObject jsonData);
 
-	void UploadConfirmOrder(String comid, String data);
+	String UploadConfirmOrder(String comid, String data);
 
 	void monthMemberSync(JSONObject jsonData);
 
@@ -97,5 +97,7 @@ public interface DoUpload {
 
 	void doBeat(String sourceIp);
     String getComId(String parkId);
+
+    void visitorSync(JSONObject jsonData);
 }
 

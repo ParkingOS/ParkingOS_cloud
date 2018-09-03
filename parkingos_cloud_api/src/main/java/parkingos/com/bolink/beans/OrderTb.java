@@ -97,6 +97,16 @@ public class OrderTb {
 
     private String workStationUuid;
 
+    private Long cityid;
+
+    public Long getCityid() {
+        return cityid;
+    }
+
+    public void setCityid(Long cityid) {
+        this.cityid = cityid;
+    }
+
     public Long getId() {
         return id;
     }

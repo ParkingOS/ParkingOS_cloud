@@ -29,6 +29,43 @@ public class ShopTb {
 
     private Integer ticketMoney;
 
+    private Integer useLimit;
+
+    public Integer getUseLimit() {
+        return useLimit;
+    }
+
+    public void setUseLimit(Integer useLimit) {
+        this.useLimit = useLimit;
+    }
+
+    @Override
+    public String toString() {
+
+        return "ShopTb{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", phone='" + phone + '\'' +
+                ", comid=" + comid +
+                ", ticketLimit=" + ticketLimit +
+                ", description='" + description + '\'' +
+                ", state=" + state +
+                ", createTime=" + createTime +
+                ", ticketfreeLimit=" + ticketfreeLimit +
+                ", ticketType=" + ticketType +
+                ", ticketMoney=" + ticketMoney +
+                ", defaultLimit='" + defaultLimit + '\'' +
+                ", discountPercent=" + discountPercent +
+                ", discountMoney=" + discountMoney +
+                ", validiteTime=" + validiteTime +
+                ", ticketUnit=" + ticketUnit +
+                ", handInputEnable=" + handInputEnable +
+                ", supportType=" + supportType +
+                '}';
+    }
+
     private String defaultLimit;
 
     private BigDecimal discountPercent;
@@ -40,6 +77,16 @@ public class ShopTb {
     private Integer ticketUnit;
 
     private Integer handInputEnable;
+
+    private Integer supportType;
+
+    public Integer getSupportType() {
+        return supportType;
+    }
+
+    public void setSupportType(Integer supportType) {
+        this.supportType = supportType;
+    }
 
     public Long getId() {
         return id;

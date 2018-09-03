@@ -157,7 +157,7 @@ function loaded(uin) {
                     //var click=' onclick="rewand('+prod_id+','+car_owner_product_id+')"';
                     var click=' onclick="rewand(\''+card_id+'\',\''+prod_id+'\',\''+car_owner_product_id+'\',\''+com_id+'\',\''+end_time+'\',\''+park_name+'\',\''+car_number+'\')"';
                     $("#thelist").append('<li '+click+' class="li1"><div class="moneyouter"><span class="'+money_class+'">'+price+'<span class="fuhao">元</span></span></div><a class="a1" href="#"><div class="'+ticketname_class+'">'+
-                        park_name+'</div><div class="ticketlimit"><div style="height:10px"></div><span class="sel_fee '+ticketlimit_class+'">'+prod_name+'</span></div><div style="height:8px"></div><div class="ticketlimit2"><span>'+car_number+'</span></div></a><div class="rewand">续费</div></li>');
+                        park_name+'</div><div class="ticketlimit"><div style="height:10px"></div><span class="sel_fee '+ticketlimit_class+'">'+prod_name+'</span></div><div style="height:8px"></div><div class="demo"><span>'+car_number+'</span></div></a><div class="rewand">续费</div></li>');
                     $("#thelist").append('</div><li class="li2"><div style="height:5px"><div class="'+line_class+'"></div><a class="a2" href="#"><div class="'+useinfo_class+'">'+guoqi+'</div><div class="limittime">'+limit_date+'</div></a></li>');
 
                 });
@@ -301,7 +301,7 @@ function refresh() {
                     //var click=' onclick="rewand('+prod_id+','+car_owner_product_id+')"';
                     var click=' onclick="rewand(\''+card_id+'\',\''+prod_id+'\',\''+car_owner_product_id+'\',\''+com_id+'\',\''+end_time+'\',\''+park_name+'\')"';
                     $("#thelist").append('<li '+click+' class="li1"><div class="moneyouter"><span class="'+money_class+'">'+price+'<span class="fuhao">元</span></span></div><a class="a1" href="#"><div class="'+ticketname_class+'">'+
-                        park_name+'</div><div class="ticketlimit"><div style="height:10px"></div><span class="sel_fee '+ticketlimit_class+'">'+prod_name+'</span></div><div style="height:8px"></div><div class="ticketlimit2"><span>'+car_number+'</span></div></a><div class="rewand">续费</div></li>');
+                        park_name+'</div><div class="ticketlimit"><div style="height:10px"></div><span class="sel_fee '+ticketlimit_class+'">'+prod_name+'</span></div><div style="height:8px"></div><div class="demo"><span>'+car_number+'</span></div></a><div class="rewand">续费</div></li>');
                     $("#thelist").append('</div><li class="li2"><div style="height:5px"><div class="'+line_class+'"></div><a class="a2" href="#"><div class="'+useinfo_class+'">'+guoqi+'</div><div class="limittime">'+limit_date+'</div></a></li>');
 
                 });
@@ -436,7 +436,7 @@ function nextPage() {
                     //var click=' onclick="rewand('+prod_id+','+car_owner_product_id+')"';
                     var click=' onclick="rewand(\''+card_id+'\',\''+prod_id+'\',\''+car_owner_product_id+'\',\''+com_id+'\',\''+end_time+'\',\''+park_name+'\')"';
                     $("#thelist").append('<li '+click+' class="li1"><div class="moneyouter"><span class="'+money_class+'">'+price+'<span class="fuhao">元</span></span></div><a class="a1" href="#"><div class="'+ticketname_class+'">'+
-                        park_name+'</div><div class="ticketlimit"><div style="height:10px"></div><span class="sel_fee '+ticketlimit_class+'">'+prod_name+'</span></div><div style="height:8px"></div><div class="ticketlimit2"><span>'+car_number+'</span></div></a><div class="rewand">续费</div></li>');
+                        park_name+'</div><div class="ticketlimit"><div style="height:10px"></div><span class="sel_fee '+ticketlimit_class+'">'+prod_name+'</span></div><div style="height:8px"></div><div class="demo"><span>'+car_number+'</span></div></a><div class="rewand">续费</div></li>');
                     $("#thelist").append('</div><li class="li2"><div style="height:5px"><div class="'+line_class+'"></div><a class="a2" href="#"><div class="'+useinfo_class+'">'+guoqi+'</div><div class="limittime">'+limit_date+'</div></a></li>');
 
                 });

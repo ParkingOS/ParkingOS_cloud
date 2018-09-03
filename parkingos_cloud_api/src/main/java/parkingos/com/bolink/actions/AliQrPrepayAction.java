@@ -211,12 +211,12 @@ public class AliQrPrepayAction {
         String carNumber = AjaxUtil.decodeUTF8(RequestUtil.getString(request, "licence"));
         WXUserView wxUserView = commonComponent.getUserinfoByOpenid(openid);
         Long uin = wxUserView.getUin();
+        Integer bindflag = wxUserView.getBindflag();
         Integer result = 0;
         if (!Check.isEmpty(carNumber)) {
-            result = commonComponent.addCarnumber(uin, carNumber);
+            result = commonComponent.addCarnumber(uin, carNumber,bindflag);
             logger.error("add car:" + result);
         } else {
-            Integer bindflag = wxUserView.getBindflag();
             //获取车主车牌号
             carNumber = aliPrepayService.getCarNumber(uin, bindflag);
         }
@@ -317,19 +317,76 @@ public class AliQrPrepayAction {
         TicketTb ticketTb = null;
         Long shopId = -1L;
         String error = "车场网络异常，请稍候重试";
+
+        ShopTb shopTb = new ShopTb();
         if (ticketId != -1) {
-            if (superimposed == 0) {//如果不支持多张叠加下发,判断是不是已经用过了优惠券
-                if (count >= 1) {
-                    error = "本次停车已使用过优惠券";
-                    logger.error("本次停车已使用过优惠券");
+            ticketTb = aliPrepayService.qryTicket(ticketId);
+            if(ticketTb!=null){
+                //判断该商户是否可用
+                shopId = ticketTb.getShopId();
+                shopTb.setId(shopId);
+                shopTb.setState(0);
+                shopTb = (ShopTb) commonDao.selectObjectByConditions(shopTb);
+
+                if(shopTb==null){
+                    error = "不存在该商户";
+                    logger.error("不存在该商户");
                     request.setAttribute("noorder", -1);
                     request.setAttribute("error", error);
                     return "aliprepay/prepay";
                 }
             }
-            ticketTb = aliPrepayService.qryTicket(ticketId);
-            shopId = ticketTb.getShopId();
+//            if (superimposed == 0) {//如果不支持多张叠加下发,判断是不是已经用过了优惠券
+//                if (count >= 1) {
+//                    error = "本次停车已使用过优惠券";
+//                    logger.error("本次停车已使用过优惠券");
+//                    request.setAttribute("noorder", -1);
+//                    request.setAttribute("error", error);
+//                    return "aliprepay/prepay";
+//                }
+//            }
+            boolean flag = false;
+            if(superimposed!=1){//有用券限制
+                if(superimposed==0){
+                    if(count>0){
+                        flag=true;
+                    }
+                }else{
+                    if(count>=superimposed){
+                        flag=true;
+                    }
+                }
+            }
+
+            if(flag){//先判断车场是不是可以用券
+                if(superimposed==0){
+                    superimposed=1;
+                }
+                error = "用券失败，本车场最多叠加"+superimposed+"张优惠券";
+                request.setAttribute("noorder", -1);
+                request.setAttribute("error", error);
+                return "aliprepay/prepay";
+            }
+
+            //判断商户自己的用券限制
+            Integer useLimit = shopTb.getUseLimit();
+            logger.info("商户用券限制:"+useLimit);
+            Integer shopCount = aliPrepayService.shopTicketCount(unpayOrder.getId(),shopId);
+            logger.info("商户已经用券shopCount:"+shopCount);
+            if(useLimit>0){//如果useLimit==0，证明商户的设置和车场一样，车场都能用，商户肯定能用
+                if(useLimit<=shopCount){
+                    error = "用券失败，本商铺最多叠加"+useLimit+"张优惠券";
+                    request.setAttribute("noorder", -1);
+                    request.setAttribute("error", error);
+                    return "aliprepay/prepay";
+                }
+            }
+
+
+
+
             if (ticketTb != null) {
+
                 //判断有效期
                 long limit_day = ticketTb.getLimitDay();
                 if (System.currentTimeMillis() / 1000 > limit_day) {
@@ -390,14 +447,15 @@ public class AliQrPrepayAction {
                 messageMap.put("ticket_id", ticketId + "");
                 messageMap.put("create_time", ticketTb.getCreateTime());
                 messageMap.put("limit_day", ticketTb.getLimitDay());
+                messageMap.put("time_range", ticketTb.getTimeRange());
                 messageMap.put("duration", duration);
                 messageMap.put("money", money + "");
-                messageMap.put("car_number", carNumber);
+                messageMap.put("car_number", unpayOrder.getCarNumber());
                 messageMap.put("ticket_type", ticketType);
-                ShopTb shopTb = new ShopTb();
-                shopTb.setId(shopId);
-                shopTb = (ShopTb) commonDao.selectObjectByConditions(shopTb);
-                messageMap.put("shop_name", shopTb.getName());
+//                ShopTb shopTb = new ShopTb();
+//                shopTb.setId(shopId);
+//                shopTb = (ShopTb) commonDao.selectObjectByConditions(shopTb);
+                messageMap.put("shopName", shopTb.getName());
                 if (ticketType == 1) {//时长减免，加上减免单位
                     logger.error("发送减免券得到商户信息：" + shopTb);
                     messageMap.put("ticket_unit", shopTb.getTicketUnit());
@@ -504,12 +562,12 @@ public class AliQrPrepayAction {
         logger.info("修改车牌号11111:"+carNumber);
         WXUserView wxUserView = commonComponent.getUserinfoByOpenid(openid);
         Long uin = wxUserView.getUin();
+        Integer bindflag = wxUserView.getBindflag();
         Integer result = 0;
         if (!Check.isEmpty(carNumber)) {
-            result = commonComponent.addCarnumber(uin, carNumber);
+            result = commonComponent.addCarnumber(uin, carNumber,bindflag);
             logger.error("add car:" + result);
         } else {
-            Integer bindflag = wxUserView.getBindflag();
             //获取车主车牌号
             carNumber = aliPrepayService.getCarNumber(uin, bindflag);
         }
@@ -703,7 +761,7 @@ public class AliQrPrepayAction {
                     return rMap;
                 }else{
 
-                    Map<String,Object> retMap = createTicket(shop_id,amount,5,0);
+                    Map<String,Object> retMap = createTicket(shop_id,amount,5,0,fixCodeTb.getUin());
                     if(retMap.get("result") == -1 || retMap.get("result") == -2){
                         logger.info("生成减免劵出错，用劵失败");
                         rMap.put("state",0);
@@ -729,7 +787,7 @@ public class AliQrPrepayAction {
                     rMap.put("error","固定码时长余额不足");
                     return rMap;
                 }else{
-                    Map<String,Object> retMap = createTicket(shop_id,amount,3,0);
+                    Map<String,Object> retMap = createTicket(shop_id,amount,3,0,fixCodeTb.getUin());
                     if(retMap.get("result") == -1 || retMap.get("result") == -2){
                         logger.info("生成减免劵出错，用劵失败");
                         rMap.put("state",0);
@@ -757,7 +815,7 @@ public class AliQrPrepayAction {
                 return rMap;
             }else{
 
-                Map<String,Object> retMap = createTicket(shop_id,0,4,0);
+                Map<String,Object> retMap = createTicket(shop_id,0,4,0,fixCodeTb.getUin());
                 if(retMap.get("result") == -1 || retMap.get("result") == -2){
                     logger.info("生成减免劵出错，用劵失败");
                     rMap.put("state",0);
@@ -779,7 +837,7 @@ public class AliQrPrepayAction {
         return rMap;
     }
 
-    private Map<String,Object> createTicket(Long shop_id,Integer reduce,Integer type,Integer isAuto) {
+    private Map<String,Object> createTicket(Long shop_id,Integer reduce,Integer type,Integer isAuto,Long uin) {
 
         logger.info("后台创建优惠券:"+isAuto+"~~~~"+type+"~~~~"+reduce);
 
@@ -868,6 +926,7 @@ public class AliQrPrepayAction {
             ticketTb.setType(type);
             ticketTb.setRemark("");
             ticketTb.setShopId(shop_id);
+            ticketTb.setUin(uin);
             Integer insertTicket = commonDao.insert(ticketTb);
 
             //生成code
@@ -904,6 +963,13 @@ public class AliQrPrepayAction {
         rMap.put("error","生成减免劵出错，用劵失败");
         return rMap;
 
+    }
+
+    //重置配置文件
+    @RequestMapping("/reloadconfig")
+    public  void reloadConfig(HttpServletResponse response){
+
+        AjaxUtil.ajaxOutput(response,Defind.reloadConfig());
     }
 
 }

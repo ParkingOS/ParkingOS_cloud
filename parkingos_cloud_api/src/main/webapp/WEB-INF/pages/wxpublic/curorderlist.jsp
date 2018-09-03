@@ -157,7 +157,7 @@
         </div>
     </div>
     <div class="weui-cells" style="position:absolute;bottom: 0px;width:100%;display: block" id = "carlist">
-        <a class="weui-cell weui-cell_access" href="tocarnumbers?uin=${uin}">
+        <a class="weui-cell weui-cell_access" href="tocarnumbers?uin=${uin}&appid=${appid}">
             <div class="weui-cell__hd"><img src="${pageContext.request.contextPath}/resources/images/wxpublic/carnumber1.png" alt="" style="width:20px;margin-right:5px;display:block"></div>
             <div class="weui-cell__bd">
                 <p>ÎÒµÄ³µÅÆ</p>
@@ -172,7 +172,7 @@
 <input id="domain" type="text" style="display:none;" value="${domain}"/>
 <input id="uin" type="text" style="display:none;" value="${uin}"/>
 <script src="${pageContext.request.contextPath}/resources/js/iscroll.js"></script>
-<script src="${pageContext.request.contextPath}/resources/js/curorderlist.js?v=673"></script>
+<script src="${pageContext.request.contextPath}/resources/js/curorderlist.js?v=63"></script>
 <script src="${pageContext.request.contextPath}/resources/js/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/jquery-weui.min.js"></script>
 </body>

@@ -33,6 +33,6 @@ public interface CommonComponent {
      * @param carnumber
      * @return
      */
-    Integer addCarnumber(Long uin, String carnumber);
+    Integer addCarnumber(Long uin, String carnumber,Integer flag);
 
 }

@@ -11,7 +11,7 @@
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/list.css?v=7" />
 	<script src="${pageContext.request.contextPath}/resources/js/jquery.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/js/iscroll.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/js/parkprodlist.js?v=30"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/parkprodlist.js?v=300"></script>
 	<style type="text/css">
 #scroller .li1 {
 	padding: 0 10px;
@@ -265,6 +265,11 @@
 	font-size: 13px;
 }
 
+.demo {display: inline-block;*display: inline;*zoom: 1;width: 12em;height: 18px;line-height: 18px;overflow: hidden;-ms-text-overflow: ellipsis;text-overflow: ellipsis;white-space: nowrap;margin-left: 22px;
+	margin-top: 10px;
+	font-size: 13px;}
+.demo:hover {height: auto; word-break:break-all; white-space: pre-wrap;  text-decoration: none;}
+
 .limittime {
 	float: right;
 	margin-right: 20px;
@@ -383,7 +388,7 @@
 
 		</div>
 		<div class="weui-cells" style="position:absolute;bottom: 0px;width:100%;display: block" id = "carlist">
-			<a class="weui-cell weui-cell_access" href="tocarnumbers?uin=${uin}">
+			<a class="weui-cell weui-cell_access" href="tocarnumbers?uin=${uin}&appid=${appid}">
 				<div class="weui-cell__hd"><img src="${pageContext.request.contextPath}/resources/images/wxpublic/carnumber1.png" alt="" style="width:20px;margin-right:5px;display:block"></div>
 				<div class="weui-cell__bd">
 					<p>ÎÒµÄ³µÅÆ</p>

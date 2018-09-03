@@ -126,6 +126,9 @@ public class WeixinProdAction {
         request.setAttribute("card_id", StringUtils.encodeUTF8(cardId));
         request.setAttribute("prod_id", prodId);
         request.setAttribute("uin", uin);
+        if(parkName.length()>12){
+            parkName = parkName.substring(0,12)+"···";
+        }
         request.setAttribute("park_name", parkName);
         request.setAttribute("car_number",StringUtils.encodeUTF8(carNumber));
         return "wxpublic/buyprod";

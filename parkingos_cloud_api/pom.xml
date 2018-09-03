@@ -269,12 +269,12 @@
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjrt</artifactId>
-      <version>1.8.10</version>
+      <version>1.8.6</version>
     </dependency>
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
-      <version>1.8.10</version>
+      <version>1.8.9</version>
     </dependency>
     <dependency>
       <groupId>cglib</groupId>
@@ -304,7 +304,7 @@
     <dependency>
       <groupId>club.bolink</groupId>
       <artifactId>commondao</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.4</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -317,11 +317,88 @@
       <artifactId>common_dao</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>-->
+    <!-- https://mvnrepository.com/artifact/org.jdom/jdom -->
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.1.3</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>4.3.2</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.3</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.7</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/commons-collections/commons-collections -->
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>io.prometheus</groupId>
+      <artifactId>simpleclient_hotspot</artifactId>
+      <version>0.1.0</version>
+    </dependency>
+    <!-- Exposition servlet -->
+    <dependency>
+      <groupId>io.prometheus</groupId>
+      <artifactId>simpleclient_servlet</artifactId>
+      <version>0.1.0</version>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
+
+    <!--memcached-->
+    <dependency>
+      <groupId>xmem</groupId>
+      <artifactId>memcached-java</artifactId>
+      <version>1.3.8</version>
+    </dependency>
+
+    <!--dom4j jar -->
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.6.1</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>io.prometheus</groupId>
+      <artifactId>simpleclient_hotspot</artifactId>
+      <version>0.1.0</version>
+    </dependency>
+    <!-- Exposition servlet -->
+    <dependency>
+      <groupId>io.prometheus</groupId>
+      <artifactId>simpleclient_servlet</artifactId>
+      <version>0.1.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>18.0</version>
+    </dependency>
+
+
   </dependencies>
 </project>

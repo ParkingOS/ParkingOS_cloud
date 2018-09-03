@@ -427,6 +427,7 @@
 					data : {
 						'openid' : '${openid}',
 						'uin':'${uin}',
+						'appid':'${appid}',
 						'carnumber' : carnumber,
 					},
 					success : function(result) {

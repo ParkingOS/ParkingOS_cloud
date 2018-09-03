@@ -1,8 +1,6 @@
 package parkingos.com.bolink.service.impl;
 
 import com.zld.common_dao.dao.CommonDao;
-import com.zld.common_dao.enums.FieldOperator;
-import com.zld.common_dao.qo.SearchBean;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +12,6 @@ import parkingos.com.bolink.beans.UserInfoTb;
 import parkingos.com.bolink.service.WeixinAccountService;
 import parkingos.com.bolink.utlis.CheckUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -36,7 +33,7 @@ public class WeixinAccountServiceImpl implements WeixinAccountService {
 
     @Override
     @Transactional
-    public UserInfoTb getUserInfo(String openId, String wxName) {
+    public UserInfoTb getUserInfo(String openId, String wxName,String appid) {
         UserInfoTb conditions = new UserInfoTb();
         conditions.setWxpOpenid(openId);
         conditions.setState(0);
@@ -55,9 +52,30 @@ public class WeixinAccountServiceImpl implements WeixinAccountService {
             addUser.setPassword("123456");
             addUser.setMedia(11);
             addUser.setWxpOpenid(openId);
+            addUser.setAppid(appid);
             userInfo = addUser;
             System.out.println(addUser);
             userInfoCommonDao.insert(addUser);
+        }
+        else {//更新用户的appid以及openid
+
+//            if(!Check.isEmpty(userInfo.getWxpOpenid())){
+//                if(!userInfo.getWxpOpenid().contains(openId)){
+//                    openId = userInfo.getWxpOpenid()+","+openId;
+//                }
+//            }
+//            if(userInfo.getAppid()!=null&&!"".equals(userInfo.getAppid())){
+//                if(!userInfo.getAppid().contains(appid)){
+//                    appid = userInfo.getAppid()+","+appid;
+//                }
+//            }
+//            userInfo.setWxpOpenid(openId);
+//            userInfo.setAppid(appid);
+//            int i =userInfoCommonDao.updateByPrimaryKey(userInfo);
+            UserInfoTb userInfoTb = new UserInfoTb();
+            userInfoTb.setAppid(appid);
+            int i = userInfoCommonDao.updateByConditions(userInfoTb,conditions);
+            logger.info("更新用户appid:"+i);
         }
         return userInfo;
     }
@@ -78,7 +96,7 @@ public class WeixinAccountServiceImpl implements WeixinAccountService {
 
     @Override
     @Transactional
-    public Integer addCarNumbers(Long uin, String carNumber) {
+    public Integer addCarNumbers(Long uin, String carNumber,String appid) {
 
         //1.是否已经是自己的车牌
         CarInfoTb carInfoConditions = new CarInfoTb();
@@ -101,40 +119,43 @@ public class WeixinAccountServiceImpl implements WeixinAccountService {
         orderConditions.setCarNumber(carNumber);
         orderConditions.setState(0);
         orderConditions.setIslocked(1);
+        orderConditions.setIshd(0);
         count = orderCommonDao.selectCountByConditions(orderConditions);
         if(count>0){
             return -2;
         }
         //4.可以绑定
         /*************处理绑定逻辑**************/
-        //1.删除之前车牌
+        //1.删除之前车牌   增加公众号区分
         carInfoConditions = new CarInfoTb();
         carInfoConditions.setCarNumber(carNumber);
+        carInfoConditions.setAppid(appid);
         carInfoCommonDao.deleteByConditions(carInfoConditions);
         //2.更新月卡信息(模糊查月卡信息)
-        List<SearchBean> searchBeans = new ArrayList<SearchBean>();
-        SearchBean searchBean = new SearchBean();
-        searchBean.setFieldName("car_number");
-        searchBean.setOperator(FieldOperator.LIKE);
-        searchBean.setBasicValue(carNumber);
-        searchBeans.add(searchBean);
-        List<CarowerProduct> carOwnerProducts = carOwnerProductCommonDao.selectListByConditions(new CarowerProduct(),searchBeans);
-        if(CheckUtil.hasElement(carOwnerProducts)){
-            CarowerProduct carOwnerProductUpdate = new CarowerProduct();
-            carOwnerProductUpdate.setUin(uin);
-            for (CarowerProduct carOwnerProduct:
-                    carOwnerProducts) {
-                CarowerProduct carOwnerProductConditions = new CarowerProduct();
-                carOwnerProductConditions.setId(carOwnerProduct.getId());
-                carOwnerProductCommonDao.updateByConditions(carOwnerProductUpdate,carOwnerProductConditions);
-            }
-        }
+//        List<SearchBean> searchBeans = new ArrayList<SearchBean>();
+//        SearchBean searchBean = new SearchBean();
+//        searchBean.setFieldName("car_number");
+//        searchBean.setOperator(FieldOperator.LIKE);
+//        searchBean.setBasicValue(carNumber);
+//        searchBeans.add(searchBean);
+//        List<CarowerProduct> carOwnerProducts = carOwnerProductCommonDao.selectListByConditions(new CarowerProduct(),searchBeans);
+//        if(CheckUtil.hasElement(carOwnerProducts)){
+//            CarowerProduct carOwnerProductUpdate = new CarowerProduct();
+//            carOwnerProductUpdate.setUin(uin);
+//            for (CarowerProduct carOwnerProduct:
+//                    carOwnerProducts) {
+//                CarowerProduct carOwnerProductConditions = new CarowerProduct();
+//                carOwnerProductConditions.setId(carOwnerProduct.getId());
+//                carOwnerProductCommonDao.updateByConditions(carOwnerProductUpdate,carOwnerProductConditions);
+//            }
+//        }
 
         //3.更新在场订单
         OrderTb orderUpdate = new OrderTb();
         orderUpdate.setUin(uin);
         orderConditions = new OrderTb();
         orderConditions.setCarNumber(carNumber);
+        orderConditions.setIshd(0);
         orderCommonDao.updateByConditions(orderUpdate,orderConditions);
 
         //4.写入新车牌
@@ -142,6 +163,7 @@ public class WeixinAccountServiceImpl implements WeixinAccountService {
         CarInfoTb addCarInfo = new CarInfoTb();
         addCarInfo.setCarNumber(carNumber);
         addCarInfo.setUin(uin);
+        addCarInfo.setAppid(appid);
         addCarInfo.setCreateTime(currentTime);
         return carInfoCommonDao.insert(addCarInfo);
     }
@@ -154,6 +176,7 @@ public class WeixinAccountServiceImpl implements WeixinAccountService {
             orderConditions.setCarNumber(carNumber);
             orderConditions.setState(0);
             orderConditions.setIslocked(1);
+            orderConditions.setIshd(0);
             List<OrderTb> orders = orderCommonDao.selectListByConditions(orderConditions);
             if(CheckUtil.hasElement(orders)){
                 return -2;

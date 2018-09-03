@@ -2,6 +2,7 @@ package parkingos.com.bolink.service.impl;
 
 import com.zld.common_dao.dao.CommonDao;
 import com.zld.common_dao.enums.FieldOperator;
+import com.zld.common_dao.qo.PageOrderConfig;
 import com.zld.common_dao.qo.SearchBean;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,19 +63,29 @@ public class AliPrepayServiceImpl implements AliPrepayService {
         orderConditions.setComid(comid);
         orderConditions.setCarNumber(carNumber);
         orderConditions.setState(0);
+        orderConditions.setIshd(0);//订单没有删除的
         OrderTb orderTb = orderTbCommonDao.selectObjectByConditions(orderConditions);
         logger.error(comid+","+carNumber+","+orderTb);
         if(orderTb == null){
             orderConditions = new OrderTb();
             orderConditions.setComid(comid);
             orderConditions.setState(0);
+            orderConditions.setIshd(0);
             List<SearchBean> searchBeans = new ArrayList<SearchBean>();
             SearchBean searchBean = new SearchBean();
             searchBean.setFieldName("car_number");
             searchBean.setOperator(FieldOperator.LIKE);
-            searchBean.setBasicValue(carNumber.substring(1));
+            searchBean.setBasicValue("_"+carNumber.substring(1));
             searchBeans.add(searchBean);
-            orderTb = orderTbCommonDao.selectObjectByConditions(orderConditions,searchBeans);
+//            orderTb = orderTbCommonDao.selectObjectByConditions(orderConditions,searchBeans);
+            PageOrderConfig pageOrderConfig = new PageOrderConfig();
+            pageOrderConfig.setOrderInfo("create_time","desc");
+            pageOrderConfig.setPageInfo(1,20);
+            List<OrderTb> orderTbList = orderTbCommonDao.selectListByConditions(orderConditions,searchBeans,pageOrderConfig);
+            logger.error("车牌模糊查询订单"+orderTbList);
+            if(orderTbList!=null&&orderTbList.size()>0){
+                orderTb = orderTbList.get(0);
+            }
         }
         return orderTb;
     }
@@ -92,5 +103,30 @@ public class AliPrepayServiceImpl implements AliPrepayService {
         TicketTb ticketConditions = new TicketTb();
         ticketConditions.setId(ticketId);
          return ticketTbCommonDao.selectObjectByConditions(ticketConditions);
+    }
+
+    @Override
+    public OrderTb qryUnpayOrder2(String carNumber, Long comid) {
+        OrderTb orderTb = null;
+        OrderTb orderConditions = new OrderTb();
+        orderConditions.setComid(comid);
+        orderConditions.setState(0);
+        List<SearchBean> searchBeans = new ArrayList<SearchBean>();
+        SearchBean searchBean = new SearchBean();
+        searchBean.setFieldName("car_number");
+        searchBean.setOperator(FieldOperator.LIKE);
+        searchBean.setBasicValue("%"+carNumber+"%");
+        searchBeans.add(searchBean);
+        orderTb = orderTbCommonDao.selectObjectByConditions(orderConditions,searchBeans);
+        return orderTb;
+    }
+
+    @Override
+    public Integer shopTicketCount(Long orderId,Long shopid) {
+        TicketTb ticketConditions = new TicketTb();
+        ticketConditions.setOrderid(orderId);
+        ticketConditions.setState(1);
+        ticketConditions.setShopId(shopid);
+        return ticketTbCommonDao.selectCountByConditions(ticketConditions);
     }
 }

@@ -19,6 +19,33 @@ public class CarInfoTb {
 
     private String picUrl2;
 
+    private String appid;
+
+    @Override
+    public String toString() {
+        return "CarInfoTb{" +
+                "id=" + id +
+                ", uin=" + uin +
+                ", carNumber='" + carNumber + '\'' +
+                ", state=" + state +
+                ", createTime=" + createTime +
+                ", isAuth=" + isAuth +
+                ", isComuse=" + isComuse +
+                ", picUrl1='" + picUrl1 + '\'' +
+                ", picUrl2='" + picUrl2 + '\'' +
+                ", appid='" + appid + '\'' +
+                ", remark='" + remark + '\'' +
+                '}';
+    }
+
+    public String getAppid() {
+        return appid;
+    }
+
+    public void setAppid(String appid) {
+        this.appid = appid;
+    }
+
     private String remark;
 
     public Long getId() {

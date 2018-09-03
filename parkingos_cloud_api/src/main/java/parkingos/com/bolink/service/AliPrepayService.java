@@ -24,4 +24,8 @@ public interface AliPrepayService {
      *根据id查询减免劵信息
      */
     TicketTb qryTicket(Long ticketId);
+
+    OrderTb qryUnpayOrder2(String carNumber, Long comid);
+
+    Integer shopTicketCount(Long id,Long shopid);
 }

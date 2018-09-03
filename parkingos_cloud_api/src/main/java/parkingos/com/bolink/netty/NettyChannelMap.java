@@ -26,7 +26,7 @@ public class NettyChannelMap {
 	}
 	
 	public static Channel get(String key) {
-	    System.out.println(channelMap);
+	    //System.out.println(channelMap);
 		return channelMap.get(key);
 	}
 	

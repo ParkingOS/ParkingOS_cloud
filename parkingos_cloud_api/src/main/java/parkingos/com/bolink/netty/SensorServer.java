@@ -16,7 +16,10 @@ import java.nio.charset.Charset;
 
 public class SensorServer {
 	Logger logger = Logger.getLogger(SensorServer.class);
-	
+	private EventLoopGroup parentGroup;
+	private EventLoopGroup childGroup;
+	private ChannelFuture f;
+
 	public SensorServer(){
 		logger.info("begin init tcp.....");
 		/*
@@ -38,8 +41,8 @@ public class SensorServer {
          * 如何知道多少个线程已经被使用，如何映射到已经创建的Channels上都需要依赖于EventLoopGroup的实现，
          * 并且可以通过构造函数来配置他们的关系。
          */
-		EventLoopGroup parentGroup = new NioEventLoopGroup();
-		EventLoopGroup childGroup = new NioEventLoopGroup();
+		this.parentGroup = new NioEventLoopGroup();
+		this.childGroup = new NioEventLoopGroup();
 		try {
 			/*
 			 * ServerBootstrap 是一个启动NIO服务的辅助启动类
@@ -72,15 +75,30 @@ public class SensorServer {
 			 */
 				.childHandler(new ChildChannelHandler());
 			//绑定端口，同步等待成功
-			ChannelFuture f = bootstrap.bind(port).sync();
+			this.f = bootstrap.bind(port).sync();
 			//等待服务端监听端口关闭
-			f.channel().closeFuture().sync();
+			this.f.channel().closeFuture().sync();
 			logger.info(">>>>>>>>>>>TCP SERVER STARTED...port:" + port);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			parentGroup.shutdownGracefully();
-			childGroup.shutdownGracefully();
+			this.parentGroup.shutdownGracefully();
+			this.childGroup.shutdownGracefully();
+		}
+	}
+
+	/**
+	 * 关闭tcp服务
+	 */
+	public void shutdown(){
+		try{
+			logger.info("tcp shutdown ");
+			this.parentGroup.shutdownGracefully();
+			this.childGroup.shutdownGracefully();
+			this.f.channel().close();
+		}
+		catch (Exception e){
+			logger.error("shutdown error:",e);
 		}
 	}
 	

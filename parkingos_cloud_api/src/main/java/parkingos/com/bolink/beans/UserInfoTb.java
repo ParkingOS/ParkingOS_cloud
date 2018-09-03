@@ -109,9 +109,81 @@ public class UserInfoTb {
 
     private Integer isSync;
 
+    @Override
+    public String toString() {
+        return "UserInfoTb{" +
+                "id=" + id +
+                ", nickname='" + nickname + '\'' +
+                ", password='" + password + '\'' +
+                ", strid='" + strid + '\'' +
+                ", sex=" + sex +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", address='" + address + '\'' +
+                ", resume='" + resume + '\'' +
+                ", regTime=" + regTime +
+                ", logonTime=" + logonTime +
+                ", logoffTime=" + logoffTime +
+                ", onlineFlag=" + onlineFlag +
+                ", comid=" + comid +
+                ", authFlag=" + authFlag +
+                ", balance=" + balance +
+                ", state=" + state +
+                ", recomCode=" + recomCode +
+                ", md5pass='" + md5pass + '\'' +
+                ", cid='" + cid + '\'' +
+                ", departmentId=" + departmentId +
+                ", media=" + media +
+                ", isview=" + isview +
+                ", collectorPics=" + collectorPics +
+                ", collectorAuditor=" + collectorAuditor +
+                ", imei='" + imei + '\'' +
+                ", clientType=" + clientType +
+                ", version='" + version + '\'' +
+                ", wxpOpenid='" + wxpOpenid + '\'' +
+                ", wxName='" + wxName + '\'' +
+                ", wxImgurl='" + wxImgurl + '\'' +
+                ", shopId=" + shopId +
+                ", creditLimit=" + creditLimit +
+                ", isAuth=" + isAuth +
+                ", rewardScore=" + rewardScore +
+                ", firstorderquota=" + firstorderquota +
+                ", rewardquota=" + rewardquota +
+                ", recommendquota=" + recommendquota +
+                ", ticketquota=" + ticketquota +
+                ", hxName='" + hxName + '\'' +
+                ", hxPass='" + hxPass + '\'' +
+                ", roleId=" + roleId +
+                ", orderHid=" + orderHid +
+                ", chanid=" + chanid +
+                ", groupid=" + groupid +
+                ", creatorId=" + creatorId +
+                ", cityid=" + cityid +
+                ", unionState=" + unionState +
+                ", uploadUnionTime=" + uploadUnionTime +
+                ", memberId='" + memberId + '\'' +
+                ", operateType=" + operateType +
+                ", isSync=" + isSync +
+                ", updateTime=" + updateTime +
+                ", userId='" + userId + '\'' +
+                ", appid='" + appid + '\'' +
+                '}';
+    }
+
     private Long updateTime;
 
     private String userId;
+
+    private String appid;
+
+    public String getAppid() {
+        return appid;
+    }
+
+    public void setAppid(String appid) {
+        this.appid = appid;
+    }
 
     public Long getId() {
         return id;
@@ -523,67 +595,6 @@ public class UserInfoTb {
 
     public Integer getOperateType() {
         return operateType;
-    }
-
-    @Override
-    public String toString() {
-        return "UserInfoTb{" +
-                "id=" + id +
-                ", nickname='" + nickname + '\'' +
-                ", password='" + password + '\'' +
-                ", strid='" + strid + '\'' +
-                ", sex=" + sex +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", mobile='" + mobile + '\'' +
-                ", address='" + address + '\'' +
-                ", resume='" + resume + '\'' +
-                ", regTime=" + regTime +
-                ", logonTime=" + logonTime +
-                ", logoffTime=" + logoffTime +
-                ", onlineFlag=" + onlineFlag +
-                ", comid=" + comid +
-                ", authFlag=" + authFlag +
-                ", balance=" + balance +
-                ", state=" + state +
-                ", recomCode=" + recomCode +
-                ", md5pass='" + md5pass + '\'' +
-                ", cid='" + cid + '\'' +
-                ", departmentId=" + departmentId +
-                ", media=" + media +
-                ", isview=" + isview +
-                ", collectorPics=" + collectorPics +
-                ", collectorAuditor=" + collectorAuditor +
-                ", imei='" + imei + '\'' +
-                ", clientType=" + clientType +
-                ", version='" + version + '\'' +
-                ", wxpOpenid='" + wxpOpenid + '\'' +
-                ", wxName='" + wxName + '\'' +
-                ", wxImgurl='" + wxImgurl + '\'' +
-                ", shopId=" + shopId +
-                ", creditLimit=" + creditLimit +
-                ", isAuth=" + isAuth +
-                ", rewardScore=" + rewardScore +
-                ", firstorderquota=" + firstorderquota +
-                ", rewardquota=" + rewardquota +
-                ", recommendquota=" + recommendquota +
-                ", ticketquota=" + ticketquota +
-                ", hxName='" + hxName + '\'' +
-                ", hxPass='" + hxPass + '\'' +
-                ", roleId=" + roleId +
-                ", orderHid=" + orderHid +
-                ", chanid=" + chanid +
-                ", groupid=" + groupid +
-                ", creatorId=" + creatorId +
-                ", cityid=" + cityid +
-                ", unionState=" + unionState +
-                ", uploadUnionTime=" + uploadUnionTime +
-                ", memberId='" + memberId + '\'' +
-                ", operateType=" + operateType +
-                ", isSync=" + isSync +
-                ", updateTime=" + updateTime +
-                ", userId='" + userId + '\'' +
-                '}';
     }
 
     public void setOperateType(Integer operateType) {

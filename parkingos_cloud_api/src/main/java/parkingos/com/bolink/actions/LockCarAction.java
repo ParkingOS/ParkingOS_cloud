@@ -122,6 +122,7 @@ public class LockCarAction {
         orderTb.setCarNumber(carNumber);
         orderTb.setComid(comid);
         orderTb.setState(0);
+        orderTb.setIshd(0);
         orderTb=(OrderTb)commonDao.selectObjectByConditions(orderTb);
         Long oid = null;
         if(orderTb!=null){

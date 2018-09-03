@@ -3,6 +3,7 @@ package parkingos.com.bolink.component.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.zld.common_dao.dao.CommonDao;
 import com.zld.common_dao.enums.FieldOperator;
+import com.zld.common_dao.qo.PageOrderConfig;
 import com.zld.common_dao.qo.SearchBean;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import parkingos.com.bolink.component.CommonComponent;
 import parkingos.com.bolink.constant.Constants;
 import parkingos.com.bolink.dto.UnionInfo;
 import parkingos.com.bolink.dto.WXUserView;
+import parkingos.com.bolink.utlis.CheckUtil;
 import parkingos.com.bolink.utlis.HttpsProxy;
 import parkingos.com.bolink.utlis.StringUtils;
 
@@ -38,6 +40,10 @@ public class CommonComponentImpl implements CommonComponent {
     CommonDao<CarInfoTb> carInfoTbCommonDao;
     @Autowired
     CommonDao<UserProfileTb> userProfileTbCommonDao;
+    @Autowired
+    CommonDao<OrderTb> orderTbCommonDao;
+    @Autowired
+    CommonDao<CarowerProduct> carowerProductCommonDao;
 
     private Logger logger = Logger.getLogger(CommonComponentImpl.class);
     @Override
@@ -137,15 +143,17 @@ public class CommonComponentImpl implements CommonComponent {
     }
 
     @Override
-    public Integer addCarnumber(Long uin, String carnumber) {
+    public Integer addCarnumber(Long uin, String carnumber,Integer bindflag) {
         Long curTime = System.currentTimeMillis()/1000;
         // 1 判断是否微信注册用户
-        UserInfoTb userInfoConditions = new UserInfoTb();
-        userInfoConditions.setId(uin);
-        userInfoConditions.setAuthFlag(4L);
-        Integer bindflag = userInfoTbCommonDao.selectCountByConditions(userInfoConditions);
+
+//        Integer bindflag = userInfoTbCommonDao.selectCountByConditions(userInfoConditions);
         if(bindflag == 1){
             //1.1 车牌是否被别人注册
+            UserInfoTb userInfoConditions = new UserInfoTb();
+            userInfoConditions.setId(uin);
+            userInfoConditions.setAuthFlag(4L);
+
             CarInfoTb carInfoTbConditions = new CarInfoTb();
             carInfoTbConditions.setCarNumber(carnumber);
             List<CarInfoTb> carInfoTbList = carInfoTbCommonDao.selectListByConditions(carInfoTbConditions);
@@ -179,9 +187,66 @@ public class CommonComponentImpl implements CommonComponent {
                 carInfoTbConditions = new CarInfoTb();
                 carInfoTbConditions.setUin(uin);
                 count = carInfoTbCommonDao.selectCountByConditions(carInfoTbConditions);
-                if(count >= 3){//该车主注册的车牌号的个数超过限制
-                    return -3;
+                if(count >= 3) {//该车主注册的车牌号的个数超过限制
+                    //超过限制之后  删除最早的一辆车  保存现在这辆车
+                    //判断是否锁车   判断这个车牌用户是否已绑定
+                    //如果满足条件才进行删除再绑定操作
+
+                    //1.是否已经是自己的车牌
+                    carInfoTbConditions.setCarNumber(carnumber);
+                    count = carInfoTbCommonDao.selectCountByConditions(carInfoTbConditions);
+                    if (count > 0) {//这个车牌该用户已经绑定
+                        return -3;
+                    }
+
+                    //2.没有锁定的在场订单
+                    OrderTb orderConditions = new OrderTb();
+                    orderConditions.setCarNumber(carnumber);
+                    orderConditions.setState(0);
+                    orderConditions.setIslocked(1);
+                    orderConditions.setIshd(0);
+                    count = orderTbCommonDao.selectCountByConditions(orderConditions);
+                    if (count > 0) {
+                        return -2;
+                    }
+
+
+                    carInfoTbConditions.setCarNumber(null);
+                    PageOrderConfig pageOrderConfig = new PageOrderConfig();
+                    pageOrderConfig.setOrderInfo("create_time", "asc");
+                    List<CarInfoTb> infoTbList = carInfoTbCommonDao.selectListByConditions(carInfoTbConditions, pageOrderConfig);
+                    logger.info("车牌已超过3个:" + infoTbList);
+                    int delete = carInfoTbCommonDao.deleteByConditions(infoTbList.get(0));
+                    logger.info("删除最早的车牌:" + delete);
+
+                    //2.更新月卡信息(模糊查月卡信息)
+                    List<SearchBean> searchBeans = new ArrayList<SearchBean>();
+                    SearchBean searchBean = new SearchBean();
+                    searchBean.setFieldName("car_number");
+                    searchBean.setOperator(FieldOperator.LIKE);
+                    searchBean.setBasicValue(carnumber);
+                    searchBeans.add(searchBean);
+                    List<CarowerProduct> carOwnerProducts = carowerProductCommonDao.selectListByConditions(new CarowerProduct(),searchBeans);
+                    if(CheckUtil.hasElement(carOwnerProducts)){
+                        CarowerProduct carOwnerProductUpdate = new CarowerProduct();
+                        carOwnerProductUpdate.setUin(uin);
+                        for (CarowerProduct carOwnerProduct:
+                                carOwnerProducts) {
+                            CarowerProduct carOwnerProductConditions = new CarowerProduct();
+                            carOwnerProductConditions.setId(carOwnerProduct.getId());
+                            carowerProductCommonDao.updateByConditions(carOwnerProductUpdate,carOwnerProductConditions);
+                        }
+                    }
+
+                    //3.更新在场订单
+                    OrderTb orderUpdate = new OrderTb();
+                    orderUpdate.setUin(uin);
+                    orderConditions = new OrderTb();
+                    orderConditions.setCarNumber(carnumber);
+                    orderTbCommonDao.updateByConditions(orderUpdate,orderConditions);
+
                 }
+
                 carInfoTbConditions = new CarInfoTb();
                 carInfoTbConditions.setUin(uin);
                 carInfoTbConditions.setCarNumber(carnumber);

@@ -109,6 +109,7 @@
 					<input type="text" name="parkid" value="${comid}" class="info">
 					<input type="text" name="ticketid" value="${ticketid}" class="info">
 					<input type="text" name="licence" value="" id = "licence" class="info">
+					<input type="text" name="isnolicence" value="${isnolicence}" class="info">
 					<input readonly style="vertical-align:middle;border:0px solid;width:55px;text-decoration: none;font-size:17px" value="³µÅÆºÅ">
 					<input id="carnum1" max-length="1" onfocus="this.blur();" @click="carnum('carnum1')" class="carnum-input"  value="">
 					<input id="carnum2" max-length="1" onfocus="this.blur();" @click="carnum('carnum2')" class="carnum-input"  value="">

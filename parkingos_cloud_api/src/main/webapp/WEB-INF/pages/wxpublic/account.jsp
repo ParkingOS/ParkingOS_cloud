@@ -221,7 +221,7 @@ body {
 		<div id="scroller">
 			<ul id="thelist">
 				<li class="li2"><img class="img2" src="${wximg}" /><a href="#"><div class="wx_name">${wxname}</div></a></li>
-				<li class="li1" style="margin-top:20px;"><img class="img1" src="${pageContext.request.contextPath}/resources/images/wxpublic/carnumber1.png" /><a href="tocarnumbers?openid=${openid}&uin=${uin}"><div><span style="color:#101010;margin-left: 15px;">我的车辆</span></div></a></li>
+				<li class="li1" style="margin-top:20px;"><img class="img1" src="${pageContext.request.contextPath}/resources/images/wxpublic/carnumber1.png" /><a href="tocarnumbers?openid=${openid}&uin=${uin}&appid=${appid}"><div><span style="color:#101010;margin-left: 15px;">我的车辆</span></div></a></li>
 				<!--<li class="li1" style="margin-top:20px;"><img class="img1" src="${pageContext.request.contextPath}/resources/images/wxpublic/orderdetail.png" /><a href="wxpaccount.do?action=toorderlist&openid=${openid}"><div><span style="color:#101010;margin-left: 15px;">历史订单</span></div></a></li>
 				<li class="li1" style="margin-top:1px;"><img class="img1" src="${pageContext.request.contextPath}/resources/images/wxpublic/dooller.png" /><a href="wxpaccount.do?action=toaccountdetail&openid=${openid}"><div><span style="color:#101010;margin-left: 15px;">账户明细</span></div></a></li>-->
 

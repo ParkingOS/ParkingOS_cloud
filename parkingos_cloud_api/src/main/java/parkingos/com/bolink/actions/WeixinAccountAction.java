@@ -11,6 +11,7 @@ import parkingos.com.bolink.constant.Constants;
 import parkingos.com.bolink.constant.WeixinConstants;
 import parkingos.com.bolink.service.WeixinAccountService;
 import parkingos.com.bolink.utlis.*;
+import parkingos.com.bolink.utlis.weixinpay.memcachUtils.MemcacheUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,8 @@ public class WeixinAccountAction {
     Logger logger = Logger.getLogger(WeixinAccountAction.class);
     @Autowired
     WeixinAccountService weixinAccountService;
+    @Autowired
+    private MemcacheUtils memcacheUtils;
 
     /**
      * 前往微信我的账户
@@ -63,12 +66,13 @@ public class WeixinAccountAction {
             logger.error("appid 已保存到cookie>>>>>>"+appid+">>>");
         }
         String openId = "";
-
+        String access_token ="";
         if("1".equals(local)){
             openId = "o809KwgZVcVlGERyPsuHxfgO3gX0";
         }else{
             String code = RequestUtil.processParams(request, "code");
-            String accessTokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+cloudAPPID+"&secret="+cloudSECERT+"&code="+code+"&grant_type=authorization_code";
+            String accessTokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appid+"&secret="+secert+"&code="+code+"&grant_type=authorization_code";
+            logger.info("获取openid==>>accessTokenUrl:"+accessTokenUrl);
             String result = WexinPublicUtil.httpsRequest(accessTokenUrl, "GET", null);
             JSONObject map = null;
             JSONObject wxUserInfo = null;
@@ -79,14 +83,17 @@ public class WeixinAccountAction {
             if(CheckUtil.isNotNull(forward)){
                 fromScope = "snsapi_base";
             }
+            logger.info("=====>>>>>fromScope:"+fromScope);
+            logger.info("=====>>>>>map:"+map);
             if(map ==null || map.get("errcode") != null){
                 logger.error("获取openid失败....");
-                String redirect_url = "http%3a%2f%2f"+ WeixinConstants.WXPUBLIC_REDIRECTURL+"%2fzld%2fwxpaccount.do?forward="+forward;
+                String redirect_url = "http%3a%2f%2f"+ WeixinConstants.WXPUBLIC_REDIRECTURL+"%2fzld%2fwxpaccount.do?forward="+bforward;
                 String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
-                        + cloudAPPID
+                        + appid
                         + "&redirect_uri="
                         + redirect_url
                         + "&response_type=code&scope="+fromScope+"&state=123#wechat_redirect";
+                logger.info("获取openid失败重新获取:"+url);
                 try {
                     response.sendRedirect(url);
                 } catch (IOException e) {
@@ -96,7 +103,10 @@ public class WeixinAccountAction {
                 return null;
             }
             openId = map.getString("openid");
-            String access_token = map.getString("access_token");
+            access_token = map.getString("access_token");
+            //保存到缓存
+//            String tokenResult = memcacheUtils.setWXPublicToken(access_token);
+//            logger.info("token保存到memcach:"+tokenResult);
             String scope = map.getString("scope");
             if(scope.equals("snsapi_userinfo")){
                 String userInfoUrl = "https://api.weixin.qq.com/sns/userinfo?access_token="+access_token+"&openid="+openId+"&lang=zh_CN";
@@ -106,9 +116,9 @@ public class WeixinAccountAction {
                 }
                 if(wxUserInfo ==null || wxUserInfo.get("errcode") != null){
                     logger.error("获取openid失败....");
-                    String redirect_url = "http%3a%2f%2f"+ WeixinConstants.WXPUBLIC_REDIRECTURL+"%2fzld%2fwxpaccount.do?forward="+forward;
+                    String redirect_url = "http%3a%2f%2f"+ WeixinConstants.WXPUBLIC_REDIRECTURL+"%2fzld%2fwxpaccount.do?forward="+bforward;
                     String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
-                            + WeixinConstants.WXPUBLIC_APPID
+                            + appid
                             + "&redirect_uri="
                             + redirect_url
                             + "&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect";
@@ -131,9 +141,13 @@ public class WeixinAccountAction {
             //跳转至错误页面
             return "";
         }
-        logger.info("openid:"+openId);
+        logger.info("openid:"+openId+"~~~~~appid:"+appid+"~~~token:"+access_token);
+
+//        WXUserView wxUserView = commonComponent.getUserinfoByOpenid(openid);
+//        Long uin = wxUserView.getUin();
+
         //2.查询用户信息,无用户则自动注册
-        UserInfoTb user = weixinAccountService.getUserInfo(openId,(String)request.getAttribute("wxname"));
+        UserInfoTb user = weixinAccountService.getUserInfo(openId,(String)request.getAttribute("wxname"),appid);
         if(user==null){
             //跳转至错误页面
             return "";
@@ -144,18 +158,19 @@ public class WeixinAccountAction {
         Integer count = weixinAccountService.getUserCarCount(uin);
         request.setAttribute("domain", Constants.DOMAIN);
         request.setAttribute("openid", openId);
+        request.setAttribute("appid",appid);
         request.getSession().setAttribute("openid",openId);
         request.setAttribute("uin",uin);
         logger.info("count:"+count);
 
         if(count<1){
             //跳转至添加车牌页面
-            request.setAttribute("forward", forward);
+            request.setAttribute("forward", bforward);
             return "wxpublic/addcarnumber";
         }
 
         request.setAttribute("uin",uin);
-        request.setAttribute("appid",cloudAPPID);
+        request.setAttribute("appid",appid);
         //4.跳转页面
         if("topresentorderlist".equals(forward)){
             //跳转至在场订单页面
@@ -180,12 +195,14 @@ public class WeixinAccountAction {
     public String toEditCarNumber(HttpServletRequest request, HttpServletResponse response){
         String openId = RequestUtil.getString(request,"openid");
         Long uin = RequestUtil.getLong(request,"uin",-1L);
-        logger.info(openId+"-"+uin);
+        String appid = RequestUtil.getString(request,"appid");
+        logger.info(openId+"-"+uin+"~~~"+appid);
         //查询车牌数量
         //Integer count = weixinAccountService.getUserCarCount(uin);
         //request.setAttribute("count",count);
         request.setAttribute("uin",uin);
         request.setAttribute("openid",openId);
+        request.setAttribute("appid",appid);
         return "wxpublic/carnumbers";
     }
 
@@ -200,10 +217,12 @@ public class WeixinAccountAction {
         String forward = RequestUtil.getString(request,"forward");
         String openId = RequestUtil.getString(request,"openid");
         Long uin = RequestUtil.getLong(request,"uin",-1L);
-        logger.info(forward+"-"+openId+"-"+uin);
+        String appid = RequestUtil.getString(request,"appid");
+        logger.info(forward+"-"+openId+"-"+uin+"toaddcarnumber  appid"+appid);
         request.setAttribute("action",forward);
         request.setAttribute("openid",openId);
         request.setAttribute("uin",uin);
+        request.setAttribute("appid",appid);
         return "wxpublic/addcarnumber";
     }
 
@@ -218,9 +237,10 @@ public class WeixinAccountAction {
         String openId = RequestUtil.getString(request,"openid");
         String carNumber = StringUtils.decodeUTF8(RequestUtil.getString(request,"carnumber"));
         Long uin = RequestUtil.getLong(request,"uin",-1L);
-        logger.info(openId+"-"+carNumber+"-"+uin);
+        String appid  =RequestUtil.getString(request,"appid");
+        logger.info("editcarnumber==>>:"+openId+"-"+carNumber+"-"+uin+"~~~appid"+appid);
         //添加车牌
-        Integer ret = weixinAccountService.addCarNumbers(uin,carNumber);
+        Integer ret = weixinAccountService.addCarNumbers(uin,carNumber,appid);
         AjaxUtil.ajaxOutput(response,ret);
         return null;
     }

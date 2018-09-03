@@ -48,7 +48,7 @@ public class UploadCarPics {
 			/*
 				 * 通过流的方式读取request请求对象中的数据
 				 */
-			logger.info(">>>>>>>>>>>>>>调用上传图片的方法...........start");
+			logger.error(">>>>>>>>>>>>>>调用上传图片的方法...........start");
 			byte[] bytes = new byte[1024 * 1024];
 			InputStream is = request.getInputStream();
 
@@ -60,11 +60,13 @@ public class UploadCarPics {
 					nTotalRead = nTotalRead + nRead;
 			}
 			String str = new String(bytes, 0, nTotalRead, "utf-8");
+//			logger.error(">>>>>>收到上传图片消息"+str);
 			JSONObject jsonObj = null;
 			try {
 				jsonObj = JSONObject.parseObject(str);
 
 			} catch (Exception e) {
+				logger.error(">>>>解析json出现异常"+e.getMessage());
 				StringUtils.ajaxOutput(response, "json数据格式不正确");
 			}
 			//logger.info(jsonObj.toJSONString());
@@ -225,10 +227,11 @@ public class UploadCarPics {
 		}
 		byte[] picture = Base64Utils.decode(content.getBytes());// Base64.decode(content);
 		int picSize = picture.length;
-		logger.error("pic size:"+picSize);
+		logger.error("pic size:"+picSize+"~~~parkid:"+parkId);
 		if(picSize>201100){
 			return "{\"state\":0,\"errmsg\":\"图片过大，最大支持200K，实际上传大小："+picture.length/1000+"K\"}";
 		}
+
 		if (pictureSource.equals("order")) {
 			if (jsonObj.containsKey("order_id")) {
 				orderId = jsonObj.getString("order_id");
@@ -302,12 +305,17 @@ public class UploadCarPics {
 		document.put("content", picture);
 		document.put("type","image/"+picType);
 
+		logger.error("pictureSource:"+pictureSource+"comid:~"+parkId);
+
 		if(pictureSource.equals("order")){
+			logger.error("park_order_type:"+parkOrderType+"~~~parkid"+parkId+"~~~orderid:"+orderId);
 			document.put("orderid", orderId);
 			document.put("gate", parkOrderType);
 		}else if(pictureSource.equals("liftrod")){
+			logger.error("liftrodid:"+liftRodId+"~~~parkid"+parkId);
 			document.put("liftrodid", liftRodId);
 		}else if(pictureSource.equals("confirm")){
+			logger.error("event_id:"+eventId+"~~~parkid"+parkId);
 			document.put("event_id", eventId);
 		}
 

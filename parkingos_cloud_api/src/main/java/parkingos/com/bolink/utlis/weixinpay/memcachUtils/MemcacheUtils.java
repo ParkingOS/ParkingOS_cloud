@@ -106,6 +106,7 @@ public class MemcacheUtils {
 			}
 		});
 	}
+
 	
 	
 	public   Map<Long ,Long> doMapLongLongCache(String key,
@@ -216,6 +217,23 @@ public class MemcacheUtils {
 		/**rand判断，同一个平台账户同一个请求，rand值不可重复*/
 		return false;
 	}
-	
+
+    public String setWXPublicToken(String token) {
+		return doStringCache("zld_wxpublic_token", (System.currentTimeMillis()/1000)+"_"+token, "update");
+    }
+
+	public String getWXPublicToken(){
+		String weixinToken = doStringCache("zld_wxpublic_token", null, null);
+		if(weixinToken!=null){
+			String [] time_token = weixinToken.split("_");
+			Long time = Long.valueOf(time_token[0]);
+			Long nTime = System.currentTimeMillis()/1000;
+			logger.error("wxpublic token times :"+(nTime-time));
+			if(nTime-time<120*60){
+				return weixinToken.substring(weixinToken.indexOf("_")+1);
+			}
+		}
+		return "notoken";
+	}
 }
 	

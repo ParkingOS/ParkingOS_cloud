@@ -205,7 +205,8 @@ div{border:none;outline:none;}
 				url : "getcarnumbers",
 				data : {
 					'openid' : '${openid}',
-					'uin' : '${uin}'
+					'uin' : '${uin}',
+					'appid':'${appid}'
 				},
 				async : false,
 				success : function(jsonData) {
@@ -244,7 +245,7 @@ div{border:none;outline:none;}
 					}
 					count = parseInt(count);
 					if(count < 3){
-						$("#thelist").append('<li style="margin-top:20px;"><img class="img1" src="${pageContext.request.contextPath}/resources/images/wxpublic/add.png" /><a style="top:-35px;left:30px;position:relative" href="toaddcarnumber?openid=${openid}&uin=${uin}&forward=tocarnumbers"><div class="company_name"><span>点击添加车牌</span><span class="right1 money"></span></div></a></li>');
+						$("#thelist").append('<li style="margin-top:20px;"><img class="img1" src="${pageContext.request.contextPath}/resources/images/wxpublic/add.png" /><a style="top:-35px;left:30px;position:relative" href="toaddcarnumber?openid=${openid}&uin=${uin}&appid=${appid}&forward=tocarnumbers"><div class="company_name"><span>点击添加车牌</span><span class="right1 money"></span></div></a></li>');
 					}
 				}
 			});

@@ -332,7 +332,7 @@ function nextPage() {
         "json");
 }
 function orderdetail(com_id,order_id,car_number){
-    car_number = encodeURI(car_number)
+
     console.log(car_number)
     var url = "toprepaycurorder?com_id="+com_id+"&car_number="+car_number+"&order_id="+order_id
     window.location.href = url

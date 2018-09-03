@@ -98,13 +98,17 @@
   </servlet-mapping>
 
   <!-- tcp服务器启动 -->
-  <servlet>
-    <servlet-name>TcpServerServlet</servlet-name>
-    <servlet-class>
-      parkingos.com.bolink.actions.TcpServerServlet
-    </servlet-class>
-    <load-on-startup>3</load-on-startup>
-  </servlet>
+
+  <listener>
+    <listener-class>parkingos.com.bolink.actions.TcpServerListener</listener-class>
+  </listener>
+  <!--<servlet>-->
+    <!--<servlet-name>TcpServerServlet</servlet-name>-->
+    <!--<servlet-class>-->
+      <!--parkingos.com.bolink.actions.TcpServerServlet-->
+    <!--</servlet-class>-->
+    <!--<load-on-startup>3</load-on-startup>-->
+  <!--</servlet>-->
 
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
