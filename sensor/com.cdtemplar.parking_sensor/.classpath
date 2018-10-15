@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/lx/workspace2/com.cdtemplar.parking_sensor/src/com/cdtemplar/lib/gson-2.2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/lx/workspace2/com.cdtemplar.parking_sensor/src/com/cdtemplar/lib/netty-all-5.0.0.Alpha1.jar" sourcepath="C:/Users/lx/.m2/repository/io/netty/netty-all/5.0.0.Alpha1/netty-all-5.0.0.Alpha1-sources.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

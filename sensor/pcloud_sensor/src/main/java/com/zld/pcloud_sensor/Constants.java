@@ -6,9 +6,9 @@ public class Constants {
 	
 	public static String TB_CLIENT = "TB_CLIENT";//天泊通信通道标识
 	
-	public static String TB_ADDR = "139.196.229.89";//天泊服务地址
+	public static String TB_ADDR = "192.168.0.5";//天泊服务地址
 	
-	public static int TB_PORT = 6001;//天泊服务端口
+	public static int TB_PORT = 6111;//天泊服务端口
 	
 	public static int SENSOR_PORT = 780;//车检器中间件服务地址
 	

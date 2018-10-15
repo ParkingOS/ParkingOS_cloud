@@ -16,6 +16,7 @@ public class SensorInfo implements Serializable {
 	private int x = 0;//车检器最新X
 	private int y = 0;//车检器最新Y
 	private int z = 0;//车检器最新Z
+	private int d = -1;//车检器最新距离 cm
 	private int rate = -1;//有车的概率值ֵ
 	public String getId() {
 		return id;
@@ -64,6 +65,12 @@ public class SensorInfo implements Serializable {
 	}
 	public void setZ(int z) {
 		this.z = z;
+	}
+	public int getD() {
+		return d;
+	}
+	public void setD(int d) {
+		this.d = d;
 	}
 	public int getRate() {
 		return rate;
